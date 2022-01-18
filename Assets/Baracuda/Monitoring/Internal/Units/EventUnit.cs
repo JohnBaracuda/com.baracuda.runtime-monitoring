@@ -1,0 +1,67 @@
+﻿using System;
+using Baracuda.Monitoring.Interface;
+using Baracuda.Monitoring.Internal.Profiles;
+
+namespace Baracuda.Monitoring.Internal.Units
+{
+    public class EventUnit<TTarget, TDelegate> : MonitorUnit where TTarget : class where TDelegate : MulticastDelegate
+    {
+        
+        #region --- [PROPERTIES] ---
+
+        public override string GetValueFormatted => _stateFormatter(_target, _invokeCounter);
+        public override string GetValueRaw { get; } = "INVALID";
+        public override IMonitorProfile Profile => _eventProfile;
+
+        #endregion
+        
+        //--------------------------------------------------------------------------------------------------------------
+        
+        #region --- [FIELDS] ---
+
+        private readonly EventProfile<TTarget, TDelegate>.StateFormatDelegate _stateFormatter;
+        private readonly EventProfile<TTarget, TDelegate> _eventProfile;
+        private readonly TTarget _target;
+
+        private readonly Delegate _eventHandler;
+        private int _invokeCounter = 0;
+
+        #endregion
+        
+        //--------------------------------------------------------------------------------------------------------------
+
+        internal EventUnit(
+            TTarget target,
+            EventProfile<TTarget, TDelegate>.StateFormatDelegate stateFormatter, 
+            EventProfile<TTarget, TDelegate> eventProfile) : base(target, eventProfile)
+        {
+            _target = target;
+            _eventProfile = eventProfile;
+            _stateFormatter = stateFormatter;
+
+            _eventHandler = eventProfile.CreateEventHandler(OnEvent);
+            eventProfile.SubscribeEventHandler(target, _eventHandler);
+            
+            ExternalUpdateRequired = eventProfile.EventAttribute.Refresh;
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+     
+        public override void Refresh()
+        {
+            RaiseValueChanged(GetValueFormatted);
+        }
+
+        private void OnEvent()
+        {
+            _invokeCounter++;
+            RaiseValueChanged(GetValueFormatted);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            _eventProfile.RemoveEventHandler(_target, _eventHandler);
+        }
+    }
+}

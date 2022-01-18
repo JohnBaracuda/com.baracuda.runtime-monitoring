@@ -1,0 +1,60 @@
+.unit {
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    -unity-text-outline-width: 0;
+    -unity-text-outline-color: rgb(0, 0, 0);
+    text-shadow: 0 0 0 rgb(41, 41, 41);
+    background-color: rgba(0, 0, 0, 0.86);
+    flex-direction: row;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.label {
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    -unity-text-outline-width: 0;
+    -unity-text-outline-color: rgb(0, 0, 0);
+    text-shadow: 0 0 0 rgb(41, 41, 41);
+    background-color: rgb(0, 0, 0);
+    flex-direction: row;
+    -unity-font-style: bold;
+}
+
+.group {
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: rgba(0, 0, 0, 0.47);
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.console {
+    background-color: rgba(0, 0, 0, 0.31);
+    margin-bottom: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+}

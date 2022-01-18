@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d41b351282edd4a883b621a972258f, type: 3}
+  m_Name: MonitoringSettings
+  m_EditorClassIdentifier: 
+  logBadImageFormatException: 1
+  logOperationCanceledException: 0
+  logThreadAbortException: 2
+  logUnknownExceptions: 4
+  logBackfieldNotFoundException: 2
+  logProcessorNotFoundException: 2
+  logInvalidProcessorSignatureException: 2
+  addClassName: 0
+  appendSymbol: 46
+  groupStaticUnits: 1
+  groupInstanceUnits: 1
+  humanizeNames: 1
+  variablePrefixes:
+  - m_
+  - s_
+  - _
+  optionalStyleSheets: []
+  instanceUnitStyles: unit
+  instanceGroupStyles: group
+  instanceLabelStyles: label
+  staticUnitStyles: unit
+  staticGroupStyles: group
+  staticLabelStyles: label
+  classColor: {r: 0.8590691, g: 0.8590691, b: 0.9339623, a: 1}
+  trueColor: {r: 0, g: 1, b: 0, a: 1}
+  falseColor: {r: 0.8679245, g: 0.23335704, b: 0.25258785, a: 1}
+  xColor: {r: 0.5276789, g: 0.6003841, b: 0.9245283, a: 1}
+  yColor: {r: 0.49, g: 1, b: 0.53, a: 1}
+  zColor: {r: 1, g: 0.38, b: 0.35, a: 1}
+  wColor: {r: 0.72646046, g: 0, b: 1, a: 1}
+  bannedAssemblyPrefixes:
+  - Assembly-Baracuda-Pooling
+  - Assembly-Plugin
+  - DOTween
+  bannedAssemblyNames: []

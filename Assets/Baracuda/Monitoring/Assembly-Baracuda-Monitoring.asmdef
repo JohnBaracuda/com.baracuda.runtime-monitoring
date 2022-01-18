@@ -1,0 +1,18 @@
+{
+    "name": "Assembly-Baracuda-Monitoring",
+    "rootNamespace": "Baracuda",
+    "references": [
+        "GUID:021345140c04c3540b09377c3ffae87a",
+        "GUID:f093583519d77944d97558bde9cc880f",
+        "GUID:8b01a9bc339a2e64e86383ce41725c2b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

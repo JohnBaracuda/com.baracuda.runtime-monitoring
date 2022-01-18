@@ -1,0 +1,20 @@
+{
+    "name": "Assembly-Baracuda-MonitoringUIElements",
+    "rootNamespace": "Baracuda",
+    "references": [
+        "GUID:13f0804893874e449b8a125fbed5edcf",
+        "GUID:021345140c04c3540b09377c3ffae87a",
+        "GUID:8b01a9bc339a2e64e86383ce41725c2b",
+        "GUID:eed91066fed21d94387442ab8e472795",
+        "GUID:0b4b72b2915ce4141be8444e0bdcf201"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
