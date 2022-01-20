@@ -1,7 +1,4 @@
 using System;
-using Baracuda.Monitoring.Attributes;
-
-[assembly: DisableMonitoring]
 namespace Baracuda.Monitoring.Attributes
 {
     /// <summary>
