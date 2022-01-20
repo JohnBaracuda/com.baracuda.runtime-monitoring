@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace Baracuda.Pooling.Abstractions
 {
-    public abstract class ObjectPool<T> : ObjectPool, IDisposable, IObjectPool<T>
+    public abstract class ObjectPool<T> : ObjectPool, IObjectPool<T>
     {
         #region --- [PROPERTIES] ---
 
@@ -23,10 +23,6 @@ namespace Baracuda.Pooling.Abstractions
         protected Action<T> ActionOnDestroy { get; }
         protected int MAXSize { get; }
         protected bool CollectionCheck { get; }
-
-#if MONITOR_POOLS
-        private protected int m_accessed;
-#endif
 
         #endregion
 
@@ -76,19 +72,6 @@ namespace Baracuda.Pooling.Abstractions
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [CLEAR] ---
-
-        public abstract void Clear();
-
-        public void Dispose()
-        {
-            Clear();
-        }
-
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
         #region --- [TOSTRING] ---
 
         public override string ToString()
@@ -110,10 +93,6 @@ namespace Baracuda.Pooling.Abstractions
             {
                 sb.Append("</color>");
             }
-#if MONITOR_POOLS
-            sb.Append(" Accesses: ");
-            sb.Append(m_accessed);
-#endif
             sb.Append(" | Concurrent:");
             sb.Append(this is ConcurrentObjectPool<T>);
             return StringBuilderPool.Release(sb);
@@ -206,24 +185,51 @@ namespace Baracuda.Pooling.Abstractions
         #endregion
     }
 
-    public abstract class ObjectPool
+    public abstract class ObjectPool : IDisposable
     {
-#if ENFORCETHREADSAFETY
-        protected static readonly System.Threading.Thread MainThread = System.Threading.Thread.CurrentThread;
-#endif
+        public static IReadOnlyCollection<ObjectPool> ActivePools => _activePools;
 
-#if MONITOR_POOLS
-        [MonitorValue] private static readonly List<ObjectPool> _registeredPools = new List<ObjectPool>();
+        private static readonly HashSet<ObjectPool> _activePools = new HashSet<ObjectPool>();
 
         protected ObjectPool()
         {
-            _registeredPools.Add(this);
+            _activePools.Add(this);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- [CLEAR] ---
+
+        public abstract void Clear();
+
+
+        #endregion
+
+#if ENFORCETHREADSAFETY
+        protected static readonly System.Threading.Thread MainThread = System.Threading.Thread.CurrentThread;
+#endif
+        private void ReleaseUnmanagedResources()
+        {
+            Clear();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            ReleaseUnmanagedResources();
+            if (disposing)
+            {
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         ~ObjectPool()
         {
-            _registeredPools.Remove(this);
+            Dispose(false);
         }
-#endif //MONITOR_POOLS
     }
 }

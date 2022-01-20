@@ -1,6 +1,6 @@
 ﻿using System;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Internal.Profiles;
+using Baracuda.Monitoring.Internal.Profiling;
 
 namespace Baracuda.Monitoring.Internal.Units
 {

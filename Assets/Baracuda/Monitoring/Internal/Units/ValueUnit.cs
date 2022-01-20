@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Internal.Profiles;
+using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Monitoring.Internal.Utils;
 using Baracuda.Threading;
 using Unity.Collections.LowLevel.Unsafe;

@@ -1,0 +1,18 @@
+{
+    "name": "Assembly-Baracuda-MonitoringUI",
+    "rootNamespace": "Baracuda",
+    "references": [
+        "GUID:8b01a9bc339a2e64e86383ce41725c2b",
+        "GUID:ca92f98736a979747b5de3a34d731a59",
+        "GUID:13f0804893874e449b8a125fbed5edcf"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

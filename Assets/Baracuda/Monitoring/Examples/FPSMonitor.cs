@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using Baracuda.Attributes.Monitoring;
+using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Internal;
 using UnityEngine;
 

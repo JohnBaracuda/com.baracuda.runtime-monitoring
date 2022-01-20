@@ -43,7 +43,9 @@ MonoBehaviour:
   zColor: {r: 1, g: 0.38, b: 0.35, a: 1}
   wColor: {r: 0.72646046, g: 0, b: 1, a: 1}
   bannedAssemblyPrefixes:
-  - Assembly-Baracuda-Pooling
   - Assembly-Plugin
   - DOTween
-  bannedAssemblyNames: []
+  - DOTween
+  bannedAssemblyNames:
+  - Assembly-Baracuda-Pooling
+  - Assembly-Baracuda-Reflection

@@ -1,0 +1,16 @@
+{
+    "name": "Assembly-Baracuda-Reflection",
+    "rootNamespace": "Baracuda",
+    "references": [
+        "Assembly-Baracuda-Pooling"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Baracuda.Monitoring.Internal.Processing;
-using Baracuda.Monitoring.Internal.Profiles;
-using Baracuda.Monitoring.Internal.Reflection;
+using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Pooling.Concretions;
+using Baracuda.Reflection;
 using Baracuda.Threading;
 
 namespace Baracuda.Monitoring.Management
@@ -24,7 +23,7 @@ namespace Baracuda.Monitoring.Management
         
         private static readonly Dictionary<object, MonitorUnit[]> _activeInstanceUnits = new Dictionary<object, MonitorUnit[]>();
         
-        private static bool _sInitialInstanceUnitsCreated = false;
+        private static bool _initialInstanceUnitsCreated = false;
         
         private static readonly List<object> _registeredTargets = new List<object>(300);
         
@@ -37,7 +36,7 @@ namespace Baracuda.Monitoring.Management
         public static void RegisterTarget(object target)
         {
             _registeredTargets.Add(target);
-            if (_sInitialInstanceUnitsCreated)
+            if (_initialInstanceUnitsCreated)
             {
                 CreateInstanceUnits(target, target.GetType());
             }
@@ -71,7 +70,7 @@ namespace Baracuda.Monitoring.Management
             {
                 CreateInstanceUnits(_registeredTargets[i], _registeredTargets[i].GetType());
             }
-            _sInitialInstanceUnitsCreated = true;
+            _initialInstanceUnitsCreated = true;
         }
 
         private static void CreateInstanceUnits(object target, Type type)
@@ -152,6 +151,5 @@ namespace Baracuda.Monitoring.Management
         }
 
         #endregion
-
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Internal.Profiles;
+using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Pooling.Concretions;
 
 namespace Baracuda.Monitoring.Internal.Units

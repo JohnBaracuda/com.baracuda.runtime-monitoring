@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Baracuda.Attributes;
-using Baracuda.Attributes.Monitoring;
+using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Management;
 using UnityEngine;

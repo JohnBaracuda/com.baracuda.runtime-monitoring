@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Baracuda.Attributes;
-using Baracuda.Attributes.Monitoring;
+using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Internal.Utils;
 
 namespace Baracuda.Monitoring.Interface

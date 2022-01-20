@@ -1,5 +1,4 @@
-﻿using Baracuda.Attributes;
-using Baracuda.Attributes.Monitoring;
+﻿using Baracuda.Monitoring.Attributes;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Examples

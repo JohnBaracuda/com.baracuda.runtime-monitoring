@@ -1,8 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using Baracuda.Attributes;
-using Baracuda.Attributes.Monitoring;
+using Baracuda.Monitoring.Attributes;
 using UnityEngine;
 using UnityEngine.UIElements;
 

@@ -1,9 +1,7 @@
 {
     "name": "Assembly-Baracuda-Pooling",
     "rootNamespace": "Baracuda",
-    "references": [
-        "GUID:021345140c04c3540b09377c3ffae87a"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

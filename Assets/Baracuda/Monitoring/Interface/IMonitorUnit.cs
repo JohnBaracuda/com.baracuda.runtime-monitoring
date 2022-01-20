@@ -1,5 +1,5 @@
 ﻿using System;
-using Baracuda.Monitoring.Internal.Profiles;
+using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Monitoring.Internal.Units;
 
 namespace Baracuda.Monitoring.Interface
