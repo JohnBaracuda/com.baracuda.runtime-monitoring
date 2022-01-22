@@ -34,7 +34,6 @@ namespace Baracuda.Threading
         /// </summary>
         /// <returns></returns>
         ///<footer><a href="https://johnbaracuda.com/dispatcher.html#miscellaneous">Documentation</a></footer>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsMainThread() => Thread.CurrentThread.ManagedThreadId == (_mainThread?.ManagedThreadId 
             ?? throw new Exception($"{nameof(Dispatcher)}.{nameof(_mainThread)} is not initialized"));
 
@@ -201,7 +200,7 @@ namespace Baracuda.Threading
 #if !DISPATCHER_DISABLE_TICKUPDATE || ENABLE_TICKFALLBACK
         
         private static CancellationTokenSource _cts = new CancellationTokenSource();
-        private const int TICK_DELAY = 25;
+        private const int TICK_DELAY = 50;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void InitTick() => InitializeTickUpdateLoop();

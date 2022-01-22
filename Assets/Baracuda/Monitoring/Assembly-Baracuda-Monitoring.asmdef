@@ -2,7 +2,6 @@
     "name": "Assembly-Baracuda-Monitoring",
     "rootNamespace": "Baracuda",
     "references": [
-        "GUID:13f0804893874e449b8a125fbed5edcf",
         "GUID:f093583519d77944d97558bde9cc880f",
         "GUID:c5fded5a8329e50488718cdbe4db0dc3",
         "GUID:8b01a9bc339a2e64e86383ce41725c2b"

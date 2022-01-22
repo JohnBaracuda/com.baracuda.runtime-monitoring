@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using Baracuda.Threading.Internal;
 using UnityEngine;
 using UnityEditor;
@@ -18,36 +17,90 @@ namespace Baracuda.Threading.Editor
         internal int postExecutionOrder = DEFAULT_POST_EXECUTION_ORDER;
        
         private static DispatcherExecutionOrder _current;
-        private const string PATH = "Assets/Baracuda/Threading/Editor/Resources";
+        private const string DEFAULT_PATH = "Assets/Baracuda/Threading/Editor";
         internal const int DEFAULT_EXECUTION_ORDER = -500;
         internal const int DEFAULT_POST_EXECUTION_ORDER = 500;
-        
+
+        private void OnEnable()
+        {
+            _current = this;
+        }
+
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- [SINGLETON LOGIC] ---
 
-        internal static DispatcherExecutionOrder GetConfigurationFile()
+        internal static DispatcherExecutionOrder GetDispatcherExecutionOrderAsset()
         {
-            if (_current) return _current;
-            return _current = Resources.LoadAll<DispatcherExecutionOrder>(string.Empty).FirstOrDefault() ?? CreateDispatcherCache() ?? throw new Exception(
-                $"{nameof(DispatcherExecutionOrder)} was not found when calling: {nameof(GetConfigurationFile)} and cannot be created!");
+            if (_current)
+            {
+                return _current;
+            }
+            else
+            {
+                return _current = LoadDispatcherExecutionOrderAsset();
+            }
+        }
+
+        private static DispatcherExecutionOrder LoadDispatcherExecutionOrderAsset()
+        {
+            var paths = new string[]
+            {
+                "Assets/Baracuda/Threading/Editor/DispatcherExecutionOrder.asset",
+                "Assets/Plugins/Baracuda/Threading/Editor/DispatcherExecutionOrder.asset",
+                "Assets/Plugins/Threading/Editor/DispatcherExecutionOrder.asset",
+                "Assets/Modules/Threading/Editor/DispatcherExecutionOrder.asset",
+                "Assets/Modules/Baracuda/Threading/Editor/DispatcherExecutionOrder.asset",
+                "Assets/Threading/Editor/DispatcherExecutionOrder.asset",
+            };
+
+            DispatcherExecutionOrder current;
+            
+            for (var i = 0; i < paths.Length; i++)
+            {
+                current = AssetDatabase.LoadAssetAtPath<DispatcherExecutionOrder>(paths[i]);
+                if (current != null)
+                {
+                    return current;
+                }
+            }
+            
+            var guids = AssetDatabase.FindAssets($"t:{typeof(DispatcherExecutionOrder)}");
+            for(var i = 0; i < guids.Length; i++)
+            {
+                var assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+                current = AssetDatabase.LoadAssetAtPath<DispatcherExecutionOrder>(assetPath);
+                if(current != null)
+                {
+                    return current;
+                }
+            }
+
+            current = CreateDispatcherCache();
+            if(current != null)
+            {
+                return current;
+            }
+
+            throw new Exception(
+                $"{nameof(DispatcherExecutionOrder)} was not found when calling: {nameof(GetDispatcherExecutionOrderAsset)} and cannot be created!");
         }
         
         private static DispatcherExecutionOrder CreateDispatcherCache()
         {
             try
             {
-                Directory.CreateDirectory(PATH);
-                var filePath = $"{PATH}/Execution-Config.asset";
+                Directory.CreateDirectory(DEFAULT_PATH);
+                var filePath = $"{DEFAULT_PATH}/{nameof(DispatcherExecutionOrder)}.asset";
 
                 var asset = CreateInstance<DispatcherExecutionOrder>();
                 AssetDatabase.CreateAsset(asset, filePath);
                 AssetDatabase.SaveAssets();
                 
 #if DISPATCHER_DEBUG
-                Debug.Log($"Created a new {nameof(DispatcherExecutionOrder)} at {PATH}! ");
+                Debug.Log($"Created a new {nameof(DispatcherExecutionOrder)} at {DEFAULT_PATH}! ");
 #endif
                 return asset;
             }
@@ -70,7 +123,7 @@ namespace Baracuda.Threading.Editor
         [InitializeOnLoadMethod]
         public static void ValidateExecutionOrder()
         {
-            var target = GetConfigurationFile();
+            var target = GetDispatcherExecutionOrderAsset();
             var monoScripts = MonoImporter.GetAllRuntimeMonoScripts();
             for (var i = 0; i < monoScripts.Length; i++)
             {
@@ -121,7 +174,7 @@ namespace Baracuda.Threading.Editor
         internal static void Open()
         {
             var window = GetWindow<ExecutionOrderWindow>("Execution Order");
-            window._target = DispatcherExecutionOrder.GetConfigurationFile();
+            window._target = DispatcherExecutionOrder.GetDispatcherExecutionOrderAsset();
             window.Show(true);
         }
 

@@ -15,11 +15,11 @@ G:/Unity/Monitoring
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-62918
+64852
 Successfully changed project path to: G:/Unity/Monitoring
 G:/Unity/Monitoring
 Using Asset Import Pipeline V2.
-Refreshing native plugins compatible for Editor in 46.77 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 56.16 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2020.3.26f1 (7298b473bc1a)
 [Subsystems] Discovering subsystems at path G:/Program Files (x86)/UnityEditor/2020.3.26f1/Editor/Data/Resources/UnitySubsystems
@@ -35,45 +35,45 @@ Initialize mono
 Mono path[0] = 'G:/Program Files (x86)/UnityEditor/2020.3.26f1/Editor/Data/Managed'
 Mono path[1] = 'G:/Program Files (x86)/UnityEditor/2020.3.26f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
 Mono config path = 'G:/Program Files (x86)/UnityEditor/2020.3.26f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56428
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56168
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: G:/Program Files (x86)/UnityEditor/2020.3.26f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.000947 seconds.
+Registered in 0.000977 seconds.
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 34.61 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 33.64 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Mono: successfully reloaded assembly
-- Completed reload, in  0.515 seconds
+- Completed reload, in  0.536 seconds
 Domain Reload Profiling:
-	ReloadAssembly (515ms)
-		BeginReloadAssembly (46ms)
+	ReloadAssembly (536ms)
+		BeginReloadAssembly (48ms)
 			ExecutionOrderSort (0ms)
 			DisableScriptedObjects (0ms)
 			BackupInstance (0ms)
 			ReleaseScriptingObjects (0ms)
 			CreateAndSetChildDomain (1ms)
-		EndReloadAssembly (408ms)
-			LoadAssemblies (45ms)
+		EndReloadAssembly (425ms)
+			LoadAssemblies (47ms)
 			RebuildTransferFunctionScriptingTraits (0ms)
-			SetupTypeCache (138ms)
+			SetupTypeCache (140ms)
 			ReleaseScriptCaches (0ms)
-			RebuildScriptCaches (29ms)
-			SetupLoadedEditorAssemblies (151ms)
+			RebuildScriptCaches (30ms)
+			SetupLoadedEditorAssemblies (155ms)
 				LogAssemblyErrors (0ms)
 				InitializePlatformSupportModulesInManaged (4ms)
 				SetLoadedEditorAssemblies (0ms)
-				RefreshPlugins (35ms)
-				BeforeProcessingInitializeOnLoad (12ms)
-				ProcessInitializeOnLoadAttributes (74ms)
-				ProcessInitializeOnLoadMethodAttributes (27ms)
+				RefreshPlugins (34ms)
+				BeforeProcessingInitializeOnLoad (13ms)
+				ProcessInitializeOnLoadAttributes (79ms)
+				ProcessInitializeOnLoadMethodAttributes (26ms)
 				AfterProcessingInitializeOnLoad (0ms)
 				EditorAssembliesLoaded (0ms)
 			ExecutionOrderSort2 (0ms)
 			AwakeInstancesAfterBackupRestoration (0ms)
 Platform modules already initialized, skipping
 Registering precompiled user dll's ...
-Registered in 0.003094 seconds.
+Registered in 0.003128 seconds.
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEngine.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEngine.UIElementsModule.dll)
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEditor.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEditor.UIElementsModule.dll)
 Begin MonoManager ReloadAssembly
@@ -81,36 +81,36 @@ ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEngine.UIElementsMo
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEditor.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEditor.UIElementsModule.dll)
 Symbol file LoadedFromMemory is not a mono symbol file
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 34.13 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 35.50 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEngine.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEngine.UIElementsModule.dll)
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEditor.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEditor.UIElementsModule.dll)
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEngine.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEngine.UIElementsModule.dll)
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEditor.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEditor.UIElementsModule.dll)
 Mono: successfully reloaded assembly
-- Completed reload, in  1.004 seconds
+- Completed reload, in  1.083 seconds
 Domain Reload Profiling:
-	ReloadAssembly (1004ms)
-		BeginReloadAssembly (120ms)
+	ReloadAssembly (1084ms)
+		BeginReloadAssembly (128ms)
 			ExecutionOrderSort (0ms)
 			DisableScriptedObjects (4ms)
 			BackupInstance (0ms)
 			ReleaseScriptingObjects (0ms)
-			CreateAndSetChildDomain (18ms)
-		EndReloadAssembly (835ms)
+			CreateAndSetChildDomain (19ms)
+		EndReloadAssembly (908ms)
 			LoadAssemblies (72ms)
 			RebuildTransferFunctionScriptingTraits (0ms)
-			SetupTypeCache (253ms)
+			SetupTypeCache (318ms)
 			ReleaseScriptCaches (1ms)
-			RebuildScriptCaches (43ms)
-			SetupLoadedEditorAssemblies (359ms)
+			RebuildScriptCaches (44ms)
+			SetupLoadedEditorAssemblies (373ms)
 				LogAssemblyErrors (0ms)
 				InitializePlatformSupportModulesInManaged (3ms)
-				SetLoadedEditorAssemblies (1ms)
-				RefreshPlugins (34ms)
+				SetLoadedEditorAssemblies (0ms)
+				RefreshPlugins (36ms)
 				BeforeProcessingInitializeOnLoad (63ms)
-				ProcessInitializeOnLoadAttributes (191ms)
-				ProcessInitializeOnLoadMethodAttributes (65ms)
+				ProcessInitializeOnLoadAttributes (203ms)
+				ProcessInitializeOnLoadMethodAttributes (66ms)
 				AfterProcessingInitializeOnLoad (2ms)
 				EditorAssembliesLoaded (0ms)
 			ExecutionOrderSort2 (0ms)
@@ -119,14 +119,14 @@ Platform modules already initialized, skipping
 ========================================================================
 Worker process is ready to serve import requests
 Launched and connected shader compiler UnityShaderCompiler.exe after 0.07 seconds
-Refreshing native plugins compatible for Editor in 0.86 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 0.77 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 2179 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2182 Unused Serialized files (Serialized files now loaded: 0)
 System memory in use before: 92.7 MB.
-System memory in use after: 92.7 MB.
+System memory in use after: 92.8 MB.
 
-Unloading 115 unused Assets to reduce memory usage. Loaded Objects now: 2515.
-Total: 3.621300 ms (FindLiveObjects: 0.202800 ms CreateObjectMapping: 0.077300 ms MarkObjects: 2.834500 ms  DeleteObjects: 0.505500 ms)
+Unloading 115 unused Assets to reduce memory usage. Loaded Objects now: 2518.
+Total: 4.337200 ms (FindLiveObjects: 0.305800 ms CreateObjectMapping: 0.110600 ms MarkObjects: 3.161900 ms  DeleteObjects: 0.756200 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
@@ -140,23 +140,47 @@ AssetImportParameters requested are different than current active one (requested
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
 ========================================================================
 Received Import Request.
-  path: Assets/Baracuda/Threading/ExecutionCycle.cs
-  artifactKey: Guid(c2c38d4373ee435cb4caaafe93566d9c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Baracuda/Threading/ExecutionCycle.cs using Guid(c2c38d4373ee435cb4caaafe93566d9c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f12f678cbd96dcd6ac36a3c7bac0b729') in 0.036531 seconds 
-  Import took 0.040437 seconds .
+  path: Assets/Baracuda/Monitoring/Assembly-Baracuda-Monitoring.asmdef
+  artifactKey: Guid(ca92f98736a979747b5de3a34d731a59) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Baracuda/Monitoring/Assembly-Baracuda-Monitoring.asmdef using Guid(ca92f98736a979747b5de3a34d731a59) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ba8893a7e6afc6bc3ae38d168a62371f') in 0.028044 seconds 
+  Import took 0.031509 seconds .
 
 ========================================================================
 Received Import Request.
-  Time since last request: 1516.078081 seconds.
-  path: Assets/Baracuda/Reflection
-  artifactKey: Guid(e2904c4c397b01248b49a8f3e1b83082) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Baracuda/Reflection using Guid(e2904c4c397b01248b49a8f3e1b83082) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c87361bba5157604e99629e3cfacef39') in 0.004997 seconds 
-  Import took 0.008699 seconds .
+  Time since last request: 3242.182502 seconds.
+  path: Assets/UI Toolkit
+  artifactKey: Guid(b3c5c4ede5de6ee4c9e16819041b9fd6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/UI Toolkit using Guid(b3c5c4ede5de6ee4c9e16819041b9fd6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ff7654262038cc5c5d1d6f3c543a1d18') in 0.009625 seconds 
+  Import took 0.057549 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 5.448897 seconds.
+  path: Assets/Baracuda/Reflection/ReflectionExtensions.cs
+  artifactKey: Guid(5f6654b434934524aa94a2e0fb31d1cb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Baracuda/Reflection/ReflectionExtensions.cs using Guid(5f6654b434934524aa94a2e0fb31d1cb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7446fa1e76eab3d6fd12a338df46c182') in 0.011194 seconds 
+  Import took 0.014576 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 70.917042 seconds.
+  path: Assets/Baracuda/Reflection/ReflectionExtensions.cs
+  artifactKey: Guid(5f6654b434934524aa94a2e0fb31d1cb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Baracuda/Reflection/ReflectionExtensions.cs using Guid(5f6654b434934524aa94a2e0fb31d1cb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5e7a892cc489c233b9c72df7571030d4') in 0.002166 seconds 
+  Import took 0.005472 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 20.706752 seconds.
+  path: Assets/Baracuda/Reflection/ReflectionExtensions.cs
+  artifactKey: Guid(5f6654b434934524aa94a2e0fb31d1cb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Baracuda/Reflection/ReflectionExtensions.cs using Guid(5f6654b434934524aa94a2e0fb31d1cb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5b4eef1ce7e6355495ce860eb87d3bac') in 0.003114 seconds 
+  Import took 0.006335 seconds .
 
 ========================================================================
 Received Prepare
 Registering precompiled user dll's ...
-Registered in 0.003875 seconds.
+Registered in 0.111426 seconds.
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEngine.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEngine.UIElementsModule.dll)
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEditor.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEditor.UIElementsModule.dll)
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEngine.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEngine.UIElementsModule.dll)
@@ -166,49 +190,49 @@ ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEngine.UIElementsMo
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEditor.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEditor.UIElementsModule.dll)
 Symbol file LoadedFromMemory is not a mono symbol file
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 0.45 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 0.48 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEngine.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEngine.UIElementsModule.dll)
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEditor.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEditor.UIElementsModule.dll)
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEngine.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEngine.UIElementsModule.dll)
 ASSEMBLY OVERRIDES: * override found for Unity assembly UnityEditor.UIElementsModule.dll (override path Library/ScriptAssemblies/UnityEditor.UIElementsModule.dll)
 Mono: successfully reloaded assembly
-- Completed reload, in  0.919 seconds
+- Completed reload, in  1.318 seconds
 Domain Reload Profiling:
-	ReloadAssembly (919ms)
-		BeginReloadAssembly (103ms)
+	ReloadAssembly (1319ms)
+		BeginReloadAssembly (171ms)
 			ExecutionOrderSort (0ms)
-			DisableScriptedObjects (4ms)
+			DisableScriptedObjects (12ms)
 			BackupInstance (0ms)
 			ReleaseScriptingObjects (0ms)
-			CreateAndSetChildDomain (33ms)
-		EndReloadAssembly (768ms)
-			LoadAssemblies (68ms)
+			CreateAndSetChildDomain (82ms)
+		EndReloadAssembly (1098ms)
+			LoadAssemblies (82ms)
 			RebuildTransferFunctionScriptingTraits (0ms)
-			SetupTypeCache (250ms)
+			SetupTypeCache (252ms)
 			ReleaseScriptCaches (1ms)
 			RebuildScriptCaches (40ms)
-			SetupLoadedEditorAssemblies (327ms)
+			SetupLoadedEditorAssemblies (640ms)
 				LogAssemblyErrors (0ms)
 				InitializePlatformSupportModulesInManaged (4ms)
-				SetLoadedEditorAssemblies (0ms)
+				SetLoadedEditorAssemblies (1ms)
 				RefreshPlugins (1ms)
-				BeforeProcessingInitializeOnLoad (80ms)
-				ProcessInitializeOnLoadAttributes (179ms)
-				ProcessInitializeOnLoadMethodAttributes (61ms)
-				AfterProcessingInitializeOnLoad (2ms)
+				BeforeProcessingInitializeOnLoad (79ms)
+				ProcessInitializeOnLoadAttributes (170ms)
+				ProcessInitializeOnLoadMethodAttributes (382ms)
+				AfterProcessingInitializeOnLoad (3ms)
 				EditorAssembliesLoaded (0ms)
 			ExecutionOrderSort2 (0ms)
 			AwakeInstancesAfterBackupRestoration (6ms)
 Platform modules already initialized, skipping
-Refreshing native plugins compatible for Editor in 0.81 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 0.49 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 2159 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2158 Unused Serialized files (Serialized files now loaded: 0)
 System memory in use before: 91.4 MB.
-System memory in use after: 91.5 MB.
+System memory in use after: 91.4 MB.
 
 Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 2520.
-Total: 4.721700 ms (FindLiveObjects: 0.216500 ms CreateObjectMapping: 0.137600 ms MarkObjects: 3.630500 ms  DeleteObjects: 0.735200 ms)
+Total: 3.708100 ms (FindLiveObjects: 0.182000 ms CreateObjectMapping: 0.057100 ms MarkObjects: 2.995900 ms  DeleteObjects: 0.471800 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
@@ -220,12 +244,4 @@ AssetImportParameters requested are different than current active one (requested
   custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
   custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-========================================================================
-Received Import Request.
-  Time since last request: 71.990223 seconds.
-  path: Assets/Baracuda/Monitoring/Internal/Utils/Extensions.cs
-  artifactKey: Guid(23b7d40f9233f214a80a8cbc38ebd401) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Baracuda/Monitoring/Internal/Utils/Extensions.cs using Guid(23b7d40f9233f214a80a8cbc38ebd401) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'be6330e80435f70899a956da5386f271') in 0.008410 seconds 
-  Import took 0.012032 seconds .
-
 AssetImportWorkerClient::OnTransportError - code=2 error=End of file

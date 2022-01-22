@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -40,6 +41,96 @@ namespace Baracuda.Reflection
         public static bool HasAttribute<T>(this MemberInfo memberInfo) where T : Attribute
         {
             return memberInfo.GetCustomAttribute<T>() != null;
+        }
+        
+        /// <summary>
+        /// Find a <see cref="Attribute"/> of memberInfo T that is targeted at the objects memberInfo.
+        /// </summary>
+        public static T FindAttributeInMono<T>(this GameObject target, bool inherit = true) where T : Attribute
+        {
+            foreach (var component in target.GetComponents<MonoBehaviour>())
+            {
+                if (component.GetType().GetUnderlying().GetCustomAttribute<T>(inherit) is { } found)
+                    return found;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Find a <see cref="Attribute"/> of memberInfo T that is targeted at the objects memberInfo.
+        /// </summary>
+        public static T[] FindAttributesInMono<T>(this GameObject target, bool inherit = true) where T : Attribute
+        {
+            var attributes = new List<T>(3);
+            foreach (var component in target.GetComponents<MonoBehaviour>())
+            {
+                if (component.GetType().GetCustomAttributes<T>(inherit) is { } found)
+                {
+                    attributes.AddRange(found);
+                }
+            }
+
+            return attributes.ToArray();
+        }
+
+        /// <summary>
+        /// Find a <see cref="Attribute"/> of memberInfo T that is targeted at the objects memberInfo.
+        /// </summary>
+        public static T FindAttributeInComponent<T>(this GameObject target, bool inherit = true) where T : Attribute
+        {
+            foreach (var component in target.GetComponents<Component>())
+            {
+                if (component.GetType().GetUnderlying().GetCustomAttribute<T>(inherit) is { } found)
+                    return found;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Find a <see cref="Attribute"/> of memberInfo T that is targeted at the objects memberInfo.
+        /// </summary>
+        public static T[] FindAttributesInComponent<T>(this GameObject target, bool inherit = true) where T : Attribute
+        {
+            var attributes = new List<T>(3);
+            foreach (var component in target.GetComponents<Component>())
+            {
+                if (component.GetType().GetUnderlying().GetCustomAttributes<T>(inherit) is { } found)
+                {
+                    attributes.AddRange(found);
+                }
+            }
+
+            return attributes.ToArray();
+        }
+        
+        
+        public static TAttribute GetAttribute<TAttribute>(this Enum value) where TAttribute : Attribute
+        {
+            var enumType = value.GetType();
+            var name = Enum.GetName(enumType, value);
+            return enumType
+                .GetField(name)
+                .GetCustomAttributes(false)
+                .OfType<TAttribute>()
+                .SingleOrDefault();
+        }
+        
+        #endregion
+        
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- [INVOKE METHOD] ---
+
+        public static MethodInfo GetInvokeMethod(this Type type, BindingFlags flags =  
+            BindingFlags.Static | 
+            BindingFlags.NonPublic | 
+            BindingFlags.Instance |
+            BindingFlags.Public | 
+            BindingFlags.FlattenHierarchy)
+        {
+            return type.GetMethod("Invoke", flags);
         }
         
         #endregion

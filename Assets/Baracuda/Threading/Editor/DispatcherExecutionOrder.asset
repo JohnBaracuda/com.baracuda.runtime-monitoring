@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56b900ebb77c4ee999399d2183eba379, type: 3}
-  m_Name: Execution-Config
+  m_Name: DispatcherExecutionOrder
   m_EditorClassIdentifier: 
   executionOrder: -500
   postExecutionOrder: 500

@@ -1,6 +1,9 @@
 {
-    "name": "Assembly-Baracuda-Threading",
-    "references": [],
+    "name": "Assembly-Baracuda-Monitoring.Example",
+    "rootNamespace": "",
+    "references": [
+        "GUID:ca92f98736a979747b5de3a34d731a59"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
