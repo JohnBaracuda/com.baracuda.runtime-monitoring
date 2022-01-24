@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Baracuda.Monitoring.Attributes
 {
@@ -11,7 +12,7 @@ namespace Baracuda.Monitoring.Attributes
     }
     
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class MonitorDisplayOptionsAttribute : Attribute
+    public sealed class FormatAttribute : Attribute
     {
         /// <summary>
         /// Custom format string used to display the members value if possible.
@@ -50,12 +51,12 @@ namespace Baracuda.Monitoring.Attributes
         public UIPosition Position { get; set; } = UIPosition.TopLeft;
         
         
-        public MonitorDisplayOptionsAttribute(string format)
+        public FormatAttribute(string format)
         {
             Format = format;
         }
 
-        public MonitorDisplayOptionsAttribute()
+        public FormatAttribute()
         {
         }
     }

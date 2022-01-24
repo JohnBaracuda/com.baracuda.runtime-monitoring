@@ -59,7 +59,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             
             var settings = MonitoringSettings.Instance();
 
-            if (memberInfo.TryGetCustomAttribute<MonitorDisplayOptionsAttribute>(out var options))
+            if (memberInfo.TryGetCustomAttribute<FormatAttribute>(out var options))
             {
                 Format = options.Format;
                 Label = options.Label;

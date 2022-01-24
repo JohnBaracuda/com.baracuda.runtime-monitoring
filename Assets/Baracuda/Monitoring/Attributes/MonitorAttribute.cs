@@ -32,8 +32,12 @@ namespace Baracuda.Monitoring.Attributes
 
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
     [MeansImplicitUse]
-    public abstract class MonitorAttribute : Attribute
+    public class MonitorAttribute : Attribute
     {
         public Segment Interval { get; set; } = Segment.Auto;
+
+        public MonitorAttribute()
+        {
+        }
     }
 }

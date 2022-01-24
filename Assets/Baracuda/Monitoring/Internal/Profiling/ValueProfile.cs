@@ -16,7 +16,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         protected ValueProfile(
             MemberInfo memberInfo,
-            MonitorValueAttribute attribute,
+            MonitorAttribute attribute,
             Type unitTargetType,
             Type unitValueType, 
             UnitType unitType,
@@ -24,12 +24,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
             : base(memberInfo, attribute, unitTargetType, unitValueType, unitType, args)
         {
             
-            if (!string.IsNullOrWhiteSpace(attribute.Update))
+            if (attribute is MonitorValueAttribute valueAttribute && !string.IsNullOrWhiteSpace(valueAttribute.Update))
             {
-                _addUpdateDelegate    = CreateUpdateHandlerDelegate<TTarget, TValue>(attribute.Update, this, true);
-                _addNotifyDelegate    = CreateNotifyHandlerDelegate<TTarget>        (attribute.Update, this, true);
-                _removeUpdateDelegate = CreateUpdateHandlerDelegate<TTarget, TValue>(attribute.Update, this, false);
-                _removeNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>        (attribute.Update, this, false);
+                _addUpdateDelegate    = CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.Update, this, true);
+                _addNotifyDelegate    = CreateNotifyHandlerDelegate<TTarget>        (valueAttribute.Update, this, true);
+                _removeUpdateDelegate = CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.Update, this, false);
+                _removeNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>        (valueAttribute.Update, this, false);
             }
 
             CustomUpdateEventAvailable = _addUpdateDelegate != null || _addNotifyDelegate != null;

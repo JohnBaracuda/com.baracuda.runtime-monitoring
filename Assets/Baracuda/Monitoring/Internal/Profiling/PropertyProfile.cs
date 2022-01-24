@@ -46,7 +46,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         private PropertyProfile(
             PropertyInfo propertyInfo,
-            MonitorValueAttribute attribute,
+            MonitorAttribute attribute,
             MonitorProfileCtorArgs args) : base(propertyInfo, attribute, typeof(TTarget), typeof(TValue), UnitType.Property, args)
         {
             if (attribute is MonitorPropertyAttribute propertyAttribute)

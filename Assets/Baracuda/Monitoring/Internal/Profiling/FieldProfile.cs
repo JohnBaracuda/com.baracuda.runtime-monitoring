@@ -41,7 +41,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         #region --- [CTOR] ---
         
-        private FieldProfile(FieldInfo fieldInfo, MonitorValueAttribute attribute, MonitorProfileCtorArgs args) 
+        private FieldProfile(FieldInfo fieldInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args) 
             : base(fieldInfo, attribute, typeof(TTarget), typeof(TValue), UnitType.Field, args)
         {
             _getValueDelegate = fieldInfo.CreateGetter<TTarget, TValue>();

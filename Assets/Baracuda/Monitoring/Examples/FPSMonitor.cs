@@ -37,7 +37,7 @@ namespace Baracuda.Monitoring.Examples
         
         [MonitorValue(Update = nameof(FPSUpdated))]
         [ValueProcessor(nameof(Processor))]
-        [MonitorDisplayOptions(FontSize = 32, Position = UIPosition.TopRight, GroupElement = false)]
+        [Format(FontSize = 32, Position = UIPosition.TopRight, GroupElement = false)]
         private static float _fps;
 
         

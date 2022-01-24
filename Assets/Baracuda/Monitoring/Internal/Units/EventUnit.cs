@@ -42,7 +42,7 @@ namespace Baracuda.Monitoring.Internal.Units
             _eventHandler = eventProfile.CreateEventHandler(OnEvent);
             eventProfile.SubscribeEventHandler(target, _eventHandler);
             
-            ExternalUpdateRequired = eventProfile.EventAttribute.Refresh;
+            ExternalUpdateRequired = eventProfile.Refresh;
         }
         
         //--------------------------------------------------------------------------------------------------------------

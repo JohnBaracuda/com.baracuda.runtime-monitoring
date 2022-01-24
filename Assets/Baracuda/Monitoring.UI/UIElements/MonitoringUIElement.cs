@@ -117,7 +117,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
 
                     // Add styles to label
                     var label = new Label(
-                        $"{profile.GroupName}::{(monitorUnit.Target is UnityEngine.Object obj ? obj.name : monitorUnit.Target.ToString())}");
+                        $"{profile.GroupName} | {(monitorUnit.Target is UnityEngine.Object obj ? obj.name : monitorUnit.Target.ToString())}");
 
                     for (var i = 0; i < Settings.InstanceLabelStyles.Length; i++)
                     {

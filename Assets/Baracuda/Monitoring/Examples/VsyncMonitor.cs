@@ -6,7 +6,7 @@ namespace Baracuda.Monitoring.Examples
     public static class VsyncMonitor
     {
         [MonitorProperty]
-        [MonitorDisplayOptions(FontSize = 16, Position = UIPosition.TopRight, GroupElement = false)]
+        [Format(FontSize = 16, Position = UIPosition.TopRight, GroupElement = false)]
         [ValueProcessor(nameof(ProcessorTargetFrameRate))]
         private static int TargetFrameRate => Application.targetFrameRate;
 
@@ -16,7 +16,7 @@ namespace Baracuda.Monitoring.Examples
         }
         
         [MonitorProperty]
-        [MonitorDisplayOptions(FontSize = 16, Position = UIPosition.TopRight, GroupElement = false)]
+        [Format(FontSize = 16, Position = UIPosition.TopRight, GroupElement = false)]
         [ValueProcessor(nameof(ProcessorVsync))]
         private static int Vsync => QualitySettings.vSyncCount;
 

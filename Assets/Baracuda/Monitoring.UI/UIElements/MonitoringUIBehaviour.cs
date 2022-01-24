@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Baracuda.Monitoring;
@@ -16,6 +17,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
         #region --- [INSPECTOR] ---
         
         [SerializeField] private bool activateOnLoad = true;
+        [SerializeField] private bool instantiateAsync = false;
 
         #endregion
         
@@ -68,20 +70,16 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
 
         #region --- [OPEN CLOSE] ---
 
-        public bool IsActive { get; private set; }
-        
         public void Show()
         {
             _uiDocument.rootVisualElement.SetEnabled(true);
             _uiDocument.rootVisualElement.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
-            IsActive = true;
         }
 
         public void Hide()
         {
             _uiDocument.rootVisualElement.SetEnabled(false);
             _uiDocument.rootVisualElement.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            IsActive = false;
         }
 
         #endregion
@@ -119,18 +117,39 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
         private void OnProfilingCompleted(IMonitorUnit[] staticUnits, IMonitorUnit[] instanceUnits)
         {
             MonitoringEvents.UnitCreated += CreateUnit;
+
+            if (instantiateAsync)
+            {
+                StartCoroutine(CreateUnitsAsync(staticUnits, instanceUnits));
+            }
+            else
+            {
+                for (var i = 0; i < staticUnits.Length; i++)
+                {
+                    CreateUnit(staticUnits[i]);
+                }
+                for (var i = 0; i < instanceUnits.Length; i++)
+                {
+                    CreateUnit(instanceUnits[i]);
+                }
+            }
                 
+            enabled = true;
+        }
+
+        private IEnumerator CreateUnitsAsync(IMonitorUnit[] staticUnits, IMonitorUnit[] instanceUnits)
+        {
             for (var i = 0; i < staticUnits.Length; i++)
             {
+                yield return null;
                 CreateUnit(staticUnits[i]);
             }
                 
             for (var i = 0; i < instanceUnits.Length; i++)
             {
+                yield return null;
                 CreateUnit(instanceUnits[i]);
             }
-                
-            enabled = true;
         }
 
         protected override void OnDestroy()

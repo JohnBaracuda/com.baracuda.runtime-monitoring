@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -14,9 +15,13 @@ namespace Baracuda.Monitoring.Internal.Profiling
     {
         #region --- [FIELDS] ---
 
+        public bool Refresh { get; } = true;
+        public bool ShowSignature { get; } = true;
+        public bool ShowSubscriber { get;  } = true;
+        public bool ShowTrueCount { get; } = false;
+        
         public delegate string StateFormatDelegate(TTarget target, int invokeCount);
 
-        internal readonly MonitorEventAttribute EventAttribute;
         private readonly EventInfo _eventInfo;
         private readonly StateFormatDelegate _formatState;
         private readonly Action<TTarget, Delegate> _subscribe;
@@ -39,11 +44,18 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         #region --- [CTOR] ---
         
-        public EventProfile(EventInfo eventInfo, MonitorEventAttribute attribute, MonitorProfileCtorArgs args) 
+        public EventProfile(EventInfo eventInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args) 
             : base(eventInfo, attribute, typeof(TTarget), typeof(TDelegate), UnitType.Event, args)
         {
             _eventInfo = eventInfo;
-            EventAttribute = attribute;
+
+            if (attribute is MonitorEventAttribute eventAttribute)
+            {
+                Refresh = eventAttribute.Refresh;
+                ShowTrueCount = eventAttribute.ShowTrueCount;
+                ShowSubscriber = eventAttribute.ShowSubscriber;
+                ShowSignature = eventAttribute.ShowSignature;
+            }
             
             var addMethod = eventInfo.GetAddMethod(true);
             var removeMethod = eventInfo.GetRemoveMethod(true);
@@ -52,7 +64,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             _remove = CreateExpression(removeMethod).Compile();
             
             var getterDelegate = eventInfo.AsFieldInfo().CreateGetter<TTarget, Delegate>();
-            var counterDelegate = CreateCounterExpression(getterDelegate, attribute.ShowTrueCount).Compile();
+            var counterDelegate = CreateCounterExpression(getterDelegate, ShowTrueCount).Compile();
             _formatState = CreateStateFormatter(counterDelegate);
         }
         
@@ -76,7 +88,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         private StateFormatDelegate CreateStateFormatter(Func<TTarget, int> counterDelegate)
         {
-            if (EventAttribute.ShowSignature)
+            if (ShowSignature)
             {
                 var parameterString = _eventInfo.GetEventSignatureString();
                 return (target, count) =>
@@ -90,8 +102,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     return StringBuilderPool.Release(sb);
                 };
             }
-            
-            
+
             return (target, count) =>
             {
                 var sb = StringBuilderPool.Get();

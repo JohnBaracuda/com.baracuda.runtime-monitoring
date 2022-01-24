@@ -29,14 +29,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
         internal static readonly Dictionary<Type, List<MonitorProfile>> InstanceProfiles =
             new Dictionary<Type, List<MonitorProfile>>();
 
-        private static readonly List<(FieldInfo fieldInfo, MonitorValueAttribute attribute, bool isStatic)>
-            _genericFieldBaseTypes = new List<(FieldInfo fieldInfo, MonitorValueAttribute attribute, bool isStatic)>();
+        private static readonly List<(FieldInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
+            _genericFieldBaseTypes = new List<(FieldInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
 
-        private static readonly List<(PropertyInfo fieldInfo, MonitorValueAttribute attribute, bool isStatic)>
-            _genericPropertyBaseTypes = new List<(PropertyInfo fieldInfo, MonitorValueAttribute attribute, bool isStatic)>();
+        private static readonly List<(PropertyInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
+            _genericPropertyBaseTypes = new List<(PropertyInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
 
-        private static readonly List<(EventInfo fieldInfo, MonitorEventAttribute attribute, bool isStatic)>
-            _genericEventBaseTypes = new List<(EventInfo fieldInfo, MonitorEventAttribute attribute, bool isStatic)>();
+        private static readonly List<(EventInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
+            _genericEventBaseTypes = new List<(EventInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
 
         
         private const BindingFlags STATIC_FLAGS = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
@@ -210,7 +210,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 try
                 {
-                    if (fieldInfos[i].TryGetCustomAttribute<MonitorValueAttribute>(out var attribute, true))
+                    if (fieldInfos[i].TryGetCustomAttribute<MonitorAttribute>(out var attribute, true))
                     {
                         CreateInstanceFieldProfile(fieldInfos[i], attribute);
                     }
@@ -232,7 +232,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 try
                 {
-                    if (propertyInfos[i].TryGetCustomAttribute<MonitorValueAttribute>(out var attribute, true))
+                    if (propertyInfos[i].TryGetCustomAttribute<MonitorAttribute>(out var attribute, true))
                     {
                         CreateInstancePropertyProfile(propertyInfos[i], attribute);
                     }
@@ -254,7 +254,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 try
                 {
-                    if (eventInfos[i].TryGetCustomAttribute<MonitorEventAttribute>(out var attribute, true))
+                    if (eventInfos[i].TryGetCustomAttribute<MonitorAttribute>(out var attribute, true))
                     {
                         CreateInstanceEventProfile(eventInfos[i], attribute);
                     }
@@ -276,7 +276,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         #region --- [INSTANCE: PROFILING] ---
 
-        private static void CreateInstanceFieldProfile(FieldInfo fieldInfo, MonitorValueAttribute attribute)
+        private static void CreateInstanceFieldProfile(FieldInfo fieldInfo, MonitorAttribute attribute)
         {
             try
             {
@@ -315,7 +315,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
 
-        private static void CreateInstancePropertyProfile(PropertyInfo propertyInfo, MonitorValueAttribute attribute)
+        private static void CreateInstancePropertyProfile(PropertyInfo propertyInfo, MonitorAttribute attribute)
         {
             try
             {
@@ -356,7 +356,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
 
-        private static void CreateInstanceEventProfile(EventInfo eventInfo, MonitorEventAttribute attribute)
+        private static void CreateInstanceEventProfile(EventInfo eventInfo, MonitorAttribute attribute)
         {
             try
             {
@@ -406,7 +406,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         // monitor the values of the generic base type.
 
         private static void CreateInstanceFieldProfileForGenericBaseType(FieldInfo fieldInfo,
-            MonitorValueAttribute attribute, Type concreteSubtype)
+            MonitorAttribute attribute, Type concreteSubtype)
         {
             try
             {
@@ -445,7 +445,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
 
         private static void CreateInstancePropertyProfileForGenericBaseType(PropertyInfo propertyInfo,
-            MonitorValueAttribute attribute, Type concreteSubtype)
+            MonitorAttribute attribute, Type concreteSubtype)
         {
             try
             {
@@ -494,7 +494,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         }
 
         private static void CreateInstanceEventProfileForGenericBaseType(EventInfo eventInfo,
-            MonitorEventAttribute attribute, Type concreteSubtype)
+            MonitorAttribute attribute, Type concreteSubtype)
         {
             try
             {
@@ -543,7 +543,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 try
                 {
-                    if (staticFields[i].TryGetCustomAttribute<MonitorValueAttribute>(out var attribute, true))
+                    if (staticFields[i].TryGetCustomAttribute<MonitorAttribute>(out var attribute, true))
                     {
                         CreateStaticFieldProfile(staticFields[i], attribute);
                     }
@@ -565,7 +565,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 try
                 {
-                    if (staticProperties[i].TryGetCustomAttribute<MonitorValueAttribute>(out var attribute, true))
+                    if (staticProperties[i].TryGetCustomAttribute<MonitorAttribute>(out var attribute, true))
                     {
                         CreateStaticPropertyProfile(staticProperties[i], attribute);
                     }
@@ -587,7 +587,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 try
                 {
-                    if (staticEvents[i].TryGetCustomAttribute<MonitorEventAttribute>(out var attribute, true))
+                    if (staticEvents[i].TryGetCustomAttribute<MonitorAttribute>(out var attribute, true))
                     {
                         CreateStaticEventProfile(staticEvents[i], attribute);
                     }
@@ -609,7 +609,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         #region --- [STATIC: PROFILING] ---
 
-        private static void CreateStaticFieldProfile(FieldInfo fieldInfo, MonitorValueAttribute attribute)
+        private static void CreateStaticFieldProfile(FieldInfo fieldInfo, MonitorAttribute attribute)
         {
             try
             {
@@ -642,7 +642,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         //--------------------------------------------------------------------------------------------------------------
 
-        private static void CreateStaticPropertyProfile(PropertyInfo propertyInfo, MonitorValueAttribute attribute)
+        private static void CreateStaticPropertyProfile(PropertyInfo propertyInfo, MonitorAttribute attribute)
         {
             try
             {
@@ -673,7 +673,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         //--------------------------------------------------------------------------------------------------------------
 
-        private static void CreateStaticEventProfile(EventInfo eventInfo, MonitorEventAttribute attribute)
+        private static void CreateStaticEventProfile(EventInfo eventInfo, MonitorAttribute attribute)
         {
             try
             {
@@ -711,7 +711,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         // monitor the values of the generic base type.
 
         private static void CreateStaticFieldProfileForGenericBaseType(FieldInfo fieldInfo,
-            MonitorValueAttribute attribute, Type concreteSubtype)
+            MonitorAttribute attribute, Type concreteSubtype)
         {
             try
             {
@@ -744,7 +744,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         //--------------------------------------------------------------------------------------------------------------
 
         private static void CreateStaticPropertyProfileForGenericBaseType(PropertyInfo propertyInfo,
-            MonitorValueAttribute attribute, Type concreteSubtype)
+            MonitorAttribute attribute, Type concreteSubtype)
         {
             try
             {
@@ -778,7 +778,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         //--------------------------------------------------------------------------------------------------------------
 
         private static void CreateStaticEventProfileForGenericBaseType(EventInfo eventInfo,
-            MonitorEventAttribute attribute, Type concreteSubtype)
+            MonitorAttribute attribute, Type concreteSubtype)
         {
             try
             {

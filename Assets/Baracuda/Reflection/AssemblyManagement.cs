@@ -47,7 +47,6 @@ namespace Baracuda.Reflection
         /// <returns></returns>
         public static Assembly[] GetFilteredAssemblies(string[] excludeNames, string[] excludePrefixes)
         {
-            var sw = Stopwatch.StartNew();
             var filteredAssemblies = new List<Assembly>(30);
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -58,8 +57,6 @@ namespace Baracuda.Reflection
                     filteredAssemblies.Add(assemblies[i]);
                 }
             }
-
-            Debug.Log(sw.ElapsedMilliseconds);
             return filteredAssemblies.ToArray();
         }
         
