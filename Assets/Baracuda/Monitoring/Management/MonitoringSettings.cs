@@ -80,7 +80,8 @@ namespace Baracuda.Monitoring.Management
         private string[] bannedAssemblyNames = new string[]
         {
         };
-        //-----------
+        
+        //--------------------------------------------------------------------------------------------------------------
 
         #region --- [PROPERTIES] ---
 

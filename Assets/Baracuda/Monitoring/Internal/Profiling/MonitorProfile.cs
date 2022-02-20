@@ -57,7 +57,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             Segment = attribute.Interval;
             IsStatic = args.ReflectedMemberFlags.HasFlagUnsafe(BindingFlags.Static);
             
-            var settings = MonitoringSettings.Instance();
+            var settings = args.Settings;
 
             if (memberInfo.TryGetCustomAttribute<FormatAttribute>(out var options))
             {

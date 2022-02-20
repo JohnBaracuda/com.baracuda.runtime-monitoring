@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Threading;
 
@@ -38,10 +40,10 @@ namespace Baracuda.Monitoring.Management
 
         #region --- [EVENTS] ---
 
-        public delegate void ProfilingCompletedListener(MonitorUnit[] staticUnits, MonitorUnit[] instanceUnits);
+        public delegate void ProfilingCompletedListener(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits);
 
         /// <summary>
-        /// As the name suggests, this event is called when profiling of the current system has been completed.
+        /// Event is invoked when profiling process for the current system has been completed.
         /// This might even be before an Awake call which is why subscribing to this event will instantly invoke
         /// a callback when subscribing after profiling was already completed.
         /// </summary>
@@ -51,7 +53,7 @@ namespace Baracuda.Monitoring.Management
             {
                 if (IsInitialized)
                 {
-                    value.Invoke(MonitoringManager.GetStaticUnits.ToArray(), MonitoringManager.GetInstanceUnits.ToArray());
+                    value.Invoke(MonitoringManager.GetStaticUnits, MonitoringManager.GetInstanceUnits);
                     return;
                 }
                 _profilingCompleted += value;
@@ -61,9 +63,15 @@ namespace Baracuda.Monitoring.Management
 
         private static ProfilingCompletedListener _profilingCompleted;
             
-            
-        public static event Action<MonitorUnit> UnitCreated;
-        public static event Action<MonitorUnit> UnitDisposed;
+        /// <summary>
+        /// Event is called when a new <see cref="MonitorUnit"/> was created.
+        /// </summary>
+        public static event Action<IMonitorUnit> UnitCreated;
+        
+        /// <summary>
+        /// Event is called when a <see cref="MonitorUnit"/> was disposed.
+        /// </summary>
+        public static event Action<IMonitorUnit> UnitDisposed;
 
         #endregion
 

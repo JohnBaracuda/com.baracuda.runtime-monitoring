@@ -1,18 +1,42 @@
 ﻿using System;
 using System.Reflection;
 using Baracuda.Monitoring.Attributes;
+using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Utils;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
     public abstract class ValueProfile<TTarget, TValue> : MonitorProfile where TTarget : class
     {
+        #region --- [FIELDS] ---
+        
         internal readonly bool CustomUpdateEventAvailable;
 
         private readonly UpdateHandleDelegate<TTarget, TValue> _addUpdateDelegate; //preferred event type
         private readonly NotifyHandleDelegate<TTarget> _addNotifyDelegate; //event without passed TValue param
         private readonly UpdateHandleDelegate<TTarget, TValue> _removeUpdateDelegate; //preferred event type
         private readonly NotifyHandleDelegate<TTarget> _removeNotifyDelegate; //event without passed TValue param
+        
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- [PROPERTIES] ---
+
+        private readonly Func<TTarget, TValue, string> _instanceValueProcessorDelegate;
+        private readonly Func<TValue, string> _staticValueProcessorDelegate;
+        private readonly Func<TValue, string> _fallbackValueProcessorDelegate;
+        
+        protected Func<TValue, string> ValueProcessor(TTarget target)
+        {
+            return _instanceValueProcessorDelegate != null 
+                    ? value => _instanceValueProcessorDelegate(target, value) 
+                    : _staticValueProcessorDelegate ?? _fallbackValueProcessorDelegate;
+        }
+
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
 
         protected ValueProfile(
             MemberInfo memberInfo,
@@ -23,7 +47,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
             MonitorProfileCtorArgs args) 
             : base(memberInfo, attribute, unitTargetType, unitValueType, unitType, args)
         {
-            
             if (attribute is MonitorValueAttribute valueAttribute && !string.IsNullOrWhiteSpace(valueAttribute.Update))
             {
                 _addUpdateDelegate    = CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.Update, this, true);
@@ -33,6 +56,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
 
             CustomUpdateEventAvailable = _addUpdateDelegate != null || _addNotifyDelegate != null;
+            
+            // Value Processor
+            
+            var processorName = memberInfo.GetCustomAttribute<ValueProcessorAttribute>()?.Processor;
+            
+            _instanceValueProcessorDelegate = Profiling.ValueProcessor.FindCustomInstanceProcessor(processorName,  this);
+            _staticValueProcessorDelegate = Profiling.ValueProcessor.FindCustomStaticProcessor(processorName, this);
+            _fallbackValueProcessorDelegate = Profiling.ValueProcessor.CreateTypeSpecificProcessor<TValue>(this);
         }
 
 
@@ -86,11 +117,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
         #region --- [CUSTOM UPDATE EVENT] ---
 
         private delegate void UpdateHandleDelegate<in T, out TParam>(T target, Action<TParam> listener);
-
         private delegate void NotifyHandleDelegate<in T>(T target, Action listener);
 
         private static UpdateHandleDelegate<T, TParam> CreateUpdateHandlerDelegate<T, TParam>(
-            string eventName, MonitorProfile profile, bool createAddMethod)
+            string eventName, IMonitorProfile profile, bool createAddMethod)
         {
             // check instance events:
             var instanceEvent = profile.UnitTargetType.GetEvent(eventName, INSTANCE_FLAGS);
@@ -126,7 +156,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         //--------------------------------------------------------------------------------------------------------------        
 
         private static NotifyHandleDelegate<T> CreateNotifyHandlerDelegate<T>(string eventName,
-            MonitorProfile profile, bool createAddMethod)
+            IMonitorProfile profile, bool createAddMethod)
         {
             // check instance events:
             var instanceEvent = profile.UnitTargetType.GetEvent(eventName, INSTANCE_FLAGS);

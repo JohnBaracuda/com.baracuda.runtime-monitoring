@@ -18,8 +18,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         private readonly Func<TTarget, TValue> _getValueDelegate;
         private readonly Action<TTarget, TValue> _setValueDelegate;
-        private readonly Func<TValue, string> _valueProcessorDelegate;
-
         
         #endregion
         
@@ -33,7 +31,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 (TTarget)target,
                 _getValueDelegate,
                 _setValueDelegate,
-                _valueProcessorDelegate,
+                ValueProcessor((TTarget)target),
                 this);
         }
 
@@ -42,7 +40,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
         //--------------------------------------------------------------------------------------------------------------
         
         #region --- [CTOR] ---
-        
         
         private PropertyProfile(
             PropertyInfo propertyInfo,
@@ -70,10 +67,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
             _getValueDelegate ??= CreateGetExpression(propertyInfo.GetMethod).Compile();
             _setValueDelegate ??= CreateSetExpression(propertyInfo.SetMethod).Compile();
-            
-            _valueProcessorDelegate = 
-                ValueProcessor.FindCustomProcessor(propertyInfo.GetCustomAttribute<ValueProcessorAttribute>()?.Processor, this) 
-                ?? ValueProcessor.CreateTypeSpecificProcessor<TValue>(this);
         }
         
 

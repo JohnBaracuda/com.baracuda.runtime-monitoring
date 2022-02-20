@@ -12,7 +12,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
 {
     [AddComponentMenu("Monitoring")]
     [RequireComponent(typeof(UIDocument))]
-    public class MonitoringUIBehaviour : MonitoredSingleton<MonitoringUIBehaviour>
+    public class MonitoringUIBehaviour : MonitoredSingleton<MonitoringUIBehaviour>, IMonitoringUI
     {
         #region --- [INSPECTOR] ---
         
@@ -24,8 +24,9 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- [FIELDS] ---
-        
-        private readonly List<MonitoringUIElement> _monitorUnitDisplays = new List<MonitoringUIElement>();
+
+        private readonly Dictionary<IMonitorUnit, IMonitoringUIElement> _monitorUnitDisplays =
+            new Dictionary<IMonitorUnit, IMonitoringUIElement>();
         
         private UIDocument _uiDocument;
         private VisualElement _frame;
@@ -70,14 +71,18 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
 
         #region --- [OPEN CLOSE] ---
 
+        public bool IsActive { get; private set; } = true;
+
         public void Show()
         {
+            IsActive = true;
             _uiDocument.rootVisualElement.SetEnabled(true);
             _uiDocument.rootVisualElement.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
         }
 
         public void Hide()
         {
+            IsActive = false;
             _uiDocument.rootVisualElement.SetEnabled(false);
             _uiDocument.rootVisualElement.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
         }
@@ -88,9 +93,9 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
         
         public void ResetFilter()
         {
-            for (var i = 0; i < _monitorUnitDisplays.Count; i++)
+            foreach (var pair in _monitorUnitDisplays)
             {
-                _monitorUnitDisplays[i].SetVisible(true);
+                pair.Value.SetVisible(true);
             }
         }
         
@@ -101,9 +106,10 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
                 ResetFilter();
                 return;
             }
-            for (var i = 0; i < _monitorUnitDisplays.Count; i++)
+            
+            foreach (var pair in _monitorUnitDisplays)
             {
-                _monitorUnitDisplays[i].SetVisible(_monitorUnitDisplays[i].Tags.Any(unitTag =>
+                pair.Value.SetVisible(pair.Value.Tags.Any(unitTag =>
                     unitTag.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0));
             }
         }
@@ -114,9 +120,10 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
 
         #region --- [UI ELEMENT INSTANTIATION] ---
 
-        private void OnProfilingCompleted(IMonitorUnit[] staticUnits, IMonitorUnit[] instanceUnits)
+        private void OnProfilingCompleted(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
         {
             MonitoringEvents.UnitCreated += CreateUnit;
+            MonitoringEvents.UnitDisposed += DisposeUnit;
 
             if (instantiateAsync)
             {
@@ -124,11 +131,11 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
             }
             else
             {
-                for (var i = 0; i < staticUnits.Length; i++)
+                for (var i = 0; i < staticUnits.Count; i++)
                 {
                     CreateUnit(staticUnits[i]);
                 }
-                for (var i = 0; i < instanceUnits.Length; i++)
+                for (var i = 0; i < instanceUnits.Count; i++)
                 {
                     CreateUnit(instanceUnits[i]);
                 }
@@ -137,15 +144,15 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
             enabled = true;
         }
 
-        private IEnumerator CreateUnitsAsync(IMonitorUnit[] staticUnits, IMonitorUnit[] instanceUnits)
+        private IEnumerator CreateUnitsAsync(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
         {
-            for (var i = 0; i < staticUnits.Length; i++)
+            for (var i = 0; i < staticUnits.Count; i++)
             {
                 yield return null;
                 CreateUnit(staticUnits[i]);
             }
                 
-            for (var i = 0; i < instanceUnits.Length; i++)
+            for (var i = 0; i < instanceUnits.Count; i++)
             {
                 yield return null;
                 CreateUnit(instanceUnits[i]);
@@ -158,11 +165,15 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
             MonitoringEvents.ProfilingCompleted -= OnProfilingCompleted;
         }
 
-        private void CreateUnit(IMonitorUnit unit)
+        private void CreateUnit(IMonitorUnit monitorUnit)
         {
-            _monitorUnitDisplays.Add(MonitoringUIElement.CreateInstance(_frame, unit));
+            _monitorUnitDisplays.Add(monitorUnit, new MonitoringUIElement(_frame, monitorUnit));
         }
-
+        
+        private void DisposeUnit(IMonitorUnit monitorUnit)
+        {
+            _monitorUnitDisplays.Remove(monitorUnit);
+        }
         
         #endregion
         

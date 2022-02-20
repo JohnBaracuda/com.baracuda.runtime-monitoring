@@ -22,7 +22,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         #region --- [FIELDS] ---
         
-        protected readonly StringDelegate ValueProcessor;
+        protected readonly StringDelegate CompiledValueProcessor;
         
         private readonly TTarget _target;
         private readonly Func<TTarget, TValue> _getValueDelegate;       
@@ -38,7 +38,7 @@ namespace Baracuda.Monitoring.Internal.Units
         internal ValueUnit(TTarget target,
             Func<TTarget, TValue> getValue,
             Action<TTarget, TValue> setValue,
-            Func<TValue, string> customValueProcessor,
+            Func<TValue, string> valueProcessor,
             ValueProfile<TTarget, TValue> valueProfile) : base(target, valueProfile)
         {
             _target = target;
@@ -46,8 +46,8 @@ namespace Baracuda.Monitoring.Internal.Units
             _setValueDelegate = setValue;
             
             _isValueType = typeof(TValue).IsValueType;
-
-            ValueProcessor = CreateValueProcessor(customValueProcessor);
+            
+            CompiledValueProcessor = CompileValueProcessor(valueProcessor);
             
             if (valueProfile.CustomUpdateEventAvailable)
             {
@@ -68,22 +68,12 @@ namespace Baracuda.Monitoring.Internal.Units
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- [VALUE PROCESSOR] ---
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private StringDelegate CreateValueProcessor(Func<TValue, string> processor)
-        {
-            if(processor != null)
-            {
-                return CreateTypeSpecificProcessor(processor).Compile(false);
-            }
-            return () => _getValueDelegate(_target)?.ToString() ?? NULL;
-        }
         
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Expression<StringDelegate> CreateTypeSpecificProcessor(Func<TValue, string> func)
+        private StringDelegate CompileValueProcessor(Func<TValue, string> func)
         {
             return () => func(_getValueDelegate(_target)) ?? NULL;
         }
+
 
         #endregion
         
@@ -112,7 +102,7 @@ namespace Baracuda.Monitoring.Internal.Units
                 {
                     throw new InvalidOperationException($"{nameof(GetValueFormatted)} is only allowed to be called from the main thread!");
                 }
-                return ValueProcessor();
+                return CompiledValueProcessor();
             }
 #else
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

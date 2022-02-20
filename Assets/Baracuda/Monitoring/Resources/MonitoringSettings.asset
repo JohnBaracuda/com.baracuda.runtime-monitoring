@@ -17,8 +17,8 @@ MonoBehaviour:
   logThreadAbortException: 2
   logUnknownExceptions: 4
   logBackfieldNotFoundException: 2
-  logProcessorNotFoundException: 2
-  logInvalidProcessorSignatureException: 2
+  logProcessorNotFoundException: 0
+  logInvalidProcessorSignatureException: 0
   addClassName: 0
   appendSymbol: 46
   groupStaticUnits: 1
@@ -44,7 +44,6 @@ MonoBehaviour:
   wColor: {r: 0.72646046, g: 0, b: 1, a: 1}
   bannedAssemblyPrefixes:
   - Assembly-Plugin
-  - DOTween
   - DOTween
   bannedAssemblyNames:
   - Assembly-Baracuda-Pooling

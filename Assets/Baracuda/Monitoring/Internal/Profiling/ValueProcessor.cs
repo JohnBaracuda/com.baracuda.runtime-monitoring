@@ -54,6 +54,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
               BindingFlags.Public |
               BindingFlags.NonPublic |
               BindingFlags.DeclaredOnly;
+        
+        private const BindingFlags INSTANCE_FLAGS
+            = BindingFlags.Instance | 
+              BindingFlags.NonPublic |
+              BindingFlags.Public |
+              BindingFlags.DeclaredOnly;
 
         #endregion
         
@@ -1158,7 +1164,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         /// <typeparam name="TTarget">the <see cref="Type"/> of the profiles Target instance</typeparam>
         /// <typeparam name="TValue">the <see cref="Type"/> of the profiles value instance</typeparam>
         /// <returns></returns>
-        internal static Func<TValue, string> FindCustomProcessor<TTarget, TValue>(
+        internal static Func<TValue, string> FindCustomStaticProcessor<TTarget, TValue>(
             string processor,
             ValueProfile<TTarget, TValue> valueProfile) where TTarget : class
         {
@@ -1314,6 +1320,77 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 
                 //----------------------------
                 
+                return null;
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                return null;
+            }
+        }
+        
+        /// <summary>
+        /// This method will scan the declaring <see cref="Type"/> of the passed
+        /// <see cref="ValueProfile{TTarget,TValue}"/> for a valid processor method with the passed name.<br/>
+        /// Certain types offer special functionality and require additional handling. Those types are:<br/>
+        /// Types assignable from <see cref="IList{T}"/> (inc. <see cref="Array"/>)<br/>
+        /// Types assignable from <see cref="IDictionary{TKey, TValue}"/><br/>
+        /// Types assignable from <see cref="IEnumerable{T}"/>
+        /// </summary>
+        /// <param name="processor">name of the method declared as a value processor</param>
+        /// <param name="valueProfile">the profile of the <see cref="ValueUnit{TTarget,TValue}"/></param>
+        /// <typeparam name="TTarget">the <see cref="Type"/> of the profiles Target instance</typeparam>
+        /// <typeparam name="TValue">the <see cref="Type"/> of the profiles value instance</typeparam>
+        /// <returns></returns>
+        internal static Func<TTarget, TValue, string> FindCustomInstanceProcessor<TTarget, TValue>(
+            string processor,
+            ValueProfile<TTarget, TValue> valueProfile) where TTarget : class
+        {
+            try
+            {
+                // validate that the processor name is not null.
+                if (string.IsNullOrWhiteSpace(processor)) return null;
+                
+                // setup
+                var declaringType = valueProfile.UnitDeclaringType;
+                var valueType = valueProfile.UnitValueType;
+                
+                // get the processor method.
+                var processorMethod = declaringType.GetMethod(processor, INSTANCE_FLAGS);
+                
+                // validate that the processor is not null.
+                if (processorMethod == null)
+                {
+                    ExceptionLogging.LogException(new ProcessorNotFoundException(processor, declaringType));
+                    return null;
+                }
+                
+                // create a delegate with for the processors method.
+                var processorFunc = (Func<TTarget, TValue, string>)processorMethod.CreateDelegate(typeof(Func<TTarget, TValue, string>));
+                
+                //----------------------------
+                
+                // cache the parameter information of the processor method.
+                var parameterInfos = processorFunc.Method.GetParameters();
+                
+                if (!parameterInfos.Any())
+                {
+                    ExceptionLogging.LogException(new InvalidProcessorSignatureException(processor, declaringType));
+                    return null;
+                }
+                
+                //----------------------------
+                
+                // Check if the types are a perfect match
+                if (parameterInfos.Length == 1 && parameterInfos[0].ParameterType.IsAssignableFrom(valueType))
+                {
+                    return (target, value) => processorFunc(target, value);
+                }
+                
+                //----------------------------
+                
+                //TODO: Add IList, IEnumerable & IDictionary support.
+
                 return null;
             }
             catch (Exception exception)

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3673558133587502237}
   - component: {fileID: 2113882065796044713}
   - component: {fileID: 6051179234521708335}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AmmunitionPack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,8 +60,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1.03, z: 1}
-  m_Center: {x: 0, y: 0.54, z: 0}
+  m_Size: {x: 2, y: 3, z: 2}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!54 &6051179234521708335
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 3592066436303029817}
   - component: {fileID: 6039705174473387657}
   - component: {fileID: 4403642244757093150}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -168,7 +168,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9136072358015058244}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ammunition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 5177555379672115718}
   - component: {fileID: 6320975940516379970}
   - component: {fileID: 6193260115070231840}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,7 +283,7 @@ GameObject:
   - component: {fileID: 1716730603196464818}
   - component: {fileID: 6407039466132599706}
   - component: {fileID: 6884390827434804502}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Plattform
   m_TagString: Untagged
   m_Icon: {fileID: 0}

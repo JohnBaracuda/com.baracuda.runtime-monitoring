@@ -6,6 +6,7 @@ namespace Baracuda.Monitoring.Internal.Units
 {
     public sealed class PropertyUnit<TTarget, TValue> : ValueUnit<TTarget, TValue> where TTarget : class
     {
+        
         #region --- [PROPERTIES] ---
 
         public override IMonitorProfile Profile => _propertyProfile;
@@ -27,9 +28,9 @@ namespace Baracuda.Monitoring.Internal.Units
         internal PropertyUnit(TTarget target, 
             Func<TTarget, TValue> getValue, 
             Action<TTarget, TValue> setValue, 
-            Func<TValue, string> customValueProcessor, 
+            Func<TValue, string> valueProcessor,
             PropertyProfile<TTarget, TValue> propertyProfile) 
-            : base (target, getValue, setValue, customValueProcessor, propertyProfile)
+            : base (target, getValue, setValue, valueProcessor, propertyProfile)
         {
             _propertyProfile = propertyProfile;
         }

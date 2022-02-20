@@ -29,7 +29,7 @@ namespace Baracuda.Monitoring.Attributes
         /// </summary>
         Tick = 4,
     }
-
+    
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
     [MeansImplicitUse]
     public class MonitorAttribute : Attribute

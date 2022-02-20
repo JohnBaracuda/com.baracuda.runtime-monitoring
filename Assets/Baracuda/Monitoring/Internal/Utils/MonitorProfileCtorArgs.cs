@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Baracuda.Monitoring.Management;
 
 namespace Baracuda.Monitoring.Internal.Utils
 {
@@ -8,10 +9,12 @@ namespace Baracuda.Monitoring.Internal.Utils
     public readonly struct MonitorProfileCtorArgs
     {
         public readonly BindingFlags ReflectedMemberFlags;
+        public readonly MonitoringSettings Settings;
 
-        public MonitorProfileCtorArgs(BindingFlags reflectedMemberFlags)
+        public MonitorProfileCtorArgs(BindingFlags reflectedMemberFlags, MonitoringSettings settings)
         {
             ReflectedMemberFlags = reflectedMemberFlags;
+            Settings = settings;
         }
     }
 }

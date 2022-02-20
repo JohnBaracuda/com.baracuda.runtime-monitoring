@@ -12,10 +12,9 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         [Header("Movement Settings")] 
         [SerializeField] private float movementSpeed = 16.5f;
-        [FormerlySerializedAs("jumpSpeed")] [SerializeField] private float jumpForce = 8f;
-        [SerializeField] [Range(0, 1f)] private float jumpBraceTime = .5f;
+        [SerializeField] private float jumpForce = 8f;
         [SerializeField] private float gravityForce = 20f;
-        [SerializeField] private float lookSpeed = 2f;
+        [SerializeField] private float mouseSensitivity = 2f;
         [SerializeField] private float airMovementSharpness = 1f;
         [SerializeField] private float inputSharpness = 10f;
         [SerializeField] private int jumps = 3;
@@ -47,7 +46,10 @@ namespace Baracuda.Monitoring.Example.Scripts
         private Transform _transform;
         private Camera _camera;
         private IPlayerInput _input;
-        [Monitor] private int _jumpsLeft;
+        
+        [Monitor]
+        [Format(GroupElement = false, FontSize = 32, Position = UIPosition.BottomLeft)]
+        private int _jumpsLeft;
         
         // Input
         private Vector2 _processedInputDir;
@@ -60,7 +62,8 @@ namespace Baracuda.Monitoring.Example.Scripts
         private float _lastJumpTime;
         
         // Dash
-        [Monitor] [Format(Format = "0.0", FontSize = 16)]
+        [Monitor] 
+        [Format("0.0", GroupElement = false, FontSize = 32, Position = UIPosition.BottomLeft)]
         private float _dashEnergy;
         private bool _isDashing = false;
         private float _lastDashTime;
@@ -76,7 +79,6 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         #region --- [PROPERTIES] ---
 
-        [Monitor]
         public Vector3 Velocity => _characterController.velocity;
         
         #endregion
@@ -204,11 +206,12 @@ namespace Baracuda.Monitoring.Example.Scripts
             }
             
             // Camera rotation
-            _rotationX += -_input.MouseY * lookSpeed;
+            _rotationX += -_input.MouseY * _camera.fieldOfView * mouseSensitivity  * .001f;
             _rotationX = Mathf.Clamp(_rotationX, -90f, 90f);
             _camera.transform.localRotation = Quaternion.Euler(_rotationX, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, _input.MouseX * lookSpeed, 0);
-
+            
+            var yRotation = _input.MouseX * _camera.fieldOfView * mouseSensitivity * .001f;
+            transform.rotation *= Quaternion.Euler(0, yRotation, 0);
             
             // other...
             if (_lastGroundCheck == GroundStatus.NoGround && groundCheck != GroundStatus.NoGround)

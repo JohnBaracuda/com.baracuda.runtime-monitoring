@@ -17,11 +17,8 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         #region --- [FIELDS] ---
 
-        [Monitor] [Format(GroupElement = true, Position = UIPosition.BottomRight)] 
         private bool _isAlive = true;
-        [Monitor] [Format("0.0", GroupElement = true)]
         private float _cooldown = 0f;
-        [Monitor] [Format(FontSize = 16 , GroupElement = true)]
         private float _currentHealth;
         
         private Animator _animator;

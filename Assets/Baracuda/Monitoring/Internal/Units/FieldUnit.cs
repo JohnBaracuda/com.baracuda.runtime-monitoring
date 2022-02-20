@@ -29,9 +29,9 @@ namespace Baracuda.Monitoring.Internal.Units
             TTarget target,
             Func<TTarget, TValue> getValue,
             Action<TTarget, TValue> setValue,
-            Func<TValue, string> customValueProcessor,
+            Func<TValue, string> valueProcessor,
             FieldProfile<TTarget, TValue> fieldProfile) 
-            : base(target, getValue, setValue, customValueProcessor, fieldProfile)
+            : base(target, getValue, setValue, valueProcessor, fieldProfile)
         {
             _fieldProfile = fieldProfile;
         }

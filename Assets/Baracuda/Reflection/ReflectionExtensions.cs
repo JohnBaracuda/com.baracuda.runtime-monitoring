@@ -43,9 +43,6 @@ namespace Baracuda.Reflection
             return memberInfo.GetCustomAttribute<T>() != null;
         }
         
-        /// <summary>
-        /// Find a <see cref="Attribute"/> of memberInfo T that is targeted at the objects memberInfo.
-        /// </summary>
         public static T FindAttributeInMono<T>(this GameObject target, bool inherit = true) where T : Attribute
         {
             foreach (var component in target.GetComponents<MonoBehaviour>())
@@ -56,10 +53,7 @@ namespace Baracuda.Reflection
 
             return null;
         }
-
-        /// <summary>
-        /// Find a <see cref="Attribute"/> of memberInfo T that is targeted at the objects memberInfo.
-        /// </summary>
+        
         public static T[] FindAttributesInMono<T>(this GameObject target, bool inherit = true) where T : Attribute
         {
             var attributes = new List<T>(3);
@@ -73,10 +67,7 @@ namespace Baracuda.Reflection
 
             return attributes.ToArray();
         }
-
-        /// <summary>
-        /// Find a <see cref="Attribute"/> of memberInfo T that is targeted at the objects memberInfo.
-        /// </summary>
+        
         public static T FindAttributeInComponent<T>(this GameObject target, bool inherit = true) where T : Attribute
         {
             foreach (var component in target.GetComponents<Component>())
@@ -87,10 +78,7 @@ namespace Baracuda.Reflection
 
             return null;
         }
-
-        /// <summary>
-        /// Find a <see cref="Attribute"/> of memberInfo T that is targeted at the objects memberInfo.
-        /// </summary>
+        
         public static T[] FindAttributesInComponent<T>(this GameObject target, bool inherit = true) where T : Attribute
         {
             var attributes = new List<T>(3);
@@ -138,11 +126,10 @@ namespace Baracuda.Reflection
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- [FIELDINFO GETTER & SETTER] ---
-
-#if NET_4_6 || NET_STANDARD
-        
+       
         public static Func<TTarget, TResult> CreateGetter<TTarget, TResult>(this FieldInfo field)
         {
+#if NET_4_6
             var methodName = $"{field!.ReflectedType!.FullName}.get_{field.Name}";
             var setterMethod = new DynamicMethod(methodName, typeof(TResult), new[] {typeof(TTarget)}, true);
             var gen = setterMethod.GetILGenerator();
@@ -158,10 +145,14 @@ namespace Baracuda.Reflection
 
             gen.Emit(OpCodes.Ret);
             return (Func<TTarget, TResult>) setterMethod.CreateDelegate(typeof(Func<TTarget, TResult>));
+#else
+            return target => (TResult)field.GetValue(target);
+#endif
         }
 
         public static Action<TTarget, TValue> CreateSetter<TTarget, TValue>(this FieldInfo field)
         {
+#if NET_4_6
             var methodName = $"{field!.ReflectedType!.FullName}.set_{field.Name}";
             var setterMethod = new DynamicMethod(methodName, null, new[] {typeof(TTarget), typeof(TValue)}, true);
             var gen = setterMethod.GetILGenerator();
@@ -179,8 +170,10 @@ namespace Baracuda.Reflection
 
             gen.Emit(OpCodes.Ret);
             return (Action<TTarget, TValue>) setterMethod.CreateDelegate(typeof(Action<TTarget, TValue>));
-        }
+#else
+            return (target, value) => field.SetValue(target, value);
 #endif
+        }
 
         #endregion
 

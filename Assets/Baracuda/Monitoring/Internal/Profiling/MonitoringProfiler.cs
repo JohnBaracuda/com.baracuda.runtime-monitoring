@@ -293,7 +293,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var genericType = typeof(FieldProfile<,>).MakeGenericType(fieldInfo.DeclaringType, fieldInfo.FieldType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS);
+                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, fieldInfo, attribute, args);
@@ -333,7 +333,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     typeof(PropertyProfile<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS);
+                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
 
                 // create a profile for the property using the the generic type and the attribute.
                 var profile =
@@ -374,7 +374,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     typeof(EventProfile<,>).MakeGenericType(eventInfo.DeclaringType, eventInfo.EventHandlerType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS);
+                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
 
                 // create a profile for the event. First parameter is the generic type definition.
                 var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, eventInfo, attribute, args);
@@ -419,7 +419,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     typeof(FieldProfile<,>).MakeGenericType(concreteSubtype, concreteFieldInfo.FieldType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS);
+                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile =
@@ -469,7 +469,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     typeof(PropertyProfile<,>).MakeGenericType(concreteSubtype, concretePropertyInfo.PropertyType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS);
+                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
 
                 // create a profile for the property using the the generic type and the attribute.
                 var profile =
@@ -507,7 +507,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo!.EventHandlerType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS);
+                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile =
@@ -626,7 +626,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var genericType = typeof(FieldProfile<,>).MakeGenericType(fieldInfo.DeclaringType, fieldInfo.FieldType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS);
+                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, fieldInfo, attribute, args);
@@ -659,7 +659,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     propertyInfo.GetMethod.ReturnType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS);
+                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
 
                 var profile =
                     (MonitorProfile) InstanceFactory.CreateInstance(genericType, propertyInfo, attribute, args);
@@ -690,7 +690,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     typeof(EventProfile<,>).MakeGenericType(eventInfo.DeclaringType, eventInfo.EventHandlerType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS);
+                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
 
                 var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, eventInfo, attribute, args);
                 StaticProfiles.Add(profile);
@@ -725,7 +725,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     typeof(FieldProfile<,>).MakeGenericType(concreteSubtype, concreteFieldInfo!.FieldType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS);
+                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile =
@@ -759,7 +759,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         concretePropertyInfo!.GetMethod.ReturnType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS);
+                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile =
@@ -793,7 +793,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo!.EventHandlerType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS);
+                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile =

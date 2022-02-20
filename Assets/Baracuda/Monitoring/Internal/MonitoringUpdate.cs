@@ -18,7 +18,7 @@ namespace Baracuda.Monitoring.Internal
             MonitoringEvents.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
         }
 
-        private static void MonitoringEventsOnProfilingCompleted(IMonitorUnit[] staticUnits, IMonitorUnit[] instanceUnits)
+        private static void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
         {
             if (!Application.isPlaying)
             {
@@ -30,12 +30,12 @@ namespace Baracuda.Monitoring.Internal
             MonitoringEvents.UnitCreated += MonitoringEventsOnUnitCreated;
             MonitoringEvents.UnitDisposed  += MonitoringEventsOnUnitDisposed;
                 
-            for (var i = 0; i < staticUnits.Length; i++)
+            for (var i = 0; i < staticUnits.Count; i++)
             {
                 MonitoringEventsOnUnitCreated(staticUnits[i]);
             }
                 
-            for (var i = 0; i < instanceUnits.Length; i++)
+            for (var i = 0; i < instanceUnits.Count; i++)
             {
                 MonitoringEventsOnUnitCreated(instanceUnits[i]);
             }
