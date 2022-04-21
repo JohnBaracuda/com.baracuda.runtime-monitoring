@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +14,7 @@ namespace Baracuda.Threading
     public static class DispatchExtensions
     {
         
-        #region --- [ACTION] ---
+        #region --- Action ---
 
         
         /// <summary>
@@ -57,7 +57,7 @@ namespace Baracuda.Threading
         /// <param name="arg1">first argument</param>
         /// <param name="arg2">second argument</param>
         /// <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
-        public static void Dispatch<T, S>(this Action<T, S> action, T arg1, S arg2)
+        public static void Dispatch<T, TS>(this Action<T, TS> action, T arg1, TS arg2)
         {
             Dispatcher.Invoke(() => action(arg1, arg2));
         }
@@ -74,7 +74,7 @@ namespace Baracuda.Threading
         /// <param name="arg2">second argument</param>
         /// <param name="arg3">third argument</param>
         /// <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
-        public static void Dispatch<T, S, U>(this Action<T, S, U> action, T arg1, S arg2, U arg3)
+        public static void Dispatch<T, TS, TU>(this Action<T, TS, TU> action, T arg1, TS arg2, TU arg3)
         {
             Dispatcher.Invoke(() => action(arg1, arg2, arg3));
         }
@@ -92,7 +92,7 @@ namespace Baracuda.Threading
         /// <param name="arg3">third argument</param>
         /// <param name="arg4">fourth argument</param>
         /// <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
-        public static void Dispatch<T, S, U, V>(this Action<T, S, U, V> action, T arg1, S arg2, U arg3, V arg4)
+        public static void Dispatch<T, TS, TU, TV>(this Action<T, TS, TU, TV> action, T arg1, TS arg2, TU arg3, TV arg4)
         {
             Dispatcher.Invoke(() => action(arg1, arg2, arg3, arg4));
         }
@@ -133,7 +133,7 @@ namespace Baracuda.Threading
         /// <param name="arg1">first argument</param>
         /// <param name="arg2">second argument</param>
         /// <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
-        public static void Dispatch<T, S>(this Action<T, S> action, T arg1, S arg2, ExecutionCycle cycle)
+        public static void Dispatch<T, TS>(this Action<T, TS> action, T arg1, TS arg2, ExecutionCycle cycle)
         {
             Dispatcher.Invoke(() => action(arg1, arg2), cycle);
         }
@@ -148,7 +148,7 @@ namespace Baracuda.Threading
         /// <param name="arg2">second argument</param>
         /// <param name="arg3">third argument</param>
         /// <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
-        public static void Dispatch<T, S, U>(this Action<T, S, U> action, T arg1, S arg2, U arg3, ExecutionCycle cycle)
+        public static void Dispatch<T, TS, TU>(this Action<T, TS, TU> action, T arg1, TS arg2, TU arg3, ExecutionCycle cycle)
         {
             Dispatcher.Invoke(() => action(arg1, arg2, arg3), cycle);
         }
@@ -164,14 +164,14 @@ namespace Baracuda.Threading
         /// <param name="arg3">third argument</param>
         /// <param name="arg4">fourth argument</param>
         /// <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
-        public static void Dispatch<T, S, U, V>(this Action<T, S, U, V> action, T arg1, S arg2, U arg3, V arg4, ExecutionCycle cycle)
+        public static void Dispatch<T, TS, TU, TV>(this Action<T, TS, TU, TV> action, T arg1, TS arg2, TU arg3, TV arg4, ExecutionCycle cycle)
         {
             Dispatcher.Invoke(() => action(arg1, arg2, arg3, arg4), cycle);
         }
         
         #endregion
 
-        #region --- [ACTION ASYNC] ---
+        #region --- Action Async ---
 
         /// <summary>
         /// Dispatch an <see cref="Action"/> that will be executed on the main thread and return a <see cref="Task"/>, 
@@ -246,7 +246,7 @@ namespace Baracuda.Threading
 
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [FUNC<TRESULT> ASYNC] ---
+        #region --- Func<tresult> Async ---
 
         /// <summary>
         /// Dispatch a <see cref="Func{T}"/> that wil executed on the main thread; and return a <see cref="Task{TResult}"/>,
@@ -311,7 +311,7 @@ namespace Baracuda.Threading
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [COROUTINE] ---
+        #region --- Coroutine ---
 
         /// <summary>
         /// Dispatch an <see cref="IEnumerator"/> that will be started and executed as a <see cref="Coroutine"/> on the main thread.
@@ -359,7 +359,7 @@ namespace Baracuda.Threading
         
         #endregion
         
-        #region --- [COROUTINE ASYNC AWAIT START] ---
+        #region --- Coroutine Async Await Start ---
 
         /// <summary>
         /// Dispatch an <see cref="IEnumerator"/> that will be started and executed as a <see cref="Coroutine"/>
@@ -483,7 +483,7 @@ namespace Baracuda.Threading
         
         #endregion
 
-        #region --- [COROUTINE ASYNC AWAIT COMPETION] ---
+        #region --- Coroutine Async Await Competion ---
 
         /// <summary>
         /// Dispatch an <see cref="IEnumerator"/> that is executed as a <see cref="Coroutine"/>
@@ -611,7 +611,7 @@ namespace Baracuda.Threading
        
         #endregion
         
-        #region --- [COROUTINE: OBSOLETE] ---
+        #region --- Coroutine: Obsolete ---
 
         /// <summary>
         /// Dispatch an <see cref="IEnumerator"/> that will be started and executed as a <see cref="Coroutine"/>
@@ -745,7 +745,7 @@ namespace Baracuda.Threading
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [TASK] ---
+        #region --- Task ---
 
         /// <summary>
         /// Dispatch the execution of a <see cref="Task"/> to the main thread.
@@ -803,7 +803,7 @@ namespace Baracuda.Threading
         
         #endregion
         
-        #region --- [TASK ASYNC] ---
+        #region --- Task Async ---
         
         /// <summary>
         /// Dispatch the execution of a <see cref="Task"/> to the main thread; and return a <see cref="Task"/>,
@@ -865,7 +865,7 @@ namespace Baracuda.Threading
         
         #endregion
         
-        #region --- [TASK<TRESULT> ASYNC] ---
+        #region --- Task<tresult> Async ---
 
         /// <summary>
         /// Dispatch the execution of a <see cref="Func{TResult}"/> to the main thread, which yields a <see cref="Task{TResult}"/>

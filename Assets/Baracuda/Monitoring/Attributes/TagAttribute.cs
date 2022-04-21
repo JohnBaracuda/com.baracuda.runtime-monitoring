@@ -1,11 +1,13 @@
-﻿using System;
+using System;
+using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.Attributes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
-    public sealed class TagAttribute : Attribute
+    [Preserve]
+    public sealed class TagAttribute : MonitoringMetaAttribute
     {
-        public readonly string[] Tags;
+        public string[] Tags { get; }
 
         public TagAttribute(string tag)
         {

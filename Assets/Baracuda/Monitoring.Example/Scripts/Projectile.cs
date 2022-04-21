@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,7 +10,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         private Rigidbody _rigidbody;
         private float _damage;
         private Transform _transform;
-        private static readonly WaitForSeconds _waitForSeconds = new WaitForSeconds(.05f);
+        private static readonly WaitForSeconds waitForSeconds = new WaitForSeconds(.05f);
         
         private void Awake()
         {
@@ -35,7 +35,7 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         private IEnumerator SecondForce(Vector3 force)
         {
-            yield return _waitForSeconds;
+            yield return waitForSeconds;
             _rigidbody.AddForce(force);
         }
 

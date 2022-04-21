@@ -18,57 +18,72 @@ namespace Baracuda.Monitoring.Management
     
     public class MonitoringSettings : ScriptableObject
     {
+        //TODO: Add Editor Assemblies only option
         
-        [Header("Debugging")]
-        public LoggingLevel logBadImageFormatException = LoggingLevel.None;
-        public LoggingLevel logOperationCanceledException = LoggingLevel.None;
-        public LoggingLevel logThreadAbortException = LoggingLevel.Warning;
-        public LoggingLevel logUnknownExceptions = LoggingLevel.Exception;
-        public LoggingLevel logBackfieldNotFoundException = LoggingLevel.Warning;
-        public LoggingLevel logProcessorNotFoundException = LoggingLevel.Warning;
-        public LoggingLevel logInvalidProcessorSignatureException = LoggingLevel.Warning;
+        /*
+         * Debugging   
+         */
         
-        [Header("Formatting")]
+        [SerializeField] private LoggingLevel logBadImageFormatException = LoggingLevel.None;
+        [SerializeField] private LoggingLevel logOperationCanceledException = LoggingLevel.None;
+        [SerializeField] private LoggingLevel logThreadAbortException = LoggingLevel.Warning;
+        [SerializeField] private LoggingLevel logUnknownExceptions = LoggingLevel.Exception;
+        [SerializeField] private LoggingLevel logBackfieldNotFoundException = LoggingLevel.Warning;
+        [SerializeField] private LoggingLevel logProcessorNotFoundException = LoggingLevel.Warning;
+        [SerializeField] private LoggingLevel logInvalidProcessorSignatureException = LoggingLevel.Warning;
+
+        /*
+         * Formatting   
+         */
+        
         [Tooltip("When enabled, class names will be used as a prefix for displayed units")]
-        public bool addClassName = true;
+        [SerializeField] private bool addClassName = true;
         [Tooltip("This symbol will be used to separate units class names and their member names.")]
-        public char appendSymbol = '.';
+        [SerializeField] private char appendSymbol = '.';
         [Tooltip("When enabled, static units will be displayed in groups of their declaring type (eg: their class)")]
-        public bool groupStaticUnits = true;
+        [SerializeField] private bool groupStaticUnits = true;
         [Tooltip("When enabled, instance units will be displayed in groups of their target object")]
-        public bool groupInstanceUnits = true;
-        [Tooltip("When enabled, names of monitored members will be humanized")]
-        public bool humanizeNames = false;
+        [SerializeField] private bool groupInstanceUnits = true;
+        [Tooltip("When enabled, names of monitored members will be humanized.(e.g. _playerHealth => Player Health)")]
+        [SerializeField] private bool humanizeNames = false;
         [Tooltip("Collection of variable prefixes that should be removed when humanizing monitored member names")]
-        public string[] variablePrefixes = {"m_", "s_", "r_", "_"};
+        [SerializeField] private string[] variablePrefixes = {"m_", "s_", "r_", "_"};
 
-        [Header("Style")] 
-        public StyleSheet[] optionalStyleSheets;
+        /*
+         * Style   
+         */
+        
+        [SerializeField] private StyleSheet[] optionalStyleSheets;
 
-        public string instanceUnitStyles = "";
-        public string instanceGroupStyles = "";
-        public string instanceLabelStyles = "";
+        [SerializeField] private string instanceUnitStyles = "";
+        [SerializeField] private string instanceGroupStyles = "";
+        [SerializeField] private string instanceLabelStyles = "";
         
-        public string staticUnitStyles = "";
-        public string staticGroupStyles = "";
-        public string staticLabelStyles = "";
-        
+        [SerializeField] private string staticUnitStyles = "";
+        [SerializeField] private string staticGroupStyles = "";
+        [SerializeField] private string staticLabelStyles = "";
+
+        /*
+         * Color   
+         */
+
         [Header("Color")]
-        public Color classColor = new Color(0.49f, 0.49f, 1f);
-        public Color trueColor = Color.green;
-        public Color falseColor = Color.gray;
+        [SerializeField] private Color classColor = new Color(0.49f, 0.49f, 1f);
+        [SerializeField] private Color trueColor = Color.green;
+        [SerializeField] private Color falseColor = Color.gray;
         
         [Header("Direction Color")]
-        public Color xColor = new Color(0.41f, 0.38f, 1f);
-        public Color yColor = new Color(0.49f, 1f, 0.53f);
-        public Color zColor = new Color(1f, 0.38f, 0.35f);
-        public Color wColor = new Color(0.6f, 0f, 1f);
+        [SerializeField] private Color xColor = new Color(0.41f, 0.38f, 1f);
+        [SerializeField] private Color yColor = new Color(0.49f, 1f, 0.53f);
+        [SerializeField] private Color zColor = new Color(1f, 0.38f, 0.35f);
+        [SerializeField] private Color wColor = new Color(0.6f, 0f, 1f);
         
-        
-        [Header("Reflection")]
+        /*
+         * Assembly Settings   
+         */
         
         [SerializeField]
-        [Tooltip("Assemblies with matching prefixes will not be searched for when creating a monitoring profile during initialization.")]
+        [Tooltip("Assemblies with matching prefixes are ignored when creating a monitoring profile during initialization.")]
         private string[] bannedAssemblyPrefixes = new string[]
         {
             "Assembly-Plugin",
@@ -76,40 +91,74 @@ namespace Baracuda.Monitoring.Management
         };
 
         [SerializeField]
-        [Tooltip("Assemblies with matching names will not be searched for when creating a monitoring profile during initialization.")]
+        [Tooltip("Assemblies with matching names are ignored when creating a monitoring profile during initialization.")]
         private string[] bannedAssemblyNames = new string[]
         {
         };
+
+        /*
+         * IL2CPP Settings   
+         */
+        
+        [SerializeField] private string filePathIL2CPPTypes = string.Empty;
+        [Tooltip("When enabled, this object will listen to an IPreprocessBuildWithReport callback")]
+        [SerializeField] private bool useIPreprocessBuildWithReport = true;
+        [SerializeField] private bool throwOnTypeGenerationError = false;
+        [SerializeField] private int preprocessBuildCallbackOrder = 0;
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [PROPERTIES] ---
+        #region --- Properties ---
+        
+        public LoggingLevel LogBadImageFormatException => logBadImageFormatException;
+        public LoggingLevel LogOperationCanceledException => logOperationCanceledException;
+        public LoggingLevel LogThreadAbortException => logThreadAbortException;
+        public LoggingLevel LogUnknownExceptions => logUnknownExceptions;
+        public LoggingLevel LogBackfieldNotFoundException => logBackfieldNotFoundException;
+        public LoggingLevel LogProcessorNotFoundException => logProcessorNotFoundException;
+        public LoggingLevel LogInvalidProcessorSignatureException => logInvalidProcessorSignatureException;
 
+
+        public bool AddClassName => addClassName;
+        public char AppendSymbol => appendSymbol;
+        public bool GroupStaticUnits => groupStaticUnits;
+        public bool GroupInstanceUnits => groupInstanceUnits;
+        public bool HumanizeNames => humanizeNames;
+        public string[] VariablePrefixes => variablePrefixes;
+        
+        
+        public Color ClassColor => classColor;
+        public Color TrueColor => trueColor;
+        public Color FalseColor => falseColor;
+        public Color XColor => xColor;
+        public Color YColor => yColor;
+        public Color ZColor => zColor;
+        public Color WColor => wColor;
+        
+        
+        public StyleSheet[] OptionalStyleSheets => optionalStyleSheets;
+        
+        
         public string[] BannedAssemblyPrefixes => bannedAssemblyPrefixes;
         public string[] BannedAssemblyNames => bannedAssemblyNames;
-
-        public string[] InstanceUnitStyles => _mInstanceUnitStyles ??= instanceUnitStyles.Split(' ');
-        public string[] InstanceGroupStyles => _mInstanceGroupStyles ??= instanceGroupStyles.Split(' ');
-        public string[] InstanceLabelStyles => _mInstanceLabelStyles ??= instanceLabelStyles.Split(' ');
         
-        public string[] StaticUnitStyles => _mStaticUnitStyles ??= staticUnitStyles.Split(' ');
-        public string[] StaticGroupStyles => _mStaticGroupStyles ??= staticGroupStyles.Split(' ');
-        public string[] StaticLabelStyles => _mStaticLabelStyles ??= staticLabelStyles.Split(' ');
+        public string FilePathIL2CPPTypes => filePathIL2CPPTypes;
+        public bool UseIPreprocessBuildWithReport => useIPreprocessBuildWithReport;
+        public bool ThrowOnTypeGenerationError => throwOnTypeGenerationError;
+        public int PreprocessBuildCallbackOrder => preprocessBuildCallbackOrder;
         
-
-        [NonSerialized] private string[] _mInstanceUnitStyles = null;
-        [NonSerialized] private string[] _mInstanceGroupStyles = null;
-        [NonSerialized] private string[] _mInstanceLabelStyles = null;
-
-        [NonSerialized] private string[] _mStaticUnitStyles = null;
-        [NonSerialized] private string[] _mStaticGroupStyles = null;
-        [NonSerialized] private string[] _mStaticLabelStyles = null;
-
+        public string[] InstanceUnitStyles => _instanceUnitStyles ??= instanceUnitStyles.Split(' ');
+        public string[] InstanceGroupStyles => _instanceGroupStyles ??= instanceGroupStyles.Split(' ');
+        public string[] InstanceLabelStyles => _instanceLabelStyles ??= instanceLabelStyles.Split(' ');
+        public string[] StaticUnitStyles => _staticUnitStyles ??= staticUnitStyles.Split(' ');
+        public string[] StaticGroupStyles => _staticGroupStyles ??= staticGroupStyles.Split(' ');
+        public string[] StaticLabelStyles => _staticLabelStyles ??= staticLabelStyles.Split(' ');
+        
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [TYPE FORMATTER] ---
+        #region --- Type Formatter ---
 
         [DefaultTypeFormatter(typeof(Vector3))]
         public static string VectorFormat = "0.00";
@@ -127,15 +176,15 @@ namespace Baracuda.Monitoring.Management
 
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [SINGLETON] ---
+        #region --- Singleton ---
 
         public static MonitoringSettings Instance() =>
-            _current ? _current : _current =
+            current ? current : current =
                 Resources.LoadAll<MonitoringSettings>(string.Empty).FirstOrDefault() ?? CreateAsset() ?? throw new Exception(
                     $"{nameof(ScriptableObject)}: {nameof(MonitoringSettings)} was not found when calling: {nameof(Instance)} and cannot be created!");
         
 
-        private static MonitoringSettings _current;
+        private static MonitoringSettings current;
     
         private static MonitoringSettings CreateAsset()
         {
@@ -155,5 +204,15 @@ namespace Baracuda.Monitoring.Management
         
         
         #endregion
+        
+        
+        
+        [NonSerialized] private string[] _instanceUnitStyles = null;
+        [NonSerialized] private string[] _instanceGroupStyles = null;
+        [NonSerialized] private string[] _instanceLabelStyles = null;
+
+        [NonSerialized] private string[] _staticUnitStyles = null;
+        [NonSerialized] private string[] _staticGroupStyles = null;
+        [NonSerialized] private string[] _staticLabelStyles = null;
     }
 }

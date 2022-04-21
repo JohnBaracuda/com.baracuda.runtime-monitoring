@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Management;
-using Baracuda.Pooling.Concretions;
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
-namespace Baracuda.Baracuda.Monitoring.UI.UIElements
+namespace Monitoring.UI.UIElements
 {
     public interface IMonitoringUIElement
     {
@@ -18,20 +18,20 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
     
     public class MonitoringUIElement : Label, IMonitoringUIElement
     {
-        #region --- [FIELDS: INSTANCE & STATIC] ---
+        #region --- Fields: Instance & Static ---
 
-        private static readonly Dictionary<object, VisualElement> _objectGroups = new Dictionary<object, VisualElement>();
-        private static readonly Dictionary<Type, VisualElement> _typeGroups = new Dictionary<Type, VisualElement>();
+        private static readonly Dictionary<object, VisualElement> objectGroups = new Dictionary<object, VisualElement>();
+        private static readonly Dictionary<Type, VisualElement> typeGroups = new Dictionary<Type, VisualElement>();
         private static MonitoringSettings Settings =>
-            _settings ? _settings : _settings = MonitoringSettings.Instance();
+            settings ? settings : settings = MonitoringSettings.Instance();
 
-        private static MonitoringSettings _settings;
+        private static MonitoringSettings settings;
 
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [PROPERTIES] ---
+        #region --- Properties ---
 
         public IMonitorUnit Unit { get; }
         public string[] Tags { get; }
@@ -40,7 +40,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [UI ELEMENT CREATION] ---
+        #region --- Ui Element Creation ---
 
         /// <summary>
         /// Creating a new Monitor Unit UI Element 
@@ -62,13 +62,19 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
             pickingMode = PickingMode.Ignore;
 
             if (Unit.Profile.FontSize > 0)
+            {
                 style.fontSize = Unit.Profile.FontSize;
+            }
 
             // Add custom styles set via attribute
-            for (var i = 0; i < profile.UssStyles.Length; i++)
+            if (profile.TryGetMetaAttribute<StyleAttribute>(out var styles))
             {
-                AddToClassList(profile.UssStyles[i]);
+                for (var i = 0; i < styles.ClassList.Length; i++)
+                {
+                    AddToClassList(styles.ClassList[i]);
+                }
             }
+            
 
 
             if (monitorUnit.Profile.IsStatic)
@@ -104,7 +110,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
 
             if (profile.AllowGrouping)
             {
-                if (!_objectGroups.TryGetValue(monitorUnit.Target, out var parentElement))
+                if (!objectGroups.TryGetValue(monitorUnit.Target, out var parentElement))
                 {
                     // Add styles to parent
                     parentElement = new VisualElement
@@ -131,7 +137,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
 
                     parentElement.Add(label);
                     rootVisualElement.Q<VisualElement>(profile.Position.AsString()).Add(parentElement);
-                    _objectGroups.Add(monitorUnit.Target, parentElement);
+                    objectGroups.Add(monitorUnit.Target, parentElement);
                 }
 
                 parentElement ??= rootVisualElement.Q<VisualElement>(Unit.Profile.Position.AsString());
@@ -164,7 +170,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
 
             if (profile.AllowGrouping)
             {
-                if (!_typeGroups.TryGetValue(profile.UnitDeclaringType, out var parentElement))
+                if (!typeGroups.TryGetValue(profile.UnitDeclaringType, out var parentElement))
                 {
                     // Add styles to parent
                     parentElement = new VisualElement
@@ -189,7 +195,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
 
                     parentElement.Add(label);
                     rootVisualElement.Q<VisualElement>(profile.Position.AsString()).Add(parentElement);
-                    _typeGroups.Add(profile.UnitDeclaringType, parentElement);
+                    typeGroups.Add(profile.UnitDeclaringType, parentElement);
                 }
 
                 parentElement ??= rootVisualElement.Q<VisualElement>(Unit.Profile.Position.AsString());
@@ -213,21 +219,21 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
             RemoveFromHierarchy();
             
             // Because the unit could have been the only unit in a group we have to check for that case and remove the group if necessary. 
-            if (_typeGroups.TryGetValue(Unit.Profile.UnitDeclaringType, out var groupParent))
+            if (typeGroups.TryGetValue(Unit.Profile.UnitDeclaringType, out var groupParent))
             {
                 if (groupParent.childCount <= 1)
                 {
                     groupParent.RemoveFromHierarchy();
-                    _typeGroups.Remove(Unit.Profile.UnitDeclaringType);
+                    typeGroups.Remove(Unit.Profile.UnitDeclaringType);
                 }
             }
             
-            if  (_objectGroups.TryGetValue(Unit.Target, out groupParent))
+            if  (objectGroups.TryGetValue(Unit.Target, out groupParent))
             {
                 if (groupParent.childCount <= 1)
                 {
                     groupParent.RemoveFromHierarchy();
-                    _objectGroups.Remove(Unit.Target);
+                    objectGroups.Remove(Unit.Target);
                 }
             }
         }

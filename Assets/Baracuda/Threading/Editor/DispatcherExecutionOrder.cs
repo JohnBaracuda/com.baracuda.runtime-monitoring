@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Baracuda.Threading.Internal;
 using UnityEngine;
@@ -8,7 +8,7 @@ namespace Baracuda.Threading.Editor
 {
     internal class DispatcherExecutionOrder : ScriptableObject
     {
-        #region --- [FIELDS] ---
+        #region --- Fields ---
 
         [SerializeField][HideInInspector] 
         internal int executionOrder = DEFAULT_EXECUTION_ORDER;
@@ -16,31 +16,31 @@ namespace Baracuda.Threading.Editor
         [SerializeField][HideInInspector] 
         internal int postExecutionOrder = DEFAULT_POST_EXECUTION_ORDER;
        
-        private static DispatcherExecutionOrder _current;
+        private static DispatcherExecutionOrder current;
         private const string DEFAULT_PATH = "Assets/Baracuda/Threading/Editor";
         internal const int DEFAULT_EXECUTION_ORDER = -500;
         internal const int DEFAULT_POST_EXECUTION_ORDER = 500;
 
         private void OnEnable()
         {
-            _current = this;
+            current = this;
         }
 
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [SINGLETON LOGIC] ---
+        #region --- Singleton Logic ---
 
         internal static DispatcherExecutionOrder GetDispatcherExecutionOrderAsset()
         {
-            if (_current)
+            if (current)
             {
-                return _current;
+                return current;
             }
             else
             {
-                return _current = LoadDispatcherExecutionOrderAsset();
+                return current = LoadDispatcherExecutionOrderAsset();
             }
         }
 
@@ -115,7 +115,7 @@ namespace Baracuda.Threading.Editor
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [EXECUTION ORDER LOGIC] ---
+        #region --- Execution Order Logic ---
 
         /// <summary>
         /// Validate and update the current script execution order of the <see cref="Dispatcher"/>.
@@ -155,7 +155,7 @@ namespace Baracuda.Threading.Editor
     
     internal class ExecutionOrderWindow : EditorWindow
     {
-        #region --- [FIELDS] ---
+        #region --- Fields ---
 
         private DispatcherExecutionOrder _target = null;
         
@@ -169,7 +169,7 @@ namespace Baracuda.Threading.Editor
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [SETUP] ---
+        #region --- Setup ---
 
         internal static void Open()
         {
@@ -187,7 +187,7 @@ namespace Baracuda.Threading.Editor
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [GUI] ---
+        #region --- Gui ---
 
         public void OnGUI()
         {

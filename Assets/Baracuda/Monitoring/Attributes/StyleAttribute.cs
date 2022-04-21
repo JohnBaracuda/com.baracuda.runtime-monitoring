@@ -1,11 +1,17 @@
-﻿using System;
+using System;
+using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.Attributes
 {
+    /// <summary>
+    /// Meta attribute can be used to provide additional USS style classes that are applied for a monitor unit when using
+    /// Unities new UI system.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
-    public sealed class StyleAttribute : Attribute
+    [Preserve]
+    public sealed class StyleAttribute : MonitoringMetaAttribute
     {
-        public readonly string[] ClassList;
+        public string[] ClassList { get; }
         
         public StyleAttribute(params string[] classList)
         {

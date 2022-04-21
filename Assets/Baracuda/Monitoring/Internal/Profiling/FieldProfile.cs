@@ -1,18 +1,17 @@
-﻿using System;
+using System;
 using System.Reflection;
 using Baracuda.Monitoring.Attributes;
+using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
-using Baracuda.Monitoring.Internal.Utils;
-using Baracuda.Reflection;
+using Baracuda.Monitoring.Internal.Utilities;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
     /// <typeparam name="TTarget">The <see cref="Type"/> of the fields target object</typeparam>
     /// <typeparam name="TValue">The <see cref="Type"/> of the return value of the field</typeparam>
-    public sealed class FieldProfile<TTarget, TValue> : ValueProfile<TTarget, TValue> where TTarget : class 
+    public sealed class FieldProfile<TTarget, TValue> : ValueProfile<TTarget, TValue> where TTarget : class
     {
-        
-        #region --- [FIELDS] ---
+        #region --- Fields ---
 
         private readonly Func<TTarget, TValue> _getValueDelegate;
         private readonly Action<TTarget, TValue> _setValueDelegate;
@@ -21,7 +20,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [FACTORY] ---
+        #region --- Factory ---
 
         public override MonitorUnit CreateUnit(object target)
         {
@@ -37,7 +36,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [CTOR] ---
+        #region --- Ctor ---
         
         private FieldProfile(FieldInfo fieldInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args) 
             : base(fieldInfo, attribute, typeof(TTarget), typeof(TValue), UnitType.Field, args)

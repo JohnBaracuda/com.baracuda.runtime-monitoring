@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq.Expressions;
+using System;
 using System.Reflection;
 using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Internal.Exceptions;
+using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
-using Baracuda.Monitoring.Internal.Utils;
-using Baracuda.Reflection;
+using Baracuda.Monitoring.Internal.Utilities;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
@@ -14,7 +13,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
     public sealed class PropertyProfile<TTarget, TValue> : ValueProfile<TTarget, TValue> where TTarget : class
     {
         
-        #region --- [FIELDS] ---
+        #region --- Fields ---
 
         private readonly Func<TTarget, TValue> _getValueDelegate;
         private readonly Action<TTarget, TValue> _setValueDelegate;
@@ -23,7 +22,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [FACTORY] ---
+        #region --- Factory ---
 
         public override MonitorUnit CreateUnit(object target)
         {
@@ -39,13 +38,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [CTOR] ---
+        #region --- Ctor ---
         
         private PropertyProfile(
             PropertyInfo propertyInfo,
             MonitorAttribute attribute,
             MonitorProfileCtorArgs args) : base(propertyInfo, attribute, typeof(TTarget), typeof(TValue), UnitType.Property, args)
         {
+#if !ENABLE_IL2CPP // backing field access is not allowed in IL2CPP
             if (attribute is MonitorPropertyAttribute propertyAttribute)
             {
                 var getBacking = propertyAttribute.GetBacking || propertyAttribute.TargetBacking;
@@ -60,28 +60,38 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         return;
                     }
                     
-                    if(getBacking) _getValueDelegate = backField.CreateGetter<TTarget, TValue>();
-                    if(setBacking) _setValueDelegate = backField.CreateSetter<TTarget, TValue>();
+                    if(getBacking)
+                    {
+                        _getValueDelegate = backField.CreateGetter<TTarget, TValue>();
+                    }
+
+                    if(setBacking)
+                    {
+                        _setValueDelegate = backField.CreateSetter<TTarget, TValue>();
+                    }
                 }
             }
 
-            _getValueDelegate ??= CreateGetExpression(propertyInfo.GetMethod).Compile();
-            _setValueDelegate ??= CreateSetExpression(propertyInfo.SetMethod).Compile();
+            _getValueDelegate ??= CreateGetExpression(propertyInfo.GetMethod);
+            _setValueDelegate ??= CreateSetExpression(propertyInfo.SetMethod);
+#else
+            _getValueDelegate = CreateGetExpression(propertyInfo.GetMethod);
+            _setValueDelegate = CreateSetExpression(propertyInfo.SetMethod);
+#endif
         }
         
 
-        private static Expression<Func<TTarget, TValue>> CreateGetExpression(MethodInfo methodInfo)
+        private static Func<TTarget, TValue> CreateGetExpression(MethodInfo methodInfo)
         {
             return target => (TValue) methodInfo.Invoke(target, null);
         }
         
-        private static Expression<Action<TTarget, TValue>> CreateSetExpression(MethodInfo methodInfo)
+        private static Action<TTarget, TValue> CreateSetExpression(MethodInfo methodInfo)
         {
             return (target, value) => methodInfo.Invoke(target, new object[] {value});
         }
 
         #endregion
         
-            
     }
 }

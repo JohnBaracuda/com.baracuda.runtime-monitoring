@@ -13,6 +13,6 @@ namespace Baracuda.Threading.Internal
     /// <footer><a href="https://johnbaracuda.com/dispatcher.html#IDisableCallback">Documentation</a></footer>
     public interface IDisableCallback
     {
-        event Action onDisable;
+        event Action Disabled;
     }
 }

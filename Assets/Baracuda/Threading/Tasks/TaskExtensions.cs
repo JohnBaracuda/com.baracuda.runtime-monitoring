@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,7 +9,7 @@ namespace Baracuda.Threading.Tasks
     public static class TaskExtensions
     {
         
-        #region --- [TIMEOUT] ---
+        #region --- Timeout ---
 
         /// <summary>
         /// Set a timout for the completion of the target <see cref="Task"/>. A <exception cref="TimeoutException"></exception>
@@ -43,7 +43,7 @@ namespace Baracuda.Threading.Tasks
         
         #endregion
         
-        #region --- [TIMEOUT: ASYNC] ---
+        #region --- Timeout: Async ---
         
         /// <summary>
         /// Set a timout for the completion of the target <see cref="Task"/>. A <exception cref="TimeoutException"></exception>
@@ -99,7 +99,7 @@ namespace Baracuda.Threading.Tasks
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [GENERIC EXCEPTION HANDLING] ---
+        #region --- Generic Exception Handling ---
 
         /// <summary>
         /// Ignore any <see cref="Exception"/> of type <see cref="TException"/> that might occur during the execution of the
@@ -170,7 +170,7 @@ namespace Baracuda.Threading.Tasks
         
         #endregion
         
-        #region --- [CONCRETE EXCEPTION HANDLING] ---
+        #region --- Concrete Exception Handling ---
 
         
         /// <summary>
@@ -199,7 +199,7 @@ namespace Baracuda.Threading.Tasks
         
         #endregion
 
-        #region --- [CONCRETE EXCEPTION HANDLING: ASYNC] ---
+        #region --- Concrete Exception Handling: Async ---
 
         
         /// <summary>
@@ -233,7 +233,7 @@ namespace Baracuda.Threading.Tasks
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [VALUETASK TIMEOUT] ---
+        #region --- Valuetask Timeout ---
 #if ENABLE_VALUETASK
         
         /// <summary>
@@ -269,7 +269,7 @@ namespace Baracuda.Threading.Tasks
 #endif
         #endregion
         
-        #region --- [VALUETASK TIMEOUT: ASYNC] ---
+        #region --- Valuetask Timeout: Async ---
 #if ENABLE_VALUETASK
         
         /// <summary>
@@ -312,7 +312,7 @@ namespace Baracuda.Threading.Tasks
 
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [VALUETASK GENERIC EXCEPTION HANDLING] ---
+        #region --- Valuetask Generic Exception Handling ---
 #if ENABLE_VALUETASK
         
         /// <summary>
@@ -384,7 +384,7 @@ namespace Baracuda.Threading.Tasks
 #endif
         #endregion
         
-        #region --- [VALUETASK CONCRETE EXCEPTION HANDLING] ---
+        #region --- Valuetask Concrete Exception Handling ---
 #if ENABLE_VALUETASK
         
         /// <summary>
@@ -413,7 +413,7 @@ namespace Baracuda.Threading.Tasks
 #endif
         #endregion
 
-        #region --- [VALUETASK CONCRETE EXCEPTION HANDLING: ASYNC] ---
+        #region --- Valuetask Concrete Exception Handling: Async ---
 #if ENABLE_VALUETASK
         
         /// <summary>

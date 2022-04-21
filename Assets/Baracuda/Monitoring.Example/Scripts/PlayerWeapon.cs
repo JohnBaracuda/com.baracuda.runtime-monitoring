@@ -1,4 +1,3 @@
-﻿using System.Text;
 using Baracuda.Monitoring.Attributes;
 using UnityEngine;
 
@@ -6,6 +5,10 @@ namespace Baracuda.Monitoring.Example.Scripts
 {
     public class PlayerWeapon : MonitoredBehaviour
     {
+        /*
+         *  Inspector Fields   
+         */
+        
         [Header("Primary")]
         [SerializeField] private float damage = 100f;
         [SerializeField] private float shotsPerSecond = 7.5f;
@@ -21,32 +24,21 @@ namespace Baracuda.Monitoring.Example.Scripts
         [SerializeField] private float defaultFOV = 90f;
         [SerializeField] private float zoomFOV = 40f;
         [SerializeField] private float fovSharpness = 10f;
+
+        /*
+         *  Private Fields   
+         */
         
+        [Monitor]
+        private int _currentAmmunition;
+        private float _lastFireTime;
+        private float _targetFOV;
         private IPlayerInput _input;
         private Camera _camera;
-        private float _lastFireTime;
 
-        [Monitor]
-        [ValueProcessor(nameof(CurrentAmmunitionValueProcessor))]
-        [Format(FontSize = 46, GroupElement = false, Position = UIPosition.BottomLeft)]
-        [ProgressBar(0, 45, 45)]
-        private int _currentAmmunition;
-        private float _targetFOV;
-
-        private string CurrentAmmunitionValueProcessor(int currentAmmunition)
-        {
-            var sb = new StringBuilder();
-            sb.Append("Ammo: ");
-            sb.Append(currentAmmunition.ToString("00"));
-            sb.Append(" / ");
-            sb.Append(ammunition.ToString("00"));
-            sb.Append(' ');
-            for (var i = 0; i < currentAmmunition; i++)
-            {
-                sb.Append('|');
-            }
-            return sb.ToString();
-        }
+        /*
+         *  Logic   
+         */
 
         protected override void Awake()
         {

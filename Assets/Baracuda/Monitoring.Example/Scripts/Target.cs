@@ -1,12 +1,11 @@
 using System.Collections;
-using Baracuda.Monitoring.Attributes;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
     public class Target : MonitoredBehaviour, IDamageable
     {
-        #region --- [INSPECTOR] ---
+        #region --- Inspector ---
 
         [SerializeField] private float health = 200;
         [SerializeField] private float recoverCooldown = 5f;
@@ -15,7 +14,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [FIELDS] ---
+        #region --- Fields ---
 
         private bool _isAlive = true;
         private float _cooldown = 0f;
@@ -27,32 +26,18 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [FIELDS: STATIC] ---
-
-        [Monitor]
-        [Format(FontSize = 36, GroupElement = false)]
-        [ValueProcessor(nameof(TargetsDestroyedValueProcessor))]
-        private static int _targetsDestroyed;
+        #region --- Fields: Static ---
         
-        private static readonly int _knockdown = Animator.StringToHash("knockdown");
-        private static readonly int _recover = Animator.StringToHash("recover");
+        private static readonly int knockdown = Animator.StringToHash("knockdown");
+        private static readonly int recover = Animator.StringToHash("recover");
         
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
-        
-        #region --- [VALUE PROCESSOR] ---
-
-        private static string TargetsDestroyedValueProcessor(int targetsDestroyed)
-        {
-            return $"Score: [{targetsDestroyed.ToString("00")}]";
-        }
-        
-        #endregion
 
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [SETUP] ---
+        #region --- Setup ---
 
         protected override void Awake()
         {
@@ -65,7 +50,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [DAMAGE HANDLING] ---
+        #region --- Damage Handling ---
 
         public void TakeDamage(float damage)
         {
@@ -74,7 +59,6 @@ namespace Baracuda.Monitoring.Example.Scripts
                 _currentHealth -= damage;
                 if (_currentHealth > 0) return;
                 _currentHealth = 0;
-                _targetsDestroyed++;
                 StartCoroutine(CooldownCoroutine());
             }
         }
@@ -82,14 +66,14 @@ namespace Baracuda.Monitoring.Example.Scripts
         private IEnumerator CooldownCoroutine()
         {
             _isAlive = false;
-            _animator.SetTrigger(_knockdown);
+            _animator.SetTrigger(knockdown);
             _cooldown = recoverCooldown;
             while (_cooldown > 0)
             {
                 _cooldown -= Time.deltaTime;
                 yield return null;
             }
-            _animator.SetTrigger(_recover);
+            _animator.SetTrigger(recover);
             _currentHealth = health;
             _isAlive = true;
         }

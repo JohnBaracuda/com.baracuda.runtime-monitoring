@@ -1,4 +1,4 @@
-﻿using Baracuda.Monitoring.Internal.Utils;
+using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Monitoring.Management;
 using UnityEngine;
 

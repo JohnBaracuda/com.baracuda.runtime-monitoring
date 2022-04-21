@@ -1,8 +1,10 @@
-﻿using System;
+using System;
+using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.Attributes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [Preserve]
     public sealed class ProgressBarAttribute : Attribute
     {
         public int Segments { get; set; }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Baracuda.Monitoring.Management;
 
 namespace Baracuda.Monitoring
@@ -19,7 +19,11 @@ namespace Baracuda.Monitoring
 
         public virtual void Dispose()
         {
-            if (_isDisposed) return;
+            if (_isDisposed)
+            {
+                return;
+            }
+
             MonitoringManager.UnregisterTarget(this);
             _isDisposed = true;
             GC.SuppressFinalize(this);

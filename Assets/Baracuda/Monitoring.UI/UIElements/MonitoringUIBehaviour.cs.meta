@@ -6,7 +6,7 @@ MonoImporter:
   defaultReferences:
   - monitorUIElementPrefab: {instanceID: 0}
   - spawn: {instanceID: 0}
-  executionOrder: 32767
+  executionOrder: 100
   icon: {instanceID: 0}
   userData: 
   assetBundleName: 

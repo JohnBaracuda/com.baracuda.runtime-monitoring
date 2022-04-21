@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 namespace Baracuda.Threading
 {
     public partial class Dispatcher
     {
-        #region --- [SINGLETON] ---
+        #region --- Singleton ---
 
         // backing field for Dispatcher.Current
-        private static Dispatcher _current;
+        private static Dispatcher current;
         
         // flag to determine if an invalid operation exception should be thrown when destroying the GameObject.
         private bool _throw = true;
@@ -20,12 +20,12 @@ namespace Baracuda.Threading
         {
             get
             {
-                if (_current == null)
+                if (current == null)
                 {
-                    _current = FindObjectOfType<Dispatcher>() 
+                    current = FindObjectOfType<Dispatcher>() 
                                ?? new GameObject(nameof(Dispatcher)).AddComponent<Dispatcher>();
                 }
-                return _current;
+                return current;
             }
         }
         
@@ -41,7 +41,7 @@ namespace Baracuda.Threading
                 return;
             }
             
-            _current = this;
+            current = this;
 
             DontDestroyOnLoad(gameObject);
         }
@@ -50,7 +50,7 @@ namespace Baracuda.Threading
         private void OnDestroy()
         {
             if (Current != this) return;
-            _current = null;
+            current = null;
             
             if (_throw && gameObject.scene.isLoaded)
             {

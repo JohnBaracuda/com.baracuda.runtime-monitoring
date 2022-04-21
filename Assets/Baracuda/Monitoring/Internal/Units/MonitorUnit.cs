@@ -1,20 +1,20 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Profiling;
-using Baracuda.Pooling.Concretions;
+using Baracuda.Monitoring.Utilities.Pooling.Concretions;
 
 namespace Baracuda.Monitoring.Internal.Units
 {
     public abstract class MonitorUnit : IDisposable, IMonitorUnit
     {
-        #region --- [DELEGATES] ---
+        #region --- Delegates ---
 
         protected delegate string StringDelegate();
 
         #endregion
         
-        #region --- [PROPERTIES] ---
+        #region --- Properties ---
 
         public string Name { get; }
         
@@ -49,13 +49,13 @@ namespace Baracuda.Monitoring.Internal.Units
         
         #endregion
 
-        #region --- [FIELDS] ---
+        #region --- Fields ---
 
         protected const string NULL = "<color=red>NULL</color>";
 
         #endregion
         
-        #region --- [UNIT STATE] ---
+        #region --- Unit State ---
 
         /// <summary>
         /// Force the unit to update its state. This will invoke a <see cref="ValueUpdated"/> event.
@@ -66,7 +66,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [EVENTS] ---
+        #region --- Events ---
 
         /// <summary>
         /// Event is invoked when the value of the unit has changed.
@@ -82,7 +82,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [RAISE] ---
+        #region --- Raise ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void RaiseValueChanged(string value)
@@ -100,7 +100,7 @@ namespace Baracuda.Monitoring.Internal.Units
 
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [CTOR] ---
+        #region --- Ctor ---
 
         protected MonitorUnit(object target, MonitorProfile profile)
         {
@@ -114,7 +114,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [OVERRIDES & INTERFACES] ---
+        #region --- Overrides & Interfaces ---
 
         public virtual void Dispose()
         {

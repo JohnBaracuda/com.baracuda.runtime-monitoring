@@ -1,4 +1,4 @@
-﻿namespace Baracuda.Monitoring.Example.Scripts
+namespace Baracuda.Monitoring.Example.Scripts
 {
     public enum GroundStatus
     {

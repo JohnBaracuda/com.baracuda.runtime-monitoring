@@ -5,12 +5,12 @@ namespace Baracuda.Monitoring
 {
     public class MonitoredScriptableObject : ScriptableObject
     {
-        public void Awake()
+        protected virtual void OnEnable()
         {
             MonitoringManager.RegisterTarget(this);
         }
 
-        private void OnDestroy()
+        protected virtual void OnDisable()
         {
             MonitoringManager.UnregisterTarget(this);
         }

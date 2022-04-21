@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring
 {
-    
     public abstract class MonitoredBehaviour : MonoBehaviour
     {
         protected virtual void Awake()

@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Reflection;
 using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Internal.Utils;
+using Baracuda.Monitoring.Internal.Utilities;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
     public abstract class ValueProfile<TTarget, TValue> : MonitorProfile where TTarget : class
     {
-        #region --- [FIELDS] ---
+        #region --- Fields ---
         
         internal readonly bool CustomUpdateEventAvailable;
 
@@ -21,7 +21,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [PROPERTIES] ---
+        #region --- Properties ---
 
         private readonly Func<TTarget, TValue, string> _instanceValueProcessorDelegate;
         private readonly Func<TValue, string> _staticValueProcessorDelegate;
@@ -75,7 +75,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return true;
             }
 
-            if (_addNotifyDelegate == null) return false;
+            if (_addNotifyDelegate == null)
+            {
+                return false;
+            }
+
             _addNotifyDelegate(target, refreshAction);
             return true;
         }
@@ -94,7 +98,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [REFLECTION FIELDS] ---
+        #region --- Reflection Fields ---
 
         private const BindingFlags STATIC_FLAGS
             = BindingFlags.Default |
@@ -114,7 +118,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [CUSTOM UPDATE EVENT] ---
+        #region --- Custom Update Event ---
 
         private delegate void UpdateHandleDelegate<in T, out TParam>(T target, Action<TParam> listener);
         private delegate void NotifyHandleDelegate<in T>(T target, Action listener);
@@ -133,7 +137,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var action =
                     (UpdateHandleDelegate<T, TParam>) Delegate.CreateDelegate(
                         typeof(UpdateHandleDelegate<T, TParam>), method, false);
-                if (action != null) return action;
+                if (action != null)
+                {
+                    return action;
+                }
             }
 
 
@@ -147,7 +154,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                 var action =
                     (Action<Action<TParam>>) Delegate.CreateDelegate(typeof(Action<Action<TParam>>), method, false);
-                if (action != null) return (target, value) => action(value);
+                if (action != null)
+                {
+                    return (target, value) => action(value);
+                }
             }
 
             return null;
@@ -169,7 +179,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var action =
                     (NotifyHandleDelegate<T>) Delegate.CreateDelegate(typeof(NotifyHandleDelegate<T>),
                         method, false);
-                if (action != null) return action;
+                if (action != null)
+                {
+                    return action;
+                }
             }
 
 
@@ -182,7 +195,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     : staticEvent.GetRemoveMethod(true);
 
                 var action = (Action<Action>) Delegate.CreateDelegate(typeof(Action<Action>), method, false);
-                if (action != null) return (target, value) => action(value);
+                if (action != null)
+                {
+                    return (target, value) => action(value);
+                }
             }
 
             return null;

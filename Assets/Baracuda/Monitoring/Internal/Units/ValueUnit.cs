@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq.Expressions;
+using System;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Profiling;
-using Baracuda.Monitoring.Internal.Utils;
+using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Threading;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
@@ -20,7 +19,7 @@ namespace Baracuda.Monitoring.Internal.Units
     public abstract class ValueUnit<TTarget, TValue> : MonitorUnit, IValueUnit where TTarget : class
     {
         
-        #region --- [FIELDS] ---
+        #region --- Fields ---
         
         protected readonly StringDelegate CompiledValueProcessor;
         
@@ -33,7 +32,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [CTOR] ---
+        #region --- Ctor ---
 
         internal ValueUnit(TTarget target,
             Func<TTarget, TValue> getValue,
@@ -67,7 +66,7 @@ namespace Baracuda.Monitoring.Internal.Units
                 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [VALUE PROCESSOR] ---
+        #region --- Value Processor ---
         
         private StringDelegate CompileValueProcessor(Func<TValue, string> func)
         {
@@ -79,7 +78,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [UPDATE] ---
+        #region --- Update ---
 
         public override void Refresh()
         {
@@ -90,7 +89,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [GET] ---
+        #region --- Get ---
         
         public override string GetValueFormatted
         {
@@ -106,7 +105,7 @@ namespace Baracuda.Monitoring.Internal.Units
             }
 #else
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ValueProcessor();
+            get => CompiledValueProcessor();
 #endif
         }
 
@@ -130,7 +129,7 @@ namespace Baracuda.Monitoring.Internal.Units
 
         #endregion
         
-        #region --- [SET] ---
+        #region --- Set ---
    
         public void SetValue(TValue value)
         {
@@ -156,7 +155,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [IDISOSABLE] ---
+        #region --- Idisosable ---
 
         public override void Dispose()
         {

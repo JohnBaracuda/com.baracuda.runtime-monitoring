@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Profiling;
 
 namespace Baracuda.Monitoring.Internal.Units
 {
-    public class EventUnit<TTarget, TDelegate> : MonitorUnit where TTarget : class where TDelegate : MulticastDelegate
+    public class EventUnit<TTarget, TDelegate> : MonitorUnit where TTarget : class where TDelegate : Delegate
     {
         
-        #region --- [PROPERTIES] ---
+        #region --- Properties ---
 
         public override string GetValueFormatted => _stateFormatter(_target, _invokeCounter);
         public override string GetValueRaw { get; } = "INVALID";
@@ -17,7 +17,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [FIELDS] ---
+        #region --- Fields ---
 
         private readonly EventProfile<TTarget, TDelegate>.StateFormatDelegate _stateFormatter;
         private readonly EventProfile<TTarget, TDelegate> _eventProfile;

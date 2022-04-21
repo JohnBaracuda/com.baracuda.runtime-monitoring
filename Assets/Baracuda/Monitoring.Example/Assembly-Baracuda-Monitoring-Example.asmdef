@@ -1,6 +1,6 @@
 {
     "name": "Assembly-Baracuda-Monitoring.Example",
-    "rootNamespace": "",
+    "rootNamespace": "Baracuda",
     "references": [
         "GUID:ca92f98736a979747b5de3a34d731a59"
     ],

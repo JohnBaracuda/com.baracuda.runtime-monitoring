@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
-using Baracuda.Monitoring.Internal.Utils;
+using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Threading;
 
 namespace Baracuda.Monitoring.Internal
@@ -9,10 +9,12 @@ namespace Baracuda.Monitoring.Internal
     {
         internal event Action OnUpdate;
         internal event Action OnTick;
+        internal event Action OnFixedUpdate;
 
-        private void Update()  => OnUpdate?.Invoke();
+        private void Update() => OnUpdate?.Invoke();
+        private void FixedUpdate() => OnFixedUpdate?.Invoke();
         private void Tick() => OnTick?.Invoke();
-        
+
         private async void TickLoop()
         {
             try
@@ -20,6 +22,7 @@ namespace Baracuda.Monitoring.Internal
                 while (true)
                 {
                     Tick();
+                    //TODO: use Update
                     await Task.Delay(50, Dispatcher.RuntimeToken);
                 }
             }
@@ -39,6 +42,7 @@ namespace Baracuda.Monitoring.Internal
             base.OnDestroy();
             OnUpdate = null;
             OnTick = null;
+            OnFixedUpdate = null;
         }
     }
 }

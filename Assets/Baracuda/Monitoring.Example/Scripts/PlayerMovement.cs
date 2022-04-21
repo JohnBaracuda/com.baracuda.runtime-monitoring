@@ -1,14 +1,11 @@
-using System;
-using Baracuda.Monitoring.Attributes;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : MonitoredBehaviour
     {
-        #region --- [INSPECTOR] ---
+        #region --- Inspector ---
 
         [Header("Movement Settings")] 
         [SerializeField] private float movementSpeed = 16.5f;
@@ -39,16 +36,13 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [FIELDS] ---
+        #region --- Fields ---
 
         // Components & other references
         private CharacterController _characterController;
         private Transform _transform;
         private Camera _camera;
         private IPlayerInput _input;
-        
-        [Monitor]
-        [Format(GroupElement = false, FontSize = 32, Position = UIPosition.BottomLeft)]
         private int _jumpsLeft;
         
         // Input
@@ -62,8 +56,6 @@ namespace Baracuda.Monitoring.Example.Scripts
         private float _lastJumpTime;
         
         // Dash
-        [Monitor] 
-        [Format("0.0", GroupElement = false, FontSize = 32, Position = UIPosition.BottomLeft)]
         private float _dashEnergy;
         private bool _isDashing = false;
         private float _lastDashTime;
@@ -72,12 +64,12 @@ namespace Baracuda.Monitoring.Example.Scripts
         // Ground check
         private GroundStatus _lastGroundCheck = GroundStatus.StableGround;
         private readonly Collider[] _raycastHits = new Collider[16];
-        private static int _hitCount;
+        private static int hitCount;
         private float _lastGroundedTime;
         
         #endregion
 
-        #region --- [PROPERTIES] ---
+        #region --- Properties ---
 
         public Vector3 Velocity => _characterController.velocity;
         
@@ -85,7 +77,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [SETUP] ---
+        #region --- Setup ---
 
         protected override void Awake()
         {
@@ -111,7 +103,7 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [UPDATE] ---
+        #region --- Update ---
 
         private void Update()
         {
@@ -137,7 +129,7 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [MOVEMENT] ---
+        #region --- Movement ---
         
         /// <summary>
         /// Quick and dirty method performing movement calculations.
@@ -235,7 +227,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [DASH] ---
+        #region --- Dash ---
         
         private bool CanDash(float time, GroundStatus groundCheck, Vector2 rawInputDir)
         {
@@ -278,17 +270,17 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [GROUND CHECK] ---
+        #region --- Ground Check ---
 
         private GroundStatus GroundCheck()
         {
             var position = _transform.position;
             var upDirection = _transform.up;
 
-            _hitCount = Physics.OverlapSphereNonAlloc(position, groundCheckRadius, _raycastHits, groundMask,
+            hitCount = Physics.OverlapSphereNonAlloc(position, groundCheckRadius, _raycastHits, groundMask,
                 QueryTriggerInteraction.Ignore);
 
-            for (var i = 0; i < _hitCount; i++)
+            for (var i = 0; i < hitCount; i++)
             {
                 if (Vector3.Dot(_raycastHits[i].transform.up, upDirection) >= .95f)
                 {
@@ -296,7 +288,7 @@ namespace Baracuda.Monitoring.Example.Scripts
                 }
             }
 
-            return _hitCount > 0 ? GroundStatus.UnstableGround : GroundStatus.NoGround;
+            return hitCount > 0 ? GroundStatus.UnstableGround : GroundStatus.NoGround;
         }
 
         #endregion

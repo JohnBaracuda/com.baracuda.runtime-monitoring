@@ -1,19 +1,18 @@
-﻿using System;
-using System.Diagnostics.Tracing;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Baracuda.Monitoring.Attributes;
+using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
-using Baracuda.Monitoring.Internal.Utils;
-using Baracuda.Pooling.Concretions;
-using Baracuda.Reflection;
+using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Monitoring.Utilities.Pooling.Concretions;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
-    public class EventProfile<TTarget, TDelegate> : MonitorProfile where TDelegate : MulticastDelegate where TTarget : class
+    public class EventProfile<TTarget, TDelegate> : MonitorProfile where TDelegate : Delegate where TTarget : class
     {
-        #region --- [FIELDS] ---
+        #region --- Fields & Properties ---
 
         public bool Refresh { get; } = true;
         public bool ShowSignature { get; } = true;
@@ -31,19 +30,13 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [FACTORY] ---
+        #region --- Ctor & Factory ---
 
         public override MonitorUnit CreateUnit(object target)
         {
             return new EventUnit<TTarget, TDelegate>((TTarget) target, _formatState, this);
         }
-
-        #endregion
-        
-        //--------------------------------------------------------------------------------------------------------------
-        
-        #region --- [CTOR] ---
-        
+       
         public EventProfile(EventInfo eventInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args) 
             : base(eventInfo, attribute, typeof(TTarget), typeof(TDelegate), UnitType.Event, args)
         {
@@ -51,7 +44,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
             if (attribute is MonitorEventAttribute eventAttribute)
             {
-                Refresh = eventAttribute.Refresh;
                 ShowTrueCount = eventAttribute.ShowTrueCount;
                 ShowSubscriber = eventAttribute.ShowSubscriber;
                 ShowSignature = eventAttribute.ShowSignature;
@@ -75,8 +67,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         private static Expression<Func<TTarget, int>> CreateCounterExpression(Func<TTarget, Delegate> func, bool trueCount)
         {
-            if(trueCount) return  target => func(target).GetInvocationList().Length;
-            
+            if(trueCount)
+            {
+                return  target => func(target).GetInvocationList().Length;
+            }
+
             return target => func(target).GetInvocationList().Length - 1;
         }
         
@@ -84,7 +79,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------   
 
-        #region --- [STATE FORMATTER] ---
+        #region --- State Foramtting ---
 
         private StateFormatDelegate CreateStateFormatter(Func<TTarget, int> counterDelegate)
         {
@@ -119,7 +114,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------   
         
-        #region --- [EVENT HANDLER] ---
+        #region --- Event Handler ---
 
         internal void SubscribeEventHandler(TTarget target, Delegate eventHandler)
         {

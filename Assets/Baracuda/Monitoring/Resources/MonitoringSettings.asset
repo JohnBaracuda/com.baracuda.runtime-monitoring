@@ -48,3 +48,8 @@ MonoBehaviour:
   bannedAssemblyNames:
   - Assembly-Baracuda-Pooling
   - Assembly-Baracuda-Reflection
+  - Assembly-Baracuda-Threading
+  filePathIL2CPPTypes: 
+  useIPreprocessBuildWithReport: 1
+  throwOnTypeGenerationError: 1
+  preprocessBuildCallbackOrder: 0

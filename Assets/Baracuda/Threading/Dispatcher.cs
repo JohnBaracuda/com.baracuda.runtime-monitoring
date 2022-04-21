@@ -27,15 +27,15 @@ namespace Baracuda.Threading
     [RequireComponent(typeof(DispatcherPostUpdate))]
     public sealed partial class Dispatcher : MonoBehaviour
     {
-        #region --- [UTILITIES] ---
+        #region --- Utilities ---
 
         /// <summary>
         /// Returns true if called from the main thread and false if not.
         /// </summary>
         /// <returns></returns>
         ///<footer><a href="https://johnbaracuda.com/dispatcher.html#miscellaneous">Documentation</a></footer>
-        public static bool IsMainThread() => Thread.CurrentThread.ManagedThreadId == (_mainThread?.ManagedThreadId 
-            ?? throw new Exception($"{nameof(Dispatcher)}.{nameof(_mainThread)} is not initialized"));
+        public static bool IsMainThread() => Thread.CurrentThread.ManagedThreadId == (mainThread?.ManagedThreadId 
+            ?? throw new Exception($"{nameof(Dispatcher)}.{nameof(mainThread)} is not initialized"));
 
         
         /// <summary>
@@ -62,53 +62,53 @@ namespace Baracuda.Threading
         /// or until the play state is changed in the editor. 
         /// </summary>
         /// <footer><a href="https://johnbaracuda.com/dispatcher.html#runtimeToken">Documentation</a></footer>
-        public static CancellationToken RuntimeToken => _runtimeCts.Token;
+        public static CancellationToken RuntimeToken => runtimeCts.Token;
         
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [FIELDS: PRIVATE] ---
+        #region --- Fields: Private ---
         
-        private static readonly Thread _mainThread = Thread.CurrentThread;
+        private static readonly Thread mainThread = Thread.CurrentThread;
         
-        private static CancellationTokenSource _runtimeCts = new CancellationTokenSource();
+        private static CancellationTokenSource runtimeCts = new CancellationTokenSource();
         
-        private static readonly Queue<Action> _defaultExecutionQueue = new Queue<Action>(10);
-        private static volatile bool _queuedDefault = false;
+        private static readonly Queue<Action> defaultExecutionQueue = new Queue<Action>(10);
+        private static volatile bool queuedDefault = false;
         
 #if !DISPATCHER_DISABLE_FIXEDUPDATE
-        private static readonly Queue<Action> _fixedUpdateExecutionQueue = new Queue<Action>(10);
-        private static volatile bool _queuedFixed = false;
+        private static readonly Queue<Action> fixedUpdateExecutionQueue = new Queue<Action>(10);
+        private static volatile bool queuedFixed = false;
 #endif
         
         
 #if !DISPATCHER_DISABLE_UPDATE
-        private static readonly Queue<Action> _updateExecutionQueue = new Queue<Action>(10);
-        private static volatile bool _queuedUpdate = false;
+        private static readonly Queue<Action> updateExecutionQueue = new Queue<Action>(10);
+        private static volatile bool queuedUpdate = false;
 #endif
         
         
 #if !DISPATCHER_DISABLE_FIXEDUPDATE
-        private static readonly Queue<Action> _lateUpdateExecutionQueue = new Queue<Action>(10);
-        private static volatile bool _queuedLate = false;
+        private static readonly Queue<Action> lateUpdateExecutionQueue = new Queue<Action>(10);
+        private static volatile bool queuedLate = false;
 #endif
         
         
 #if !DISPATCHER_DISABLE_POSTUPDATE
-        private static readonly Queue<Action> _postUpdateExecutionQueue = new Queue<Action>(10);
-        private static volatile bool _queuedPost = false;
+        private static readonly Queue<Action> postUpdateExecutionQueue = new Queue<Action>(10);
+        private static volatile bool queuedPost = false;
 #endif
         
         
 #if !DISPATCHER_DISABLE_TICKUPDATE || ENABLE_TICKFALLBACK
-        private static readonly Queue<Action> _tickExecutionQueue = new Queue<Action>(10);
-        private static volatile bool _queuedTick = false;
+        private static readonly Queue<Action> tickExecutionQueue = new Queue<Action>(10);
+        private static volatile bool queuedTick = false;
 #endif
         
 #if UNITY_EDITOR && !DISPATCHER_DISABLE_EDITORUPDATE
-        private static readonly Queue<Action> _editorExecutionQueue = new Queue<Action>(10);
-        private static volatile bool _queuedEditor = false;
+        private static readonly Queue<Action> editorExecutionQueue = new Queue<Action>(10);
+        private static volatile bool queuedEditor = false;
 #endif
 
 
@@ -117,7 +117,7 @@ namespace Baracuda.Threading
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [INITIALIZE] ---
+        #region --- Initialize ---
 
         private void OnApplicationQuit()
         {
@@ -126,9 +126,9 @@ namespace Baracuda.Threading
 
         private static void CancelAndResetRuntimeToken()
         {
-            _runtimeCts.Cancel();
-            _runtimeCts.Dispose();
-            _runtimeCts = new CancellationTokenSource();
+            runtimeCts.Cancel();
+            runtimeCts.Dispose();
+            runtimeCts = new CancellationTokenSource();
         }
 
 
@@ -163,16 +163,16 @@ namespace Baracuda.Threading
 #if DISPATCHER_DEBUG
             CurrentCycle = ExecutionCycle.EditorUpdate;      
 #endif
-            if (_queuedEditor)
+            if (queuedEditor)
             {
-                lock (_editorExecutionQueue)
+                lock (editorExecutionQueue)
                 {
-                    while (_editorExecutionQueue.Count > 0)
+                    while (editorExecutionQueue.Count > 0)
                     {
-                        _editorExecutionQueue.Dequeue().Invoke();
+                        editorExecutionQueue.Dequeue().Invoke();
                     }
 
-                    _queuedEditor = false;
+                    queuedEditor = false;
                 }
             }
             
@@ -195,11 +195,11 @@ namespace Baracuda.Threading
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [UPDATE: TICK] ---
+        #region --- Update: Tick ---
 
 #if !DISPATCHER_DISABLE_TICKUPDATE || ENABLE_TICKFALLBACK
         
-        private static CancellationTokenSource _cts = new CancellationTokenSource();
+        private static CancellationTokenSource cts = new CancellationTokenSource();
         private const int TICK_DELAY = 50;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -208,15 +208,15 @@ namespace Baracuda.Threading
         private static void InitializeTickUpdateLoop()
         {
             StopTick();
-            _cts = new CancellationTokenSource();
-            TickUpdate(_cts.Token);
+            cts = new CancellationTokenSource();
+            TickUpdate(cts.Token);
         }
 
         private static void StopTick()
         {
-            _cts.Cancel();
-            _cts.Dispose();
-            _cts = new CancellationTokenSource();
+            cts.Cancel();
+            cts.Dispose();
+            cts = new CancellationTokenSource();
         }
 
         
@@ -227,13 +227,13 @@ namespace Baracuda.Threading
 #if DISPATCHER_DEBUG
                 CurrentCycle = ExecutionCycle.TickUpdate;      
 #endif
-                if (_queuedTick)
+                if (queuedTick)
                 {
-                    lock (_tickExecutionQueue)
+                    lock (tickExecutionQueue)
                     {
-                        while (_tickExecutionQueue.Count > 0)
+                        while (tickExecutionQueue.Count > 0)
                         {
-                            _tickExecutionQueue.Dequeue().Invoke();
+                            tickExecutionQueue.Dequeue().Invoke();
                         }
                     }
                 }
@@ -247,7 +247,7 @@ namespace Baracuda.Threading
         
         #endregion
         
-        #region --- [UPDATE: MONOBEHAVIOUR] ---
+        #region --- Update: Monobehaviour ---
         
 #if !DISPATCHER_DISABLE_UPDATE
         private void Update()
@@ -255,16 +255,16 @@ namespace Baracuda.Threading
 #if DISPATCHER_DEBUG
             CurrentCycle = ExecutionCycle.Update;      
 #endif
-            if (_queuedUpdate)
+            if (queuedUpdate)
             {
-                lock (_updateExecutionQueue)
+                lock (updateExecutionQueue)
                 {
-                    while (_updateExecutionQueue.Count > 0)
+                    while (updateExecutionQueue.Count > 0)
                     {
-                        _updateExecutionQueue.Dequeue().Invoke();
+                        updateExecutionQueue.Dequeue().Invoke();
                     }
 
-                    _queuedUpdate = false;
+                    queuedUpdate = false;
                 }
             }
             
@@ -278,16 +278,16 @@ namespace Baracuda.Threading
 #if DISPATCHER_DEBUG
             CurrentCycle = ExecutionCycle.LateUpdate;      
 #endif
-            if (_queuedLate)
+            if (queuedLate)
             {
-                lock (_lateUpdateExecutionQueue)
+                lock (lateUpdateExecutionQueue)
                 {
-                    while (_lateUpdateExecutionQueue.Count > 0)
+                    while (lateUpdateExecutionQueue.Count > 0)
                     {
-                        _lateUpdateExecutionQueue.Dequeue().Invoke();
+                        lateUpdateExecutionQueue.Dequeue().Invoke();
                     }
 
-                    _queuedLate = false;
+                    queuedLate = false;
                 }
             }
             
@@ -301,16 +301,16 @@ namespace Baracuda.Threading
 #if DISPATCHER_DEBUG
             CurrentCycle = ExecutionCycle.FixedUpdate;      
 #endif
-            if (_queuedFixed)
+            if (queuedFixed)
             {
-                lock (_fixedUpdateExecutionQueue)
+                lock (fixedUpdateExecutionQueue)
                 {
-                    while (_fixedUpdateExecutionQueue.Count > 0)
+                    while (fixedUpdateExecutionQueue.Count > 0)
                     {
-                        _fixedUpdateExecutionQueue.Dequeue().Invoke();
+                        fixedUpdateExecutionQueue.Dequeue().Invoke();
                     }
 
-                    _queuedFixed = false;
+                    queuedFixed = false;
                 }
             }
             
@@ -324,16 +324,16 @@ namespace Baracuda.Threading
 #if DISPATCHER_DEBUG
             CurrentCycle = ExecutionCycle.PostUpdate;      
 #endif
-            if (_queuedPost)
+            if (queuedPost)
             {
-                lock (_postUpdateExecutionQueue)
+                lock (postUpdateExecutionQueue)
                 {
-                    while (_postUpdateExecutionQueue.Count > 0)
+                    while (postUpdateExecutionQueue.Count > 0)
                     {
-                        _postUpdateExecutionQueue.Dequeue().Invoke();
+                        postUpdateExecutionQueue.Dequeue().Invoke();
                     }
 
-                    _queuedPost = false;
+                    queuedPost = false;
                 }
             }
 
@@ -343,21 +343,21 @@ namespace Baracuda.Threading
 
         #endregion
 
-        #region --- [RELEASE] ---
+        #region --- Release ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ReleaseDefaultQueue()
         {
-            if (!_queuedDefault) return;
+            if (!queuedDefault) return;
             
-            lock (_defaultExecutionQueue)
+            lock (defaultExecutionQueue)
             {
-                while (_defaultExecutionQueue.Count > 0)
+                while (defaultExecutionQueue.Count > 0)
                 {
-                    _defaultExecutionQueue.Dequeue()?.Invoke();
+                    defaultExecutionQueue.Dequeue()?.Invoke();
                 }
 
-                _queuedDefault = false;
+                queuedDefault = false;
             }
         }
 

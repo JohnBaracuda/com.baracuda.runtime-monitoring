@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -6,10 +6,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Baracuda.Monitoring.Internal.Exceptions;
+using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
-using Baracuda.Monitoring.Internal.Utils;
+using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Monitoring.Management;
-using Baracuda.Reflection;
 using Baracuda.Threading;
 using UnityEngine;
 
@@ -20,25 +20,25 @@ namespace Baracuda.Monitoring.Internal.Profiling
     /// </summary>
     internal static class ValueProcessor
     {
-        #region --- [FORMATTING] ---
+        #region --- Formatting ---
 
         private const string DEFAULT_INDENT = "<pos=14>";
         private const int DEFAULT_INDENT_NUM = 14;
 
-        private static readonly MonitoringSettings _settings = Dispatcher.InvokeAsync(MonitoringSettings.Instance).Result;
+        private static readonly MonitoringSettings settings = Dispatcher.InvokeAsync(MonitoringSettings.Instance).Result;
         
         private const string NULL = "<color=red>NULL</color>";
 
-        private static readonly string _xColor = _settings.xColor.ToRichTextPrefix();
-        private static readonly string _yColor = _settings.yColor.ToRichTextPrefix();
-        private static readonly string _zColor = _settings.zColor.ToRichTextPrefix();
-        private static readonly string _wColor = _settings.wColor.ToRichTextPrefix();
+        private static readonly string xColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.XColor)}>";
+        private static readonly string yColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.YColor)}>";
+        private static readonly string zColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.ZColor)}>";
+        private static readonly string wColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.WColor)}>";
         
         #endregion
                 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [REFLECTION FIELDS] ---
+        #region --- Reflection Fields ---
 
         private const BindingFlags FLAGS 
             = BindingFlags.Default | 
@@ -65,7 +65,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [VALUE PROCESSOR: TYPE SPECIFIC FALLBACK] ---
+        #region --- Value Processor: Type Specific Fallback ---
 
         /// <summary>
         /// Creates a default type specific processor to format the <see cref="TValue"/> depending on its exact type.
@@ -87,14 +87,16 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return (Func<TValue, string>)(Delegate) CreateBooleanProcessor(profile);
             }
             
+#if !ENABLE_IL2CPP
             // Dictionary<TKey, TValue>
             if (profile.UnitValueType.IsDictionary())
             {
                 var keyType   = profile.UnitValueType.GetGenericArguments()[0];
                 var valueType = profile.UnitValueType.GetGenericArguments()[1];
-                var genericMethod = _createDictionaryProcessorMethod.MakeGenericMethod(keyType, valueType);
+                var genericMethod = createDictionaryProcessorMethod.MakeGenericMethod(keyType, valueType);
                 return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
             }
+#endif
 
             // IEnumerable<bool>
             if (profile.UnitValueType.HasInterface<IEnumerable<bool>>())
@@ -102,11 +104,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return (Func<TValue, string>) (Delegate) CreateIEnumerableBooleanProcessor(profile);
             }
             
+#if !ENABLE_IL2CPP
             // IEnumerable<T>
             if (profile.UnitValueType.IsGenericIEnumerable(true))
             {
                 var type = profile.UnitValueType.GetElementType() ?? profile.UnitValueType.GetGenericArguments()[0];
-                var genericMethod = _createGenericIEnumerableMethod.MakeGenericMethod(type);
+                var genericMethod = createGenericIEnumerableMethod.MakeGenericMethod(type);
                 return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
             }
 
@@ -116,11 +119,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var type = profile.UnitValueType.GetElementType();
                 
                 var genericMethod = type!.IsValueType 
-                        ? _createValueTypeArrayMethod.MakeGenericMethod(type)
-                        : _createReferenceTypeArrayMethod.MakeGenericMethod(type);
+                        ? createValueTypeArrayMethod.MakeGenericMethod(type)
+                        : createReferenceTypeArrayMethod.MakeGenericMethod(type);
                 
                 return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
             }
+#endif
             
             // IEnumerable
             if (profile.UnitValueType.IsIEnumerable(true))
@@ -309,22 +313,22 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     stringBuilder.Clear();
                     stringBuilder.Append(name);
                     stringBuilder.Append(": X:");
-                    stringBuilder.Append(_xColor);
+                    stringBuilder.Append(xColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.x.ToString(format));
                     stringBuilder.Append("]</color> ");
                     stringBuilder.Append("Y:");
-                    stringBuilder.Append(_yColor);
+                    stringBuilder.Append(yColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.y.ToString(format));
                     stringBuilder.Append("]</color> ");
                     stringBuilder.Append("Z:");
-                    stringBuilder.Append(_zColor);
+                    stringBuilder.Append(zColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.z.ToString(format));
                     stringBuilder.Append("]</color>");
                     stringBuilder.Append("W:");
-                    stringBuilder.Append(_wColor);
+                    stringBuilder.Append(wColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.w.ToString(format));
                     stringBuilder.Append("]</color>");
@@ -335,22 +339,22 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     stringBuilder.Clear();
                     stringBuilder.Append(name);
                     stringBuilder.Append(": X:");
-                    stringBuilder.Append(_xColor);
+                    stringBuilder.Append(xColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.x.ToString(CultureInfo.InvariantCulture));
                     stringBuilder.Append("]</color> ");
                     stringBuilder.Append("Y:");
-                    stringBuilder.Append(_yColor);
+                    stringBuilder.Append(yColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.y.ToString(CultureInfo.InvariantCulture));
                     stringBuilder.Append("]</color> ");
                     stringBuilder.Append("Z:");
-                    stringBuilder.Append(_zColor);
+                    stringBuilder.Append(zColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.z.ToString(CultureInfo.InvariantCulture));
                     stringBuilder.Append("]</color>");
                     stringBuilder.Append("W:");
-                    stringBuilder.Append(_wColor);
+                    stringBuilder.Append(wColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.w.ToString(CultureInfo.InvariantCulture));
                     stringBuilder.Append("]</color>");
@@ -371,17 +375,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     stringBuilder.Clear();
                     stringBuilder.Append(name);
                     stringBuilder.Append(": X:");
-                    stringBuilder.Append(_xColor);
+                    stringBuilder.Append(xColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.x.ToString(format));
                     stringBuilder.Append("]</color> ");
                     stringBuilder.Append("Y:");
-                    stringBuilder.Append(_yColor);
+                    stringBuilder.Append(yColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.y.ToString(format));
                     stringBuilder.Append("]</color> ");
                     stringBuilder.Append("Z:");
-                    stringBuilder.Append(_zColor);
+                    stringBuilder.Append(zColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.z.ToString(format));
                     stringBuilder.Append("]</color>");
@@ -395,17 +399,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     stringBuilder.Clear();
                     stringBuilder.Append(name);
                     stringBuilder.Append(": X:");
-                    stringBuilder.Append(_xColor);
+                    stringBuilder.Append(xColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.x.ToString(CultureInfo.InvariantCulture));
                     stringBuilder.Append("]</color> ");
                     stringBuilder.Append("Y:");
-                    stringBuilder.Append(_yColor);
+                    stringBuilder.Append(yColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.y.ToString(CultureInfo.InvariantCulture));
                     stringBuilder.Append("]</color> ");
                     stringBuilder.Append("Z:");
-                    stringBuilder.Append(_zColor);
+                    stringBuilder.Append(zColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.z.ToString(CultureInfo.InvariantCulture));
                     stringBuilder.Append("]</color>");
@@ -427,11 +431,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     stringBuilder.Clear();
                     stringBuilder.Append(label);
                     stringBuilder.Append(": X:");
-                    stringBuilder.Append(_xColor);
+                    stringBuilder.Append(xColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.x.ToString(format));
                     stringBuilder.Append("]</color> Y:");
-                    stringBuilder.Append(_yColor);
+                    stringBuilder.Append(yColor);
                     stringBuilder.Append(value.y.ToString(format));
                     stringBuilder.Append("]</color>");
 
@@ -445,11 +449,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     stringBuilder.Clear();
                     stringBuilder.Append(label);
                     stringBuilder.Append(": X:");
-                    stringBuilder.Append(_xColor);
+                    stringBuilder.Append(xColor);
                     stringBuilder.Append('[');
                     stringBuilder.Append(value.x.ToString(CultureInfo.InvariantCulture));
                     stringBuilder.Append("]</color> Y:");
-                    stringBuilder.Append(_yColor);
+                    stringBuilder.Append(yColor);
                     stringBuilder.Append(value.y.ToString(CultureInfo.InvariantCulture));
                     stringBuilder.Append("]</color>");
 
@@ -559,7 +563,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
         
-        private static readonly MethodInfo _createDictionaryProcessorMethod = typeof(ValueProcessor)
+        private static readonly MethodInfo createDictionaryProcessorMethod = typeof(ValueProcessor)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .Single(methodInfo => methodInfo.Name == nameof(CreateDictionaryProcessor) && methodInfo.IsGenericMethodDefinition);
         
@@ -769,7 +773,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
         
-        private static readonly MethodInfo _createReferenceTypeArrayMethod = typeof(ValueProcessor)
+        private static readonly MethodInfo createReferenceTypeArrayMethod = typeof(ValueProcessor)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .Single(methodInfo => methodInfo.Name == nameof(CreateReferenceTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
         
@@ -879,7 +883,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
         
-        private static readonly MethodInfo _createValueTypeArrayMethod = typeof(ValueProcessor)
+        private static readonly MethodInfo createValueTypeArrayMethod = typeof(ValueProcessor)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .Single(methodInfo => methodInfo.Name == nameof(CreateValueTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
         
@@ -935,7 +939,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 };
         }
         
-        private static readonly MethodInfo _createGenericIEnumerableMethod = typeof(ValueProcessor)
+        private static readonly MethodInfo createGenericIEnumerableMethod = typeof(ValueProcessor)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .Single(methodInfo => methodInfo.Name == nameof(CreateGenericIEnumerableProcessor) && methodInfo.IsGenericMethodDefinition);
         
@@ -1058,7 +1062,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
             return profile.ShowIndexer
                 ? (Func<IEnumerable<bool>, string>) ((value) =>
                 {
-                    if (value == null) return nullString;
+                    if (value == null)
+                    {
+                        return nullString;
+                    }
+
                     var index = 0;
 
                     stringBuilder.Clear();
@@ -1078,7 +1086,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 })
                 : (value) =>
                 {
-                    if (value == null) return nullString;
+                    if (value == null)
+                    {
+                        return nullString;
+                    }
 
                     stringBuilder.Clear();
                     stringBuilder.Append(name);
@@ -1103,7 +1114,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
             return (value) =>
             {
-                if (value == null) return nullString;
+                if (value == null)
+                {
+                    return nullString;
+                }
 
                 stringBuilder.Clear();
                 stringBuilder.Append(name);
@@ -1140,8 +1154,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         private static Func<bool, string> CreateBooleanProcessor(MonitorProfile profile)
         {
-            var tureString  =  $"{profile.Label}: {"TRUE".Colorize(_settings.trueColor)}";
-            var falseString =  $"{profile.Label}: {"FALSE".Colorize(_settings.falseColor)}";
+            var tureString  =  $"{profile.Label}: {"TRUE".Colorize(settings.TrueColor)}";
+            var falseString =  $"{profile.Label}: {"FALSE".Colorize(settings.FalseColor)}";
             return (value) => value ? tureString : falseString;
         }
 
@@ -1149,7 +1163,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [VALUE PROCESSOR: CUSTOM] ---
+        #region --- Value Processor: Custom ---
 
         /// <summary>
         /// This method will scan the declaring <see cref="Type"/> of the passed
@@ -1171,8 +1185,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
             try
             {
                 // validate that the processor name is not null.
-                if (string.IsNullOrWhiteSpace(processor)) return null;
-                
+                if (string.IsNullOrWhiteSpace(processor))
+                {
+                    return null;
+                }
+
                 // setup
                 var declaringType = valueProfile.UnitDeclaringType;
                 var valueType = valueProfile.UnitValueType;
@@ -1212,7 +1229,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 
                 //----------------------------
 
-                #region --- [ILIST<T>] ---
+                #region --- Ilist<t> ---
 
                 // IList<T> processor
                 if (valueType.IsGenericIList())
@@ -1223,7 +1240,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         if (parameterInfos.Length == 1)
                         {
                             // create a generic method to create the generic processor
-                            var delegateCreationMethod = _genericIListWithoutIndexCreateMethod
+                            var delegateCreationMethod = genericIListWithoutIndexCreateMethod
                                 .MakeGenericMethod(valueType, valueType.IsArray? valueType.GetElementType() : valueType.GetGenericArguments()[0]);
                             
                             // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
@@ -1232,14 +1249,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
                                 ?.ConvertUnsafe<object, Func<TValue, string>>();
                             
                             // return the delegate if it was created successfully
-                            if (func != null) return func;
+                            if (func != null)
+                            {
+                                return func;
+                            }
                         }
                         
                         // IList<T> processor passing each element of the collection with the associated index.
                         if (parameterInfos.Length == 2 && parameterInfos[1].ParameterType == typeof(int))
                         {
                             // create a generic method to create the generic processor
-                            var delegateCreationMethod = _genericIListWithIndexCreateMethod
+                            var delegateCreationMethod = genericIListWithIndexCreateMethod
                                 .MakeGenericMethod(valueType, valueType.IsArray? valueType.GetElementType() : valueType.GetGenericArguments()[0]);
                             
                             // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
@@ -1248,7 +1268,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
                                 ?.ConvertUnsafe<object, Func<TValue, string>>();
                             
                             // return the delegate if it was created successfully
-                            if (func != null) return func;
+                            if (func != null)
+                            {
+                                return func;
+                            }
                         }   
                     }
                 }
@@ -1257,7 +1280,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 
                 //----------------------------
 
-                #region --- [IDICTIONARY<TKEY,TVALUE>] ---
+                #region --- Idictionary<tkey,tvalue> ---
 
                 // IDictionary<TKey, TValue> processor
                 if (valueType.IsGenericIDictionary())
@@ -1275,7 +1298,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                             && parameterInfos[1].ParameterType == genericArgs[1])
                         {
                             // create a generic method to create the generic processor
-                            var delegateCreationMethod = _genericIDictionaryCreateMethod
+                            var delegateCreationMethod = genericIDictionaryCreateMethod
                                 .MakeGenericMethod(valueType, genericArgs[0], genericArgs[1]);
                             
                             // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
@@ -1284,7 +1307,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
                                 ?.ConvertUnsafe<object, Func<TValue, string>>();
                             
                             // return the delegate if it was created successfully
-                            if (func != null) return func;
+                            if (func != null)
+                            {
+                                return func;
+                            }
                         }
                     }
                 }
@@ -1293,7 +1319,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 
                 //----------------------------
 
-                #region --- [IENUMERABLE<T>] ---
+                #region --- Ienumerable<t> ---
 
                 // IEnumerable<T> processor
                 if (valueType.IsGenericIEnumerable(true))
@@ -1303,7 +1329,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     if (parameterInfos.Length == 1 && parameterInfos[0].ParameterType == valueType.GetGenericArguments()[0])
                     {
                         // create a generic method to create the generic processor
-                        var delegateCreationMethod = _genericIEnumerableProcessorMethod
+                        var delegateCreationMethod = genericIEnumerableProcessorMethod
                             .MakeGenericMethod(valueType, valueType.GetGenericArguments()[0]);
                         
                         // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
@@ -1312,7 +1338,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
                             ?.ConvertUnsafe<object, Func<TValue, string>>();
                         
                         // return the delegate if it was created successfully
-                        if (func != null) return func;
+                        if (func != null)
+                        {
+                            return func;
+                        }
                     }
                 }
 
@@ -1349,16 +1378,16 @@ namespace Baracuda.Monitoring.Internal.Profiling
             try
             {
                 // validate that the processor name is not null.
-                if (string.IsNullOrWhiteSpace(processor)) return null;
-                
-                // setup
+                if (string.IsNullOrWhiteSpace(processor))
+                {
+                    return null;
+                }
+
                 var declaringType = valueProfile.UnitDeclaringType;
                 var valueType = valueProfile.UnitValueType;
                 
-                // get the processor method.
                 var processorMethod = declaringType.GetMethod(processor, INSTANCE_FLAGS);
                 
-                // validate that the processor is not null.
                 if (processorMethod == null)
                 {
                     ExceptionLogging.LogException(new ProcessorNotFoundException(processor, declaringType));
@@ -1389,8 +1418,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 
                 //----------------------------
                 
-                //TODO: Add IList, IEnumerable & IDictionary support.
-
                 return null;
             }
             catch (Exception exception)
@@ -1404,9 +1431,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [VALUE PROCESSOR: ILIST WITH INDEX ARGUMENT] ---
+        #region --- Value Processor: Ilist With Index Argument ---
 
-        private static readonly MethodInfo _genericIListWithIndexCreateMethod =
+        private static readonly MethodInfo genericIListWithIndexCreateMethod =
             typeof(ValueProcessor).GetMethod(nameof(CreateIListFuncWithIndexArgument), STATIC_FLAGS);
         
         /// <summary>
@@ -1431,7 +1458,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 // create a stringBuilder object to be used by the lambda.
                 var stringBuilder = new StringBuilder();
 
-                #region --- [PROCESSOR CODE] ---
+                #region --- Processor Code ---
 
                 return (value) =>
                 {
@@ -1466,9 +1493,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [VALUE PROCESSOR: ILIST WITHOUT INDEX ARGUMENT] ---
+        #region --- Value Processor: Ilist Without Index Argument ---
 
-        private static readonly MethodInfo _genericIListWithoutIndexCreateMethod =
+        private static readonly MethodInfo genericIListWithoutIndexCreateMethod =
             typeof(ValueProcessor).GetMethod(nameof(CreateIListFuncWithoutIndexArgument), STATIC_FLAGS);
         
         private static Func<TInput, string> CreateIListFuncWithoutIndexArgument<TInput, TElement>(MethodInfo processor, string name) where TInput : IList<TElement>
@@ -1484,7 +1511,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 // create a stringBuilder object to be used by the lambda.
                 var stringBuilder = new StringBuilder();
 
-                #region --- [PROCESSOR CODE] ---
+                #region --- Processor Code ---
 
                 return (value) =>
                 {
@@ -1520,10 +1547,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [VALUE PROCESSOR: DICTIONARY] ---
+        #region --- Value Processor: Dictionary ---
 
         
-        private static readonly MethodInfo _genericIDictionaryCreateMethod =
+        private static readonly MethodInfo genericIDictionaryCreateMethod =
             typeof(ValueProcessor).GetMethod(nameof(CreateIDictionaryFunc), STATIC_FLAGS);
 
         private static Func<TInput, string> CreateIDictionaryFunc<TInput, TKey, TValue>(MethodInfo processor, string name) where TInput : IDictionary<TKey, TValue>
@@ -1539,7 +1566,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 // create a stringBuilder object to be used by the lambda.
                 var stringBuilder = new StringBuilder();
                 
-                #region --- [PROCESSOR CODE] ---
+                #region --- Processor Code ---
 
                 return (value) =>
                 {
@@ -1575,9 +1602,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [VALUE PROCESSOR: IENUMERABLE] ---
+        #region --- Value Processor: Ienumerable ---
 
-        private static readonly MethodInfo _genericIEnumerableProcessorMethod =
+        private static readonly MethodInfo genericIEnumerableProcessorMethod =
             typeof(ValueProcessor).GetMethod(nameof(CreateIEnumerableFunc), STATIC_FLAGS);
         
         private static Func<TInput, string> CreateIEnumerableFunc<TInput, TElement>(MethodInfo processor, string name) where TInput : IEnumerable<TElement>
@@ -1593,7 +1620,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 // create a stringBuilder object to be used by the lambda.
                 var sb = new StringBuilder();
 
-                #region --- [PROCESSOR CODE] ---
+                #region --- Processor Code ---
 
                 return (value) =>
                 {

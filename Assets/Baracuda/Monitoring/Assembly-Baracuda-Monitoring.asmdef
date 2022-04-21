@@ -3,8 +3,7 @@
     "rootNamespace": "Baracuda",
     "references": [
         "GUID:f093583519d77944d97558bde9cc880f",
-        "GUID:c5fded5a8329e50488718cdbe4db0dc3",
-        "GUID:8b01a9bc339a2e64e86383ce41725c2b"
+        "GUID:a36f1a03b85217848b49df119256eeb5"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

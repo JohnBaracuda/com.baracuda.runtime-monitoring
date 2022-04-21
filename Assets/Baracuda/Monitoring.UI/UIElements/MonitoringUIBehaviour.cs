@@ -8,25 +8,27 @@ using Baracuda.Monitoring.Management;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Baracuda.Baracuda.Monitoring.UI.UIElements
+namespace Monitoring.UI.UIElements
 {
     [AddComponentMenu("Monitoring")]
     [RequireComponent(typeof(UIDocument))]
+
     public class MonitoringUIBehaviour : MonitoredSingleton<MonitoringUIBehaviour>, IMonitoringUI
     {
-        #region --- [INSPECTOR] ---
+        #region --- Inspector ---
         
         [SerializeField] private bool activateOnLoad = true;
         [SerializeField] private bool instantiateAsync = false;
-
+        
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [FIELDS] ---
+        #region --- Fields ---
 
         private readonly Dictionary<IMonitorUnit, IMonitoringUIElement> _monitorUnitDisplays =
             new Dictionary<IMonitorUnit, IMonitoringUIElement>();
+        
         
         private UIDocument _uiDocument;
         private VisualElement _frame;
@@ -35,7 +37,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [INIT] ---
+        #region --- Init ---
 
         protected override void Awake()
         {
@@ -45,7 +47,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
             _frame = _uiDocument.rootVisualElement.Q<VisualElement>("frame");
             
             // Add custom styleSheets.
-            foreach (var optionalStyleSheet in MonitoringSettings.Instance().optionalStyleSheets)
+            foreach (var optionalStyleSheet in MonitoringSettings.Instance().OptionalStyleSheets)
             {
                 _uiDocument.rootVisualElement.styleSheets.Add(optionalStyleSheet);
             }
@@ -69,7 +71,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [OPEN CLOSE] ---
+        #region --- Open Close ---
 
         public bool IsActive { get; private set; } = true;
 
@@ -89,7 +91,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
 
         #endregion
 
-        #region --- [FILTER] ---
+        #region --- Filter ---
         
         public void ResetFilter()
         {
@@ -118,7 +120,7 @@ namespace Baracuda.Baracuda.Monitoring.UI.UIElements
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [UI ELEMENT INSTANTIATION] ---
+        #region --- Ui Element Instantiation ---
 
         private void OnProfilingCompleted(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
         {

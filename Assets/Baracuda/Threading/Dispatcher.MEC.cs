@@ -1,4 +1,4 @@
-﻿// If you want to use the Dispatcher with More Efficient Coroutines you have to define the symbol 'EXPERIMENTAL_ENABLE_MEC',
+// If you want to use the Dispatcher with More Efficient Coroutines you have to define the symbol 'EXPERIMENTAL_ENABLE_MEC',
 // create an Assembly Definition File for Mec and add it to the Dispatcher ADFs list of Assembly References.
 // Please be aware that this is a experimental feature and its implementation might drastically change in future versions.
 #if EXPERIMENTAL_ENABLE_MEC
@@ -15,7 +15,7 @@ namespace Baracuda.Threading
 {
     public partial class Dispatcher
     {
-        #region --- [DISPATCH: MEC COROUTINE] ---
+        #region --- Dispatch: Mec Coroutine ---
 
         /// <summary>
         ///     Experimental feature will change in future versions!<br/>
@@ -58,7 +58,7 @@ namespace Baracuda.Threading
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [DISPATCH: COROUTINE ASYNC : AWAIT START] ---
+        #region --- Dispatch: Coroutine Async : Await Start ---
 
         /// <summary>
         ///     Experimental feature will change in future versions!<br/>
@@ -178,7 +178,7 @@ namespace Baracuda.Threading
 
         #endregion
         
-        #region --- [DISPATCH: COROUTINE ASYNC : AWAIT COMPLETION] ---
+        #region --- Dispatch: Coroutine Async : Await Completion ---
 
         /// <summary>
         ///     Experimental feature will change in future versions!<br/>

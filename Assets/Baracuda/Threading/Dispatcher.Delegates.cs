@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Baracuda.Threading.Utils;
@@ -9,7 +9,7 @@ namespace Baracuda.Threading
     public partial class Dispatcher
     {
         
-        #region --- [DISPATCH: ACTION] ---
+        #region --- Dispatch: Action ---
 
         /// <summary>
         /// Dispatch the execution of an <see cref="Action"/> to the main thread.
@@ -22,12 +22,12 @@ namespace Baracuda.Threading
         /// <footer><a href="https://johnbaracuda.com/dispatcher.html#actions">Documentation</a></footer>
         public static void Invoke(Action action)
         {
-            lock (_defaultExecutionQueue)
+            lock (defaultExecutionQueue)
             {
-                _defaultExecutionQueue.Enqueue(action);
+                defaultExecutionQueue.Enqueue(action);
             }
 
-            _queuedDefault = true;
+            queuedDefault = true;
         }
 
 
@@ -44,77 +44,77 @@ namespace Baracuda.Threading
             {
 #if !DISPATCHER_DISABLE_UPDATE
                 case ExecutionCycle.Update:
-                    lock (_updateExecutionQueue)
+                    lock (updateExecutionQueue)
                     {
-                        _updateExecutionQueue.Enqueue(action);
+                        updateExecutionQueue.Enqueue(action);
                     }
 
-                    _queuedUpdate = true;
+                    queuedUpdate = true;
                     break;
 #endif
 
 #if !DISPATCHER_DISABLE_LATEUPDATE
                 case ExecutionCycle.LateUpdate:
-                    lock (_lateUpdateExecutionQueue)
+                    lock (lateUpdateExecutionQueue)
                     {
-                        _lateUpdateExecutionQueue.Enqueue(action);
+                        lateUpdateExecutionQueue.Enqueue(action);
                     }
 
-                    _queuedLate = true;
+                    queuedLate = true;
                     break;
 #endif
 
 #if !DISPATCHER_DISABLE_FIXEDUPDATE
                 case ExecutionCycle.FixedUpdate:
-                    lock (_fixedUpdateExecutionQueue)
+                    lock (fixedUpdateExecutionQueue)
                     {
-                        _fixedUpdateExecutionQueue.Enqueue(action);
+                        fixedUpdateExecutionQueue.Enqueue(action);
                     }
 
-                    _queuedFixed = true;
+                    queuedFixed = true;
                     break;
 #endif
 
 #if !DISPATCHER_DISABLE_POSTUPDATE
                 case ExecutionCycle.PostUpdate:
-                    lock (_postUpdateExecutionQueue)
+                    lock (postUpdateExecutionQueue)
                     {
-                        _postUpdateExecutionQueue.Enqueue(action);
+                        postUpdateExecutionQueue.Enqueue(action);
                     }
 
-                    _queuedPost = true;
+                    queuedPost = true;
                     break;
 #endif
 
 #if !DISPATCHER_DISABLE_TICKUPDATE || ENABLE_TICKFALLBACK
                 case ExecutionCycle.TickUpdate:
-                    lock (_tickExecutionQueue)
+                    lock (tickExecutionQueue)
                     {
-                        _tickExecutionQueue.Enqueue(action);
+                        tickExecutionQueue.Enqueue(action);
                     }
 
-                    _queuedTick = true;
+                    queuedTick = true;
                     break;
 #endif
 
 #if UNITY_EDITOR && !DISPATCHER_DISABLE_EDITORUPDATE
                 case ExecutionCycle.EditorUpdate:
-                    lock (_editorExecutionQueue)
+                    lock (editorExecutionQueue)
                     {
-                        _editorExecutionQueue.Enqueue(action);
+                        editorExecutionQueue.Enqueue(action);
                     }
 
-                    _queuedEditor = true;
+                    queuedEditor = true;
                     break;
 #endif
 
                 default:
-                    lock (_defaultExecutionQueue)
+                    lock (defaultExecutionQueue)
                     {
-                        _defaultExecutionQueue.Enqueue(action);
+                        defaultExecutionQueue.Enqueue(action);
                     }
 
-                    _queuedDefault = true;
+                    queuedDefault = true;
                     break;
             }
         }
@@ -124,7 +124,7 @@ namespace Baracuda.Threading
 
         #endregion
 
-        #region --- [DISPATCH: ACTION ASYNC] ---
+        #region --- Dispatch: Action Async ---
 
         /// <summary>
         /// Dispatch an <see cref="Action"/> that will be executed on the main thread and return a <see cref="Task"/>, 
@@ -300,7 +300,7 @@ namespace Baracuda.Threading
 
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [DISPATCH: FUNC<TRESULT> ASYNC] ---
+        #region --- Dispatch: Func<tresult> Async ---
 
         /// <summary>
         /// Dispatch a <see cref="Func{T}"/> that wil executed on the main thread; and return a <see cref="Task{TResult}"/>,

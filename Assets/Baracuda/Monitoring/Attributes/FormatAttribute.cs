@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.Attributes
 {
@@ -11,7 +12,8 @@ namespace Baracuda.Monitoring.Attributes
     }
     
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class FormatAttribute : Attribute
+    [Preserve]
+    public sealed class FormatAttribute : MonitoringMetaAttribute
     {
         /// <summary>
         /// Custom format string used to display the members value if possible.

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Profiling;
 
@@ -6,8 +6,7 @@ namespace Baracuda.Monitoring.Internal.Units
 {
     public sealed class FieldUnit<TTarget, TValue> : ValueUnit<TTarget, TValue> where TTarget : class
     {
-        
-        #region --- [PROPERTIES] ---
+        #region --- Properties ---
 
         public override IMonitorProfile Profile => _fieldProfile;
 
@@ -15,7 +14,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [FIELDS] ---
+        #region --- Fields ---
 
         private readonly FieldProfile<TTarget, TValue> _fieldProfile;
         
@@ -23,7 +22,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [CTR] ---
+        #region --- Ctr ---
 
         internal FieldUnit(
             TTarget target,

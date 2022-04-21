@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Threading;
 using UnityEngine;
@@ -8,7 +8,7 @@ namespace Baracuda.Threading.Internal
     public static class ExceptionSensitiveCoroutineHandler
     {
 
-        #region --- [PUBLIC: METHODS] ---
+        #region --- Public: Methods ---
 
         public static void StartCoroutineExceptionSensitive(
             IEnumerator enumerator,
@@ -44,7 +44,7 @@ namespace Baracuda.Threading.Internal
 
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [PRIVATE: METHODS] ---
+        #region --- Private: Methods ---
         
         private static IEnumerator StartCoroutineExceptionSensitiveInternal(
             IEnumerator enumerator,
@@ -57,7 +57,7 @@ namespace Baracuda.Threading.Internal
             // allocating local method so we can unsubscribe it later to prevent memory leaks.
             void OnDisable() => error(new BehaviourDisabledException("Target Behaviour for iterator was disabled!"));
 
-            callback.onDisable += OnDisable;
+            callback.Disabled += OnDisable;
             while (true)
             {
                 object current;
@@ -67,7 +67,7 @@ namespace Baracuda.Threading.Internal
                     if (enumerator.MoveNext() == false)
                     {
                         completed();
-                        callback.onDisable -= OnDisable;
+                        callback.Disabled -= OnDisable;
                         break;
                     }
                     current = enumerator.Current;
@@ -75,7 +75,7 @@ namespace Baracuda.Threading.Internal
                 catch (Exception exception)
                 {
                     error(exception);
-                    callback.onDisable -= OnDisable;
+                    callback.Disabled -= OnDisable;
                     yield break;
                 }
                 yield return current;
@@ -93,7 +93,7 @@ namespace Baracuda.Threading.Internal
             // allocating local method so we can unsubscribe it later to prevent memory leaks.
             void OnDisable() => error(new BehaviourDisabledException("Target Behaviour for iterator was disabled!"));
 
-            callback.onDisable += OnDisable;
+            callback.Disabled += OnDisable;
             while (true)
             {
                 object current;
@@ -103,7 +103,7 @@ namespace Baracuda.Threading.Internal
                     if (enumerator.MoveNext() == false)
                     {
                         completed();
-                        callback.onDisable -= OnDisable;
+                        callback.Disabled -= OnDisable;
                         break;
                     }
                     current = enumerator.Current;
@@ -111,7 +111,7 @@ namespace Baracuda.Threading.Internal
                 catch (Exception exception)
                 {
                     error(exception);
-                    callback.onDisable -= OnDisable;
+                    callback.Disabled -= OnDisable;
                     yield break;
                 }
                 yield return current;
@@ -122,7 +122,7 @@ namespace Baracuda.Threading.Internal
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [EXTENSION METHODS] ---
+        #region --- Extension Methods ---
 
         /// <summary>
         /// Run an iterator function that might throw an exception. Call the callback with the exception

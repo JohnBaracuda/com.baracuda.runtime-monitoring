@@ -9,8 +9,8 @@ namespace Baracuda.Monitoring.Internal
 {
     internal static class MonitoringUpdate
     {
-        private static readonly List<IMonitorUnit> _updateUnits = new List<IMonitorUnit>();
-        private static readonly List<IMonitorUnit> _tickUnits  = new List<IMonitorUnit>();
+        private static readonly List<IMonitorUnit> updateUnits = new List<IMonitorUnit>();
+        private static readonly List<IMonitorUnit> tickUnits  = new List<IMonitorUnit>();
         
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Initialize()
@@ -49,12 +49,12 @@ namespace Baracuda.Monitoring.Internal
                 switch (unit.Profile.Segment)
                 {
                     case Segment.Update:
-                        _updateUnits.Add(unit);
+                        updateUnits.Add(unit);
                         break;
                     
                     case Segment.Auto: 
                     case Segment.Tick:
-                        _tickUnits.Add(unit); 
+                        tickUnits.Add(unit); 
                         break;
                 }
             }
@@ -67,12 +67,12 @@ namespace Baracuda.Monitoring.Internal
                 switch (unit.Profile.Segment)
                 {
                     case Segment.Update:
-                        _updateUnits.Remove(unit);
+                        updateUnits.Remove(unit);
                         break;
                     
                     case Segment.Auto: 
                     case Segment.Tick:
-                        _tickUnits.Remove(unit); 
+                        tickUnits.Remove(unit); 
                         break;
                 }
             }
@@ -80,24 +80,24 @@ namespace Baracuda.Monitoring.Internal
 
         private static void SetupUpdateHook()
         {
-            var hook = MonitoringUpdateHook.EnsureExist();
+            var hook = MonitoringUpdateHook.Promise();
             hook.OnTick += OnTick;
             hook.OnUpdate += OnUpdate;
         }
         
         private static void OnUpdate()
         {
-            for (var i = 0; i < _updateUnits.Count; i++)
+            for (var i = 0; i < updateUnits.Count; i++)
             {
-                _updateUnits[i].Refresh();
+                updateUnits[i].Refresh();
             }
         }
 
         private static void OnTick()
         {
-            for (var i = 0; i < _tickUnits.Count; i++)
+            for (var i = 0; i < tickUnits.Count; i++)
             {
-                _tickUnits[i].Refresh();
+                tickUnits[i].Refresh();
             }
         }
     }

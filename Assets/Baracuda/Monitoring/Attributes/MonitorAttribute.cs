@@ -1,8 +1,39 @@
 using System;
+using Baracuda.Monitoring.Management;
 using JetBrains.Annotations;
+using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.Attributes
 {
+    /// <summary>
+    /// Mark a Field, Property or Event which will then be monitored during runtime. Use concretions of this attribute
+    /// for more options depending on the targets category.
+    /// <br/>Concretions are:
+    /// <br/><see cref="MonitorValueAttribute"/>
+    /// <br/><see cref="MonitorFieldAttribute"/>
+    /// <br/><see cref="MonitorPropertyAttribute"/>
+    /// <br/><see cref="MonitorEventAttribute"/>
+    /// <br/> When monitoring non static members of a class, instances
+    /// of the monitored class must be registered and unregistered when they are created and destroyed using:
+    /// <see cref="MonitoringManager.RegisterTarget"/> or <see cref="MonitoringManager.UnregisterTarget"/>.
+    /// This process can be simplified by using monitored base types for classes that you plan to monitor.
+    /// <br/>These base types are:
+    /// <br/><see cref="MonitoredObject"/>
+    /// <br/><see cref="MonitoredBehaviour"/>
+    /// <br/><see cref="MonitoredSingleton{T}"/>
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
+    [MeansImplicitUse]
+    [Preserve]
+    public class MonitorAttribute : Attribute
+    {
+        public Segment Interval { get; set; } = Segment.Auto;
+
+        public MonitorAttribute()
+        {
+        }
+    }
+
     /// <summary>
     /// Update segment during which a monitored members state should be evaluated.
     /// </summary>
@@ -28,16 +59,5 @@ namespace Baracuda.Monitoring.Attributes
         /// The member will be evaluated on every Tick. Tick is called in once every 50 milliseconds.
         /// </summary>
         Tick = 4,
-    }
-    
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
-    [MeansImplicitUse]
-    public class MonitorAttribute : Attribute
-    {
-        public Segment Interval { get; set; } = Segment.Auto;
-
-        public MonitorAttribute()
-        {
-        }
     }
 }

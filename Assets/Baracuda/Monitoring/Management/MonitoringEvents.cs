@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Units;
@@ -10,19 +9,22 @@ namespace Baracuda.Monitoring.Management
 {
     public static class MonitoringEvents
     {
-        #region --- [PROPERTIES] ---
+        #region --- Properties ---
 
         public static bool IsInitialized
         {
-            get => _sIsInitialized;
+            get => sIsInitialized;
 
             [MethodImpl(MethodImplOptions.Synchronized)]
             private set
             {
                 if (!Dispatcher.IsMainThread())
+                {
                     throw new InvalidOperationException(
                         $"Set => {nameof(IsInitialized)} is only allowed to be set from the main thread!");
-                _sIsInitialized = value;
+                }
+
+                sIsInitialized = value;
             }
         }
 
@@ -30,15 +32,15 @@ namespace Baracuda.Monitoring.Management
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [BACKING FIELDS] ---
+        #region --- Backing Fields ---
 
-        private static volatile bool _sIsInitialized = false;
+        private static volatile bool sIsInitialized = false;
 
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [EVENTS] ---
+        #region --- Events ---
 
         public delegate void ProfilingCompletedListener(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits);
 
@@ -56,12 +58,12 @@ namespace Baracuda.Monitoring.Management
                     value.Invoke(MonitoringManager.GetStaticUnits, MonitoringManager.GetInstanceUnits);
                     return;
                 }
-                _profilingCompleted += value;
+                profilingCompleted += value;
             }
-            remove => _profilingCompleted -= value;
+            remove => profilingCompleted -= value;
         }
 
-        private static ProfilingCompletedListener _profilingCompleted;
+        private static ProfilingCompletedListener profilingCompleted;
             
         /// <summary>
         /// Event is called when a new <see cref="MonitorUnit"/> was created.
@@ -77,7 +79,7 @@ namespace Baracuda.Monitoring.Management
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [RAISE] ---
+        #region --- Raise ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void RaiseUnitCreated(MonitorUnit monitorUnit)
@@ -106,8 +108,8 @@ namespace Baracuda.Monitoring.Management
         internal static void ProfilingCompletedInternal(MonitorUnit[] staticUnits, MonitorUnit[] instanceUnits)
         {
             IsInitialized = true;
-            _profilingCompleted?.Invoke(staticUnits, instanceUnits);
-            _profilingCompleted = null;
+            profilingCompleted?.Invoke(staticUnits, instanceUnits);
+            profilingCompleted = null;
         }
         
         #endregion

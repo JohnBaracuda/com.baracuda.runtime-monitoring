@@ -1,5 +1,4 @@
-﻿using System;
-using Baracuda.Monitoring.Internal.Profiling;
+using System;
 using Baracuda.Monitoring.Internal.Units;
 
 namespace Baracuda.Monitoring.Interface
@@ -29,7 +28,7 @@ namespace Baracuda.Monitoring.Interface
         object Target { get; }
 
         /// <summary>
-        /// The <see cref="MonitorProfile"/> of the unit.
+        /// <see cref="IMonitorProfile"/> describing the monitoring unit. 
         /// </summary>
         IMonitorProfile Profile { get; }
 

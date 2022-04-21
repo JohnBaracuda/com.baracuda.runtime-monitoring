@@ -1,10 +1,13 @@
-﻿using System;
+using System;
 using System.Reflection;
 using Baracuda.Monitoring.Attributes;
-using Baracuda.Monitoring.Internal.Utils;
+using Baracuda.Monitoring.Internal.Utilities;
 
 namespace Baracuda.Monitoring.Interface
 {
+    /// <summary>
+    /// Interface provides access to data describing the profile of a monitored member. 
+    /// </summary>
     public interface IMonitorProfile
     {
         /// <summary>
@@ -19,15 +22,12 @@ namespace Baracuda.Monitoring.Interface
         Type UnitDeclaringType { get; }
         string[] Tags { get; }
         bool IsStatic { get; }
-        bool ShowIndexer { get; }
         string Label { get; }
         string Format { get; }
         int FontSize { get; }
-        int IndentValue { get; }
-        string Indent { get; }
         UIPosition Position { get; }
         bool AllowGrouping { get; }
-        string[] UssStyles { get; }
         string GroupName { get; }
+        bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute;
     }
 }

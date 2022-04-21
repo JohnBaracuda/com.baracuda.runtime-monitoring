@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -11,7 +11,7 @@ namespace Baracuda.Threading
 {
     public sealed partial class Dispatcher : IDisableCallback
     {
-        #region --- [DISPATCH: COROUTINE] ---
+        #region --- Dispatch: Coroutine ---
         
         /// <summary>
         /// Dispatch an <see cref="IEnumerator"/> that will be started and executed as a <see cref="Coroutine"/> on the main thread.
@@ -102,7 +102,7 @@ namespace Baracuda.Threading
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [DISPATCH: COROUTINE ASYNC : AWAIT START] ---
+        #region --- Dispatch: Coroutine Async : Await Start ---
         
         
         /// <summary>
@@ -380,7 +380,7 @@ namespace Baracuda.Threading
 
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [DISPATCH: COROUTINE ASYNC : AWAIT COMPLETION] ---
+        #region --- Dispatch: Coroutine Async : Await Completion ---
 
         /// <summary>
         /// Dispatch an <see cref="IEnumerator"/> that is executed as a <see cref="Coroutine"/>
@@ -631,7 +631,7 @@ namespace Baracuda.Threading
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- [STOP COROUTINE] ---
+        #region --- Stop Coroutine ---
 
         /// <summary>
         /// Stop a coroutine that is running on the Dispatcher.
@@ -709,7 +709,7 @@ namespace Baracuda.Threading
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- [INTERNAL COROUTINE] ---
+        #region --- Internal Coroutine ---
         
         /// <summary>
         /// Start an internal coroutine with cancellation support and exception handling.
@@ -732,30 +732,30 @@ namespace Baracuda.Threading
         {
             if (throwExceptions)
             {
-                Current.StartCoroutineExceptionSensitive(coroutine, tcs.TrySetException, tcs.TrySetCompleted, ct, _current);
+                Current.StartCoroutineExceptionSensitive(coroutine, tcs.TrySetException, tcs.TrySetCompleted, ct, current);
             }
             else
             {
-                Current.StartCoroutineExceptionSensitive(coroutine, tcs.TrySetResult, tcs.TrySetCompleted, ct, _current);
+                Current.StartCoroutineExceptionSensitive(coroutine, tcs.TrySetResult, tcs.TrySetCompleted, ct, current);
             }
         }
         
         
         #endregion
         
-        #region --- [INTERFACE: DISABLE CALLBACK] ---
+        #region --- Interface: Disable Callback ---
         
-        public event Action onDisable;
+        public event Action Disabled;
 
         private void OnDisable()
         {
-            onDisable?.Invoke();
-            onDisable = null;
+            Disabled?.Invoke();
+            Disabled = null;
         }
 
         #endregion
         
-        #region --- [OBSOLETE] ---
+        #region --- Obsolete ---
         
         /// <summary>
         /// Dispatch an <see cref="IEnumerator"/> that will be started and executed as a <see cref="Coroutine"/>

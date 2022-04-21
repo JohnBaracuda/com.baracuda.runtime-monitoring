@@ -1,0 +1,20 @@
+{
+    "name": "Assembly-Baracuda-Monitoring-Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:ca92f98736a979747b5de3a34d731a59",
+        "GUID:ebbe9d84e8ef48849914915fd413606a",
+        "GUID:a36f1a03b85217848b49df119256eeb5"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

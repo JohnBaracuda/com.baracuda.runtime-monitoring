@@ -1,4 +1,4 @@
-﻿namespace Baracuda.Monitoring.Management
+namespace Baracuda.Monitoring.Management
 {
     public static class MonitoringExtensions
     {

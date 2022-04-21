@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring.Example.Scripts
     /// </summary>
     public class LegacyPlayerInput : MonitoredBehaviour, IPlayerInput
     {
-        #region --- [INSPECTOR] ---
+        #region --- Inspector ---
 
         [SerializeField] private KeyCode jumpKey = KeyCode.Space;
         [SerializeField] private KeyCode primaryFireKey = KeyCode.Mouse0;
@@ -18,7 +18,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         #endregion
 
-        #region --- [INTERFACE: IPlayerInput] ---
+        #region --- Interface: Iplayerinput ---
 
         public float Vertical { get; private set; }
         
