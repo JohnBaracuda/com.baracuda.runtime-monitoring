@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
-using Baracuda.Monitoring.Utilities.Pooling.Concretions;
+using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 

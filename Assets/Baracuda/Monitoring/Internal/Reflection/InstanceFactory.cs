@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Baracuda.Monitoring.Utilities.Pooling.Concretions;
+using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Reflection

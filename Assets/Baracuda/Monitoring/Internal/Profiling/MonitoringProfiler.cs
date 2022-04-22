@@ -82,7 +82,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             try
             {
-                settings = await Dispatcher.InvokeAsync(MonitoringSettings.Instance, ct);
+                settings = await Dispatcher.InvokeAsync(() => MonitoringSettings.Instance(), ct);
                 
                 var types = await CreateAssemblyProfileAsync(ct);
                 await CreateMonitoringProfileAsync(types, ct);

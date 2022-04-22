@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
-using Baracuda.Monitoring.Utilities.Pooling.Concretions;
 using Baracuda.Threading;
 
 namespace Baracuda.Monitoring.Management
@@ -15,8 +15,8 @@ namespace Baracuda.Monitoring.Management
     {
         #region --- Collections ---
 
-        public static IReadOnlyList<MonitorUnit> GetStaticUnits => staticUnits;
-        public static IReadOnlyList<MonitorUnit> GetInstanceUnits => instanceUnits;
+        public static IReadOnlyList<MonitorUnit> GetStaticUnits() => staticUnits;
+        public static IReadOnlyList<MonitorUnit> GetInstanceUnits() => instanceUnits;
 
         private static readonly List<MonitorUnit> staticUnits = new List<MonitorUnit>(30);
         private static readonly List<MonitorUnit> instanceUnits = new List<MonitorUnit>(30);

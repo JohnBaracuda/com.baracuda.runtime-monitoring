@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Baracuda.Monitoring.Attributes;
+using Baracuda.Monitoring.Display;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -25,6 +26,7 @@ namespace Baracuda.Monitoring.Management
         [SerializeField] private bool enableMonitoring = true;
         [Tooltip("When enabled the game start will be delayed until all profiling has completed. This might increase the startup time significantly!")]
         [SerializeField] private bool forceSynchronousLoad = false;
+        [SerializeReference, SerializeField] private MonitoringDisplayHandler monitoringDisplayHandler;
 
         /*
          * Debugging   
@@ -115,7 +117,8 @@ namespace Baracuda.Monitoring.Management
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Properties ---
-        
+
+        public MonitoringDisplayHandler DisplayDisplayHandler => monitoringDisplayHandler;
         public bool EnableMonitoring => enableMonitoring;
         public bool ForceSynchronousLoad => forceSynchronousLoad;
 

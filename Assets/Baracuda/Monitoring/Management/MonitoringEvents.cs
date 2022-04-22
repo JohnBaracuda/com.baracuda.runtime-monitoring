@@ -28,14 +28,8 @@ namespace Baracuda.Monitoring.Management
             }
         }
 
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Backing Fields ---
-
         private static volatile bool sIsInitialized = false;
-
+        
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -55,7 +49,7 @@ namespace Baracuda.Monitoring.Management
             {
                 if (IsInitialized)
                 {
-                    value.Invoke(MonitoringManager.GetStaticUnits, MonitoringManager.GetInstanceUnits);
+                    value.Invoke(MonitoringManager.GetStaticUnits(), MonitoringManager.GetInstanceUnits());
                     return;
                 }
                 profilingCompleted += value;
@@ -81,7 +75,6 @@ namespace Baracuda.Monitoring.Management
 
         #region --- Raise ---
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void RaiseUnitCreated(MonitorUnit monitorUnit)
         {
             if (!Dispatcher.IsMainThread())
@@ -91,9 +84,7 @@ namespace Baracuda.Monitoring.Management
             }
             UnitCreated?.Invoke(monitorUnit);
         }
-
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        
         internal static void RaiseUnitDisposed(MonitorUnit monitorUnit)
         {
             if (!Dispatcher.IsMainThread())
@@ -103,7 +94,6 @@ namespace Baracuda.Monitoring.Management
             }
             UnitDisposed?.Invoke(monitorUnit);
         }
-
         
         internal static void ProfilingCompletedInternal(MonitorUnit[] staticUnits, MonitorUnit[] instanceUnits)
         {

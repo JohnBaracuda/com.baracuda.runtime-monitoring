@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using Baracuda.Monitoring.Utilities.Pooling.Concretions;
+using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Reflection

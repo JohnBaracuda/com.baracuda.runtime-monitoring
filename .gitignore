@@ -73,3 +73,6 @@ crashlytics-build.properties
 *.log
 ProjectSettings/RiderScriptEditorPersistedState.asset
 *.DotSettings
+*.log
+*.log
+*.log

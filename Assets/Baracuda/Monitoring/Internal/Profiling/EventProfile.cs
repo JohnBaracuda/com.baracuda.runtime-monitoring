@@ -3,10 +3,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Baracuda.Monitoring.Attributes;
+using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
-using Baracuda.Monitoring.Utilities.Pooling.Concretions;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {

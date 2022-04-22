@@ -10,12 +10,13 @@ namespace Baracuda.Monitoring.Editor
     public class MonitoringSettingsInspector : UnityEditor.Editor
     {
         private FoldoutHandler Foldout { get; set; }
-        private MonitoringSettings _settings;
+        private static GUIStyle RichTextStyle => new GUIStyle("label") { richText = true, alignment = TextAnchor.MiddleCenter};
 
         #region --- Serialized Properties ---
 
         private SerializedProperty _enableMonitoring;
         private SerializedProperty _forceSynchronousLoad;
+        private SerializedProperty _monitoringDisplayHandler;
         
         private SerializedProperty _logBadImageFormatException;
         private SerializedProperty _logOperationCanceledException;
@@ -63,12 +64,15 @@ namespace Baracuda.Monitoring.Editor
         private void OnEnable()
         {
             Foldout = new FoldoutHandler(nameof(MonitoringSettings));
-            _settings = MonitoringSettings.Instance();
-
             PopulateSerializedProperties();
         }
 
         private void OnDisable()
+        {
+            SaveState();
+        }
+
+        public void SaveState()
         {
             Foldout.SaveState();
         }
@@ -104,14 +108,22 @@ namespace Baracuda.Monitoring.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            
             EditorGUIUtility.labelWidth = 300;
+            DrawTitle("Monitoring", Color.clear, new Color(0.85f, 0.85f, 0.85f));
+
+            if (Application.isPlaying)
+            {
+                EditorGUILayout.HelpBox("Cannot edit settings during runtime!", MessageType.Info);
+                GUI.enabled = false;
+            }
             
             if (Foldout["General"])
             {
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_enableMonitoring);
                 EditorGUILayout.PropertyField(_forceSynchronousLoad);
+                EditorGUILayout.PropertyField(_monitoringDisplayHandler);
+                DrawButtonControls();
                 EditorGUILayout.Space();
             }
             
@@ -190,6 +202,30 @@ namespace Baracuda.Monitoring.Editor
 
         #region --- Misc ---
 
+        private static void DrawButtonControls()
+        {
+            EditorGUILayout.Space();
+            DrawLine();
+            EditorGUILayout.Space();
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Documentation", GUILayout.Height(25), GUILayout.MinWidth(150)))
+            {
+                Application.OpenURL("https://github.com/JohnBaracuda/Member-State-Monitoring");
+            }
+            if (GUILayout.Button("Repository", GUILayout.Height(25), GUILayout.MinWidth(150)))
+            {
+                Application.OpenURL("https://github.com/JohnBaracuda/Member-State-Monitoring");
+            }
+            if (GUILayout.Button("Website", GUILayout.Height(25), GUILayout.MinWidth(150)))
+            {
+                Application.OpenURL("https://johnbaracuda.com/");
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            EditorGUILayout.Space();
+        }
+
         private static void DrawGenerateAotTypesButton()
         {
             EditorGUILayout.Space();
@@ -197,7 +233,7 @@ namespace Baracuda.Monitoring.Editor
             EditorGUILayout.Space();
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Generate IL2CPP Ahead Of Time Types", GUILayout.Height(30), GUILayout.MinWidth(250)))
+            if (GUILayout.Button("Generate Code", GUILayout.Height(25), GUILayout.MinWidth(150)))
             {
                 IL2CPPBuildPreprocessor.GenerateIL2CPPAheadOfTimeTypes();
             }
@@ -206,6 +242,13 @@ namespace Baracuda.Monitoring.Editor
             EditorGUILayout.Space();
         }
 
+        private static void DrawTitle(string title, Color background, Color font)
+        {
+            var fullRect = GUILayoutUtility.GetRect(0, 0, 36, 0);
+            EditorGUI.DrawRect(fullRect, background);
+            GUI.Label(fullRect, "<size=16><color=#" + ColorUtility.ToHtmlStringRGB(font) + ">" + title + "</color></size>", RichTextStyle);
+        }
+        
         private static void DrawLine(int thickness = 1, int padding = 1)
         {
             var rect = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
