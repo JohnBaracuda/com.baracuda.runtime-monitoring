@@ -1,6 +1,6 @@
 {
     "name": "Assembly-Baracuda-Threading-Editor",
-    "rootNamespace": "Baracuda",
+    "rootNamespace": "",
     "references": [
         "GUID:f093583519d77944d97558bde9cc880f"
     ],

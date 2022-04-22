@@ -18,8 +18,14 @@ namespace Baracuda.Monitoring.Management
     
     public class MonitoringSettings : ScriptableObject
     {
-        //TODO: Add Editor Assemblies only option
-        
+        /*
+         * General   
+         */
+
+        [SerializeField] private bool enableMonitoring = true;
+        [Tooltip("When enabled the game start will be delayed until all profiling has completed. This might increase the startup time significantly!")]
+        [SerializeField] private bool forceSynchronousLoad = false;
+
         /*
          * Debugging   
          */
@@ -109,6 +115,10 @@ namespace Baracuda.Monitoring.Management
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Properties ---
+        
+        public bool EnableMonitoring => enableMonitoring;
+        public bool ForceSynchronousLoad => forceSynchronousLoad;
+
         
         public LoggingLevel LogBadImageFormatException => logBadImageFormatException;
         public LoggingLevel LogOperationCanceledException => logOperationCanceledException;

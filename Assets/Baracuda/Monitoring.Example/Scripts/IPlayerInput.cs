@@ -1,6 +1,3 @@
-using System;
-using UnityEngine;
-
 namespace Baracuda.Monitoring.Example.Scripts
 {
     public interface IPlayerInput

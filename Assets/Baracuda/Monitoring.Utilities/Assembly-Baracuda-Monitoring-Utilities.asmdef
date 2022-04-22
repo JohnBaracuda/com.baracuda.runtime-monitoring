@@ -1,6 +1,6 @@
 {
     "name": "Assembly-Baracuda-Monitoring-Utilities",
-    "rootNamespace": "Baracuda",
+    "rootNamespace": "",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -8,7 +8,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "!DISABLE_RUNTIME_MONITORING"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }

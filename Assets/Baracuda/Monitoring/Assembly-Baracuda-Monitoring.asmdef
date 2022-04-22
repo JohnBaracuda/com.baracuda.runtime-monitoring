@@ -1,6 +1,6 @@
 {
     "name": "Assembly-Baracuda-Monitoring",
-    "rootNamespace": "Baracuda",
+    "rootNamespace": "",
     "references": [
         "GUID:f093583519d77944d97558bde9cc880f",
         "GUID:a36f1a03b85217848b49df119256eeb5"
@@ -11,7 +11,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "!DISABLE_RUNTIME_MONITORING"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }

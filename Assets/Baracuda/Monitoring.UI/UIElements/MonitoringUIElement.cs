@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
-namespace Monitoring.UI.UIElements
+namespace Baracuda.Monitoring.UI.UIElements
 {
     public interface IMonitoringUIElement
     {

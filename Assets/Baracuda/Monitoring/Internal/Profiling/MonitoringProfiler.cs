@@ -74,7 +74,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         private static void InitializeRuntimeReflection()
-            => Task.Run(() => InitializeProfilingAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
+        {
+            Task.Run(() => InitializeProfilingAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
+        }
 
         private static async Task InitializeProfilingAsync(CancellationToken ct)
         {
@@ -82,8 +84,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 settings = await Dispatcher.InvokeAsync(MonitoringSettings.Instance, ct);
                 
-                var types = await CreateAssemblyProfile(ct);
-                await CreateMonitoringProfile(types, ct);
+                var types = await CreateAssemblyProfileAsync(ct);
+                await CreateMonitoringProfileAsync(types, ct);
             }
             catch (OperationCanceledException oce)
             {
@@ -105,7 +107,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
 
-        private static Task<Type[]> CreateAssemblyProfile(CancellationToken ct)
+        private static Task<Type[]> CreateAssemblyProfileAsync(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -122,7 +124,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 {
                     continue;
                 }
-
+                
                 var types = assembly.GetTypes();
                 
                 for (var j = 0; j < types.Length; j++)
@@ -145,7 +147,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             return Task.FromResult(typeCache.ToArray());
         }
 
-        private static async Task CreateMonitoringProfile(Type[] types, CancellationToken ct)
+        private static async Task CreateMonitoringProfileAsync(Type[] types, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
             

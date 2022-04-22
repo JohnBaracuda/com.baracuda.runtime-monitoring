@@ -595,7 +595,7 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLDecompressionFallback: 0
   scriptingDefineSymbols:
-    Standalone: DISPATCHER_DEBUG;PPSDF;ENFORCETHREADSAFETY;JETBRAINS_ANNOTATIONS;MONITORING_DEBUG;BARACUDA_MONITORING
+    Standalone: DISPATCHER_DEBUG;PPSDF;ENFORCETHREADSAFETY;JETBRAINS_ANNOTATIONS;MONITORING_DEBUG
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

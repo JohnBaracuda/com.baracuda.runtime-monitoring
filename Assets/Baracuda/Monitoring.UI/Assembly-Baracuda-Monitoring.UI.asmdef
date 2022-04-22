@@ -10,7 +10,10 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "!DISABLE_RUNTIME_MONITORING",
+        "UNITY_2020_1_OR_NEWER"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }

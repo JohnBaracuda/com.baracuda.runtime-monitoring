@@ -351,15 +351,21 @@ namespace Baracuda.Monitoring.Internal.Reflection
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNumeric(this Type type)
-            => numericTypes.Contains(type) || numericTypes.Contains(Nullable.GetUnderlyingType(type));
+        {
+            return numericTypes.Contains(type) || numericTypes.Contains(Nullable.GetUnderlyingType(type));
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsFloatingPoint(this Type type)
-            => decimalTypes.Contains(type) || decimalTypes.Contains(Nullable.GetUnderlyingType(type));
+        {
+            return decimalTypes.Contains(type) || decimalTypes.Contains(Nullable.GetUnderlyingType(type));
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsWholeNumber(this Type type)
-            => integerTypes.Contains(type) || integerTypes.Contains(Nullable.GetUnderlyingType(type));
+        {
+            return integerTypes.Contains(type) || integerTypes.Contains(Nullable.GetUnderlyingType(type));
+        }
 
         /*
          *  Elementary & Meta
@@ -367,15 +373,39 @@ namespace Baracuda.Monitoring.Internal.Reflection
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsString(this Type type)
-            => type == typeof(string);
+        {
+            return type == typeof(string);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsStruct(this Type type)
-            => type.IsValueType && !type.IsEnum && !type.IsPrimitive;
+        {
+            return type.IsValueType && !type.IsEnum && !type.IsPrimitive;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsReadonlyRefStruct(this Type type)
+        {
+            return type.IsStruct() && type.IsRefBy() && type.IsReadOnly();
+        }
+
+        public static bool IsRefBy(this Type type)
+        {
+            return type.HasAttribute<IsByRefLikeAttribute>();
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsReadOnly(this Type type)
+        {
+            return type.HasAttribute<IsReadOnlyAttribute>();
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsStatic(this Type type)
-            => type.IsAbstract && type.IsSealed;
+        {
+            return type.IsAbstract && type.IsSealed;
+        }
 
         /*
          *  Collections   
@@ -383,33 +413,45 @@ namespace Baracuda.Monitoring.Internal.Reflection
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsList(this Type type)
-            => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsDictionary(this Type type)
-            => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsStack(this Type type)
-            => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Stack<>);
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Stack<>);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIEnumerable(this Type type, bool excludeStrings = false)
-            => excludeStrings
+        {
+            return excludeStrings
                 ? type.GetInterface(nameof(IEnumerable)) != null && !type.IsString()
                 : type.GetInterface(nameof(IEnumerable)) != null;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIEnumerable(this Type type, bool excludeStrings = false)
-            => excludeStrings
+        {
+            return excludeStrings
                 ? type.IsGenericType && type.GetInterface(nameof(IEnumerable)) != null && !type.IsString()
                 : type.IsGenericType && type.GetInterface(nameof(IEnumerable)) != null;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIEnumerableT(this Type type, bool excludeStrings = false)
-            => excludeStrings
+        {
+            return excludeStrings
                 ? type.IsGenericType && type.IsAssignableFrom(typeof(IEnumerable<>)) && !type.IsString()
                 : type.IsGenericType && type.IsAssignableFrom(typeof(IEnumerable<>));
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIDictionary(this Type type)
@@ -420,9 +462,13 @@ namespace Baracuda.Monitoring.Internal.Reflection
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsGenericIList(this Type type) 
-            => type.GetInterfaces().Any(interfaceType => interfaceType.IsGenericType && (interfaceType.GetElementType() ??
-                    interfaceType.GetGenericTypeDefinition()) == typeof(IList<>));
+        public static bool IsGenericIList(this Type type)
+        {
+            return type.GetInterfaces().Any(interfaceType => interfaceType.IsGenericType &&
+                                                             (interfaceType.GetElementType() ??
+                                                              interfaceType.GetGenericTypeDefinition()) ==
+                                                             typeof(IList<>));
+        }
 
         /*
          *  Unity Types   
@@ -430,15 +476,21 @@ namespace Baracuda.Monitoring.Internal.Reflection
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsVector(this Type type)
-            => (type == typeof(Vector2) || type == typeof(Vector3) || type == typeof(Vector4));
+        {
+            return (type == typeof(Vector2) || type == typeof(Vector3) || type == typeof(Vector4));
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsVectorInt(this Type type)
-            => (type == typeof(Vector2Int) || type == typeof(Vector3Int));
+        {
+            return (type == typeof(Vector2Int) || type == typeof(Vector3Int));
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsColor(this Type type)
-            => (type == typeof(Color) || type == typeof(Color32));
+        {
+            return (type == typeof(Color) || type == typeof(Color32));
+        }
 
         /*
          *  Generics & Delegates   
@@ -446,15 +498,21 @@ namespace Baracuda.Monitoring.Internal.Reflection
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsDelegate(this Type type)
-            => typeof(Delegate).IsAssignableFrom(type.BaseType);
+        {
+            return typeof(Delegate).IsAssignableFrom(type.BaseType);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsSubclassOrAssignable(this Type type, Type inheritsFrom)
-            => type.IsSubclassOf(inheritsFrom) || type.IsAssignableFrom(inheritsFrom);
+        {
+            return type.IsSubclassOf(inheritsFrom) || type.IsAssignableFrom(inheritsFrom);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasInterface<T>(this Type type)
-            => type.GetInterfaces().Any(x => x == typeof(T));
+        {
+            return type.GetInterfaces().Any(x => x == typeof(T));
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic, bool includeSelf)

@@ -2,13 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Baracuda.Monitoring;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Management;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Monitoring.UI.UIElements
+namespace Baracuda.Monitoring.UI.UIElements
 {
     [AddComponentMenu("Monitoring")]
     [RequireComponent(typeof(UIDocument))]

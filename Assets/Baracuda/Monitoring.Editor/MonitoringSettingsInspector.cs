@@ -4,7 +4,7 @@ using Baracuda.Monitoring.Management;
 using UnityEditor;
 using UnityEngine;
 
-namespace Monitoring.Editor
+namespace Baracuda.Monitoring.Editor
 {
     [CustomEditor(typeof(MonitoringSettings))]
     public class MonitoringSettingsInspector : UnityEditor.Editor
@@ -14,6 +14,9 @@ namespace Monitoring.Editor
 
         #region --- Serialized Properties ---
 
+        private SerializedProperty _enableMonitoring;
+        private SerializedProperty _forceSynchronousLoad;
+        
         private SerializedProperty _logBadImageFormatException;
         private SerializedProperty _logOperationCanceledException;
         private SerializedProperty _logThreadAbortException;
@@ -101,6 +104,16 @@ namespace Monitoring.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+            
+            EditorGUIUtility.labelWidth = 300;
+            
+            if (Foldout["General"])
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.PropertyField(_enableMonitoring);
+                EditorGUILayout.PropertyField(_forceSynchronousLoad);
+                EditorGUILayout.Space();
+            }
             
             if (Foldout["Debug"])
             {
@@ -210,8 +223,7 @@ namespace Monitoring.Editor
                 var path = property.stringValue;
                 
                 GUILayout.BeginHorizontal();
-                EditorGUILayout.PrefixLabel(property.displayName);
-                path = EditorGUILayout.TextField("", path);
+                path = EditorGUILayout.TextField(property.displayName, path);
                 if (GUILayout.Button("...", GUILayout.Width(20)))
                 {
                     var newPath = EditorUtility.OpenFilePanel("Select File", string.IsNullOrWhiteSpace(path)? path : Application.dataPath, fileExtension);

@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
 
-namespace Monitoring.Editor
+namespace Baracuda.Monitoring.Editor
 {
     public class FoldoutHandler
     {
@@ -19,17 +19,15 @@ namespace Monitoring.Editor
          */
         
         private readonly Dictionary<string, bool> _data;
-        private readonly bool _indent;
         private readonly string _dataKey;
 
         /*
          * Ctor   
          */
 
-        public FoldoutHandler(string dataKey = null, bool indent = true)
+        public FoldoutHandler(string dataKey = null)
         {
             _dataKey = dataKey;
-            _indent = indent;
             
             var data = EditorPrefs.GetString(_dataKey);
             
@@ -83,7 +81,7 @@ namespace Monitoring.Editor
                     _data.Add(name, currentValue = !DefaultFoldoutStates.TryGetValue(name, out var state) || state);
                 }
                     
-                var newValue = _indent ? Foldout(currentValue, name): WindowFoldout(currentValue, name);
+                var newValue = Foldout(currentValue, name);
                 this[name] = newValue;
 
                 if (newValue != currentValue && Event.current.alt)
@@ -122,27 +120,13 @@ namespace Monitoring.Editor
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Foldout(bool value, string label)
         {
-            EditorGUILayout.LabelField("");
-            var lastRect = GUILayoutUtility.GetLastRect();
+            var lastRect = EditorGUILayout.GetControlRect();
             var widthRect = new Rect(0, lastRect.y, EditorGUIUtility.currentViewWidth, lastRect.height + 2);
-            var foldoutRect = new Rect(20, lastRect.y +1, EditorGUIUtility.currentViewWidth - 10, lastRect.height);
             EditorGUI.DrawRect(new Rect(0, lastRect.y, EditorGUIUtility.currentViewWidth, 1), new Color(0f, 0f, 0f, 0.3f));
             EditorGUI.DrawRect(widthRect, new Color(0f, 0f, 0f, 0.15f));
-            return EditorGUI.Foldout(foldoutRect,value, label, true);
+            return EditorGUI.Foldout(lastRect,value, label, true);
         }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool WindowFoldout(bool value, string label)
-        {
-            EditorGUILayout.LabelField("");
-            var lastRect = GUILayoutUtility.GetLastRect();
-            var widthRect = new Rect(0, lastRect.y, EditorGUIUtility.currentViewWidth, lastRect.height + 2);
-            var foldoutRect = new Rect(0, lastRect.y +1, EditorGUIUtility.currentViewWidth - 10, lastRect.height);
-            EditorGUI.DrawRect(new Rect(0, lastRect.y, EditorGUIUtility.currentViewWidth, 1), new Color(0f, 0f, 0f, 0.3f));
-            EditorGUI.DrawRect(widthRect, new Color(0f, 0f, 0f, 0.15f));
-            return EditorGUI.Foldout(foldoutRect,value, label, true);
-        }
-        
+       
         
         #endregion
     }

@@ -21,7 +21,7 @@ using UnityEngine;
 using UnityEngine.Scripting;
 using Assembly = System.Reflection.Assembly;
 
-namespace Monitoring.Editor
+namespace Baracuda.Monitoring.Editor
 {
     public class IL2CPPBuildPreprocessor : IPreprocessBuildWithReport
     {
@@ -359,6 +359,11 @@ namespace Monitoring.Editor
             {
                 validated = typeof(object);
                 return;
+            }
+
+            if (type.IsStruct())
+            {
+                
             }
 
             if (type.IsEnum)
