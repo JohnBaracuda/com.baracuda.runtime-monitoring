@@ -1,24 +1,23 @@
+﻿using System.Collections.Generic;
+using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Management;
-using Baracuda.Threading;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Display
 {
-    public static class MonitoringDisplay
+    public abstract class MonitoringDisplay : MonitoredSingleton<MonitoringDisplay>
     {
-        private static MonitoringDisplayHandler displayHandlerInstance;
-        
-        [RuntimeInitializeOnLoadMethod]
-        private static async void InitializeMonitoringDisplay()
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void InitializeMonitoringDisplay()
         {
-            var settings = await Dispatcher.InvokeAsync(() => MonitoringSettings.Instance());
+            var settings = MonitoringSettings.Instance();
 
             if (!settings.EnableMonitoring)
             {
                 return;
             }
 
-            displayHandlerInstance = Object.Instantiate(settings.DisplayDisplayHandler, Vector3.zero, Quaternion.identity);
+            var displayHandlerInstance = Instantiate(settings.DisplayDisplay, Vector3.zero, Quaternion.identity);
             // MonitoringEvents.ProfilingCompleted += displayHandlerInstance.OnProfilingCompleted;
             // MonitoringEvents.ProfilingCompleted += delegate
             // {
@@ -26,5 +25,17 @@ namespace Baracuda.Monitoring.Display
             //     MonitoringEvents.UnitDisposed += displayHandlerInstance.OnUnitDisposed;
             // };
         }
+        
+        public static void ShowDisplay(){}
+        public static void HideDisplay(){}
+        public static void ToggleDisplay(){}
+        public static bool IsVisible() => false;
+
+        // protected internal abstract void OnUnitDisposed(IMonitorUnit obj);
+        //
+        // protected internal abstract void OnUnitCreated(IMonitorUnit obj);
+        //
+        // protected internal abstract void OnProfilingCompleted(IReadOnlyList<IMonitorUnit> staticUnits,
+        //     IReadOnlyList<IMonitorUnit> instanceUnits);
     }
 }

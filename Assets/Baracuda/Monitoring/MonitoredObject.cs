@@ -3,7 +3,7 @@ using Baracuda.Monitoring.Management;
 
 namespace Baracuda.Monitoring
 {
-    public abstract class MonitoredObject : object, IDisposable
+    public abstract class MonitoredObject : IDisposable
     {
         private bool _isDisposed = false;
         

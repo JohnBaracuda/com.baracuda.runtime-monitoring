@@ -11,8 +11,8 @@ namespace Baracuda.Monitoring.Attributes
         BottomRight
     }
     
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     [Preserve]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class FormatAttribute : MonitoringMetaAttribute
     {
         /// <summary>

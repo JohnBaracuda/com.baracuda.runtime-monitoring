@@ -18,7 +18,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         public MonitorAttribute Attribute { get; }
         public MemberInfo MemberInfo { get; }
         public UnitType UnitType { get; }
-        public Segment Segment { get; }
+        public UpdateOptions UpdateOptions { get; }
         public Type UnitTargetType { get; }
         public Type UnitValueType { get; }
         public Type UnitDeclaringType { get; }
@@ -67,7 +67,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             UnitTargetType = unitTargetType;
             UnitValueType = unitValueType;
             UnitDeclaringType = memberInfo.DeclaringType;
-            Segment = attribute.Interval;
+            UpdateOptions = attribute.Update;
             IsStatic = args.ReflectedMemberFlags.HasFlagUnsafe(BindingFlags.Static);
             
             var settings = args.Settings;
@@ -138,7 +138,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         /// </summary>
         /// <param name="target">The target of the unit. Null if static</param>
         /// <returns></returns>
-        public abstract MonitorUnit CreateUnit(object target);
+        internal abstract MonitorUnit CreateUnit(object target);
 
         #endregion
     }

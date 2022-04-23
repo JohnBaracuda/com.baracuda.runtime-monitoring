@@ -27,7 +27,7 @@ namespace Baracuda.Monitoring.Attributes
     [Preserve]
     public class MonitorAttribute : Attribute
     {
-        public Segment Interval { get; set; } = Segment.Auto;
+        public UpdateOptions Update { get; set; } = UpdateOptions.Auto;
 
         public MonitorAttribute()
         {
@@ -37,7 +37,7 @@ namespace Baracuda.Monitoring.Attributes
     /// <summary>
     /// Update segment during which a monitored members state should be evaluated.
     /// </summary>
-    public enum Segment
+    public enum UpdateOptions
     {
         /// <summary>
         /// If an update event is set, the state of the members will only be evaluated when the event is invoked. Else
@@ -46,18 +46,18 @@ namespace Baracuda.Monitoring.Attributes
         Auto = 0,
         
         /// <summary>
-        /// The members will not be evaluated except once on load.
+        /// The members will not be evaluated except once on load. Use this option for constant values.
         /// </summary>
         DontUpdate = 1,
         
         /// <summary>
         /// The member will be evaluated on every Update.
         /// </summary>
-        Update = 2,
+        FrameUpdate = 2,
         
         /// <summary>
         /// The member will be evaluated on every Tick. Tick is called in once every 50 milliseconds.
         /// </summary>
-        Tick = 4,
+        TickUpdate = 4,
     }
 }

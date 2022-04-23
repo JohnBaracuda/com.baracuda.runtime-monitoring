@@ -8,10 +8,10 @@ using Baracuda.Monitoring.Management;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Baracuda.Monitoring.UI.UIElements
+namespace Baracuda.Monitoring.UI.UIToolkit
 {
     [RequireComponent(typeof(UIDocument))]
-    internal class MonitoringUIElementsBehaviour : MonitoringDisplayHandler, IMonitoringUI
+    internal class MonitoringDisplayElementsBehaviour : MonitoringDisplay, IMonitoringDisplayHandler
     {
         #region --- Inspector ---
         

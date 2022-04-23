@@ -29,7 +29,7 @@ namespace Baracuda.Monitoring.Example.Scripts
          *  Private Fields   
          */
         
-        [Monitor]
+        [MonitorField]
         private int _currentAmmunition;
         private float _lastFireTime;
         private float _targetFOV;

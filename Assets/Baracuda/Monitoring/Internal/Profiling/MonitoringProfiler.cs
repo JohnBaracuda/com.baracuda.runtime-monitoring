@@ -44,28 +44,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         private static MonitoringSettings settings;
         
-        private static readonly string[] bannedAssemblyPrefixes = new string[]
-        {
-            "Newtonsoft",
-            "netstandard",
-            "System",
-            "Unity",
-            "Microsoft",
-            "Mono.",
-            "mscorlib",
-            "NSubstitute",
-            "JetBrains",
-            "nunit.",
-            "GeNa."
-        };
-
-        private static readonly string[] bannedAssemblyNames = new string[]
-        {
-            "mcs",
-            "AssetStoreTools",
-            "PPv2URPConverters"
-        };
-        
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------

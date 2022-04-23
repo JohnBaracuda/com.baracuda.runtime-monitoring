@@ -22,7 +22,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         #region --- Factory ---
 
-        public override MonitorUnit CreateUnit(object target)
+        internal override MonitorUnit CreateUnit(object target)
         {
             return new FieldUnit<TTarget, TValue>(
                 (TTarget)target,

@@ -29,15 +29,15 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
          *  FPS Monitor   
          */
         
-        [MonitorValue(Update = nameof(FPSUpdated))]
+        [MonitorValue(UpdateEvent = nameof(FPSUpdated))]
         [ValueProcessor(nameof(Processor))]
         [Format(FontSize = 32, Position = UIPosition.TopRight, GroupElement = false)]
         private static float fps;
 
-        [MonitorValue(Interval = Segment.Tick)]
+        [MonitorValue(Update = UpdateOptions.TickUpdate)]
         private static long totalFrameCount = 0;
         
-        [MonitorValue(Interval = Segment.Tick)]
+        [MonitorValue(Update = UpdateOptions.TickUpdate)]
         private static long fixedUpdateCount = 0;
 
         /*

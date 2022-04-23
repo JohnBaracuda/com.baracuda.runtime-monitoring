@@ -32,7 +32,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         #region --- Ctor & Factory ---
 
-        public override MonitorUnit CreateUnit(object target)
+        internal override MonitorUnit CreateUnit(object target)
         {
             return new EventUnit<TTarget, TDelegate>((TTarget) target, _formatState, this);
         }

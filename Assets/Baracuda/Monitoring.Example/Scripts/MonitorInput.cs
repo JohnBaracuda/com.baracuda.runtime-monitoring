@@ -6,24 +6,24 @@ namespace Baracuda.Monitoring.Example.Scripts
     public class MonitorInput : MonoBehaviour
     {
         [SerializeField] private KeyCode toggleKey = KeyCode.F3;
-        private IMonitoringUI _monitoringUI;
+        private IMonitoringDisplayHandler _monitoringDisplayHandler;
 
         private void Awake()
         {
-            _monitoringUI = GetComponent<IMonitoringUI>();
+            _monitoringDisplayHandler = GetComponent<IMonitoringDisplayHandler>();
         }
 
         private void Update()
         {
             if (Input.GetKeyDown(toggleKey))
             {
-                if (_monitoringUI.IsActive)
+                if (_monitoringDisplayHandler.IsActive)
                 {
-                    _monitoringUI.Hide();
+                    _monitoringDisplayHandler.Hide();
                 }
                 else
                 {
-                    _monitoringUI.Show();
+                    _monitoringDisplayHandler.Show();
                 }
             }
         }

@@ -26,7 +26,7 @@ namespace Baracuda.Monitoring.Management
         [SerializeField] private bool enableMonitoring = true;
         [Tooltip("When enabled the game start will be delayed until all profiling has completed. This might increase the startup time significantly!")]
         [SerializeField] private bool forceSynchronousLoad = false;
-        [SerializeReference, SerializeField] private MonitoringDisplayHandler monitoringDisplayHandler;
+        [SerializeReference, SerializeField] private MonitoringDisplay monitoringDisplay;
 
         /*
          * Debugging   
@@ -118,7 +118,7 @@ namespace Baracuda.Monitoring.Management
 
         #region --- Properties ---
 
-        public MonitoringDisplayHandler DisplayDisplayHandler => monitoringDisplayHandler;
+        public MonitoringDisplay DisplayDisplay => monitoringDisplay;
         public bool EnableMonitoring => enableMonitoring;
         public bool ForceSynchronousLoad => forceSynchronousLoad;
 

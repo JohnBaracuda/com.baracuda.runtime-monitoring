@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Reflection;
 using Baracuda.Monitoring.Management;
 using UnityEditor;
@@ -9,14 +10,30 @@ namespace Baracuda.Monitoring.Editor
     [CustomEditor(typeof(MonitoringSettings))]
     public class MonitoringSettingsInspector : UnityEditor.Editor
     {
+        #region --- Data ---
+
+        /*
+         * Private Fields 
+         */
+        
         private FoldoutHandler Foldout { get; set; }
         private static GUIStyle RichTextStyle => new GUIStyle("label") { richText = true, alignment = TextAnchor.MiddleCenter};
 
-        #region --- Serialized Properties ---
+        /*
+         * Constant Web Links   
+         */
+
+        private const string LINK_DOCUMENTATION = "https://johnbaracuda.com/monitoring.html";
+        private const string LINK_REPOSITORY = "https://github.com/JohnBaracuda/Member-State-Monitoring";
+        private const string LINK_WEBSITE = "https://johnbaracuda.com/";
+
+        /*
+         * Serialized Properties   
+         */
 
         private SerializedProperty _enableMonitoring;
         private SerializedProperty _forceSynchronousLoad;
-        private SerializedProperty _monitoringDisplayHandler;
+        private SerializedProperty _monitoringDisplay;
         
         private SerializedProperty _logBadImageFormatException;
         private SerializedProperty _logOperationCanceledException;
@@ -105,6 +122,8 @@ namespace Baracuda.Monitoring.Editor
 
         //--------------------------------------------------------------------------------------------------------------
 
+        #region --- GUI ---
+        
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -115,6 +134,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 EditorGUILayout.HelpBox("Cannot edit settings during runtime!", MessageType.Info);
                 GUI.enabled = false;
+                EditorGUILayout.Space();
             }
             
             if (Foldout["General"])
@@ -122,7 +142,8 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_enableMonitoring);
                 EditorGUILayout.PropertyField(_forceSynchronousLoad);
-                EditorGUILayout.PropertyField(_monitoringDisplayHandler);
+                //TODO: Draw Required
+                EditorGUILayout.PropertyField(_monitoringDisplay);
                 DrawButtonControls();
                 EditorGUILayout.Space();
             }
@@ -199,9 +220,8 @@ namespace Baracuda.Monitoring.Editor
 
             serializedObject.ApplyModifiedProperties();
         }
-
-        #region --- Misc ---
-
+        
+        
         private static void DrawButtonControls()
         {
             EditorGUILayout.Space();
@@ -211,15 +231,15 @@ namespace Baracuda.Monitoring.Editor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Documentation", GUILayout.Height(25), GUILayout.MinWidth(150)))
             {
-                Application.OpenURL("https://github.com/JohnBaracuda/Member-State-Monitoring");
+                Application.OpenURL(LINK_DOCUMENTATION);
             }
             if (GUILayout.Button("Repository", GUILayout.Height(25), GUILayout.MinWidth(150)))
             {
-                Application.OpenURL("https://github.com/JohnBaracuda/Member-State-Monitoring");
+                Application.OpenURL(LINK_REPOSITORY);
             }
             if (GUILayout.Button("Website", GUILayout.Height(25), GUILayout.MinWidth(150)))
             {
-                Application.OpenURL("https://johnbaracuda.com/");
+                Application.OpenURL(LINK_WEBSITE);
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -241,6 +261,10 @@ namespace Baracuda.Monitoring.Editor
             GUILayout.EndHorizontal();
             EditorGUILayout.Space();
         }
+
+        #endregion
+
+        #region --- Misc ---
 
         private static void DrawTitle(string title, Color background, Color font)
         {
@@ -269,17 +293,24 @@ namespace Baracuda.Monitoring.Editor
                 path = EditorGUILayout.TextField(property.displayName, path);
                 if (GUILayout.Button("...", GUILayout.Width(20)))
                 {
-                    var newPath = EditorUtility.OpenFilePanel("Select File", string.IsNullOrWhiteSpace(path)? path : Application.dataPath, fileExtension);
+                    var newPath = EditorUtility.OpenFilePanel("Select File", IsValidPath(path)? path : Application.dataPath, fileExtension);
                     path = !string.IsNullOrWhiteSpace(newPath) ? newPath : path;
                 }
                 GUILayout.EndHorizontal();
 
-                property.stringValue = path;
+                property.stringValue = IsValidPath(path)? path : Application.dataPath;
+                property.serializedObject.ApplyModifiedProperties();
+                property.serializedObject.Update();
             }
             else
             {
-                throw new InvalidCastException("Property must be a string!");
+                throw new InvalidCastException("FilePath Property must be a string!");
             }
+        }
+
+        private static bool IsValidPath(string path)
+        {
+            return Path.IsPathFullyQualified(path) && path.StartsWith(Application.dataPath);
         }
         
         #endregion

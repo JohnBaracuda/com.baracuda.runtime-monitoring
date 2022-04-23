@@ -19,10 +19,12 @@ namespace Baracuda.Monitoring.Attributes
     [Preserve]
     public  class MonitorValueAttribute : MonitorAttribute
     {
+        //TODO: Maybe add enable write access for potential value setting
+        
         /// <summary>
         /// The name of an event that is invoked when the monitored value is updated. Use to reduce the evaluation of the
         /// monitored member. 
         /// </summary>
-        public string Update { get; set; } = null;
+        public string UpdateEvent { get; set; } = null;
     }
 }

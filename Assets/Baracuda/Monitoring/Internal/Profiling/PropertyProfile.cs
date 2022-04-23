@@ -12,7 +12,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
     /// <typeparam name="TValue">The <see cref="Type"/> of the return value of the property</typeparam>
     public sealed class PropertyProfile<TTarget, TValue> : ValueProfile<TTarget, TValue> where TTarget : class
     {
-        
         #region --- Fields ---
 
         private readonly Func<TTarget, TValue> _getValueDelegate;
@@ -24,7 +23,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         #region --- Factory ---
 
-        public override MonitorUnit CreateUnit(object target)
+        internal override MonitorUnit CreateUnit(object target)
         {
             return new PropertyUnit<TTarget, TValue>(
                 (TTarget)target,

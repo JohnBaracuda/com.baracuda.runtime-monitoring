@@ -16,12 +16,15 @@ namespace Baracuda.Monitoring.Interface
         MonitorAttribute Attribute { get; }
         MemberInfo MemberInfo { get; }
         UnitType UnitType { get; }
-        Segment Segment { get; }
+        UpdateOptions UpdateOptions { get; }
         Type UnitTargetType { get; }
         Type UnitValueType { get; }
         Type UnitDeclaringType { get; }
-        string[] Tags { get; }
         bool IsStatic { get; }
+        
+        // TODO: outsource from profile
+        
+        string[] Tags { get; }
         string Label { get; }
         string Format { get; }
         int FontSize { get; }

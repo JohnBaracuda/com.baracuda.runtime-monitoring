@@ -46,14 +46,14 @@ namespace Baracuda.Monitoring.Internal
         {
             if (unit.ExternalUpdateRequired)
             {
-                switch (unit.Profile.Segment)
+                switch (unit.Profile.UpdateOptions)
                 {
-                    case Segment.Update:
+                    case UpdateOptions.FrameUpdate:
                         updateUnits.Add(unit);
                         break;
                     
-                    case Segment.Auto: 
-                    case Segment.Tick:
+                    case UpdateOptions.Auto: 
+                    case UpdateOptions.TickUpdate:
                         tickUnits.Add(unit); 
                         break;
                 }
@@ -64,14 +64,14 @@ namespace Baracuda.Monitoring.Internal
         {
             if (unit.ExternalUpdateRequired)
             {
-                switch (unit.Profile.Segment)
+                switch (unit.Profile.UpdateOptions)
                 {
-                    case Segment.Update:
+                    case UpdateOptions.FrameUpdate:
                         updateUnits.Remove(unit);
                         break;
                     
-                    case Segment.Auto: 
-                    case Segment.Tick:
+                    case UpdateOptions.Auto: 
+                    case UpdateOptions.TickUpdate:
                         tickUnits.Remove(unit); 
                         break;
                 }

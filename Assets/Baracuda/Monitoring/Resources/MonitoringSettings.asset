@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableMonitoring: 1
   forceSynchronousLoad: 0
-  monitoringDisplayHandler: {fileID: 4062470990811542421, guid: cc50f3b5789885343bad909dd731c281, type: 3}
+  monitoringDisplay: {fileID: 4062470990811542421, guid: cc50f3b5789885343bad909dd731c281, type: 3}
   logBadImageFormatException: 1
   logOperationCanceledException: 0
   logThreadAbortException: 2
@@ -52,7 +52,7 @@ MonoBehaviour:
   - Assembly-Baracuda-Pooling
   - Assembly-Baracuda-Reflection
   - Assembly-Baracuda-Threading
-  filePathIL2CPPTypes: 
+  filePathIL2CPPTypes: G:/Unity/Monitoring/Assets/Baracuda/IL2CPP/IL2CPP_AOT.cs
   useIPreprocessBuildWithReport: 1
   throwOnTypeGenerationError: 1
   preprocessBuildCallbackOrder: 0

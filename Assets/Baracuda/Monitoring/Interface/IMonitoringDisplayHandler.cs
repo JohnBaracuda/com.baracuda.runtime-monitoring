@@ -1,6 +1,6 @@
 namespace Baracuda.Monitoring.Interface
 {
-    public interface IMonitoringUI
+    public interface IMonitoringDisplayHandler
     {
         bool IsActive { get; }
         void Show();

@@ -19,6 +19,8 @@ namespace Baracuda.Monitoring.Attributes
     [Preserve]
     public sealed class MonitorPropertyAttribute : MonitorValueAttribute
     {
+        //TODO: is this really needed? 
+        
         /// <summary>
         /// Target the backing field of the property directly.
         /// </summary>
