@@ -578,11 +578,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 75
-  shotsPerSecond: 7
+  fullAutomatic: 0
+  shotsPerSecond: 10
   bulletsPerShot: 1
-  bulletSpread: 25
-  bulletForce: 1600
-  ammunition: 10
+  bulletSpread: 15
+  bulletForce: 3600
+  ammunition: 30
   layerMask:
     serializedVersion: 2
     m_Bits: 119
@@ -590,7 +591,7 @@ MonoBehaviour:
   projectilePool: {fileID: 0}
   defaultFOV: 80
   zoomFOV: 40
-  fovSharpness: 10
+  fovSharpness: 17
 --- !u!114 &8485219938503472851
 MonoBehaviour:
   m_ObjectHideFlags: 0

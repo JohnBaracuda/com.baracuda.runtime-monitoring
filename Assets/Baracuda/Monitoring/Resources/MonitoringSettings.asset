@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: MonitoringSettings
   m_EditorClassIdentifier: 
   enableMonitoring: 1
-  forceSynchronousLoad: 0
+  openDisplayOnLoad: 0
   monitoringDisplay: {fileID: 4062470990811542421, guid: cc50f3b5789885343bad909dd731c281, type: 3}
+  forceSynchronousLoad: 0
+  showRuntimeObject: 0
   logBadImageFormatException: 1
   logOperationCanceledException: 0
   logThreadAbortException: 2
   logUnknownExceptions: 4
-  logBackfieldNotFoundException: 2
   logProcessorNotFoundException: 0
   logInvalidProcessorSignatureException: 0
   addClassName: 0
@@ -31,13 +32,10 @@ MonoBehaviour:
   - m_
   - s_
   - _
-  optionalStyleSheets: []
-  instanceUnitStyles: unit
-  instanceGroupStyles: group
-  instanceLabelStyles: label
-  staticUnitStyles: unit
-  staticGroupStyles: group
-  staticLabelStyles: label
+  floatFormat: 0.000
+  integerFormat: 0
+  vectorFormat: 0.00
+  quaternionFormat: 0.00
   classColor: {r: 0.8590691, g: 0.8590691, b: 0.9339623, a: 1}
   trueColor: {r: 0, g: 1, b: 0, a: 1}
   falseColor: {r: 0.8679245, g: 0.23335704, b: 0.25258785, a: 1}
@@ -48,10 +46,7 @@ MonoBehaviour:
   bannedAssemblyPrefixes:
   - Assembly-Plugin
   - DOTween
-  bannedAssemblyNames:
-  - Assembly-Baracuda-Pooling
-  - Assembly-Baracuda-Reflection
-  - Assembly-Baracuda-Threading
+  bannedAssemblyNames: []
   filePathIL2CPPTypes: G:/Unity/Monitoring/Assets/Baracuda/IL2CPP/IL2CPP_AOT.cs
   useIPreprocessBuildWithReport: 1
   throwOnTypeGenerationError: 1

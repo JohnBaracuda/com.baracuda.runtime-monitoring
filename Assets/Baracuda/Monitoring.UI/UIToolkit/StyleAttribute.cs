@@ -1,7 +1,8 @@
 using System;
+using Baracuda.Monitoring.Attributes;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring.UI.UIToolkit
 {
     /// <summary>
     /// Meta attribute can be used to provide additional USS style classes that are applied for a monitor unit when using

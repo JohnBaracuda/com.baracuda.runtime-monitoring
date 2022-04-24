@@ -9,11 +9,15 @@ namespace Baracuda.Monitoring.Management
 {
     public static class MonitoringEvents
     {
-        #region --- Properties ---
+        #region --- Public API ---
 
+        /// <summary>
+        /// Value indicated whether or not monitoring profiling has completed and monitoring is fully initialized.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
         public static bool IsInitialized
         {
-            get => sIsInitialized;
+            get => isInitialized;
 
             [MethodImpl(MethodImplOptions.Synchronized)]
             private set
@@ -24,17 +28,15 @@ namespace Baracuda.Monitoring.Management
                         $"Set => {nameof(IsInitialized)} is only allowed to be set from the main thread!");
                 }
 
-                sIsInitialized = value;
+                isInitialized = value;
             }
         }
-
-        private static volatile bool sIsInitialized = false;
         
-        #endregion
+        private static volatile bool isInitialized = false;
 
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Events ---
+        /*
+         * Events   
+         */
 
         public delegate void ProfilingCompletedListener(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits);
 

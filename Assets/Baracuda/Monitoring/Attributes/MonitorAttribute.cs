@@ -1,6 +1,5 @@
 using System;
 using Baracuda.Monitoring.Management;
-using JetBrains.Annotations;
 using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.Attributes
@@ -23,7 +22,6 @@ namespace Baracuda.Monitoring.Attributes
     /// <br/><see cref="MonitoredSingleton{T}"/>
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
-    [MeansImplicitUse]
     [Preserve]
     public class MonitorAttribute : Attribute
     {

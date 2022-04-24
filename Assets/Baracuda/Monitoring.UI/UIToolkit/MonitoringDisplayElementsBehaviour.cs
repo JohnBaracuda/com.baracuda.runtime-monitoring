@@ -1,41 +1,64 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Baracuda.Monitoring.Display;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Management;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Baracuda.Monitoring.UI.UIToolkit
 {
     [RequireComponent(typeof(UIDocument))]
-    internal class MonitoringDisplayElementsBehaviour : MonitoringDisplay, IMonitoringDisplayHandler
+    internal class MonitoringDisplayElementsBehaviour : MonitoringDisplay, IStyleProvider
     {
         #region --- Inspector ---
         
-        [SerializeField] private bool activateOnLoad = true;
-        [SerializeField] private bool instantiateAsync = false;
+        [Header("Styles")]
+        [SerializeField] private StyleSheet[] optionalStyleSheets;
+        [Space]
+        [SerializeField] private string instanceUnitStyles = "";
+        [SerializeField] private string instanceGroupStyles = "";
+        [SerializeField] private string instanceLabelStyles = "";
+        [Space]
+        [SerializeField] private string staticUnitStyles = "";
+        [SerializeField] private string staticGroupStyles = "";
+        [SerializeField] private string staticLabelStyles = "";
         
         #endregion
-        
+
+        #region --- Properties ---
+        public string[] InstanceUnitStyles => _instanceUnitStyles ??= instanceUnitStyles.Split(' ');
+        public string[] InstanceGroupStyles => _instanceGroupStyles ??= instanceGroupStyles.Split(' ');
+        public string[] InstanceLabelStyles => _instanceLabelStyles ??= instanceLabelStyles.Split(' ');
+        public string[] StaticUnitStyles => _staticUnitStyles ??= staticUnitStyles.Split(' ');
+        public string[] StaticGroupStyles => _staticGroupStyles ??= staticGroupStyles.Split(' ');
+        public string[] StaticLabelStyles => _staticLabelStyles ??= staticLabelStyles.Split(' ');
+
+        #endregion
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Fields ---
 
-        private readonly Dictionary<IMonitorUnit, IMonitoringUIElement> _monitorUnitDisplays =
-            new Dictionary<IMonitorUnit, IMonitoringUIElement>();
-        
+        private readonly Dictionary<IMonitorUnit, IMonitoringUIElement> _monitorUnitDisplays = new Dictionary<IMonitorUnit, IMonitoringUIElement>();
         
         private UIDocument _uiDocument;
         private VisualElement _frame;
+        private bool _isVisible;
+        
+        private string[] _instanceUnitStyles = null;
+        private string[] _instanceGroupStyles = null;
+        private string[] _instanceLabelStyles = null;
+
+        private string[] _staticUnitStyles = null;
+        private string[] _staticGroupStyles = null;
+        private string[] _staticLabelStyles = null;
         
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Init ---
+        #region --- Setup ---
 
         protected override void Awake()
         {
@@ -44,23 +67,9 @@ namespace Baracuda.Monitoring.UI.UIToolkit
             _uiDocument = GetComponent<UIDocument>();
             _frame = _uiDocument.rootVisualElement.Q<VisualElement>("frame");
             
-            // Add custom styleSheets.
-            foreach (var optionalStyleSheet in MonitoringSettings.Instance().OptionalStyleSheets)
+            foreach (var optionalStyleSheet in optionalStyleSheets)
             {
                 _uiDocument.rootVisualElement.styleSheets.Add(optionalStyleSheet);
-            }
-            
-            // if profiling has already been completed at this point the listener will be invoked the moment it is subscribed.
-            MonitoringEvents.ProfilingCompleted += OnProfilingCompleted;
-
-
-            if (activateOnLoad)
-            {
-                Show();
-            }
-            else
-            {
-                Hide();
             }
         }
 
@@ -71,27 +80,53 @@ namespace Baracuda.Monitoring.UI.UIToolkit
 
         #region --- Open Close ---
 
-        public bool IsActive { get; private set; } = true;
+        protected override bool IsVisible => _isVisible;
 
-        public void Show()
+        protected override void Show()
         {
-            IsActive = true;
+            _isVisible = true;
             _uiDocument.rootVisualElement.SetEnabled(true);
             _uiDocument.rootVisualElement.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
         }
 
-        public void Hide()
+        protected override void Hide()
         {
-            IsActive = false;
+            _isVisible = false;
             _uiDocument.rootVisualElement.SetEnabled(false);
             _uiDocument.rootVisualElement.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
         }
 
+        protected override void Toggle()
+        {
+            if (IsVisible)
+            {
+                Hide();
+            }
+            else
+            {
+                Show();
+            }
+        }
+
+        #endregion
+        
+        #region --- Ui Element Instantiation ---
+
+        protected override void OnUnitCreated(IMonitorUnit monitorUnit)
+        {
+            _monitorUnitDisplays.Add(monitorUnit, new MonitoringUIElement(_frame, monitorUnit, this));
+        }
+        
+        protected override void OnUnitDisposed(IMonitorUnit monitorUnit)
+        {
+            _monitorUnitDisplays.Remove(monitorUnit);
+        }
+        
         #endregion
 
         #region --- Filter ---
         
-        public void ResetFilter()
+        protected override void ResetFilter()
         {
             foreach (var pair in _monitorUnitDisplays)
             {
@@ -99,7 +134,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit
             }
         }
         
-        public void Filter(string filter)
+        protected override void Filter(string filter)
         {
             if (string.IsNullOrWhiteSpace(filter))
             {
@@ -115,67 +150,5 @@ namespace Baracuda.Monitoring.UI.UIToolkit
         }
 
         #endregion
-        
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Ui Element Instantiation ---
-
-        private void OnProfilingCompleted(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
-        {
-            MonitoringEvents.UnitCreated += CreateUnit;
-            MonitoringEvents.UnitDisposed += DisposeUnit;
-
-            if (instantiateAsync)
-            {
-                StartCoroutine(CreateUnitsAsync(staticUnits, instanceUnits));
-            }
-            else
-            {
-                for (var i = 0; i < staticUnits.Count; i++)
-                {
-                    CreateUnit(staticUnits[i]);
-                }
-                for (var i = 0; i < instanceUnits.Count; i++)
-                {
-                    CreateUnit(instanceUnits[i]);
-                }
-            }
-                
-            enabled = true;
-        }
-
-        private IEnumerator CreateUnitsAsync(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
-        {
-            for (var i = 0; i < staticUnits.Count; i++)
-            {
-                yield return null;
-                CreateUnit(staticUnits[i]);
-            }
-                
-            for (var i = 0; i < instanceUnits.Count; i++)
-            {
-                yield return null;
-                CreateUnit(instanceUnits[i]);
-            }
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            MonitoringEvents.ProfilingCompleted -= OnProfilingCompleted;
-        }
-
-        private void CreateUnit(IMonitorUnit monitorUnit)
-        {
-            _monitorUnitDisplays.Add(monitorUnit, new MonitoringUIElement(_frame, monitorUnit));
-        }
-        
-        private void DisposeUnit(IMonitorUnit monitorUnit)
-        {
-            _monitorUnitDisplays.Remove(monitorUnit);
-        }
-        
-        #endregion
-        
     }
 }

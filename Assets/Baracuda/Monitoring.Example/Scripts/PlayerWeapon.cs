@@ -9,8 +9,11 @@ namespace Baracuda.Monitoring.Example.Scripts
          *  Inspector Fields   
          */
         
+        
+        
         [Header("Primary")]
         [SerializeField] private float damage = 100f;
+        [SerializeField] private bool fullAutomatic = true;
         [SerializeField] private float shotsPerSecond = 7.5f;
         [SerializeField] private int bulletsPerShot = 3;
         [SerializeField] private float bulletSpread = 50f;
@@ -35,6 +38,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         private float _targetFOV;
         private IPlayerInput _input;
         private Camera _camera;
+        private bool _canFireSemiAutomatic = true;
 
         /*
          *  Logic   
@@ -57,8 +61,9 @@ namespace Baracuda.Monitoring.Example.Scripts
             _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView, _targetFOV, fovSharpness * deltaTime);
             var time = Time.time;
             
-            if (_input.PrimaryFirePressed && _currentAmmunition > 0 && time - _lastFireTime > 1 / shotsPerSecond)
+            if (_input.PrimaryFirePressed && (fullAutomatic || _canFireSemiAutomatic) && _currentAmmunition > 0 && time - _lastFireTime > 1 / shotsPerSecond)
             {
+                _canFireSemiAutomatic = false;
                 _lastFireTime = time;
                 for (var i = 0; i < bulletsPerShot; i++)
                 {
@@ -76,6 +81,11 @@ namespace Baracuda.Monitoring.Example.Scripts
                         break;
                     }
                 }
+            }
+
+            if (!_input.PrimaryFirePressed)
+            {
+                _canFireSemiAutomatic = true;
             }
         }
 

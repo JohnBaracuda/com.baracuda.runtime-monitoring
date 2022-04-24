@@ -36,11 +36,11 @@ namespace Baracuda.Monitoring.Editor
             OnPreprocessBuildInternal();
         }
         
-        public int callbackOrder => MonitoringSettings.Instance().PreprocessBuildCallbackOrder;
+        public int callbackOrder => MonitoringSettings.GetInstance().PreprocessBuildCallbackOrder;
         
         public void OnPreprocessBuild(BuildReport report)
         {
-            if (!MonitoringSettings.Instance().UseIPreprocessBuildWithReport)
+            if (!MonitoringSettings.GetInstance().UseIPreprocessBuildWithReport)
             {
                 return;
             }
@@ -116,8 +116,8 @@ namespace Baracuda.Monitoring.Editor
 
         private static void OnPreprocessBuildInternal()
         {
-            var filePath = MonitoringSettings.Instance().FilePathIL2CPPTypes;
-            var throwOnError = MonitoringSettings.Instance().ThrowOnTypeGenerationError;
+            var filePath = MonitoringSettings.GetInstance().FilePathIL2CPPTypes;
+            var throwOnError = MonitoringSettings.GetInstance().ThrowOnTypeGenerationError;
             Debug.Log($"Starting IL2CPP AOT Type Definition Generation.\nFilePath: {filePath}");
             
             errorLog = new List<string>();

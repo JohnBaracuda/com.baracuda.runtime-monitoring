@@ -8,9 +8,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
 {
     public abstract class ValueProfile<TTarget, TValue> : MonitorProfile where TTarget : class
     {
-        #region --- Fields ---
+        #region --- Properties ---
         
-        internal readonly bool CustomUpdateEventAvailable;
+        public bool SetAccessEnabled { get; } = false;
+        internal bool CustomUpdateEventAvailable { get; }
+        
+        #endregion
+        
+        #region --- Fields ---
 
         private readonly UpdateHandleDelegate<TTarget, TValue> _addUpdateDelegate; //preferred event type
         private readonly NotifyHandleDelegate<TTarget> _addNotifyDelegate; //event without passed TValue param
@@ -49,6 +54,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             if (attribute is MonitorValueAttribute valueAttribute && !string.IsNullOrWhiteSpace(valueAttribute.UpdateEvent))
             {
+                SetAccessEnabled = valueAttribute.EnableSetAccess;
+                
                 _addUpdateDelegate    = CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, true);
                 _addNotifyDelegate    = CreateNotifyHandlerDelegate<TTarget>        (valueAttribute.UpdateEvent, this, true);
                 _removeUpdateDelegate = CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, false);
@@ -58,7 +65,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
             CustomUpdateEventAvailable = _addUpdateDelegate != null || _addNotifyDelegate != null;
             
             // Value Processor
-            
             var processorName = memberInfo.GetCustomAttribute<ValueProcessorAttribute>()?.Processor;
             
             _instanceValueProcessorDelegate = Profiling.ValueProcessor.FindCustomInstanceProcessor(processorName,  this);

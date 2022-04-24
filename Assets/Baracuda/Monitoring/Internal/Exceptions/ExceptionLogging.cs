@@ -8,7 +8,7 @@ namespace Baracuda.Monitoring.Internal.Exceptions
 {
     internal static class ExceptionLogging
     {
-        private static readonly MonitoringSettings settings = Dispatcher.InvokeAsync(MonitoringSettings.Instance).Result;
+        private static readonly MonitoringSettings settings = Dispatcher.InvokeAsync(MonitoringSettings.GetInstance).Result;
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void LogException<T>(T exception, LoggingLevel loggingLevel) where T : Exception
@@ -38,10 +38,6 @@ namespace Baracuda.Monitoring.Internal.Exceptions
         {
             switch (exception)
             {
-                case BackfieldNotFoundException backfieldNotFound:
-                    LogException(backfieldNotFound, settings.LogBackfieldNotFoundException);
-                    break;
-                
                 case ProcessorNotFoundException processorNotFound:
                     LogException(processorNotFound, settings.LogProcessorNotFoundException);
                     break;

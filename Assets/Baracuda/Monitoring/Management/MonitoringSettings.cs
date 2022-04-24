@@ -1,10 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Display;
+using Baracuda.Monitoring.Internal.Reflection;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Baracuda.Monitoring.Management
 {
@@ -24,10 +23,15 @@ namespace Baracuda.Monitoring.Management
          */
 
         [SerializeField] private bool enableMonitoring = true;
-        [Tooltip("When enabled the game start will be delayed until all profiling has completed. This might increase the startup time significantly!")]
-        [SerializeField] private bool forceSynchronousLoad = false;
+        [SerializeField] private bool openDisplayOnLoad = true;
         [SerializeReference, SerializeField] private MonitoringDisplay monitoringDisplay;
 
+        [Tooltip("When enabled the game start will be delayed until all profiling has completed. This might increase the startup time significantly!")]
+        [SerializeField] private bool forceSynchronousLoad = false;
+
+        [Space] 
+        [SerializeField] private bool showRuntimeObject = false;
+        
         /*
          * Debugging   
          */
@@ -36,7 +40,6 @@ namespace Baracuda.Monitoring.Management
         [SerializeField] private LoggingLevel logOperationCanceledException = LoggingLevel.None;
         [SerializeField] private LoggingLevel logThreadAbortException = LoggingLevel.Warning;
         [SerializeField] private LoggingLevel logUnknownExceptions = LoggingLevel.Exception;
-        [SerializeField] private LoggingLevel logBackfieldNotFoundException = LoggingLevel.Warning;
         [SerializeField] private LoggingLevel logProcessorNotFoundException = LoggingLevel.Warning;
         [SerializeField] private LoggingLevel logInvalidProcessorSignatureException = LoggingLevel.Warning;
 
@@ -57,19 +60,15 @@ namespace Baracuda.Monitoring.Management
         [Tooltip("Collection of variable prefixes that should be removed when humanizing monitored member names")]
         [SerializeField] private string[] variablePrefixes = {"m_", "s_", "r_", "_"};
 
-        /*
-         * Style   
-         */
-        
-        [SerializeField] private StyleSheet[] optionalStyleSheets;
-
-        [SerializeField] private string instanceUnitStyles = "";
-        [SerializeField] private string instanceGroupStyles = "";
-        [SerializeField] private string instanceLabelStyles = "";
-        
-        [SerializeField] private string staticUnitStyles = "";
-        [SerializeField] private string staticGroupStyles = "";
-        [SerializeField] private string staticLabelStyles = "";
+        [Header("Type Formatter")] 
+        [Tooltip("Default formatting string that is applied to every float. (float, double)")]
+        [SerializeField] private string floatFormat = "0.000";
+        [Tooltip("Default formatting string that is applied to every integer type. (short, int, long)")]
+        [SerializeField] private string integerFormat = "0";
+        [Tooltip("Default formatting string that is applied to the individual values of every Vector type. (Vector2, Vector3)")]
+        [SerializeField] private string vectorFormat = "0.00";
+        [Tooltip("Default formatting string that is applied to the individual values of every Quaternion")]
+        [SerializeField] private string quaternionFormat = "0.00";
 
         /*
          * Color   
@@ -118,19 +117,30 @@ namespace Baracuda.Monitoring.Management
 
         #region --- Properties ---
 
+        /*
+         * General   
+         */
+        
         public MonitoringDisplay DisplayDisplay => monitoringDisplay;
         public bool EnableMonitoring => enableMonitoring;
+        public bool OpenDisplayOnLoad => openDisplayOnLoad;
+        public bool ShowRuntimeObject => showRuntimeObject;
         public bool ForceSynchronousLoad => forceSynchronousLoad;
 
+        /*
+         * Logging   
+         */
         
         public LoggingLevel LogBadImageFormatException => logBadImageFormatException;
         public LoggingLevel LogOperationCanceledException => logOperationCanceledException;
         public LoggingLevel LogThreadAbortException => logThreadAbortException;
         public LoggingLevel LogUnknownExceptions => logUnknownExceptions;
-        public LoggingLevel LogBackfieldNotFoundException => logBackfieldNotFoundException;
         public LoggingLevel LogProcessorNotFoundException => logProcessorNotFoundException;
         public LoggingLevel LogInvalidProcessorSignatureException => logInvalidProcessorSignatureException;
 
+        /*
+         * Formatting   
+         */
 
         public bool AddClassName => addClassName;
         public char AppendSymbol => appendSymbol;
@@ -138,7 +148,10 @@ namespace Baracuda.Monitoring.Management
         public bool GroupInstanceUnits => groupInstanceUnits;
         public bool HumanizeNames => humanizeNames;
         public string[] VariablePrefixes => variablePrefixes;
-        
+
+        /*
+         * Coloring   
+         */
         
         public Color ClassColor => classColor;
         public Color TrueColor => trueColor;
@@ -147,61 +160,71 @@ namespace Baracuda.Monitoring.Management
         public Color YColor => yColor;
         public Color ZColor => zColor;
         public Color WColor => wColor;
-        
-        
-        public StyleSheet[] OptionalStyleSheets => optionalStyleSheets;
-        
+
+        /*
+         * Assembly Settings   
+         */
         
         public string[] BannedAssemblyPrefixes => bannedAssemblyPrefixes;
         public string[] BannedAssemblyNames => bannedAssemblyNames;
+
+        /*
+         * IL2CPP Settings   
+         */
         
         public string FilePathIL2CPPTypes => filePathIL2CPPTypes;
         public bool UseIPreprocessBuildWithReport => useIPreprocessBuildWithReport;
         public bool ThrowOnTypeGenerationError => throwOnTypeGenerationError;
         public int PreprocessBuildCallbackOrder => preprocessBuildCallbackOrder;
-        
-        public string[] InstanceUnitStyles => _instanceUnitStyles ??= instanceUnitStyles.Split(' ');
-        public string[] InstanceGroupStyles => _instanceGroupStyles ??= instanceGroupStyles.Split(' ');
-        public string[] InstanceLabelStyles => _instanceLabelStyles ??= instanceLabelStyles.Split(' ');
-        public string[] StaticUnitStyles => _staticUnitStyles ??= staticUnitStyles.Split(' ');
-        public string[] StaticGroupStyles => _staticGroupStyles ??= staticGroupStyles.Split(' ');
-        public string[] StaticLabelStyles => _staticLabelStyles ??= staticLabelStyles.Split(' ');
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Type Formatter ---
 
-        [DefaultTypeFormatter(typeof(Vector3))]
-        public static string VectorFormat = "0.00";
+        internal string GetFormatStringForType(Type type)
+        {
+            if (type.IsFloatingPoint())
+            {
+                return floatFormat;
+            }
 
-        [DefaultTypeFormatter(typeof(Quaternion))]
-        public static string QuaternionFormat = "0.00";
-        
-        [DefaultTypeFormatter(typeof(float))]
-        public static string FloatFormat = "0.000";
-        
-        [DefaultTypeFormatter(typeof(double))]
-        public static string DoubleFormat = "0.000";
+            if (type.IsVector())
+            {
+                return vectorFormat;
+            }
+
+            if (type.IsInteger())
+            {
+                return integerFormat;
+            }
+
+            if (type == typeof(Quaternion))
+            {
+                return quaternionFormat;
+            }
+
+            return null;
+        }
 
         #endregion
-
+        
         //--------------------------------------------------------------------------------------------------------------
         
         #region --- Singleton ---
-
-        public static MonitoringSettings Instance() =>
+        
+        public static MonitoringSettings GetInstance() =>
             current ? current : current =
                 Resources.LoadAll<MonitoringSettings>(string.Empty).FirstOrDefault() ?? CreateAsset() ?? throw new Exception(
-                    $"{nameof(ScriptableObject)}: {nameof(MonitoringSettings)} was not found when calling: {nameof(Instance)} and cannot be created!");
+                    $"{nameof(ScriptableObject)}: {nameof(MonitoringSettings)} was not found when calling: {nameof(GetInstance)} and cannot be created!");
         
 
         private static MonitoringSettings current;
     
         private static MonitoringSettings CreateAsset()
         {
-            var asset = CreateInstance<MonitoringSettings>();
+         var asset = CreateInstance<MonitoringSettings>();
 #if UNITY_EDITOR
             var path = $"Assets/Resources";
             Directory.CreateDirectory(path);
@@ -217,15 +240,5 @@ namespace Baracuda.Monitoring.Management
         
         
         #endregion
-        
-        
-        
-        [NonSerialized] private string[] _instanceUnitStyles = null;
-        [NonSerialized] private string[] _instanceGroupStyles = null;
-        [NonSerialized] private string[] _instanceLabelStyles = null;
-
-        [NonSerialized] private string[] _staticUnitStyles = null;
-        [NonSerialized] private string[] _staticGroupStyles = null;
-        [NonSerialized] private string[] _staticLabelStyles = null;
     }
 }

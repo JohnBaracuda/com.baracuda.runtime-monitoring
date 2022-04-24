@@ -931,6 +931,5 @@ namespace Baracuda.Threading
         }
         
         #endregion
-
     }
 }

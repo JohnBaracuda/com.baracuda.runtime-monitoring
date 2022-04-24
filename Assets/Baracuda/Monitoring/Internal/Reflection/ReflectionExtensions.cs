@@ -362,7 +362,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsWholeNumber(this Type type)
+        public static bool IsInteger(this Type type)
         {
             return integerTypes.Contains(type) || integerTypes.Contains(Nullable.GetUnderlyingType(type));
         }

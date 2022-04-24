@@ -10,6 +10,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
     public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         [SerializeField] private bool dontDestroyOnLoad = true;
+        [SerializeField] private bool hideInHierarchy = false;
 
         public static T Current { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; private set; }
         
@@ -42,6 +43,11 @@ namespace Baracuda.Monitoring.Internal.Utilities
             if (dontDestroyOnLoad)
             {
                 DontDestroyOnLoad(gameObject);
+            }
+
+            if (hideInHierarchy)
+            {
+                gameObject.hideFlags |= HideFlags.HideInHierarchy;
             }
         }        
 

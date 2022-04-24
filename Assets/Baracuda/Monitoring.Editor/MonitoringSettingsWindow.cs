@@ -18,7 +18,7 @@ namespace Baracuda.Monitoring.Editor
 
         private void OnEnable()
         {
-            _settings = MonitoringSettings.Instance();
+            _settings = MonitoringSettings.GetInstance();
             _inspector = UnityEditor.Editor.CreateEditor(_settings) as MonitoringSettingsInspector;
         }
 

@@ -42,7 +42,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         private void OnCollisionEnter(Collision collision)
         {
-            var component = collision.gameObject.GetComponentInParent<IDamageable>();
+            var component = collision.gameObject.GetComponent<IDamageable>();
             component?.TakeDamage(_damage);
             gameObject.SetActive(false);
         }

@@ -60,7 +60,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             try
             {
-                settings = await Dispatcher.InvokeAsync(() => MonitoringSettings.Instance(), ct);
+                settings = await Dispatcher.InvokeAsync(() => MonitoringSettings.GetInstance(), ct);
                 
                 var types = await CreateAssemblyProfileAsync(ct);
                 await CreateMonitoringProfileAsync(types, ct);
@@ -136,7 +136,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var staticProperties = types[i].GetProperties(STATIC_FLAGS);
                 var staticEvents = types[i].GetEvents(STATIC_FLAGS);
 
-                ProfileDefaultTypeFormatter(staticFields);
                 InspectStaticFields(staticFields);
                 InspectStaticProperties(staticProperties);
                 InspectStaticEvents(staticEvents);
@@ -282,12 +281,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
 
                 // create a generic type definition.
-                var genericType = 
-#if ENALBE_IL2CPP && ALLOW_ALLOC
-                    typeof(FieldProfile<object,object>);
-#else
-                    typeof(FieldProfile<,>).MakeGenericType(fieldInfo.DeclaringType, fieldInfo.FieldType);
-#endif
+                var genericType = typeof(FieldProfile<,>).MakeGenericType(fieldInfo.DeclaringType, fieldInfo.FieldType);
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, settings);
@@ -326,12 +320,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
 
                 // create a generic type definition.
-                var genericType =
-#if ENALBE_IL2CPP && ALLOW_ALLOC
-                    typeof(PropertyProfile<object,object>);
-#else
-                    typeof(PropertyProfile<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
-#endif
+                var genericType = typeof(PropertyProfile<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
+
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, settings);
@@ -371,12 +361,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
 
                 // create a generic type definition.
-                var genericType =
-#if ENALBE_IL2CPP && ALLOW_ALLOC
-                    typeof(EventProfile<object,object>);
-#else
-                    typeof(EventProfile<,>).MakeGenericType(eventInfo.DeclaringType, eventInfo.EventHandlerType);
-#endif
+                var genericType = typeof(EventProfile<,>).MakeGenericType(eventInfo.DeclaringType, eventInfo.EventHandlerType);
+
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, settings);
@@ -420,12 +406,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var concreteFieldInfo = concreteSubtype.GetFieldIncludeBaseTypes(fieldInfo.Name, INSTANCE_FLAGS);
 
                 // create a generic type definition.
-                var concreteGenericType =
-#if ENALBE_IL2CPP && ALLOW_ALLOC
-                    typeof(FieldProfile<object,object>);
-#else
-                    typeof(FieldProfile<,>).MakeGenericType(concreteSubtype, concreteFieldInfo.FieldType);
-#endif
+                var concreteGenericType = typeof(FieldProfile<,>).MakeGenericType(concreteSubtype, concreteFieldInfo.FieldType);
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, settings);
@@ -474,11 +455,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                 // create a generic type definition.
                 var concreteGenericType =
-#if ENALBE_IL2CPP && ALLOW_ALLOC
-                    typeof(PropertyProfile<object,object>);
-#else
                     typeof(PropertyProfile<,>).MakeGenericType(concreteSubtype, concretePropertyInfo.PropertyType);
-#endif
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, settings);
@@ -515,12 +492,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var concreteEventInfo = concreteSubtype.GetEventIncludeBaseTypes(eventInfo.Name, INSTANCE_FLAGS);
 
                 // create a generic type definition.
-                var concreteGenericType =
-#if ENALBE_IL2CPP && ALLOW_ALLOC
-                    typeof(EventProfile<object,object>);
-#else
-                    typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo!.EventHandlerType);
-#endif
+                var concreteGenericType = typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo!.EventHandlerType);
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, settings);
@@ -880,51 +852,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     {
                         CreateInstanceEventProfileForGenericBaseType(eventInfo, attribute, type);
                     }
-                }
-            }
-        }
-
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Type Formatter ---
-
-        internal static readonly Dictionary<Type, string> DefaultTypeFormatter = new Dictionary<Type, string>();
-
-        private static void ProfileDefaultTypeFormatter(FieldInfo[] staticFieldInfos)
-        {
-            for (var i = 0; i < staticFieldInfos.Length; i++)
-            {
-                try
-                {
-                    if (staticFieldInfos[i]
-                        .TryGetCustomAttribute<DefaultTypeFormatterAttribute>(out var attribute, true))
-                    {
-                        if (staticFieldInfos[i].FieldType == typeof(string))
-                        {
-                            if (!DefaultTypeFormatter.ContainsKey(attribute.Type))
-                            {
-                                DefaultTypeFormatter.Add(attribute.Type, staticFieldInfos[i].GetValue(null).ToString());
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogWarning("Only String Is Valid DefaultTypeFormatter");
-                        }
-                    }
-                }
-                catch (BadImageFormatException exception)
-                {
-                    ExceptionLogging.LogException(exception, settings.LogBadImageFormatException);
-                }
-                catch (ThreadAbortException threadAbortException)
-                {
-                    ExceptionLogging.LogException(threadAbortException, settings.LogThreadAbortException);
-                }
-                catch (Exception exception)
-                {
-                    ExceptionLogging.LogException(exception, settings.LogUnknownExceptions);
                 }
             }
         }

@@ -17,8 +17,6 @@ namespace Baracuda.Monitoring.Editor
          */
         
         private FoldoutHandler Foldout { get; set; }
-        private static GUIStyle RichTextStyle => new GUIStyle("label") { richText = true, alignment = TextAnchor.MiddleCenter};
-
         /*
          * Constant Web Links   
          */
@@ -32,14 +30,15 @@ namespace Baracuda.Monitoring.Editor
          */
 
         private SerializedProperty _enableMonitoring;
+        private SerializedProperty _openDisplayOnLoad;
         private SerializedProperty _forceSynchronousLoad;
         private SerializedProperty _monitoringDisplay;
+        private SerializedProperty _showRuntimeObject;
         
         private SerializedProperty _logBadImageFormatException;
         private SerializedProperty _logOperationCanceledException;
         private SerializedProperty _logThreadAbortException;
         private SerializedProperty _logUnknownExceptions;
-        private SerializedProperty _logBackfieldNotFoundException;
         private SerializedProperty _logProcessorNotFoundException;
         private SerializedProperty _logInvalidProcessorSignatureException;
         
@@ -49,14 +48,11 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _groupInstanceUnits;
         private SerializedProperty _humanizeNames;
         private SerializedProperty _variablePrefixes;
-        
-        private SerializedProperty _optionalStyleSheets;
-        private SerializedProperty _instanceUnitStyles;
-        private SerializedProperty _instanceGroupStyles;
-        private SerializedProperty _instanceLabelStyles;
-        private SerializedProperty _staticUnitStyles;
-        private SerializedProperty _staticGroupStyles;
-        private SerializedProperty _staticLabelStyles;
+
+        private SerializedProperty _floatFormat;
+        private SerializedProperty _integerFormat;
+        private SerializedProperty _vectorFormat;
+        private SerializedProperty _quaternionFormat;
         
         private SerializedProperty _classColor;
         private SerializedProperty _trueColor;
@@ -128,12 +124,10 @@ namespace Baracuda.Monitoring.Editor
         {
             serializedObject.Update();
             EditorGUIUtility.labelWidth = 300;
-            DrawTitle("Monitoring", Color.clear, new Color(0.85f, 0.85f, 0.85f));
 
             if (Application.isPlaying)
             {
-                EditorGUILayout.HelpBox("Cannot edit settings during runtime!", MessageType.Info);
-                GUI.enabled = false;
+                EditorGUILayout.HelpBox("Some Settings may not update during runtime!", MessageType.Info);
                 EditorGUILayout.Space();
             }
             
@@ -141,9 +135,9 @@ namespace Baracuda.Monitoring.Editor
             {
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_enableMonitoring);
-                EditorGUILayout.PropertyField(_forceSynchronousLoad);
-                //TODO: Draw Required
-                EditorGUILayout.PropertyField(_monitoringDisplay);
+                EditorGUILayout.PropertyField(_openDisplayOnLoad);
+                DrawRequired(_monitoringDisplay);
+                EditorGUILayout.PropertyField(_showRuntimeObject);
                 DrawButtonControls();
                 EditorGUILayout.Space();
             }
@@ -155,7 +149,6 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_logOperationCanceledException);
                 EditorGUILayout.PropertyField(_logThreadAbortException);
                 EditorGUILayout.PropertyField(_logUnknownExceptions);
-                EditorGUILayout.PropertyField(_logBackfieldNotFoundException);
                 EditorGUILayout.PropertyField(_logProcessorNotFoundException);
                 EditorGUILayout.PropertyField(_logInvalidProcessorSignatureException);
                 EditorGUILayout.Space();
@@ -170,22 +163,14 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_groupInstanceUnits);
                 EditorGUILayout.PropertyField(_humanizeNames);
                 EditorGUILayout.PropertyField(_variablePrefixes);
+                
+                EditorGUILayout.PropertyField(_floatFormat);
+                EditorGUILayout.PropertyField(_integerFormat);
+                EditorGUILayout.PropertyField(_vectorFormat);
+                EditorGUILayout.PropertyField(_quaternionFormat);
                 EditorGUILayout.Space();
             }
-            
-            if (Foldout["Style"])
-            {
-                EditorGUILayout.Space();
-                EditorGUILayout.PropertyField(_optionalStyleSheets);
-                EditorGUILayout.PropertyField(_instanceUnitStyles);
-                EditorGUILayout.PropertyField(_instanceGroupStyles);
-                EditorGUILayout.PropertyField(_instanceLabelStyles);
-                EditorGUILayout.PropertyField(_staticUnitStyles);
-                EditorGUILayout.PropertyField(_staticGroupStyles);
-                EditorGUILayout.PropertyField(_staticLabelStyles);
-                EditorGUILayout.Space();
-            }
-            
+          
             if (Foldout["Color"])
             {
                 EditorGUILayout.Space();
@@ -266,11 +251,13 @@ namespace Baracuda.Monitoring.Editor
 
         #region --- Misc ---
 
-        private static void DrawTitle(string title, Color background, Color font)
+        private static void DrawRequired(SerializedProperty property)
         {
-            var fullRect = GUILayoutUtility.GetRect(0, 0, 36, 0);
-            EditorGUI.DrawRect(fullRect, background);
-            GUI.Label(fullRect, "<size=16><color=#" + ColorUtility.ToHtmlStringRGB(font) + ">" + title + "</color></size>", RichTextStyle);
+            if (property.objectReferenceValue == null)
+            {
+                EditorGUILayout.HelpBox($"{property.displayName} is Required!", MessageType.Error);
+            }
+            EditorGUILayout.PropertyField(property);
         }
         
         private static void DrawLine(int thickness = 1, int padding = 1)

@@ -1,15 +1,13 @@
 using System;
 using System.Reflection;
 using Baracuda.Monitoring.Attributes;
-using Baracuda.Monitoring.Internal.Exceptions;
 using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
-
 namespace Baracuda.Monitoring.Internal.Profiling
 {
-    /// <typeparam name="TTarget">The <see cref="Type"/> of the property target object</typeparam>
-    /// <typeparam name="TValue">The <see cref="Type"/> of the return value of the property</typeparam>
+    /// <typeparam name="TTarget">The Type of the properties target object</typeparam>
+    /// <typeparam name="TValue">The Type of the properties return value</typeparam>
     public sealed class PropertyProfile<TTarget, TValue> : ValueProfile<TTarget, TValue> where TTarget : class
     {
         #region --- Fields ---
@@ -44,50 +42,35 @@ namespace Baracuda.Monitoring.Internal.Profiling
             MonitorAttribute attribute,
             MonitorProfileCtorArgs args) : base(propertyInfo, attribute, typeof(TTarget), typeof(TValue), UnitType.Property, args)
         {
-#if !ENABLE_IL2CPP // backing field access is not allowed in IL2CPP
-            if (attribute is MonitorPropertyAttribute propertyAttribute)
-            {
-                var getBacking = propertyAttribute.GetBacking || propertyAttribute.TargetBacking;
-                var setBacking = propertyAttribute.SetBacking || propertyAttribute.TargetBacking;
-
-                if (getBacking || setBacking)
-                {
-                    var backField = propertyInfo.GetBackingField();
-                    if (backField == null)
-                    {
-                        ExceptionLogging.LogException(new BackfieldNotFoundException(propertyInfo));
-                        return;
-                    }
-                    
-                    if(getBacking)
-                    {
-                        _getValueDelegate = backField.CreateGetter<TTarget, TValue>();
-                    }
-
-                    if(setBacking)
-                    {
-                        _setValueDelegate = backField.CreateSetter<TTarget, TValue>();
-                    }
-                }
-            }
-
-            _getValueDelegate ??= CreateGetExpression(propertyInfo.GetMethod);
-            _setValueDelegate ??= CreateSetExpression(propertyInfo.SetMethod);
+#if !ENABLE_IL2CPP 
+            var backField = propertyInfo.GetBackingField();
+            
+            _getValueDelegate = backField?.CreateGetter<TTarget, TValue>() ?? CreateGetDelegate(propertyInfo.GetMethod);
+            _setValueDelegate = SetAccessEnabled
+                ? backField?.CreateSetter<TTarget, TValue>() ?? CreateSetDelegate(propertyInfo.SetMethod) 
+                : null;
 #else
-            _getValueDelegate = CreateGetExpression(propertyInfo.GetMethod);
-            _setValueDelegate = CreateSetExpression(propertyInfo.SetMethod);
+            _getValueDelegate = CreateGetDelegate(propertyInfo.GetMethod);
+            _setValueDelegate =  SetAccessEnabled
+                ? CreateSetDelegate(propertyInfo.SetMethod) 
+                : null;
 #endif
         }
         
 
-        private static Func<TTarget, TValue> CreateGetExpression(MethodInfo methodInfo)
+        private static Func<TTarget, TValue> CreateGetDelegate(MethodInfo methodInfo)
         {
             return target => (TValue) methodInfo.Invoke(target, null);
         }
         
-        private static Action<TTarget, TValue> CreateSetExpression(MethodInfo methodInfo)
+        private static Action<TTarget, TValue> CreateSetDelegate(MethodInfo methodInfo)
         {
-            return (target, value) => methodInfo.Invoke(target, new object[] {value});
+            var proxy = new object[1];
+            return (target, value) =>
+            {
+                proxy[0] = value;
+                methodInfo.Invoke(target, proxy);
+            };
         }
 
         #endregion

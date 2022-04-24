@@ -58,6 +58,11 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
             return stringBuilder.ToString();
         }
 
+        private void Start()
+        {
+            gameObject.hideFlags |= HideFlags.HideInHierarchy;
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void InitializeOnLoad()
         {

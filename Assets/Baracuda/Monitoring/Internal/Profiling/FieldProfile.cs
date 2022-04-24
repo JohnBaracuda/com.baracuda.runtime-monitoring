@@ -42,7 +42,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
             : base(fieldInfo, attribute, typeof(TTarget), typeof(TValue), UnitType.Field, args)
         {
             _getValueDelegate = fieldInfo.CreateGetter<TTarget, TValue>();
-            _setValueDelegate = fieldInfo.CreateSetter<TTarget, TValue>();
+            _setValueDelegate = SetAccessEnabled
+                ? fieldInfo.CreateSetter<TTarget, TValue>()
+                : null;
         }
 
         #endregion

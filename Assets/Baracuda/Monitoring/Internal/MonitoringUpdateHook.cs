@@ -1,41 +1,60 @@
 using System;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Internal.Utilities;
-using Baracuda.Threading;
+using Baracuda.Monitoring.Management;
+using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal
 {
     internal class MonitoringUpdateHook : MonoSingleton<MonitoringUpdateHook>
     {
+        /*
+         * Events   
+         */
+        
         internal event Action OnUpdate;
         internal event Action OnTick;
         internal event Action OnFixedUpdate;
 
-        private void Update() => OnUpdate?.Invoke();
-        private void FixedUpdate() => OnFixedUpdate?.Invoke();
-        private void Tick() => OnTick?.Invoke();
+        /*
+         * Tick loop fields   
+         */
 
-        private async void TickLoop()
-        {
-            try
-            {
-                while (true)
-                {
-                    Tick();
-                    //TODO: use Update
-                    await Task.Delay(50, Dispatcher.RuntimeToken);
-                }
-            }
-            catch (OperationCanceledException)
-            {
-            }
-        }
+        private float _tickTimer = 0;
+        private const float TICK_INTERVAL_IN_SECONDS = .1f;
+
+        /*
+         * Unity Event Methods    
+         */
 
         protected override void Awake()
         {
             base.Awake();
-            TickLoop();
+            gameObject.hideFlags = MonitoringSettings.GetInstance().ShowRuntimeObject ? HideFlags.None : HideFlags.HideInHierarchy;
         }
+
+        private void Update()
+        {
+            OnUpdate?.Invoke();
+            Tick();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Tick()
+        {
+            _tickTimer += Time.deltaTime;
+            if (_tickTimer >= TICK_INTERVAL_IN_SECONDS)
+            {
+                OnTick?.Invoke();
+                _tickTimer = 0;
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            OnFixedUpdate?.Invoke();
+        }
+
 
         protected override void OnDestroy()
         {

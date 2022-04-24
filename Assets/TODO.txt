@@ -1,0 +1,11 @@
+//Documentation:
+TODO: Add / improve xml comments for attributes and API
+TODO: Add readme.md
+TODO: Add online documentation / page
+
+//UI - Unity UI:
+TODO: Add TMP based Unity UI Implementation.
+
+//Compatibility
+TODO: Check compatibility with 2019.4
+

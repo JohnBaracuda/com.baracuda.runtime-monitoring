@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Internal.Pooling.Concretions;
-using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
-using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
@@ -21,24 +18,20 @@ namespace Baracuda.Monitoring.Internal.Profiling
         public UpdateOptions UpdateOptions { get; }
         public Type UnitTargetType { get; }
         public Type UnitValueType { get; }
-        public Type UnitDeclaringType { get; }
-        public  string[] Tags { get; }
         public bool IsStatic { get; }
-        public bool ShowIndexer { get; } = true;
-        public string Label { get; }
-        public string Format { get; }
-        public int FontSize { get; }
-        public int IndentValue { get; }
-        public string Indent { get; }
-        public UIPosition Position { get; }
-        public bool AllowGrouping { get; } = true;
-        public string GroupName { get; }
+        
+        public FormatData FormatData { get; }
         
         public bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute
         {
-            var result = _metaAttributes.TryGetValue(typeof(TAttribute), out var metaAttribute);
-            attribute = metaAttribute as TAttribute;
-            return result;
+            attribute = GetMetaAttribute<TAttribute>();
+            return attribute != null;
+        }
+        
+        public TAttribute GetMetaAttribute<TAttribute>() where TAttribute : MonitoringMetaAttribute
+        {
+            _metaAttributes.TryGetValue(typeof(TAttribute), out var metaAttribute);
+            return metaAttribute as TAttribute;;
         }
 
         #endregion
@@ -66,7 +59,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             MemberInfo = memberInfo;
             UnitTargetType = unitTargetType;
             UnitValueType = unitValueType;
-            UnitDeclaringType = memberInfo.DeclaringType;
+            UnitType = unityType;
             UpdateOptions = attribute.Update;
             IsStatic = args.ReflectedMemberFlags.HasFlagUnsafe(BindingFlags.Static);
             
@@ -77,54 +70,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 _metaAttributes.Add(monitoringMetaAttribute.GetType(), monitoringMetaAttribute);
             }
 
-            if (TryGetMetaAttribute<FormatAttribute>(out var options))
-            {
-                Format = options.Format;
-                Label = options.Label;
-                ShowIndexer = options.ShowIndexer;
-                FontSize = Mathf.Clamp((int) options.FontSize, 0, 64);
-                Position = options.Position;
-                IndentValue = options.ElementIndent;
-                Indent = options.ElementIndent >= 0? $"<pos={options.ElementIndent.ToString()}>" : null;
-                AllowGrouping = options.GroupElement;
-            }
-
-            AllowGrouping = AllowGrouping && (IsStatic ? settings.GroupStaticUnits : settings.GroupInstanceUnits);
-            
-            GroupName = settings.HumanizeNames? UnitDeclaringType!.Name.Humanize() : UnitDeclaringType!.Name;
-            if (UnitDeclaringType.IsGenericType)
-            {
-                GroupName = UnitDeclaringType.ToSyntaxString();
-            }
-            
-            if (Label == null)
-            {
-                Label = settings.HumanizeNames? memberInfo.Name.Humanize(settings.VariablePrefixes) : memberInfo.Name;
-                
-                if (settings.AddClassName)
-                {
-                    Label = $"{unitTargetType.Name.Colorize(settings.ClassColor)}{settings.AppendSymbol.ToString()}{Label}";
-                }
-            }
-
-            if (MonitoringProfiler.DefaultTypeFormatter.TryGetValue(unitValueType, out var typeFormatter))
-            {
-                Format ??= typeFormatter;
-            }
-           
-            UnitType = unityType;
-            
-            // Tags added to the profile can be used to filter active units.
-            var tags = ConcurrentListPool<string>.Get();
-            tags.Add(Label);
-            tags.Add(UnitType.ToString());
-            tags.Add(IsStatic ? "Static" : "Instance");
-            if (TryGetMetaAttribute<TagAttribute>(out var categoryAttribute))
-            {
-                tags.AddRange(categoryAttribute.Tags);
-            }
-            Tags = tags.ToArray();
-            ConcurrentListPool<string>.Release(tags);
+            FormatData = FormatData.Create(this, settings);
         }
 
         #endregion

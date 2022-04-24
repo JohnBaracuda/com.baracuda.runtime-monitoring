@@ -17,9 +17,13 @@ namespace Baracuda.Monitoring.Attributes
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     [Preserve]
-    public  class MonitorValueAttribute : MonitorAttribute
+    public class MonitorValueAttribute : MonitorAttribute
     {
-        //TODO: Maybe add enable write access for potential value setting
+        /// <summary>
+        /// When enabled, the monitored value may be set by the MonitorUnit. This will enable UI scripts to set the value
+        /// directly.
+        /// </summary>
+        public bool EnableSetAccess { get; set; }
         
         /// <summary>
         /// The name of an event that is invoked when the monitored value is updated. Use to reduce the evaluation of the

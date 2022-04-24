@@ -11,14 +11,14 @@ namespace Baracuda.Monitoring.Editor
         /*
          * Properties    
          */
-        public Dictionary<string, bool> Data => _data;
+        private Dictionary<string, bool> Data { get; }
+
         public Dictionary<string, bool> DefaultFoldoutStates { get; } = new Dictionary<string, bool>();
 
         /*
          * Fields   
          */
-        
-        private readonly Dictionary<string, bool> _data;
+
         private readonly string _dataKey;
 
         /*
@@ -33,7 +33,7 @@ namespace Baracuda.Monitoring.Editor
             
             if (string.IsNullOrWhiteSpace(data))
             {
-                _data = new Dictionary<string, bool>();
+                Data = new Dictionary<string, bool>();
                 return;
             }
 
@@ -53,7 +53,7 @@ namespace Baracuda.Monitoring.Editor
                 dictionary.Add(key, value);
             }
 
-            _data = dictionary;
+            Data = dictionary;
 
         }
 
@@ -76,9 +76,9 @@ namespace Baracuda.Monitoring.Editor
         {
             get
             {
-                if (!_data.TryGetValue(name, out var currentValue))
+                if (!Data.TryGetValue(name, out var currentValue))
                 {
-                    _data.Add(name, currentValue = !DefaultFoldoutStates.TryGetValue(name, out var state) || state);
+                    Data.Add(name, currentValue = !DefaultFoldoutStates.TryGetValue(name, out var state) || state);
                 }
                     
                 var newValue = Foldout(currentValue, name);
@@ -108,9 +108,9 @@ namespace Baracuda.Monitoring.Editor
             }
             private set
             {
-                if (!_data.TryAdd(name, value))
+                if (!Data.TryAdd(name, value))
                 {
-                    _data[name] = value;
+                    Data[name] = value;
                 }
             }
         }
@@ -118,7 +118,7 @@ namespace Baracuda.Monitoring.Editor
         #region --- GUI ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Foldout(bool value, string label)
+        private static bool Foldout(bool value, string label)
         {
             var lastRect = EditorGUILayout.GetControlRect();
             var widthRect = new Rect(0, lastRect.y, EditorGUIUtility.currentViewWidth, lastRect.height + 2);

@@ -107,7 +107,7 @@ namespace Baracuda.Monitoring.Internal.Units
             Target = target;
             Name = (target is UnityEngine.Object unityObject)
                 ? unityObject.name
-                : profile.UnitDeclaringType.Name;
+                : profile.UnitTargetType.Name;
         }
 
         #endregion
@@ -125,7 +125,7 @@ namespace Baracuda.Monitoring.Internal.Units
         {
             var sb = StringBuilderPool.Get();
             sb.Append("Label: ");
-            sb.Append(Profile.Label);
+            sb.Append(Profile.FormatData.Label);
             sb.Append(" :: Target:");
             sb.Append(Target?.ToString() ?? NULL);
             sb.Append(" :: Update:");

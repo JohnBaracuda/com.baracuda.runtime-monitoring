@@ -3,14 +3,6 @@ using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.Attributes
 {
-    public enum UIPosition
-    {
-        TopLeft,
-        TopRight,
-        BottomLeft,
-        BottomRight
-    }
-    
     [Preserve]
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class FormatAttribute : MonitoringMetaAttribute
@@ -60,6 +52,18 @@ namespace Baracuda.Monitoring.Attributes
         public FormatAttribute()
         {
         }
+    }
+    
+    /*
+     * UI Position
+     */
+
+    public enum UIPosition
+    {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight
     }
 
     public static class UIPositionExtension

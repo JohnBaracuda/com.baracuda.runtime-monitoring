@@ -36,7 +36,6 @@ namespace Baracuda.Monitoring.Management
         /// <summary>
         /// Register an object that is monitored during runtime.
         /// </summary>
-        /// <param name="target"></param>
         public static void RegisterTarget(object target)
         {
             registeredTargets.Add(target);
@@ -49,7 +48,6 @@ namespace Baracuda.Monitoring.Management
         /// <summary>
         /// Unregister an object that is monitored during runtime.
         /// </summary>
-        /// <param name="target"></param>
         public static void UnregisterTarget(object target)
         {
             DestroyInstanceUnits(target);

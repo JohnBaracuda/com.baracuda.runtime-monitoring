@@ -65,11 +65,6 @@ namespace Baracuda.Monitoring.Internal.Reflection
         private static bool IsAssemblyValidForReflection(Assembly assembly, IReadOnlyList<string> excludeNames,
             IReadOnlyList<string> excludePrefixes)
         {
-            if (assembly.HasAttribute<DisableAssemblyReflectionAttribute>())
-            {
-                return false;
-            }
-
             var assemblyFullName = assembly.FullName;
             for (var i = 0; i < bannedAssemblyPrefixes.Length; i++)
             {

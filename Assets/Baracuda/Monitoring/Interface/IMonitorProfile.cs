@@ -19,18 +19,10 @@ namespace Baracuda.Monitoring.Interface
         UpdateOptions UpdateOptions { get; }
         Type UnitTargetType { get; }
         Type UnitValueType { get; }
-        Type UnitDeclaringType { get; }
         bool IsStatic { get; }
+        FormatData FormatData { get; }
         
-        // TODO: outsource from profile
-        
-        string[] Tags { get; }
-        string Label { get; }
-        string Format { get; }
-        int FontSize { get; }
-        UIPosition Position { get; }
-        bool AllowGrouping { get; }
-        string GroupName { get; }
         bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute;
+        TAttribute GetMetaAttribute<TAttribute>() where TAttribute : MonitoringMetaAttribute;
     }
 }

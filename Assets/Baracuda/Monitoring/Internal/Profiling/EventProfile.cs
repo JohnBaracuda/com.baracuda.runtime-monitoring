@@ -101,7 +101,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             return (target, count) =>
             {
                 var sb = StringBuilderPool.Get();
-                sb.Append(Label);
+                sb.Append(FormatData.Label);
                 sb.Append(" Subscriber:");
                 sb.Append(counterDelegate(target));
                 sb.Append(" Invokes: ");

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4062470990811542423}
   - component: {fileID: 4062470990811542420}
-  - component: {fileID: 4062470990811542422}
   - component: {fileID: 4062470990811542421}
   m_Layer: 0
   m_Name: Monitoring_UIElements_PFB
@@ -49,20 +48,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 112ddc9c33e2af3438d9074457a87634, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: fca1c77dffe945d42843c8d2515aa08d, type: 3}
-  m_SortingOrder: 0
---- !u!114 &4062470990811542422
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4062470990811542426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e88f2f6fe04cb8c4d928871ebc0658fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  toggleKey: 284
+  m_SortingOrder: 10000
 --- !u!114 &4062470990811542421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,5 +62,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
-  activateOnLoad: 1
-  instantiateAsync: 0
+  hideInHierarchy: 1
+  optionalStyleSheets: []
+  instanceUnitStyles: unit
+  instanceGroupStyles: group
+  instanceLabelStyles: label
+  staticUnitStyles: unit
+  staticGroupStyles: group
+  staticLabelStyles: label
