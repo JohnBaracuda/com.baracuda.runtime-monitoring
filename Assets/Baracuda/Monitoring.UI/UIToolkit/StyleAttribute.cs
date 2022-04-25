@@ -1,5 +1,4 @@
 using System;
-using Baracuda.Monitoring.Attributes;
 using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.UI.UIToolkit

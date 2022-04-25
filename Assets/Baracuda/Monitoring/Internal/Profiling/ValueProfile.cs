@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Utilities;
 
@@ -11,6 +10,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
         #region --- Properties ---
         
         public bool SetAccessEnabled { get; } = false;
+        
+        /// <summary>
+        /// When true, the profile was provided with a custom update event and is not required to be evaluated every frame/tick.
+        /// </summary>
         internal bool CustomUpdateEventAvailable { get; }
         
         #endregion

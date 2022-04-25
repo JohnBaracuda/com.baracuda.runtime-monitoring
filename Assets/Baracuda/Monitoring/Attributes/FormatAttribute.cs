@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     [Preserve]
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]

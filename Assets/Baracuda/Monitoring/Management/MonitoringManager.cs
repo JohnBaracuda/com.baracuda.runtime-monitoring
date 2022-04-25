@@ -13,19 +13,26 @@ namespace Baracuda.Monitoring.Management
 {
     public static class MonitoringManager
     {
-        #region --- Collections ---
+        #region --- Field & Properties ---
 
+        /*
+         * Public   
+         */
+        
         public static IReadOnlyList<MonitorUnit> GetStaticUnits() => staticUnits;
         public static IReadOnlyList<MonitorUnit> GetInstanceUnits() => instanceUnits;
 
+        /*
+         * Private   
+         */
+        
         private static readonly List<MonitorUnit> staticUnits = new List<MonitorUnit>(30);
         private static readonly List<MonitorUnit> instanceUnits = new List<MonitorUnit>(30);
         
         private static readonly Dictionary<object, MonitorUnit[]> activeInstanceUnits = new Dictionary<object, MonitorUnit[]>();
         
-        private static bool initialInstanceUnitsCreated = false;
-        
         private static readonly List<object> registeredTargets = new List<object>(300);
+        private static bool initialInstanceUnitsCreated = false;
         
         #endregion
         
@@ -93,34 +100,33 @@ namespace Baracuda.Monitoring.Management
                     continue;
                 }
 
-                if (MonitoringProfiler.InstanceProfiles.TryGetValue(validTypes[i], out var profiles))
+                if (!MonitoringProfiler.InstanceProfiles.TryGetValue(validTypes[i], out var profiles))
                 {
-                    // loop through the profiles and create a new unit for each profile.
-                    for (var j = 0; j < profiles.Count; j++)
-                    {
-                        if(guids.Contains(profiles[j].MemberInfo))
-                        {
-                            continue;
-                        }
+                    continue;
+                }
 
-                        guids.Add(profiles[j].MemberInfo);
-                        
-                        var unit = profiles[j].CreateUnit(target);
-                        units.Add(unit);
-                        instanceUnits.Add(unit);
-                        MonitoringEvents.RaiseUnitCreated(unit);
+                // loop through the profiles and create a new unit for each profile.
+                for (var j = 0; j < profiles.Count; j++)
+                {
+                    if(guids.Contains(profiles[j].MemberInfo))
+                    {
+                        continue;
                     }
+
+                    guids.Add(profiles[j].MemberInfo);
+                        
+                    var unit = profiles[j].CreateUnit(target);
+                    units.Add(unit);
+                    instanceUnits.Add(unit);
+                    MonitoringEvents.RaiseUnitCreated(unit);
                 }
             }
 
             // cache the created units in a dictionary that allows access by the units target.
             // this dictionary will be used to dispose the units if the target gets destroyed 
-            if (units.Count > 0)
+            if (units.Count > 0 && !activeInstanceUnits.ContainsKey(target))
             {
-                if (!activeInstanceUnits.ContainsKey(target))
-                {
-                    activeInstanceUnits.Add(target, units.ToArray());
-                }
+                activeInstanceUnits.Add(target, units.ToArray());
             }
             ConcurrentListPool<MemberInfo>.Release(guids);
             ConcurrentListPool<MonitorUnit>.Release(units);
@@ -132,16 +138,18 @@ namespace Baracuda.Monitoring.Management
 
         private static void DestroyInstanceUnits(object target)
         {
-            if (activeInstanceUnits.TryGetValue(target, out var units))
+            if (!activeInstanceUnits.TryGetValue(target, out var units))
             {
-                for (int i = 0; i < units.Length; i++)
-                {
-                    units[i].Dispose();
-                    MonitoringEvents.RaiseUnitDisposed(units[i]);
-                }
-                
-                activeInstanceUnits.Remove(target);
+                return;
             }
+
+            for (var i = 0; i < units.Length; i++)
+            {
+                units[i].Dispose();
+                MonitoringEvents.RaiseUnitDisposed(units[i]);
+            }
+                
+            activeInstanceUnits.Remove(target);
         }
 
         #endregion

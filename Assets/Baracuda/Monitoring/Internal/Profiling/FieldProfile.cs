@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
@@ -22,6 +21,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         #region --- Factory ---
 
+        /// <summary>
+        /// Create a new <see cref="FieldUnit{TTarget, TValue}"/> based on this profile.
+        /// </summary>
+        /// <param name="target">Target object for the unit. Null if it is a static unit.</param>
         internal override MonitorUnit CreateUnit(object target)
         {
             return new FieldUnit<TTarget, TValue>(

@@ -2,7 +2,7 @@ using System;
 using Baracuda.Monitoring.Interface;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Attributes inheriting from this class can be used to provide monitoring units with additional meta data.

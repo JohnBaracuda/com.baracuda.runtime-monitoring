@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Monitoring.Internal.Reflection;
@@ -141,6 +140,10 @@ namespace Baracuda.Monitoring.Editor
             content.Append('\n');
             
             content.Append('\n');
+            content.Append("#if ENABLE_IL2CPP");
+            content.Append('\n');
+            
+            content.Append('\n');
             content.Append("internal class IL2CPP_AOT\n{");
             for (var index = 0; index < typeDefinitionResults.Length; index++)
             {
@@ -163,6 +166,10 @@ namespace Baracuda.Monitoring.Editor
 
             content.Append('\n');
             content.Append('}');
+            
+            content.Append('\n');
+            content.Append("#endif //ENABLE_IL2CPP");
+            content.Append('\n');
 
             if (string.IsNullOrWhiteSpace(filePath) || !filePath.EndsWith(".cs"))
             {

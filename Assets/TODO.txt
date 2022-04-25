@@ -3,6 +3,13 @@ TODO: Add / improve xml comments for attributes and API
 TODO: Add readme.md
 TODO: Add online documentation / page
 
+//Features:
+TODO: Add Method Monitoring
+TODO: Make MonitoringAPI class that manages display etc.
+
+//Bugs / Fixes:
+TODO: Fix CreateEventHandler AOT 
+
 //UI - Unity UI:
 TODO: Add TMP based Unity UI Implementation.
 

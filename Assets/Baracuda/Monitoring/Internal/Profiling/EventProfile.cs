@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
@@ -32,6 +31,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         #region --- Ctor & Factory ---
 
+        /// <summary>
+        /// Create a new <see cref="EventUnit{TTarget, TValue}"/> based on this profile.
+        /// </summary>
+        /// <param name="target">Target object for the unit. Null if it is a static unit.</param>
         internal override MonitorUnit CreateUnit(object target)
         {
             return new EventUnit<TTarget, TDelegate>((TTarget) target, _formatState, this);
@@ -51,15 +54,23 @@ namespace Baracuda.Monitoring.Internal.Profiling
             
             var addMethod = eventInfo.GetAddMethod(true);
             var removeMethod = eventInfo.GetRemoveMethod(true);
-
+            var getterDelegate = eventInfo.AsFieldInfo().CreateGetter<TTarget, Delegate>();
+#if !ENABLE_IL2CPP
+            var counterDelegate = CreateCounterExpression(getterDelegate, ShowTrueCount).Compile();
             _subscribe = CreateExpression(addMethod).Compile();
             _remove = CreateExpression(removeMethod).Compile();
+#else
+            var counterDelegate = CreateCounterExpression(getterDelegate, ShowTrueCount);
+            _subscribe = CreateExpression(addMethod);
+            _remove = CreateExpression(removeMethod);
+#endif
             
-            var getterDelegate = eventInfo.AsFieldInfo().CreateGetter<TTarget, Delegate>();
-            var counterDelegate = CreateCounterExpression(getterDelegate, ShowTrueCount).Compile();
+            
+            
             _formatState = CreateStateFormatter(counterDelegate);
         }
         
+#if !ENABLE_IL2CPP
         private static Expression<Action<TTarget, Delegate>> CreateExpression(MethodInfo methodInfo)
         {
             return (target, @delegate) => methodInfo.Invoke(target, new object[]{@delegate});
@@ -74,6 +85,22 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
             return target => func(target).GetInvocationList().Length - 1;
         }
+#else
+        private static Action<TTarget, Delegate> CreateExpression(MethodInfo methodInfo)
+        {
+            return (target, @delegate) => methodInfo.Invoke(target, new object[]{@delegate});
+        }
+        
+        private static Func<TTarget, int> CreateCounterExpression(Func<TTarget, Delegate> func, bool trueCount)
+        {
+            if(trueCount)
+            {
+                return  target => func(target).GetInvocationList().Length;
+            }
+
+            return target => func(target).GetInvocationList().Length - 1;
+        }
+#endif
         
         #endregion
         
@@ -85,11 +112,37 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             if (ShowSignature)
             {
-                var parameterString = _eventInfo.GetEventSignatureString();
+                var signatureString = _eventInfo.GetEventSignatureString();
+
+                if (ShowSubscriber)
+                {
+                    return (target, count) =>
+                    {
+                        var sb = StringBuilderPool.Get();
+                        sb.Append(signatureString);
+                        sb.Append(" Subscriber:");
+                        sb.Append(counterDelegate(target));
+                        sb.Append(" Invokes: ");
+                        sb.Append(count);
+                        return StringBuilderPool.Release(sb);
+                    };
+                }
+
                 return (target, count) =>
                 {
                     var sb = StringBuilderPool.Get();
-                    sb.Append(parameterString);
+                    sb.Append(signatureString);
+                    sb.Append(" Invokes: ");
+                    sb.Append(count);
+                    return StringBuilderPool.Release(sb);
+                };
+            }
+
+            if (ShowSubscriber)
+            {
+                return (target, count) =>
+                {
+                    var sb = StringBuilderPool.Get();
                     sb.Append(" Subscriber:");
                     sb.Append(counterDelegate(target));
                     sb.Append(" Invokes: ");
@@ -101,9 +154,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
             return (target, count) =>
             {
                 var sb = StringBuilderPool.Get();
-                sb.Append(FormatData.Label);
-                sb.Append(" Subscriber:");
-                sb.Append(counterDelegate(target));
                 sb.Append(" Invokes: ");
                 sb.Append(count);
                 return StringBuilderPool.Release(sb);
@@ -128,6 +178,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         internal Delegate CreateEventHandler(Action action)
         {
+            //TODO: this does not work with IL2CPP
+            
             var handlerType = _eventInfo.EventHandlerType;
             var eventParams = handlerType.GetMethod("Invoke")!.GetParameters();
             var parameters = eventParams.Select(p=>Expression.Parameter(p.ParameterType,"x"));

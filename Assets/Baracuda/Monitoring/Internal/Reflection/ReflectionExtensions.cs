@@ -15,6 +15,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
     {
         #region --- Attribute Utilities ---
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetCustomAttribute<T>(this MemberInfo memberInfo, out T attribute, bool inherited = false) where T : Attribute
         {
             if (memberInfo.GetCustomAttribute<T>(inherited) is { } found)
@@ -27,6 +28,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
             return false;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasAttribute<T>(this ICustomAttributeProvider provider, bool inherited = true) where T : Attribute
         {
             try
@@ -39,6 +41,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasAttribute<T>(this MemberInfo memberInfo) where T : Attribute
         {
             return memberInfo.GetCustomAttribute<T>() != null;
@@ -64,6 +67,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
         #region --- FieldInfo Getter & Setter ---
 
 #if !ENABLE_IL2CPP
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Func<TTarget, TResult> CreateGetter<TTarget, TResult>(this FieldInfo field)
         {
             var methodName = $"{field!.ReflectedType!.FullName}.get_{field.Name}";
@@ -83,6 +87,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
             return (Func<TTarget, TResult>) setterMethod.CreateDelegate(typeof(Func<TTarget, TResult>));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Action<TTarget, TValue> CreateSetter<TTarget, TValue>(this FieldInfo field)
         {
             var methodName = $"{field!.ReflectedType!.FullName}.set_{field.Name}";
@@ -104,11 +109,13 @@ namespace Baracuda.Monitoring.Internal.Reflection
             return (Action<TTarget, TValue>) setterMethod.CreateDelegate(typeof(Action<TTarget, TValue>));
         }
 #else
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Func<TTarget, TResult> CreateGetter<TTarget, TResult>(this FieldInfo field)
         {
             return target => (TResult)field.GetValue(target);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Action<TTarget, TValue> CreateSetter<TTarget, TValue>(this FieldInfo field)
         {
             return (target, value) => field.SetValue(target, value);
@@ -123,6 +130,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
         private const BindingFlags EVENT_FLAGS = BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance |
                                                  BindingFlags.Public | BindingFlags.FlattenHierarchy;
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static FieldInfo AsFieldInfo(this EventInfo eventInfo)
         {
             return eventInfo.DeclaringType?.GetField(eventInfo.Name, EVENT_FLAGS);
@@ -180,6 +188,8 @@ namespace Baracuda.Monitoring.Internal.Reflection
         #region --- Backing Field Access ---
         
 #if !ENABLE_IL2CPP
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
           public static FieldInfo GetBackingField(this PropertyInfo propertyInfo,
             bool strictCheckIsAutoProperty = false)
         {
@@ -231,16 +241,19 @@ namespace Baracuda.Monitoring.Internal.Reflection
                 : null;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool StrictCheckIsAutoProperty(PropertyInfo pi)
         {
             return null != pi.GetCustomAttribute<CompilerGeneratedAttribute>();
         }
-
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool StrictCheckIsAutoPropertyBackingField(PropertyInfo pi, FieldInfo fi)
         {
             return fi.Name == "<" + pi.Name + ">k__BackingField";
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetAutoPropertyBakingFieldMetadataTokenInGetMethodOfStatic(byte[] msilBytes)
         {
             return 6 == msilBytes.Length && 0x7E == msilBytes[0] && 0x2A == msilBytes[5]
@@ -248,6 +261,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
                 : -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetAutoPropertyBakingFieldMetadataTokenInSetMethodOfStatic(byte[] msilBytes)
         {
             return 7 == msilBytes.Length && 0x02 == msilBytes[0] && 0x80 == msilBytes[1] && 0x2A == msilBytes[6]
@@ -255,6 +269,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
                 : -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetAutoPropertyBakingFieldMetadataTokenInGetMethodOfInstance(byte[] msilBytes)
         {
             return 7 == msilBytes.Length && 0x02 == msilBytes[0] && 0x7B == msilBytes[1] && 0x2A == msilBytes[6]
@@ -262,6 +277,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
                 : -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetAutoPropertyBakingFieldMetadataTokenInSetMethodOfInstance(byte[] msilBytes)
         {
             return 8 == msilBytes.Length && 0x02 == msilBytes[0] && 0x03 == msilBytes[1] && 0x7D == msilBytes[2] &&
@@ -324,30 +340,6 @@ namespace Baracuda.Monitoring.Internal.Reflection
         #endregion
         
         #region --- Type Checks ---
-
-        /*
-         * Access   
-         */
-
-        public static bool IsAccessible(this Type type)
-        {
-            var baseTypes = type.GetDeclaringTypes(true);
-            
-            for (var i = 0; i < baseTypes.Length; i++)
-            {
-                var baseType = baseTypes[i];
-                if (!baseType.IsPublic && !baseType.IsNestedPublic)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /*
-         *  Numeric   
-         */
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNumeric(this Type type)
@@ -366,10 +358,6 @@ namespace Baracuda.Monitoring.Internal.Reflection
         {
             return integerTypes.Contains(type) || integerTypes.Contains(Nullable.GetUnderlyingType(type));
         }
-
-        /*
-         *  Elementary & Meta
-         */
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsString(this Type type)
@@ -400,16 +388,11 @@ namespace Baracuda.Monitoring.Internal.Reflection
             return type.HasAttribute<IsReadOnlyAttribute>();
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsStatic(this Type type)
         {
             return type.IsAbstract && type.IsSealed;
         }
-
-        /*
-         *  Collections   
-         */
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsList(this Type type)
@@ -456,18 +439,50 @@ namespace Baracuda.Monitoring.Internal.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIDictionary(this Type type)
         {
-            return type.GetInterfaces()
-                .Any(interfaceType => interfaceType.IsGenericType
-                                      && interfaceType.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+            for (var i = 0; i < type.GetInterfaces().Length; i++)
+            {
+                var interfaceType = type.GetInterfaces()[i];
+                if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIList(this Type type)
         {
-            return type.GetInterfaces().Any(interfaceType => interfaceType.IsGenericType &&
-                                                             (interfaceType.GetElementType() ??
-                                                              interfaceType.GetGenericTypeDefinition()) ==
-                                                             typeof(IList<>));
+            for (var i = 0; i < type.GetInterfaces().Length; i++)
+            {
+                var interfaceType = type.GetInterfaces()[i];
+                if (interfaceType.IsGenericType && (interfaceType.GetElementType() ?? interfaceType.GetGenericTypeDefinition()) == typeof(IList<>))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        
+        /// <summary>
+        /// Returns ture if the type and all of its declaring types are public. 
+        /// </summary>
+        public static bool IsAccessible(this Type type)
+        {
+            var baseTypes = type.GetDeclaringTypes(true);
+            
+            for (var i = 0; i < baseTypes.Length; i++)
+            {
+                var baseType = baseTypes[i];
+                if (!baseType.IsPublic && !baseType.IsNestedPublic)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /*
@@ -509,9 +524,18 @@ namespace Baracuda.Monitoring.Internal.Reflection
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool HasInterface<T>(this Type type)
+        public static bool HasInterface<T>(this Type type) where T : class
         {
-            return type.GetInterfaces().Any(x => x == typeof(T));
+            for (var i = 0; i < type.GetInterfaces().Length; i++)
+            {
+                var @interface = type.GetInterfaces()[i];
+                if (@interface == typeof(T))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -541,7 +565,9 @@ namespace Baracuda.Monitoring.Internal.Reflection
         #region --- Underlying & Collection Types ---
 
         public static Type GetUnderlying(this Type nullableType)
-            => Nullable.GetUnderlyingType(nullableType) ?? nullableType;
+        {
+            return Nullable.GetUnderlyingType(nullableType) ?? nullableType;
+        }
 
         public static Type GetEnumerableType(this Type type)
         {
@@ -587,11 +613,13 @@ namespace Baracuda.Monitoring.Internal.Reflection
 
         #region --- Event ---
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetSubscriberCount<TDelegate>(this TDelegate eventDelegate) where TDelegate : Delegate
         {
             return eventDelegate?.GetInvocationList().Length ?? 0;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string GetSubscriberCountString<TDelegate>(this TDelegate eventDelegate) where TDelegate : Delegate
         {
             return eventDelegate.GetSubscriberCount().ToString();
@@ -759,6 +787,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
 
         #region --- Base Type Reflection ---
                 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Type[] GetBaseTypes(this Type type, bool includeThis)
         {
             var temp = ConcurrentListPool<Type>.Get();
@@ -783,6 +812,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
             return array;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Type[] GetDeclaringTypes(this Type type, bool includeThis)
         {
             var temp = ConcurrentListPool<Type>.Get();
@@ -803,6 +833,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
             return array;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Type[] GetBaseTypesExcludeUnityTypes(this Type type, bool includeThis)
         {
             var temp = ConcurrentListPool<Type>.Get();
@@ -826,6 +857,8 @@ namespace Baracuda.Monitoring.Internal.Reflection
             ConcurrentListPool<Type>.Release(temp);
             return array;
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static FieldInfo GetFieldIncludeBaseTypes(this Type type, string fieldName, BindingFlags flags = 
             BindingFlags.Static | 
             BindingFlags.NonPublic | 
@@ -850,6 +883,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
             return fieldInfo;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PropertyInfo GetPropertyIncludeBaseTypes(this Type type, string propertyName, BindingFlags flags = 
             BindingFlags.Static | 
             BindingFlags.NonPublic | 
@@ -874,7 +908,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
             return propertyInfo;
         }
         
-        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static MethodInfo GetMethodIncludeBaseTypes(this Type type, string methodName, BindingFlags flags)
         {
             MethodInfo methodInfo = null;
@@ -895,6 +929,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
             return methodInfo;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static EventInfo GetEventIncludeBaseTypes(this Type type, string eventName, BindingFlags flags)
         {
             EventInfo eventInfo = null;

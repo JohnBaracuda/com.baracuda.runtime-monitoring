@@ -32,8 +32,6 @@ namespace Baracuda.Monitoring.Management
             }
         }
         
-        private static volatile bool isInitialized = false;
-
         /*
          * Events   
          */
@@ -58,8 +56,6 @@ namespace Baracuda.Monitoring.Management
             }
             remove => profilingCompleted -= value;
         }
-
-        private static ProfilingCompletedListener profilingCompleted;
             
         /// <summary>
         /// Event is called when a new <see cref="MonitorUnit"/> was created.
@@ -71,6 +67,14 @@ namespace Baracuda.Monitoring.Management
         /// </summary>
         public static event Action<IMonitorUnit> UnitDisposed;
 
+        /*
+         * Backing fields   
+         */
+        
+        private static volatile bool isInitialized = false;
+        
+        private static ProfilingCompletedListener profilingCompleted;
+        
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------

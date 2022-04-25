@@ -1,5 +1,5 @@
+using System;
 using System.Collections;
-using Baracuda.Monitoring.Attributes;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -33,6 +33,10 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         private static readonly int knockdown = Animator.StringToHash("knockdown");
         private static readonly int recover = Animator.StringToHash("recover");
+
+        [MonitorEvent(ShowTrueCount = true, ShowSignature = true, ShowSubscriber = true)]
+        public static event Action<int> TargetDestroyed;
+        private static int totalTargetsDestroyed;
         
         #endregion
 
@@ -64,6 +68,8 @@ namespace Baracuda.Monitoring.Example.Scripts
                 }
 
                 _currentHealth = 0;
+                totalTargetsDestroyed++;
+                TargetDestroyed?.Invoke(totalTargetsDestroyed);
                 StartCoroutine(CooldownCoroutine());
             }
         }

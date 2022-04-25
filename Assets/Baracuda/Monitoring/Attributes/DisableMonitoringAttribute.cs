@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Disable monitoring for the target assembly or class.

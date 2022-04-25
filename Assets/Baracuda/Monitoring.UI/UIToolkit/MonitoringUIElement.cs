@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Management;
 using UnityEngine;
@@ -33,7 +32,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Ui Element Creation ---
+        #region --- UI Element Creation ---
 
         /// <summary>
         /// Creating a new Monitor Unit UI Element 
@@ -42,7 +41,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit
         {
             var tags = ListPool<string>.Get();
             tags.Add(monitorUnit.Name);
-            tags.AddRange(monitorUnit.Profile.FormatData.Tags);
+            tags.AddRange(monitorUnit.Profile.Tags);
             Tags = tags.ToArray();
 
             ListPool<string>.Release(tags);

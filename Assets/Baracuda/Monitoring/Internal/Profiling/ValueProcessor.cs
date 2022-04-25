@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Internal.Exceptions;
 using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
@@ -17,7 +16,7 @@ using UnityEngine;
 namespace Baracuda.Monitoring.Internal.Profiling
 {
     /// <summary>
-    /// This class creates custom ValueProcessor delegates for Monitoring units based on their values type.
+    /// Class creates custom ValueProcessor delegates for Monitoring units based on their values type.
     /// </summary>
     internal static class ValueProcessor
     {

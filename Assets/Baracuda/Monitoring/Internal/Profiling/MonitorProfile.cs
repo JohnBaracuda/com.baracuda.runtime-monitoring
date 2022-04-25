@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Interface;
+using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
 
@@ -19,9 +19,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
         public Type UnitTargetType { get; }
         public Type UnitValueType { get; }
         public bool IsStatic { get; }
-        
+        public string[] Tags { get; }
         public FormatData FormatData { get; }
-        
+
         public bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute
         {
             attribute = GetMetaAttribute<TAttribute>();
@@ -71,6 +71,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
 
             FormatData = FormatData.Create(this, settings);
+            
+            var tags = ConcurrentListPool<string>.Get();
+            tags.Add(FormatData.Label);
+            tags.Add(UnitType.AsString());
+            tags.Add(IsStatic ? "Static" : "Instance");
+            if (TryGetMetaAttribute<MonitoringTagAttribute>(out var categoryAttribute))
+            {
+                tags.AddRange(categoryAttribute.Tags);
+            }
+            Tags = tags.ToArray();
+            ConcurrentListPool<string>.Release(tags);
         }
 
         #endregion

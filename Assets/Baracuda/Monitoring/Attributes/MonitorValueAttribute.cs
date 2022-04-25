@@ -2,18 +2,15 @@ using System;
 using Baracuda.Monitoring.Management;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
-    /// Mark a Property or Field which will then be monitored during runtime.
-    /// <br/> When monitoring non static members of a class, instances
-    /// of the monitored class must be registered and unregistered when they are created and destroyed using:
+    /// Mark a Field or Property to be monitored at runtime.
+    /// When monitoring non static members, instances of the monitored class must be registered and unregistered
+    /// when they are created and destroyed using:
     /// <see cref="MonitoringManager.RegisterTarget"/> or <see cref="MonitoringManager.UnregisterTarget"/>.
-    /// This process can be simplified by using monitored base types for classes that you plan to monitor.
-    /// These base types are:
-    /// <br/><see cref="MonitoredObject"/>
-    /// <br/><see cref="MonitoredBehaviour"/>
-    /// <br/><see cref="MonitoredSingleton{T}"/>
+    /// This process can be simplified by using monitored base types:
+    /// <br/><see cref="MonitoredObject"/>, <see cref="MonitoredBehaviour"/> or <see cref="MonitoredSingleton{T}"/>
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     [Preserve]
@@ -27,8 +24,9 @@ namespace Baracuda.Monitoring.Attributes
         
         /// <summary>
         /// The name of an event that is invoked when the monitored value is updated. Use to reduce the evaluation of the
-        /// monitored member. 
+        /// monitored member. Events can be of type <see cref="Action"/> or <see cref="Action{T}"/>, with T being the type of the monitored value. 
         /// </summary>
+        /// <footer>Note: use the nameof keyword to pass the name of the event.</footer> 
         public string UpdateEvent { get; set; } = null;
     }
 }

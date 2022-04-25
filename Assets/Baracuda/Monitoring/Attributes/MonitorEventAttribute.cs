@@ -2,18 +2,15 @@ using System;
 using Baracuda.Monitoring.Management;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
-    /// Mark an Event which will then be monitored during runtime.
-    /// <br/> When monitoring non static members of a class, instances
-    /// of the monitored class must be registered and unregistered when they are created and destroyed using:
+    /// Mark a C# event to be monitored at runtime.
+    /// When monitoring non static members, instances of the monitored class must be registered and unregistered
+    /// when they are created and destroyed using:
     /// <see cref="MonitoringManager.RegisterTarget"/> or <see cref="MonitoringManager.UnregisterTarget"/>.
-    /// This process can be simplified by using monitored base types for classes that you plan to monitor.
-    /// These base types are:
-    /// <br/><see cref="MonitoredObject"/>
-    /// <br/><see cref="MonitoredBehaviour"/>
-    /// <br/><see cref="MonitoredSingleton{T}"/>
+    /// This process can be simplified by using monitored base types:
+    /// <br/><see cref="MonitoredObject"/>, <see cref="MonitoredBehaviour"/> or <see cref="MonitoredSingleton{T}"/>
     /// </summary>
     [AttributeUsage(AttributeTargets.Event)]
     [Preserve]

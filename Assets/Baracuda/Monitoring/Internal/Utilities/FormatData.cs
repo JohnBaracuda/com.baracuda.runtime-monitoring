@@ -1,4 +1,3 @@
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Monitoring.Internal.Reflection;
@@ -16,13 +15,12 @@ namespace Baracuda.Monitoring.Internal.Utilities
         
         public bool AllowGrouping { get; }
         public string Group { get; }
-        public string[] Tags { get; }
 
         /*
          * Ctor   
          */
                 
-        private FormatData(string format, bool showIndexer, string label, int fontSize, UIPosition position, bool allowGrouping, string group, string[] tags)
+        private FormatData(string format, bool showIndexer, string label, int fontSize, UIPosition position, bool allowGrouping, string group)
         {
             Format = format;
             ShowIndexer = showIndexer;
@@ -31,7 +29,6 @@ namespace Baracuda.Monitoring.Internal.Utilities
             Position = position;
             AllowGrouping = allowGrouping;
             Group = group;
-            Tags = tags;
         }
 
         /*
@@ -66,19 +63,8 @@ namespace Baracuda.Monitoring.Internal.Utilities
             }
             
             format ??= settings.GetFormatStringForType(profile.UnitValueType);
-            
-            // Tags added to the profile can be used to filter active units.
-            var tags = ConcurrentListPool<string>.Get();
-            tags.Add(label);
-            tags.Add(profile.UnitType.ToString());
-            tags.Add(profile.IsStatic ? "Static" : "Instance");
-            if (profile.TryGetMetaAttribute<TagAttribute>(out var categoryAttribute))
-            {
-                tags.AddRange(categoryAttribute.Tags);
-            }
-            ConcurrentListPool<string>.Release(tags);
-            
-            return new FormatData(format, showIndexer, label, fontSize, position, allowGrouping, group, tags.ToArray());
+
+            return new FormatData(format, showIndexer, label, fontSize, position, allowGrouping, group);
         }
     }
 }

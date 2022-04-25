@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-using Baracuda.Monitoring.Attributes;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts.Persistent

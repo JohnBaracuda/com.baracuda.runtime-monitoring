@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Internal.Exceptions;
 using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Utilities;

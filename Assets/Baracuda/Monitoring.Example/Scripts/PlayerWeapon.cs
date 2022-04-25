@@ -1,4 +1,3 @@
-using Baracuda.Monitoring.Attributes;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
@@ -8,8 +7,6 @@ namespace Baracuda.Monitoring.Example.Scripts
         /*
          *  Inspector Fields   
          */
-        
-        
         
         [Header("Primary")]
         [SerializeField] private float damage = 100f;
