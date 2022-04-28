@@ -44,8 +44,6 @@ namespace Baracuda.Monitoring.Editor
         
         private SerializedProperty _addClassName;
         private SerializedProperty _appendSymbol;
-        private SerializedProperty _groupStaticUnits;
-        private SerializedProperty _groupInstanceUnits;
         private SerializedProperty _humanizeNames;
         private SerializedProperty _variablePrefixes;
 
@@ -159,8 +157,6 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_addClassName);
                 EditorGUILayout.PropertyField(_appendSymbol);
-                EditorGUILayout.PropertyField(_groupStaticUnits);
-                EditorGUILayout.PropertyField(_groupInstanceUnits);
                 EditorGUILayout.PropertyField(_humanizeNames);
                 EditorGUILayout.PropertyField(_variablePrefixes);
                 

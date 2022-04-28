@@ -38,10 +38,8 @@ namespace Baracuda.Monitoring.Internal.Units
             _target = target;
             _eventProfile = eventProfile;
             _stateFormatter = stateFormatter;
-
-            _eventHandler = eventProfile.CreateEventHandler(OnEvent);
+            _eventHandler = eventProfile.CreateMatchingDelegate(OnEvent);
             eventProfile.SubscribeEventHandler(target, _eventHandler);
-            
             ExternalUpdateRequired = eventProfile.Refresh;
         }
         

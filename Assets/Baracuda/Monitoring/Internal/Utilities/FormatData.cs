@@ -44,7 +44,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
             var label = formatAttribute?.Label;
             var fontSize = formatAttribute?.FontSize ?? -1;
             var position = formatAttribute?.Position ?? UIPosition.TopLeft;
-            var allowGrouping = (formatAttribute?.GroupElement ?? true) && (profile.IsStatic ? settings.GroupStaticUnits : settings.GroupInstanceUnits);
+            var allowGrouping = formatAttribute?.GroupElement ?? true;
             var group = settings.HumanizeNames? profile.UnitTargetType!.Name.Humanize() : profile.UnitTargetType!.Name;
             
             if (profile.UnitTargetType.IsGenericType)

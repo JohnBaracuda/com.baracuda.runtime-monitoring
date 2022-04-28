@@ -2,10 +2,13 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
+using JetBrains.Annotations;
+using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
@@ -55,37 +58,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
             var addMethod = eventInfo.GetAddMethod(true);
             var removeMethod = eventInfo.GetRemoveMethod(true);
             var getterDelegate = eventInfo.AsFieldInfo().CreateGetter<TTarget, Delegate>();
-#if !ENABLE_IL2CPP
-            var counterDelegate = CreateCounterExpression(getterDelegate, ShowTrueCount).Compile();
-            _subscribe = CreateExpression(addMethod).Compile();
-            _remove = CreateExpression(removeMethod).Compile();
-#else
+            
             var counterDelegate = CreateCounterExpression(getterDelegate, ShowTrueCount);
             _subscribe = CreateExpression(addMethod);
             _remove = CreateExpression(removeMethod);
-#endif
-            
-            
             
             _formatState = CreateStateFormatter(counterDelegate);
         }
         
-#if !ENABLE_IL2CPP
-        private static Expression<Action<TTarget, Delegate>> CreateExpression(MethodInfo methodInfo)
-        {
-            return (target, @delegate) => methodInfo.Invoke(target, new object[]{@delegate});
-        }
-        
-        private static Expression<Func<TTarget, int>> CreateCounterExpression(Func<TTarget, Delegate> func, bool trueCount)
-        {
-            if(trueCount)
-            {
-                return  target => func(target).GetInvocationList().Length;
-            }
-
-            return target => func(target).GetInvocationList().Length - 1;
-        }
-#else
         private static Action<TTarget, Delegate> CreateExpression(MethodInfo methodInfo)
         {
             return (target, @delegate) => methodInfo.Invoke(target, new object[]{@delegate});
@@ -100,7 +80,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
             return target => func(target).GetInvocationList().Length - 1;
         }
-#endif
         
         #endregion
         
@@ -168,25 +147,92 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         internal void SubscribeEventHandler(TTarget target, Delegate eventHandler)
         {
+#if ENABLE_IL2CPP
+            if (eventHandler == null)
+            {
+                return;
+            }
+#endif
             _subscribe(target, eventHandler);
         }
 
         internal void RemoveEventHandler(TTarget target, Delegate eventHandler)
         {
+#if ENABLE_IL2CPP
+            if (eventHandler == null)
+            {
+                return;
+            }
+#endif
             _remove(target, eventHandler);
         }
-        
-        internal Delegate CreateEventHandler(Action action)
+
+        /*
+         * Matching Delegate    
+         */
+
+         /// <summary>
+        /// Returns a delegate with 
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        internal TDelegate CreateMatchingDelegate(Action action)
         {
-            //TODO: this does not work with IL2CPP
-            
+#if ENABLE_IL2CPP
+            return CreateEventHandlerForIL2CPP(action) as TDelegate;
+#else
+            return CreateEventHandlerForMono(action) as TDelegate;
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private Delegate CreateEventHandlerForMono(Action action)
+        {
             var handlerType = _eventInfo.EventHandlerType;
-            var eventParams = handlerType.GetMethod("Invoke")!.GetParameters();
-            var parameters = eventParams.Select(p=>Expression.Parameter(p.ParameterType,"x"));
-            var body = Expression.Call(Expression.Constant(action),action.GetType().GetMethod("Invoke")!);
+            var eventParams = handlerType.GetInvokeMethod().GetParameters();
+            var parameters = eventParams.Select(p=> Expression.Parameter(p.ParameterType,"x"));
+            var body = Expression.Call(Expression.Constant(action), action.GetType().GetInvokeMethod());
             var lambda = Expression.Lambda(body,parameters.ToArray());
             return Delegate.CreateDelegate(handlerType, lambda.Compile(), "Invoke", false);
         }
+        
+        
+        // We cannot create a event handler method dynamically when using IL2CPP so we will only check for the
+        // most common types and create concrete expressions. 
+#if ENABLE_IL2CPP
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private Delegate CreateEventHandlerForIL2CPP(Action action)
+        {
+            var handlerType = _eventInfo.EventHandlerType;
+            
+            if (handlerType == typeof(Action))
+            {
+                return action;
+            }
+
+            if (handlerType == typeof(Action<float>))
+            {
+                return new Action<float>(_ => action());
+            }
+            
+            if (handlerType == typeof(Action<int>))
+            {
+                return new Action<int>(_ => action());
+            }
+            
+            if (handlerType == typeof(Action<string>))
+            {
+                return new Action<string>(_ => action());
+            }
+            
+            if (handlerType == typeof(Action<bool>))
+            {
+                return new Action<bool>(_ => action());
+            }
+
+            return null;
+        }
+#endif
         
         #endregion
     }

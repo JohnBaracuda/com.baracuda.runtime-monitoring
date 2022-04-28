@@ -1,10 +1,11 @@
 //Documentation:
 TODO: Add / improve xml comments for attributes and API
 TODO: Add readme.md
-TODO: Add online documentation / page
+TODO: Add Tooltips
+TODO: Add goal to readme (performant, runtime, easy to use etc.)
 
 //Features:
-TODO: Add Method Monitoring
+TODO: Add Method Monitoring (if it has a return value it should act as a property. If not ui should create a button to invoke the method)
 TODO: Make MonitoringAPI class that manages display etc.
 
 //Bugs / Fixes:

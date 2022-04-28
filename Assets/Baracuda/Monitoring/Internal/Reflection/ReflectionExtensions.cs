@@ -909,7 +909,12 @@ namespace Baracuda.Monitoring.Internal.Reflection
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static MethodInfo GetMethodIncludeBaseTypes(this Type type, string methodName, BindingFlags flags)
+        public static MethodInfo GetMethodIncludeBaseTypes(this Type type, string methodName, BindingFlags flags = 
+            BindingFlags.Static | 
+            BindingFlags.NonPublic | 
+            BindingFlags.Instance |
+            BindingFlags.Public | 
+            BindingFlags.FlattenHierarchy)
         {
             MethodInfo methodInfo = null;
             var targetType = type;

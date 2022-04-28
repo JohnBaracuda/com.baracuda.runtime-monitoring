@@ -12,16 +12,15 @@ namespace Baracuda.Monitoring.Internal
          * Events   
          */
         
-        internal event Action OnUpdate;
+        internal event Action OnLateUpdate;
         internal event Action OnTick;
-        internal event Action OnFixedUpdate;
 
         /*
          * Tick loop fields   
          */
 
         private float _tickTimer = 0;
-        private const float TICK_INTERVAL_IN_SECONDS = .1f;
+        private const float TICK_INTERVAL_IN_SECONDS = .0333f;
 
         /*
          * Unity Event Methods    
@@ -33,9 +32,9 @@ namespace Baracuda.Monitoring.Internal
             gameObject.hideFlags = MonitoringSettings.GetInstance().ShowRuntimeObject ? HideFlags.None : HideFlags.HideInHierarchy;
         }
 
-        private void Update()
+        private void LateUpdate()
         {
-            OnUpdate?.Invoke();
+            OnLateUpdate?.Invoke();
             Tick();
         }
 
@@ -50,18 +49,12 @@ namespace Baracuda.Monitoring.Internal
             }
         }
 
-        private void FixedUpdate()
-        {
-            OnFixedUpdate?.Invoke();
-        }
-
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            OnUpdate = null;
+            OnLateUpdate = null;
             OnTick = null;
-            OnFixedUpdate = null;
         }
     }
 }

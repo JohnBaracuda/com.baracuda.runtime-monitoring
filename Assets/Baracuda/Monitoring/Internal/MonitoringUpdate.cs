@@ -81,10 +81,10 @@ namespace Baracuda.Monitoring.Internal
         {
             var hook = MonitoringUpdateHook.Promise();
             hook.OnTick += OnTick;
-            hook.OnUpdate += OnUpdate;
+            hook.OnLateUpdate += OnLateUpdate;
         }
         
-        private static void OnUpdate()
+        private static void OnLateUpdate()
         {
             for (var i = 0; i < updateUnits.Count; i++)
             {

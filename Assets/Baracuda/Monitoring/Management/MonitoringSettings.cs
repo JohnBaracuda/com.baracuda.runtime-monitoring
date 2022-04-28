@@ -31,7 +31,7 @@ namespace Baracuda.Monitoring.Management
 
         [Space] 
         [SerializeField] private bool showRuntimeObject = false;
-        
+
         /*
          * Debugging   
          */
@@ -51,10 +51,6 @@ namespace Baracuda.Monitoring.Management
         [SerializeField] private bool addClassName = true;
         [Tooltip("This symbol will be used to separate units class names and their member names.")]
         [SerializeField] private char appendSymbol = '.';
-        [Tooltip("When enabled, static units will be displayed in groups of their declaring type (eg: their class)")]
-        [SerializeField] private bool groupStaticUnits = true;
-        [Tooltip("When enabled, instance units will be displayed in groups of their target object")]
-        [SerializeField] private bool groupInstanceUnits = true;
         [Tooltip("When enabled, names of monitored members will be humanized.(e.g. _playerHealth => Player Health)")]
         [SerializeField] private bool humanizeNames = false;
         [Tooltip("Collection of variable prefixes that should be removed when humanizing monitored member names")]
@@ -144,8 +140,6 @@ namespace Baracuda.Monitoring.Management
 
         public bool AddClassName => addClassName;
         public char AppendSymbol => appendSymbol;
-        public bool GroupStaticUnits => groupStaticUnits;
-        public bool GroupInstanceUnits => groupInstanceUnits;
         public bool HumanizeNames => humanizeNames;
         public string[] VariablePrefixes => variablePrefixes;
 
