@@ -52,6 +52,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         private static void InitializeRuntimeReflection()
         {
+            settings = MonitoringSettings.GetInstance();
             Task.Run(() => InitializeProfilingAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
         }
 
@@ -59,8 +60,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             try
             {
-                settings = await Dispatcher.InvokeAsync(() => MonitoringSettings.GetInstance(), ct);
-                
                 var types = await CreateAssemblyProfileAsync(ct);
                 await CreateMonitoringProfileAsync(types, ct);
             }

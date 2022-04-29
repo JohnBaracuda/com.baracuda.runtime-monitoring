@@ -6,7 +6,6 @@ namespace Baracuda.Monitoring.Internal.Units
 {
     public class EventUnit<TTarget, TDelegate> : MonitorUnit where TTarget : class where TDelegate : Delegate
     {
-        
         #region --- Properties ---
 
         public override string GetValueFormatted => _stateFormatter(_target, _invokeCounter);

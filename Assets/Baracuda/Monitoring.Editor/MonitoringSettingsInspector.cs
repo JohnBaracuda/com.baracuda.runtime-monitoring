@@ -22,7 +22,7 @@ namespace Baracuda.Monitoring.Editor
          */
 
         private const string LINK_DOCUMENTATION = "https://johnbaracuda.com/monitoring.html";
-        private const string LINK_REPOSITORY = "https://github.com/JohnBaracuda/Member-State-Monitoring";
+        private const string LINK_REPOSITORY = "https://github.com/johnbaracuda/Runtime-Monitoring";
         private const string LINK_WEBSITE = "https://johnbaracuda.com/";
 
         /*
@@ -135,13 +135,20 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_enableMonitoring);
                 EditorGUILayout.PropertyField(_openDisplayOnLoad);
                 DrawRequired(_monitoringDisplay);
-                EditorGUILayout.PropertyField(_showRuntimeObject);
-                DrawButtonControls();
+                EditorGUILayout.Space();
+            }
+
+            if (Foldout["Documentation & Links"])
+            {
+                EditorGUILayout.Space();
+                DrawWeblinks();
                 EditorGUILayout.Space();
             }
             
             if (Foldout["Debug"])
             {
+                EditorGUILayout.Space();
+                EditorGUILayout.PropertyField(_showRuntimeObject);
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_logBadImageFormatException);
                 EditorGUILayout.PropertyField(_logOperationCanceledException);
@@ -159,7 +166,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_appendSymbol);
                 EditorGUILayout.PropertyField(_humanizeNames);
                 EditorGUILayout.PropertyField(_variablePrefixes);
-                
+                DrawLine();
                 EditorGUILayout.PropertyField(_floatFormat);
                 EditorGUILayout.PropertyField(_integerFormat);
                 EditorGUILayout.PropertyField(_vectorFormat);
@@ -202,31 +209,36 @@ namespace Baracuda.Monitoring.Editor
             serializedObject.ApplyModifiedProperties();
         }
         
-        
-        private static void DrawButtonControls()
+        private static void DrawWeblinks()
         {
-            EditorGUILayout.Space();
-            DrawLine();
-            EditorGUILayout.Space();
+            // Documentation
             GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Documentation", GUILayout.Height(25), GUILayout.MinWidth(150)))
+            EditorGUILayout.LabelField("Documentation", GUILayout.Width(EditorGUIUtility.labelWidth));
+            if (GUILayout.Button(LINK_DOCUMENTATION))
             {
                 Application.OpenURL(LINK_DOCUMENTATION);
             }
-            if (GUILayout.Button("Repository", GUILayout.Height(25), GUILayout.MinWidth(150)))
+            GUILayout.EndHorizontal();
+            
+            // Repository
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Repository", GUILayout.Width(EditorGUIUtility.labelWidth));
+            if (GUILayout.Button(LINK_REPOSITORY))
             {
                 Application.OpenURL(LINK_REPOSITORY);
             }
-            if (GUILayout.Button("Website", GUILayout.Height(25), GUILayout.MinWidth(150)))
+            GUILayout.EndHorizontal();
+            
+            // Website
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Website", GUILayout.Width(EditorGUIUtility.labelWidth));
+            if (GUILayout.Button(LINK_WEBSITE))
             {
                 Application.OpenURL(LINK_WEBSITE);
             }
-            GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            EditorGUILayout.Space();
         }
-
+        
         private static void DrawGenerateAotTypesButton()
         {
             EditorGUILayout.Space();
@@ -258,6 +270,7 @@ namespace Baracuda.Monitoring.Editor
         
         private static void DrawLine(int thickness = 1, int padding = 1)
         {
+            EditorGUILayout.Space();
             var rect = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
             rect.height = thickness;
             rect.y += padding * .5f;
@@ -265,7 +278,7 @@ namespace Baracuda.Monitoring.Editor
             rect.width += 4;
             EditorGUI.DrawRect(rect, new Color(.1f, .1f, .1f, .9f));
         }
-        
+
         private static void DrawFilePath(SerializedProperty property, string fileExtension)
         {
             if (property.propertyType == SerializedPropertyType.String)

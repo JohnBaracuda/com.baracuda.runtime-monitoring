@@ -180,26 +180,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
 #if ENABLE_IL2CPP
             return CreateEventHandlerForIL2CPP(action) as TDelegate;
-#else
+#else // MONO
             return CreateEventHandlerForMono(action) as TDelegate;
 #endif
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Delegate CreateEventHandlerForMono(Action action)
-        {
-            var handlerType = _eventInfo.EventHandlerType;
-            var eventParams = handlerType.GetInvokeMethod().GetParameters();
-            var parameters = eventParams.Select(p=> Expression.Parameter(p.ParameterType,"x"));
-            var body = Expression.Call(Expression.Constant(action), action.GetType().GetInvokeMethod());
-            var lambda = Expression.Lambda(body,parameters.ToArray());
-            return Delegate.CreateDelegate(handlerType, lambda.Compile(), "Invoke", false);
-        }
-        
-        
-        // We cannot create a event handler method dynamically when using IL2CPP so we will only check for the
-        // most common types and create concrete expressions. 
+         
 #if ENABLE_IL2CPP
+
+        /// <summary>
+        /// We cannot create a event handler method dynamically when using IL2CPP so we will only check for the
+        /// most common types and create concrete expressions. 
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Delegate CreateEventHandlerForIL2CPP(Action action)
         {
@@ -232,6 +223,20 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
             return null;
         }
+        
+#else // MONO
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private Delegate CreateEventHandlerForMono(Action action)
+        {
+            var handlerType = _eventInfo.EventHandlerType;
+            var eventParams = handlerType.GetInvokeMethod().GetParameters();
+            var parameters = eventParams.Select(p=> Expression.Parameter(p.ParameterType,"x"));
+            var body = Expression.Call(Expression.Constant(action), action.GetType().GetInvokeMethod());
+            var lambda = Expression.Lambda(body,parameters.ToArray());
+            return Delegate.CreateDelegate(handlerType, lambda.Compile(), "Invoke", false);
+        }
+        
 #endif
         
         #endregion
