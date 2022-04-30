@@ -423,22 +423,36 @@ namespace Baracuda.Monitoring.Internal.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIEnumerable(this Type type, bool excludeStrings = false)
         {
-            return excludeStrings
-                ? type.IsGenericType && type.GetInterface(nameof(IEnumerable)) != null && !type.IsString()
-                : type.IsGenericType && type.GetInterface(nameof(IEnumerable)) != null;
-        }
+            if (excludeStrings && type.IsString())
+            {
+                return false;
+            }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsIEnumerableT(this Type type, bool excludeStrings = false)
-        {
-            return excludeStrings
-                ? type.IsGenericType && type.IsAssignableFrom(typeof(IEnumerable<>)) && !type.IsString()
-                : type.IsGenericType && type.IsAssignableFrom(typeof(IEnumerable<>));
+            if (type.IsInterface && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            {
+                return true;
+            }
+            
+            for (var i = 0; i < type.GetInterfaces().Length; i++)
+            {
+                var interfaceType = type.GetInterfaces()[i];
+                if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIDictionary(this Type type)
         {
+            if (type.IsInterface && type.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+            {
+                return true;
+            }
+            
             for (var i = 0; i < type.GetInterfaces().Length; i++)
             {
                 var interfaceType = type.GetInterfaces()[i];
@@ -454,15 +468,22 @@ namespace Baracuda.Monitoring.Internal.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIList(this Type type)
         {
-            for (var i = 0; i < type.GetInterfaces().Length; i++)
+            if (type.IsInterface && type.GetGenericTypeDefinition() == typeof(IList<>))
             {
-                var interfaceType = type.GetInterfaces()[i];
-                if (interfaceType.IsGenericType && (interfaceType.GetElementType() ?? interfaceType.GetGenericTypeDefinition()) == typeof(IList<>))
+                return true;
+            }
+            
+            var interfaces = type.GetInterfaces();
+            
+            for (var i = 0; i < interfaces.Length; i++)
+            {
+                var @interface = interfaces[i];
+                if (@interface.IsGenericType && @interface.GetGenericTypeDefinition() == typeof(IList<>))
                 {
                     return true;
                 }
             }
-
+            
             return false;
         }
         

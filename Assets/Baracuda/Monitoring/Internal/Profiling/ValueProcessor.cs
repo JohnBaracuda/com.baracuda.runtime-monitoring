@@ -106,7 +106,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             
 #if !ENABLE_IL2CPP
             // Dictionary<TKey, TValue>
-            if (profile.UnitValueType.IsDictionary())
+            if (profile.UnitValueType.IsGenericIDictionary())
             {
                 var keyType   = profile.UnitValueType.GetGenericArguments()[0];
                 var valueType = profile.UnitValueType.GetGenericArguments()[1];
@@ -585,7 +585,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .Single(methodInfo => methodInfo.Name == nameof(CreateDictionaryProcessor) && methodInfo.IsGenericMethodDefinition);
         
-        private static Func<Dictionary<TKey, TValue>, string> CreateDictionaryProcessor<TKey, TValue>(MonitorProfile profile)
+        private static Func<IDictionary<TKey, TValue>, string> CreateDictionaryProcessor<TKey, TValue>(MonitorProfile profile)
         {
             var name = profile.FormatData.Label;
             var stringBuilder = new StringBuilder();
@@ -596,7 +596,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 if (typeof(TValue).IsValueType)
                 {
                     return profile.FormatData.ShowIndexer
-                        ? (Func<Dictionary<TKey, TValue>, string>) ((value) =>
+                        ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
                             var index = 0;
                             stringBuilder.Clear();
@@ -644,7 +644,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 else
                 {
                     return profile.FormatData.ShowIndexer
-                        ? (Func<Dictionary<TKey, TValue>, string>) ((value) =>
+                        ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
                             var index = 0;
                             stringBuilder.Clear();
@@ -695,7 +695,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 if (typeof(TValue).IsValueType)
                 {
                     return profile.FormatData.ShowIndexer
-                        ? (Func<Dictionary<TKey, TValue>, string>) ((value) =>
+                        ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
                             var index = 0;
                             stringBuilder.Clear();
@@ -743,7 +743,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 else
                 {
                     return profile.FormatData.ShowIndexer
-                        ? (Func<Dictionary<TKey, TValue>, string>) ((value) =>
+                        ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
                             var index = 0;
                             stringBuilder.Clear();
@@ -1248,11 +1248,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 
                 //----------------------------
 
-                #region --- Ilist<t> ---
+                #region --- Ilist<T> ---
 
                 // IList<T> processor
                 if (valueType.IsGenericIList())
                 {
+                    //Debug.Log("IList");
                     if (parameterInfos[0].ParameterType.IsAssignableFrom(valueType.IsArray? valueType.GetElementType() : valueType.GetGenericArguments()[0]))
                     {
                         // IList<T> processor passing each element of the collection
@@ -1299,7 +1300,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 
                 //----------------------------
 
-                #region --- Idictionary<tkey,tvalue> ---
+                #region --- IDictionary<TKey,TValue> ---
 
                 // IDictionary<TKey, TValue> processor
                 if (valueType.IsGenericIDictionary())
@@ -1338,7 +1339,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 
                 //----------------------------
 
-                #region --- Ienumerable<t> ---
+                #region --- IEnumerable<T> ---
 
                 // IEnumerable<T> processor
                 if (valueType.IsGenericIEnumerable(true))

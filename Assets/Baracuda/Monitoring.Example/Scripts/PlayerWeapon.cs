@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using UnityEngine;
 
@@ -30,7 +32,9 @@ namespace Baracuda.Monitoring.Example.Scripts
          *  Private Fields   
          */
         
-        [Monitor] [ValueProcessor(nameof(CurrentAmmunitionProcessor)), Format(UIPosition.BottomLeft, FontSize = 26)]
+        [Monitor] 
+        [ValueProcessor(nameof(CurrentAmmunitionProcessor))]
+        [Format(UIPosition.BottomLeft, FontSize = 26, GroupElement = false)]
         private int _currentAmmunition;
         private float _lastFireTime;
         private float _targetFOV;

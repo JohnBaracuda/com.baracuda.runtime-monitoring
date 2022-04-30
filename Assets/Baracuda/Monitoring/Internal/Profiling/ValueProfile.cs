@@ -72,7 +72,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
             
             _instanceValueProcessorDelegate = Profiling.ValueProcessor.FindCustomInstanceProcessor(processorName,  this);
             _staticValueProcessorDelegate = Profiling.ValueProcessor.FindCustomStaticProcessor(processorName, this);
-            _fallbackValueProcessorDelegate = Profiling.ValueProcessor.CreateTypeSpecificProcessor<TValue>(this);
+            if (_staticValueProcessorDelegate == null && _instanceValueProcessorDelegate == null)
+            {
+                _fallbackValueProcessorDelegate = Profiling.ValueProcessor.CreateTypeSpecificProcessor<TValue>(this);
+            }
         }
 
 
