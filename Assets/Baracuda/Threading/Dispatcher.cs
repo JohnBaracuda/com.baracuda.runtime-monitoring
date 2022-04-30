@@ -49,7 +49,6 @@ namespace Baracuda.Threading
             }
         }
 
-        
         /// <summary>
         /// Ensure that a <see cref="Dispatcher"/> instance exists and return it.
         /// This method is just a wrapper for Dispatcher.<see cref="Dispatcher.Current"/>
@@ -57,7 +56,6 @@ namespace Baracuda.Threading
         /// <returns></returns>
         ///<footer><a href="https://johnbaracuda.com/dispatcher.html#miscellaneous">Documentation</a></footer>
         public static Dispatcher Validate() => Current;
-
         
 #if DISPATCHER_DEBUG
         /// <summary>
