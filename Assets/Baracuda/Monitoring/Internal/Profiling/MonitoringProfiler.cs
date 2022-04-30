@@ -5,10 +5,10 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Exceptions;
 using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Utilities;
-using Baracuda.Monitoring.Management;
 using Baracuda.Threading;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -55,13 +55,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
             settings = MonitoringSettings.GetInstance();
             Task.Run(() => InitializeProfilingAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
         }
-
+        
         private static async Task InitializeProfilingAsync(CancellationToken ct)
         {
             try
             {
-                var types = await CreateAssemblyProfileAsync(ct);
-                await CreateMonitoringProfileAsync(types, ct);
+                var types = await CreateAssemblyProfile(ct);
+                await CreateMonitoringProfile(types, ct);
+                await MonitoringUnitManager.CompleteProfilingAsync(ct);
             }
             catch (OperationCanceledException oce)
             {
@@ -83,7 +84,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
 
-        private static Task<Type[]> CreateAssemblyProfileAsync(CancellationToken ct)
+        /*
+         * Assembly & Profiling   
+         */
+
+        private static Task<Type[]> CreateAssemblyProfile(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -122,8 +127,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
             return Task.FromResult(typeCache.ToArray());
         }
-
-        private static async Task CreateMonitoringProfileAsync(Type[] types, CancellationToken ct)
+        
+        private static Task CreateMonitoringProfile(Type[] types, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
             
@@ -183,10 +188,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
 
             ct.ThrowIfCancellationRequested();
-
-            await MonitoringManager.CompleteProfiling(ct);
+            
+            return Task.CompletedTask;
         }
-
+        
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------

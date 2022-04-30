@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Baracuda.Monitoring.Internal.Pooling.Concretions;
@@ -9,22 +10,51 @@ using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Threading;
 
-namespace Baracuda.Monitoring.Management
+namespace Baracuda.Monitoring.API
 {
-    public static class MonitoringManager
+    public static class MonitoringUnitManager
     {
-        #region --- Field & Properties ---
+        #region --- API ---
 
         /*
-         * Public   
+         * Target Object Registration   
          */
         
-        public static IReadOnlyList<MonitorUnit> GetStaticUnits() => staticUnits;
-        public static IReadOnlyList<MonitorUnit> GetInstanceUnits() => instanceUnits;
+        /// <summary>
+        /// Register an object that is monitored during runtime.
+        /// </summary>
+        public static void RegisterTarget(object target)
+        {
+            RegisterTargetInternal(target);
+        }
+        
+        /// <summary>
+        /// Unregister an object that is monitored during runtime.
+        /// </summary>
+        public static void UnregisterTarget(object target)
+        {
+            UnregisterTargetInternal(target);
+        }
 
         /*
-         * Private   
-         */
+         * Getter   
+         */        
+        
+        /// <summary>
+        /// Get a list of monitoring units for static targets.
+        /// </summary>
+        public static IReadOnlyList<MonitorUnit> GetStaticUnits() => staticUnits;
+        
+        /// <summary>
+        /// Get a list of monitoring units for instance targets.
+        /// </summary>
+        public static IReadOnlyList<MonitorUnit> GetInstanceUnits() => instanceUnits;
+        
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+        
+        #region --- Private Fields ---
         
         private static readonly List<MonitorUnit> staticUnits = new List<MonitorUnit>(30);
         private static readonly List<MonitorUnit> instanceUnits = new List<MonitorUnit>(30);
@@ -38,12 +68,10 @@ namespace Baracuda.Monitoring.Management
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- Target Registration ---
-        
-        /// <summary>
-        /// Register an object that is monitored during runtime.
-        /// </summary>
-        public static void RegisterTarget(object target)
+        #region --- Internal Target Registration ---
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RegisterTargetInternal(object target)
         {
             registeredTargets.Add(target);
             if (initialInstanceUnitsCreated)
@@ -52,10 +80,8 @@ namespace Baracuda.Monitoring.Management
             }
         }
         
-        /// <summary>
-        /// Unregister an object that is monitored during runtime.
-        /// </summary>
-        public static void UnregisterTarget(object target)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void UnregisterTargetInternal(object target)
         {
             DestroyInstanceUnits(target);
             registeredTargets.Remove(target);
@@ -63,16 +89,18 @@ namespace Baracuda.Monitoring.Management
 
         #endregion
         
-        //--------------------------------------------------------------------------------------------------------------
-        
-        internal static async Task CompleteProfiling(CancellationToken ct)
+        #region --- Internal Complete Profiling ---
+
+        internal static async Task CompleteProfilingAsync(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
-            await CreateStaticUnits(MonitoringProfiler.StaticProfiles.ToArray());
+            CreateStaticUnits(MonitoringProfiler.StaticProfiles.ToArray());
             await Dispatcher.InvokeAsync(CreateInitialInstanceUnits, ct);
             await Dispatcher.InvokeAsync(() => MonitoringEvents.ProfilingCompletedInternal(staticUnits.ToArray(), instanceUnits.ToArray()), ct);
         }
         
+        #endregion
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Instantiate: Instance Units ---
@@ -154,22 +182,19 @@ namespace Baracuda.Monitoring.Management
 
         #endregion
         
-        //--------------------------------------------------------------------------------------------------------------
-
         #region --- Instantiate: Static Units ---
-
-        private static async Task CreateStaticUnits(MonitorProfile[] staticProfiles)
+        
+        private static void CreateStaticUnits(MonitorProfile[] staticProfiles)
         {
             for (var i = 0; i < staticProfiles.Length; i++)
             {
-                await CreateStaticUnit(staticProfiles[i]);
+                CreateStaticUnit(staticProfiles[i]);
             }
         }
         
-        private static Task CreateStaticUnit(MonitorProfile staticProfile)
+        private static void CreateStaticUnit(MonitorProfile staticProfile)
         {
             staticUnits.Add(staticProfile.CreateUnit(null));
-            return Task.CompletedTask;
         }
 
         #endregion

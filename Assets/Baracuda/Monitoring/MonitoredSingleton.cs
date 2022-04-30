@@ -1,5 +1,5 @@
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Utilities;
-using Baracuda.Monitoring.Management;
 using UnityEngine;
 
 namespace Baracuda.Monitoring
@@ -9,13 +9,13 @@ namespace Baracuda.Monitoring
         protected override void Awake()
         {
             base.Awake();
-            MonitoringManager.RegisterTarget(this);
+            MonitoringUnitManager.RegisterTarget(this);
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            MonitoringManager.UnregisterTarget(this);
+            MonitoringUnitManager.UnregisterTarget(this);
         }
     }
 }

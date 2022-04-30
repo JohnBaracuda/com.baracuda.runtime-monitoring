@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
-using Baracuda.Monitoring.Management;
+using Baracuda.Monitoring.API;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,9 +32,10 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _enableMonitoring;
         private SerializedProperty _openDisplayOnLoad;
         private SerializedProperty _forceSynchronousLoad;
-        private SerializedProperty _monitoringDisplay;
-        private SerializedProperty _showRuntimeObject;
+        private SerializedProperty _monitoringDisplayController;
         
+        private SerializedProperty _showRuntimeMonitoringObject; 
+        private SerializedProperty _showRuntimeUIController;
         private SerializedProperty _logBadImageFormatException;
         private SerializedProperty _logOperationCanceledException;
         private SerializedProperty _logThreadAbortException;
@@ -134,7 +135,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_enableMonitoring);
                 EditorGUILayout.PropertyField(_openDisplayOnLoad);
-                DrawRequired(_monitoringDisplay);
+                DrawRequired(_monitoringDisplayController);
                 EditorGUILayout.Space();
             }
 
@@ -148,7 +149,8 @@ namespace Baracuda.Monitoring.Editor
             if (Foldout["Debug"])
             {
                 EditorGUILayout.Space();
-                EditorGUILayout.PropertyField(_showRuntimeObject);
+                EditorGUILayout.PropertyField(_showRuntimeMonitoringObject);
+                EditorGUILayout.PropertyField(_showRuntimeUIController);
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_logBadImageFormatException);
                 EditorGUILayout.PropertyField(_logOperationCanceledException);

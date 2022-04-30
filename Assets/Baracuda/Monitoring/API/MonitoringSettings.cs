@@ -1,12 +1,11 @@
 using System;
 using System.IO;
 using System.Linq;
-using Baracuda.Monitoring.Display;
 using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Utilities;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Management
+namespace Baracuda.Monitoring.API
 {
     public class MonitoringSettings : ScriptableObject
     {
@@ -17,19 +16,17 @@ namespace Baracuda.Monitoring.Management
         [SerializeField] private bool enableMonitoring = true;
         [Tooltip("When enabled, the monitoring display will be opened as soon as profiling has completed.")]
         [SerializeField] private bool openDisplayOnLoad = true;
-        [SerializeReference, SerializeField] 
         [Tooltip("Reference to the used MonitoringDisplay object.")]
-        private MonitoringDisplay monitoringDisplay;
-
-        [Tooltip("WIP: When enabled the game start will be delayed until all profiling has completed. This might increase the startup time significantly!")]
-        [SerializeField] private bool forceSynchronousLoad = false;
+        [SerializeReference, SerializeField] private MonitoringDisplayController monitoringDisplayController;
 
         /*
          * Debugging   
          */
         
         [Tooltip("When enabled, the monitoring runtime object is set visible in the hierarchy.")]
-        [SerializeField] private bool showRuntimeObject = false;
+        [SerializeField] private bool showRuntimeMonitoringObject = false;
+        [Tooltip("When enabled, the monitoring UI Controller object is set visible in the hierarchy.")]
+        [SerializeField] private bool showRuntimeUIController = false;
         [Tooltip("BadImageFormatException is a rare exception that may occur during profiling.")]
         [SerializeField] private LoggingLevel logBadImageFormatException = LoggingLevel.None;
         [Tooltip("OperationCanceledException is an exception that may occur when exiting playmode during profiling. It is used to abort the profiling background Task.")]
@@ -120,11 +117,11 @@ namespace Baracuda.Monitoring.Management
          * General   
          */
         
-        public MonitoringDisplay DisplayDisplay => monitoringDisplay;
+        public MonitoringDisplayController DisplayControllerDisplayController => monitoringDisplayController;
         public bool EnableMonitoring => enableMonitoring;
         public bool OpenDisplayOnLoad => openDisplayOnLoad;
-        public bool ShowRuntimeObject => showRuntimeObject;
-        public bool ForceSynchronousLoad => forceSynchronousLoad;
+        public bool ShowRuntimeMonitoringObject => showRuntimeMonitoringObject;
+        public bool ShowRuntimeUIController => showRuntimeUIController;
 
         /*
          * Logging   

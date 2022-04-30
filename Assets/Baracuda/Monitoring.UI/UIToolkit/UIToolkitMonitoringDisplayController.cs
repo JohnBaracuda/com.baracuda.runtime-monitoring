@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Baracuda.Monitoring.Display;
 using Baracuda.Monitoring.Interface;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,7 +8,7 @@ using UnityEngine.UIElements;
 namespace Baracuda.Monitoring.UI.UIToolkit
 {
     [RequireComponent(typeof(UIDocument))]
-    internal class MonitoringDisplayElementsBehaviour : MonitoringDisplay, IStyleProvider
+    internal class UIToolkitMonitoringDisplayController : MonitoringDisplayController, IStyleProvider
     {
         #region --- Inspector ---
         
@@ -96,17 +95,6 @@ namespace Baracuda.Monitoring.UI.UIToolkit
             _uiDocument.rootVisualElement.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
         }
 
-        protected override void Toggle()
-        {
-            if (IsVisible)
-            {
-                Hide();
-            }
-            else
-            {
-                Show();
-            }
-        }
 
         #endregion
         

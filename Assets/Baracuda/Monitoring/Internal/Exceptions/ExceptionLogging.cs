@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Utilities;
-using Baracuda.Monitoring.Management;
 using Baracuda.Threading;
 using UnityEngine;
 

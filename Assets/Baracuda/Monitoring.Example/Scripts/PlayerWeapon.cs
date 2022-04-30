@@ -1,3 +1,4 @@
+using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
@@ -29,13 +30,32 @@ namespace Baracuda.Monitoring.Example.Scripts
          *  Private Fields   
          */
         
-        [MonitorField]
+        [Monitor] [ValueProcessor(nameof(CurrentAmmunitionProcessor)), Format(UIPosition.BottomLeft, FontSize = 26)]
         private int _currentAmmunition;
         private float _lastFireTime;
         private float _targetFOV;
         private IPlayerInput _input;
         private Camera _camera;
         private bool _canFireSemiAutomatic = true;
+
+        /*
+         * Value Processor   
+         */
+
+        private string CurrentAmmunitionProcessor(int current)
+        {
+            var sb = StringBuilderPool.Get();
+            sb.Append("Ammunition: ");
+            sb.Append(current);
+            sb.Append(" / ");
+            sb.Append(ammunition);
+            sb.Append(' ');
+            for (var i = 0; i < current; i++)
+            {
+                sb.Append('|');
+            }
+            return StringBuilderPool.Release(sb);
+        }
 
         /*
          *  Logic   

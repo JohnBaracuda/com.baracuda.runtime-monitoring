@@ -1,5 +1,5 @@
 using System.Reflection;
-using Baracuda.Monitoring.Management;
+using Baracuda.Monitoring.API;
 
 namespace Baracuda.Monitoring.Internal.Utilities
 {

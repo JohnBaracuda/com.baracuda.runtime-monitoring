@@ -1,7 +1,7 @@
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Monitoring.Internal.Reflection;
-using Baracuda.Monitoring.Management;
 
 namespace Baracuda.Monitoring.Internal.Utilities
 {

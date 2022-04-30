@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Management;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal

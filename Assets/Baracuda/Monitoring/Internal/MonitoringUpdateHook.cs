@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Utilities;
-using Baracuda.Monitoring.Management;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal
@@ -29,7 +29,7 @@ namespace Baracuda.Monitoring.Internal
         protected override void Awake()
         {
             base.Awake();
-            gameObject.hideFlags = MonitoringSettings.GetInstance().ShowRuntimeObject ? HideFlags.None : HideFlags.HideInHierarchy;
+            gameObject.hideFlags = MonitoringSettings.GetInstance().ShowRuntimeMonitoringObject ? HideFlags.None : HideFlags.HideInHierarchy;
         }
 
         private void LateUpdate()

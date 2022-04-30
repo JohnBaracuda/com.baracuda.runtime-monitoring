@@ -6,12 +6,12 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
-using Baracuda.Monitoring.Management;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -335,9 +335,14 @@ namespace Baracuda.Monitoring.Editor
             }
             
             var typedGeneric = parsedGenericType.MakeGenericType(parsedTargetType, parsedValueType);
-
+            
             var fullDefinition = ToGenericTypeStringFullName(typedGeneric);
             var rawDefinition = generic.MakeGenericType(targetType, valueType).ToSyntaxString();
+
+            if (fullDefinition == null || rawDefinition == null)
+            {
+                return null;
+            }
             
             return new TypeDefinitionResult(fullDefinition, rawDefinition);
         }
@@ -444,7 +449,7 @@ namespace Baracuda.Monitoring.Editor
             
             if (type.IsStatic())
             {
-                return typeof(System.Object).FullName!.Replace('+', '.');
+                return typeof(object).FullName!.Replace('+', '.');
             }
 
             if (type.IsGenericType)
@@ -483,8 +488,7 @@ namespace Baracuda.Monitoring.Editor
 
             typeCacheFullName.Add(type, type.FullName);
             
-            
-            return type.FullName!.Replace('+', '.');
+            return type.FullName?.Replace('+', '.');
         }
         
         #endregion

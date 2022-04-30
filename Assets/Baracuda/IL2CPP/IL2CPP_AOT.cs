@@ -3,7 +3,7 @@
 //---------- ----------------------------- ----------
 
 //Runtime Monitoring
-//File generated: 2022-04-29 21:30:54Z
+//File generated: 2022-04-30 12:25:32Z
 //Please dont change the contents of this file. Otherwise IL2CPP runtime may not work with runtime monitoring!
 //Ensure that this file is located in Assembly-CSharp. Otherwise this file may not compile.
 
@@ -19,61 +19,53 @@ internal class IL2CPP_AOT
     [UnityEngine.Scripting.PreserveAttribute]
     Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.PlayerWeapon, System.Int32> AOT_GENERATED_TYPE_2;
     
-    //EventProfile<Target, Action<int>>
-    [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.EventProfile<Baracuda.Monitoring.Example.Scripts.Target, System.Action<System.Int32>> AOT_GENERATED_TYPE_4;
-    
-    //EventUnit<Target, Action<int>>
-    [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.EventUnit<Baracuda.Monitoring.Example.Scripts.Target, System.Action<System.Int32>> AOT_GENERATED_TYPE_6;
-    
-    //FieldProfile<Target, float>
-    [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Target, System.Single> AOT_GENERATED_TYPE_8;
-    
-    //FieldUnit<Target, float>
-    [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Target, System.Single> AOT_GENERATED_TYPE_10;
-    
     //FieldProfile<FPSMonitor, float>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Single> AOT_GENERATED_TYPE_12;
+    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Single> AOT_GENERATED_TYPE_4;
     
     //FieldUnit<FPSMonitor, float>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Single> AOT_GENERATED_TYPE_14;
+    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Single> AOT_GENERATED_TYPE_6;
     
     //FieldProfile<FPSMonitor, long>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_16;
+    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_8;
     
     //FieldUnit<FPSMonitor, long>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_18;
+    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_10;
     
     //FieldProfile<FPSMonitor, long>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_20;
+    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_12;
     
     //FieldUnit<FPSMonitor, long>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_22;
+    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_14;
     
     //PropertyProfile<VsyncMonitor, int>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<System.Object, System.Int32> AOT_GENERATED_TYPE_24;
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<System.Object, System.Int32> AOT_GENERATED_TYPE_16;
     
     //PropertyUnit<VsyncMonitor, int>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.PropertyUnit<System.Object, System.Int32> AOT_GENERATED_TYPE_26;
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<System.Object, System.Int32> AOT_GENERATED_TYPE_18;
     
     //PropertyProfile<VsyncMonitor, int>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<System.Object, System.Int32> AOT_GENERATED_TYPE_28;
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<System.Object, System.Int32> AOT_GENERATED_TYPE_20;
     
     //PropertyUnit<VsyncMonitor, int>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.PropertyUnit<System.Object, System.Int32> AOT_GENERATED_TYPE_30;
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<System.Object, System.Int32> AOT_GENERATED_TYPE_22;
+    
+    //FieldProfile<Target, int>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Game.Target, System.Int32> AOT_GENERATED_TYPE_24;
+    
+    //FieldUnit<Target, int>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Game.Target, System.Int32> AOT_GENERATED_TYPE_26;
     
 }
 #endif //ENABLE_IL2CPP

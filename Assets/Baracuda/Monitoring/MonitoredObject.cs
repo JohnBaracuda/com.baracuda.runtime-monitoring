@@ -1,32 +1,18 @@
 using System;
-using Baracuda.Monitoring.Management;
+using Baracuda.Monitoring.API;
 
 namespace Baracuda.Monitoring
 {
     public abstract class MonitoredObject : IDisposable
     {
-        private bool _isDisposed = false;
-        
         protected MonitoredObject()
         {
-            MonitoringManager.RegisterTarget(this);
-        }
-        
-        ~ MonitoredObject()
-        {
-            Dispose();
+            MonitoringUnitManager.RegisterTarget(this);
         }
 
         public virtual void Dispose()
         {
-            if (_isDisposed)
-            {
-                return;
-            }
-
-            MonitoringManager.UnregisterTarget(this);
-            _isDisposed = true;
-            GC.SuppressFinalize(this);
+            MonitoringUnitManager.UnregisterTarget(this);
         }
     }
 }

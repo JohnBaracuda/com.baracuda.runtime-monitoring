@@ -1,4 +1,4 @@
-using Baracuda.Monitoring.Management;
+using Baracuda.Monitoring.API;
 using UnityEngine;
 
 namespace Baracuda.Monitoring
@@ -7,12 +7,12 @@ namespace Baracuda.Monitoring
     {
         protected virtual void OnEnable()
         {
-            MonitoringManager.RegisterTarget(this);
+            MonitoringUnitManager.RegisterTarget(this);
         }
 
         protected virtual void OnDisable()
         {
-            MonitoringManager.UnregisterTarget(this);
+            MonitoringUnitManager.UnregisterTarget(this);
         }
     }
 }

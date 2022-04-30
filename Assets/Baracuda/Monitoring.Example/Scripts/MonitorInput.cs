@@ -1,4 +1,4 @@
-using Baracuda.Monitoring.Display;
+using Baracuda.Monitoring.API;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts

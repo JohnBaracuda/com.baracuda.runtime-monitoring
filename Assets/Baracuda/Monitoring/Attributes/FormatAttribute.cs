@@ -48,6 +48,11 @@ namespace Baracuda.Monitoring
         {
             Format = format;
         }
+        
+        public FormatAttribute(UIPosition position)
+        {
+            Position = position;
+        }
 
         public FormatAttribute()
         {

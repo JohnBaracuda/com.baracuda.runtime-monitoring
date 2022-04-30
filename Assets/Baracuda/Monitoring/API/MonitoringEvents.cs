@@ -5,11 +5,11 @@ using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Threading;
 
-namespace Baracuda.Monitoring.Management
+namespace Baracuda.Monitoring.API
 {
     public static class MonitoringEvents
     {
-        #region --- Public API ---
+        #region --- API ---
 
         /// <summary>
         /// Value indicated whether or not monitoring profiling has completed and monitoring is fully initialized.
@@ -17,9 +17,10 @@ namespace Baracuda.Monitoring.Management
         /// <exception cref="InvalidOperationException"></exception>
         public static bool IsInitialized
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => isInitialized;
 
-            [MethodImpl(MethodImplOptions.Synchronized)]
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private set
             {
                 if (!Dispatcher.IsMainThread())
@@ -49,7 +50,7 @@ namespace Baracuda.Monitoring.Management
             {
                 if (IsInitialized)
                 {
-                    value.Invoke(MonitoringManager.GetStaticUnits(), MonitoringManager.GetInstanceUnits());
+                    value.Invoke(MonitoringUnitManager.GetStaticUnits(), MonitoringUnitManager.GetInstanceUnits());
                     return;
                 }
                 profilingCompleted += value;
@@ -66,18 +67,17 @@ namespace Baracuda.Monitoring.Management
         /// Event is called when a <see cref="MonitorUnit"/> was disposed.
         /// </summary>
         public static event Action<IMonitorUnit> UnitDisposed;
-
-        /*
-         * Backing fields   
-         */
-        
-        private static volatile bool isInitialized = false;
-        
-        private static ProfilingCompletedListener profilingCompleted;
         
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
+        
+        #region --- Backing Fields ---
+
+        private static volatile bool isInitialized = false;
+        private static ProfilingCompletedListener profilingCompleted;
+        
+        #endregion
 
         #region --- Raise ---
 

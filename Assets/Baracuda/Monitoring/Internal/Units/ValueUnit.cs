@@ -18,7 +18,6 @@ namespace Baracuda.Monitoring.Internal.Units
     /// <typeparam name="TValue"></typeparam>
     public abstract class ValueUnit<TTarget, TValue> : MonitorUnit, IValueUnit where TTarget : class
     {
-        
         #region --- Fields ---
         
         protected readonly StringDelegate CompiledValueProcessor;
@@ -97,10 +96,7 @@ namespace Baracuda.Monitoring.Internal.Units
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (!Dispatcher.IsMainThread())
-                {
-                    throw new InvalidOperationException($"{nameof(GetValueFormatted)} is only allowed to be called from the main thread!");
-                }
+                Dispatcher.GuardAgainstIsNotMainThread(nameof(GetValueFormatted));
                 return CompiledValueProcessor();
             }
 #else
@@ -115,10 +111,7 @@ namespace Baracuda.Monitoring.Internal.Units
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (!Dispatcher.IsMainThread())
-                {
-                    throw new InvalidOperationException($"{nameof(GetValueRaw)} is only allowed to be called from the main thread!");
-                }
+                Dispatcher.GuardAgainstIsNotMainThread(nameof(GetValueRaw));
                 return _getValueDelegate(_target).ToString();
             }
 #else
@@ -155,7 +148,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Idisosable ---
+        #region --- IDisosable ---
 
         public override void Dispose()
         {
@@ -164,6 +157,5 @@ namespace Baracuda.Monitoring.Internal.Units
         }
 
         #endregion
-
     }
 }
