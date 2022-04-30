@@ -6,15 +6,13 @@ Runtime Monitoring is an open source tool providing an easy way to monitor the v
 
 &nbsp;
 ## Table of Contents
----
+
 
 - [Getting started](#getting-started)
 - [Import / Installation](#import)
 - [Value Processor](#value-processor)
 - [Monitoring API](#api)
-- [Runtime](#runtime)
-  - [Mono Runtiome](#mono-runtime)
-  - [IL2CPP Runtime](#il2cpp-runtime)
+- [Runtime (Mono & IL2CPP)](#runtime)
 - [Display / UI](#display-ui)
   - [UI Toolkit](#ui-toolkit)
   - [Unity UI](#ui-ugui)
@@ -29,8 +27,7 @@ Runtime Monitoring is an open source tool providing an easy way to monitor the v
 - [Licence](#licence)
 
 &nbsp;
-### Getting Started
----
+## Getting Started
 
 ```c#
 // Place the MonitorAttribute on any field, property or event.
@@ -96,16 +93,15 @@ public int HealthPoints
 
 
 &nbsp;
-### Import
----
+## Import
 
 Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) page. 
 
 Depending on your needs you may select or deselect individual modules when importing. [Monitoring](#monitoring-core "Monitoring Assembly"), [Monitoring Editor](#monitoring-editor "Monitoring Editor Assembly") & [Threading](#thread-dispatcher "Threading / Dispatcher") are essensial modules for this asset. [Monitoring Example](#monitoring-example "Monitoring Example Assembly") contains an optional example scene and [Monitoring UI](#monitoring-ui "Monitoring Preset UI Assemblies") contains UI / Display preset that should work out of the box with different Unity UI Systems.
 
 &nbsp;
-### Value Processor
----
+## Value Processor
+
 You can add the ValueProcessorAttribute to a monitored field or porperty to gain more controll of its string representation. Use the attibute to pass the name of a method that will be used to parse the current value to a string.
 
 The value processor method must accept a value of the monitored members type, can be both static and non static (when monitoring a non non static member) and must return a string.
@@ -124,7 +120,6 @@ private string IsAliveProcessor(bool isAliveValue)
 
 Static ValueProcessor Methods can have certain overloads for objects that impliment generic collection interfaces.
 
-&nbsp;
 
 ```c#
 //IList<T> ValueProcessor
@@ -147,7 +142,6 @@ private static string IListProcessorWithIndex(string element, int index)
 }
 ```
 &nbsp;
-
 ```c#
 //IDictionary<TKey, TValue> ValueProcessor
 
@@ -164,7 +158,6 @@ private static string IDictionaryProcessor(string name, bool isAlive)
 }
 ```
 &nbsp;
-
 ```c#
 //IEnumerable<T> ValueProcessor
 
@@ -181,16 +174,13 @@ private static string IEnumerableValueProcessor(int number)
 }
 ```
 
-
 &nbsp;
-### Runtime
----
+## Runtime
 
 The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono & IL2CPP runtimes are supported. Mono runtime works without any limitations.
 
-
 &nbsp;
-#### IL2CPP Runtime
+### IL2CPP Runtime
 
 Monitoring is making extensive use of dynamic type & method creation during its initialization process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation)
 
@@ -199,8 +189,7 @@ In order to use IL2CPP as a runtime some features are disabled or reduced and so
 
 
 &nbsp;
-### Display UI
----
+## Display UI
 
 The monitoring system does not controll any UI elements. It is almost compleatly separated from UI but provides an easy way to either chose one of the prefabricated UI modules or to create a custom UI Solution based on individual preferences. 
 
@@ -209,15 +198,14 @@ Because Unity has multiple UI systems every prefabricated UI Module is based on 
 
 &nbsp;
 ### UI Toolkit
----
 
 Currently the only implimented UI Solution. UI Toolkit is only available when using Unity 2020.1 or newer. 
 
 
 
 &nbsp;
-### Licence
----
+## Licence
+
 [MIT License](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) so do what you want but consider giving a star ⭐ or a donation to support me ❤️
 
 ❤️❤️❤️ [Donations | PayPal.me](https://www.paypal.com/paypalme/johnbaracuda) ❤️❤️❤️
