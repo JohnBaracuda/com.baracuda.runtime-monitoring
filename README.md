@@ -280,13 +280,13 @@ Currently the only implimented UI Solution. UI Toolkit is only available when us
 
 Runtime Monitoring is separated into multiple assemblies / modules. Some of those modules are essential while others are optional.
 
- Assembly                    | Folder                           | Editor            | Essentioal  
-:-                           |:-                                |:-                 |:-           
-Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                   |:heavy_check_mark:
-Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark: |:heavy_check_mark:
-Assembly-Baracuda-Threading  | Baracuda/Threading               |                   |:heavy_check_mark:
-Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                   |
-Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                   |
+ Assembly                    | Path                             | Editor             | Essentioal  
+:-                           |:-                                |:------------------:|:------------------:         
+Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                    |[:heavy_check_mark:]
+Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |[:heavy_check_mark:]|[:heavy_check_mark:]
+Assembly-Baracuda-Threading  | Baracuda/Threading               |                    |[:heavy_check_mark:]
+Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                    |
+Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                    |
 
 &nbsp;
 ### Monitoring Core
