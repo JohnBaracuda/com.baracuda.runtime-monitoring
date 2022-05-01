@@ -12,7 +12,7 @@ namespace Baracuda.Monitoring.API
         /// <summary>
         /// Set the active monitoring display visible.
         /// </summary>
-        public static void ShowDisplay()
+        public static void Show()
         {
             ShowDisplayInternal();
         }
@@ -20,7 +20,7 @@ namespace Baracuda.Monitoring.API
         /// <summary>
         /// Hide the active monitoring display.
         /// </summary>
-        public static void HideDisplay()
+        public static void Hide()
         {
             HideDisplayInternal();
         }
@@ -38,7 +38,7 @@ namespace Baracuda.Monitoring.API
         /// Returns true if the there is an active monitoring display that is also visible.
         /// </summary>
         /// <returns></returns>
-        public static bool GetIsVisible()
+        public static bool IsVisible()
         {
             return GetIsVisibleInternal();
         }

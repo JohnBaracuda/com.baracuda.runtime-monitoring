@@ -3,6 +3,8 @@ Monitoring
 
 Runtime Monitoring is an open source tool providing an easy way to monitor the value or state of C# objects and members. Just add the 'Monitor' attribute to a field, property, event, method or class and get its value or state displayed during runtime.
 
+Note that this documentation is currently work in progress.
+
 
 &nbsp;
 ## Table of Contents
@@ -14,13 +16,13 @@ Runtime Monitoring is an open source tool providing an easy way to monitor the v
 - [Value Processor](#value-processor)
 - [Update Loop](#update-loop)
 - [Update Event](#update-event)
-- [Monitoring API](#api)
 - [Runtime (Mono & IL2CPP)](#runtime)
 - [Display / UI](#display-ui)
   - [UI Toolkit](#ui-toolkit)
   - [Unity UI](#unity-ui)
   - [Custom UI Implementation](#custom-ui-implementation)
 - [Assemblies / Modules](#assemblies-and-modules)
+- [Planned Features](#planned-features)
 - [Licence](#licence)
 
 &nbsp;
@@ -75,8 +77,6 @@ public class Player : MonitoredBehaviour
 Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) page. 
 
 Depending on your needs you may select or deselect individual modules when importing. [Monitoring](#monitoring-core "Monitoring Assembly"), [Monitoring Editor](#monitoring-editor "Monitoring Editor Assembly") & [Threading](#thread-dispatcher "Threading / Dispatcher") are essensial modules for this asset. [Monitoring Example](#monitoring-example "Monitoring Example Assembly") contains an optional example scene and [Monitoring UI](#monitoring-ui "Monitoring Preset UI Assemblies") contains UI / Display preset that should work out of the box with different Unity UI Systems.
-
-&nbsp;
 
  Assembly                    | Path                             | Editor           | Core  
 :-                           |:-                                |:----------------:|:----------------:         
@@ -268,7 +268,24 @@ In order to use IL2CPP as a runtime some features are disabled or reduced and so
 
 The monitoring system does not controll any UI elements. It is almost compleatly separated from UI but provides an easy way to either chose one of the prefabricated UI modules or to create a custom UI Solution based on individual preferences. 
 
-Because Unity has multiple UI systems every prefabricated UI Module is based on one of them. At the moment only UI Toolkit is implimented but Unity UI and event GUI are planned as upcoming features.
+Because Unity has multiple UI systems every prefabricated UI Module is based on one of them. At the moment only UI Toolkit is implimented but Unity UI and event GUI are planned as upcoming features. Use the ```MonitoringDisplay``` API to control the current Monitoring UI, independent of its implementation.
+
+```c#
+using Baracuda.Monitoring.API;
+
+// Show the monitoring UI overlay.
+MonitoringDisplay.Show();
+
+// Hide the monitoring UI overlay.
+MonitoringDisplay.Hide();
+
+// Toggle the visibility of the active monitoring display.
+// This method returns a bool indicating the new visibility state.
+MonitoringDisplay.ToggleDisplay();
+
+// Returns true if the there is an active monitoring display that is also visible.
+MonitoringDisplay.IsVisible();
+```
 
 
 ### UI Toolkit
@@ -281,7 +298,12 @@ Unity UI is not yet implimented.
 
 ### Custom UI Implementation
 
-You can create a custom UI implimented...
+(WIP) You can create a custom UI implimentation...
+
++ Create a new class and inherit from ```MonitoringDisplayController```
++ Add the script to a new GameObject and create a prefab of it.
++ Make sure to delete the GameObject from your scene.
++ Select the monitoring settings and serialize the prefab at General/Monitoring Display Controller.
 
 &nbsp;
 ## Assemblies and Modules
@@ -295,6 +317,18 @@ Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_ma
 Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:|
 Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                  |                  |
 Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                  |                  | Unity 2020.1 or newer
+
+
+
+&nbsp;
+## Planned Features
+
++ Unity UI implementation
++ GUI implementation
++ Method monitoring
++ Class scoped monitoring
++ Improved IL2CPP support / AOT generation
++ Compatibility with 2019.4
 
 
 &nbsp;

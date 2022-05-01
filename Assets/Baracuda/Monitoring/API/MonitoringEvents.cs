@@ -23,12 +23,7 @@ namespace Baracuda.Monitoring.API
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private set
             {
-                if (!Dispatcher.IsMainThread())
-                {
-                    throw new InvalidOperationException(
-                        $"Set => {nameof(IsInitialized)} is only allowed to be set from the main thread!");
-                }
-
+                Dispatcher.GuardAgainstIsNotMainThread("set" + nameof(IsInitialized));
                 isInitialized = value;
             }
         }
