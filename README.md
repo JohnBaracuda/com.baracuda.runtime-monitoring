@@ -13,19 +13,14 @@ Runtime Monitoring is an open source tool providing an easy way to monitor the v
 - [Settings](#settings)
 - [Value Processor](#value-processor)
 - [Update Loop](#update-loop)
+- [Update Event](#update-event)
 - [Monitoring API](#api)
 - [Runtime (Mono & IL2CPP)](#runtime)
 - [Display / UI](#display-ui)
   - [UI Toolkit](#ui-toolkit)
-  - [Unity UI](#ui-ugui)
-  - [GUI](#ui-gui)
-  - [Custom UI / Display Implimentation](#custom-ui-implimentation)
+  - [Unity UI](#unity-ui)
+  - [Custom UI Implementation](#custom-ui-implementation)
 - [Assemblies / Modules](#assemblies-and-modules)
-  - [Monitoring Core](#monitoring-core)
-  - [Monitoring Editor](#monitoring-editor)
-  - [Monitoring UI](#monitoring-ui)
-  - [Monitoring Example](#monitoring-example)
-  - [Threading / Dispatcher](#thread-dispatcher)
 - [Licence](#licence)
 
 &nbsp;
@@ -81,7 +76,15 @@ Import this asset into your project as a .unitypackage available at [Runtime-Mon
 
 Depending on your needs you may select or deselect individual modules when importing. [Monitoring](#monitoring-core "Monitoring Assembly"), [Monitoring Editor](#monitoring-editor "Monitoring Editor Assembly") & [Threading](#thread-dispatcher "Threading / Dispatcher") are essensial modules for this asset. [Monitoring Example](#monitoring-example "Monitoring Example Assembly") contains an optional example scene and [Monitoring UI](#monitoring-ui "Monitoring Preset UI Assemblies") contains UI / Display preset that should work out of the box with different Unity UI Systems.
 
-After a successful import there might be some things that you want to setup properly. 
+&nbsp;
+
+ Assembly                    | Path                             | Editor           | Core  
+:-                           |:-                                |:----------------:|:----------------:         
+Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                  |:heavy_check_mark:
+Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark:|:heavy_check_mark:
+Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:
+Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                  |
+Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                  |
 
 
 &nbsp;
@@ -200,13 +203,14 @@ public enum UpdateOptions
 
 + ```UpdateOtions.TickUpdate```: The member will be evaluated on every Tick. Tick is a custom update cycle that is roughly called 30 times per second.
 
+
 &nbsp;
 
-### Update Event
+## Update Event
 
 When monitoring a field or a property (Value units) you can provide an 'OnValueChanged' event that will tell the monitored unit that the state of the member has changed.
 
-This event can either be an ```Action``` or an ```Action<T>```, with T being the type of the monitored field or property. Note that once a valid update event was provided the unit will not be evaluated during an update cycle anymore, unless  ```UpdateOptions``` are explicitly set to ```Auto``` or ```FrameUpdate```. 
+This event can either be an ```Action``` or an ```Action<T>```, with T being the type of the monitored field or property. Note that once a valid update event was provided the unit will not be evaluated during an update cycle anymore, unless  ```UpdateOptions``` are explicitly set to ```UpdateOptions.Auto``` or ```UpdateOptions.FrameUpdate```. 
 
 Passing an event will slightly reduce performance overhead for values or member that you know will update rarely. It is however not required.
 
@@ -252,8 +256,7 @@ public void ContinueGame()
 
 The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono & IL2CPP runtimes are supported. Mono runtime works without any limitations.
 
-&nbsp;
-### IL2CPP Runtime
+### IL2CPP
 
 Monitoring is making extensive use of dynamic type & method creation during its initialization process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation)
 
@@ -268,30 +271,30 @@ The monitoring system does not controll any UI elements. It is almost compleatly
 Because Unity has multiple UI systems every prefabricated UI Module is based on one of them. At the moment only UI Toolkit is implimented but Unity UI and event GUI are planned as upcoming features.
 
 
-&nbsp;
 ### UI Toolkit
 
 Currently the only implimented UI Solution. UI Toolkit is only available when using Unity 2020.1 or newer. 
 
+### Unity UI
 
+Unity UI is not yet implimented. 
+
+### Custom UI Implementation
+
+You can create a custom UI implimented...
 
 &nbsp;
 ## Assemblies and Modules
 
-Runtime Monitoring is separated into multiple assemblies / modules. Some of those modules are essential while others are optional.
+Runtime Monitoring is separated into multiple assemblies / modules. Some of those modules are essential while others are not.
 
- Assembly                    | Path                             | Editor             | Essentioal  
-:-                           |:-                                |:------------------:|:------------------:         
-Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                    |[:heavy_check_mark:]
-Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |[:heavy_check_mark:]|[:heavy_check_mark:]
-Assembly-Baracuda-Threading  | Baracuda/Threading               |                    |[:heavy_check_mark:]
-Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                    |
-Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                    |
-
-&nbsp;
-### Monitoring Core
-+ Assembly Name: Assembly-Baracuda-Monitoring
-
+ Assembly                    | Path                             | Editor           | Core             | Note  
+:-                           |:-                                |:----------------:|:----------------:|:- 
+Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                  |:heavy_check_mark:|
+Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark:|:heavy_check_mark:| [Thread Dispatcher](#https://github.com/JohnBaracuda/Thread-Dispatcher)
+Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:|
+Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                  |                  |
+Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                  |                  | Unity 2020.1 or newer
 
 
 &nbsp;
