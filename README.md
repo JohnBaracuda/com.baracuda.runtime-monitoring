@@ -10,7 +10,9 @@ Runtime Monitoring is an open source tool providing an easy way to monitor the v
 
 - [Getting started](#getting-started)
 - [Import / Installation](#import)
+- [Settings](#settings)
 - [Value Processor](#value-processor)
+- [Update Loop](#update-loop)
 - [Monitoring API](#api)
 - [Runtime (Mono & IL2CPP)](#runtime)
 - [Display / UI](#display-ui)
@@ -18,7 +20,7 @@ Runtime Monitoring is an open source tool providing an easy way to monitor the v
   - [Unity UI](#ui-ugui)
   - [GUI](#ui-gui)
   - [Custom UI / Display Implimentation](#custom-ui-implimentation)
-- [Assemblies / Modules](#assemblies)
+- [Assemblies / Modules](#assemblies-and-modules)
   - [Monitoring Core](#monitoring-core)
   - [Monitoring Editor](#monitoring-editor)
   - [Monitoring UI](#monitoring-ui)
@@ -40,9 +42,10 @@ public int HealthPoints { get; private set; }
 
 [Monitor]
 public event OnHealthChanged;
+```
 
-// When monitoring non static member of an object, 
-// instances of the object must be registered.
+```c#
+// When monitoring instances, these objects must be registered.
 
 public class Player : MonoBehaviour
 {
@@ -68,27 +71,6 @@ public class Player : MonitoredBehaviour
     [Monitor]
     private int healthPoints;
 }
-
-// Monitord member are evaluated in an update loop.
-// You can provide an event that will tell monitoring that a 
-// value has changed to remove it from the update loop. 
-
-private int healthPoints;
-public event Action<int> OnHealthChanged;
-
-[Monitor(UpdateEvent = nameof(OnHealthChanged))]
-public int HealthPoints 
-{
-    get
-    {
-        return healthPoints;
-    }
-    private set
-    {
-        healthPoints = value;
-        OnHealthChanged?.Invoke(healthPoints);
-    }
-}
 ```
 
 
@@ -98,6 +80,15 @@ public int HealthPoints
 Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) page. 
 
 Depending on your needs you may select or deselect individual modules when importing. [Monitoring](#monitoring-core "Monitoring Assembly"), [Monitoring Editor](#monitoring-editor "Monitoring Editor Assembly") & [Threading](#thread-dispatcher "Threading / Dispatcher") are essensial modules for this asset. [Monitoring Example](#monitoring-example "Monitoring Example Assembly") contains an optional example scene and [Monitoring UI](#monitoring-ui "Monitoring Preset UI Assemblies") contains UI / Display preset that should work out of the box with different Unity UI Systems.
+
+After a successful import there might be some things that you want to setup properly. 
+
+
+&nbsp;
+## Settings
+
+Open the settings by navigating to (menu: Tools > Monitoring > Settings) 
+
 
 &nbsp;
 ## Value Processor
@@ -116,10 +107,23 @@ private string IsAliveProcessor(bool isAliveValue)
     return isAliveValue ? "Player is Alive" : "Player is Dead!";
 }
 ```
-&nbsp;
+```c#
+[ValueProcessor(nameof(IListProcessor))] 
+[Monitor] private IList<string> names = new string[] {"Gordon", "Alyx", "Barney"};
 
-Static ValueProcessor Methods can have certain overloads for objects that impliment generic collection interfaces.
+private string IListProcessor(IList<string> elements)
+{
+    var str = string.Empty;
+    foreach (var name in elements)
+    {
+        str += name;
+        str += "\n";
+    }
+    return str;
+}
+```
 
+Static processor methods can have certain overloads for objects that impliment generic collection interfaces. Those overload allow you to process the value of individual elements of the collection instead of the whole collection all at once. 
 
 ```c#
 //IList<T> ValueProcessor
@@ -141,7 +145,6 @@ private static string IListProcessorWithIndex(string element, int index)
     return $"The name at index {index} is {element}";
 }
 ```
-&nbsp;
 ```c#
 //IDictionary<TKey, TValue> ValueProcessor
 
@@ -157,7 +160,6 @@ private static string IDictionaryProcessor(string name, bool isAlive)
     return $"{name} is {(isAlive ? "alive" : "dead")}";
 }
 ```
-&nbsp;
 ```c#
 //IEnumerable<T> ValueProcessor
 
@@ -175,6 +177,77 @@ private static string IEnumerableValueProcessor(int number)
 ```
 
 &nbsp;
+## Update Loop
+
+Monitord member are evaluated in an update loop. You can provide an event that will tell monitoring that a value has changed to remove it from the update loop. 
+
+
+```c#
+public enum UpdateOptions
+{
+    Auto = 0,
+    DontUpdate = 1,
+    FrameUpdate = 2,
+    TickUpdate = 4,
+}
+```
+
++ ```UpdateOtions.Auto```: If an update event is set, the state of the members  will only be evaluated when the event is invoked. Otherwise Tick is the preferred update interval. 
+
++ ```UpdateOtions.DontUpdate```: The members will not be evaluated except once on load. Use this option for constant values.
+
++ ```UpdateOtions.FrameUpdate```: The member will be evaluated on every LateUpdate.
+
++ ```UpdateOtions.TickUpdate```: The member will be evaluated on every Tick. Tick is a custom update cycle that is roughly called 30 times per second.
+
+&nbsp;
+
+### Update Event
+
+When monitoring a field or a property (Value units) you can provide an 'OnValueChanged' event that will tell the monitored unit that the state of the member has changed.
+
+This event can either be an ```Action``` or an ```Action<T>```, with T being the type of the monitored field or property. Note that once a valid update event was provided the unit will not be evaluated during an update cycle anymore, unless  ```UpdateOptions``` are explicitly set to ```Auto``` or ```FrameUpdate```. 
+
+Passing an event will slightly reduce performance overhead for values or member that you know will update rarely. It is however not required.
+
+```c#
+private int healthPoints;
+public event Action<int> OnHealthChanged;
+
+[Monitor(UpdateEvent = nameof(OnHealthChanged))]
+public int HealthPoints 
+{
+    get => healthPoints;
+    private set
+    {
+        healthPoints = value;
+        OnHealthChanged?.Invoke(healthPoints);
+    }
+}
+```
+
+```c#
+[Monitor(UpdateEvent = nameof(OnGameStateChanged))]
+private bool isGamePaused;
+
+public event Action OnGameStateChanged;
+
+public void PauseGame()
+{
+    isGamePaused = true;
+    OnGameStateChanged?.Invoke();
+}
+
+public void ContinueGame()
+{
+    isGamePaused = false;
+    OnGameStateChanged?.Invoke();
+}
+```
+
+
+
+&nbsp;
 ## Runtime
 
 The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono & IL2CPP runtimes are supported. Mono runtime works without any limitations.
@@ -185,7 +258,6 @@ The true purpose of this tool is to provide an easy way to debug and monitor bui
 Monitoring is making extensive use of dynamic type & method creation during its initialization process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation)
 
 In order to use IL2CPP as a runtime some features are disabled or reduced and some types must be generated during a build process, that can then be used by the IL2CPP runtime as templates. You can configure the IL2CPP AOT type generation from the monitoring settings.
-
 
 
 &nbsp;
@@ -200,6 +272,25 @@ Because Unity has multiple UI systems every prefabricated UI Module is based on 
 ### UI Toolkit
 
 Currently the only implimented UI Solution. UI Toolkit is only available when using Unity 2020.1 or newer. 
+
+
+
+&nbsp;
+## Assemblies and Modules
+
+Runtime Monitoring is separated into multiple assemblies / modules. Some of those modules are essential while others are optional.
+
+ Assembly                    | Folder                           | Editor            | Essentioal  
+:-                           |:-                                |:-                 |:-           
+Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                   |:heavy_check_mark:
+Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark: |:heavy_check_mark:
+Assembly-Baracuda-Threading  | Baracuda/Threading               |                   |:heavy_check_mark:
+Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                   |
+Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                   |
+
+&nbsp;
+### Monitoring Core
++ Assembly Name: Assembly-Baracuda-Monitoring
 
 
 

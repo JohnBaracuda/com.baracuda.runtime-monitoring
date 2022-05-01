@@ -45,8 +45,7 @@ namespace Baracuda.Monitoring
         FrameUpdate = 2,
         
         /// <summary>
-        /// The member will be evaluated on every Tick. Tick is a custom update cycle that is roughly called 30 times
-        /// per second.
+        /// The member will be evaluated on every Tick. Tick is a custom update cycle that is roughly called 30 times per second.
         /// </summary>
         TickUpdate = 4,
     }
