@@ -71,8 +71,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                 _uiDocument.rootVisualElement.styleSheets.Add(optionalStyleSheet);
             }
         }
-
-
+        
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------

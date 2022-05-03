@@ -37,6 +37,24 @@ public int HealthPoints { get; private set; }
 
 [Monitor]
 public event OnHealthChanged;
+
+[MonitorField(Update = UpdateOptions.FrameUpdate)]
+private float speed; 
+
+[MonitorProperty(UpdateEvent = nameof(OnPlayerDeath))]
+public bool IsAlive { get; private set; }
+
+[MonitorEvent]
+public static event Action<bool> OnPlayerDeath;
+
+[MonitorEvent(ShowSignature = false, ShowSubscriber = true)]
+public event OnGameStart;
+
+// Example used by FPSMonitor.cs
+[MonitorValue(UpdateEvent = nameof(FPSUpdated))]
+[ValueProcessor(nameof(FPSProcessor))]
+[Format(FontSize = 32, Position = UIPosition.TopRight, GroupElement = false)]
+private static float fps;
 ```
 
 
@@ -62,7 +80,7 @@ Everything should work out of the box after a successful import. If however you 
 
 + Open the settings by navigating to (menu: Tools > Monitoring > Settings).
 + Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
-+ Use the ```Monitoring UI Controller``` field to set the active UI Controller.
++ Use the ```Monitoring UI Controller``` field in the UI Controller foldout to set the active UI Controller. The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
 
 &nbsp;
 ## Monitoring Objects

@@ -61,8 +61,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c930b01391a542548b4f7ceabe6c3e41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dontDestroyOnLoad: 1
-  hideInHierarchy: 1
   optionalStyleSheets: []
   instanceUnitStyles: unit
   instanceGroupStyles: group

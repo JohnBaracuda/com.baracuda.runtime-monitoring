@@ -135,7 +135,16 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_enableMonitoring);
                 EditorGUILayout.PropertyField(_openDisplayOnLoad);
-                DrawUIControllerRefField(_monitoringUIController);
+                EditorGUILayout.Space();
+            }
+
+            if (Foldout["UI Controller"])
+            {
+                EditorGUILayout.Space();
+                if (DrawUIControllerRefField(_monitoringUIController))
+                {
+                    DrawInlinedUIController();
+                }
                 EditorGUILayout.Space();
             }
 
@@ -210,7 +219,7 @@ namespace Baracuda.Monitoring.Editor
 
             serializedObject.ApplyModifiedProperties();
         }
-        
+
         private static void DrawWeblinks()
         {
             // Documentation
@@ -261,9 +270,10 @@ namespace Baracuda.Monitoring.Editor
 
         #region --- Misc ---
 
-        private static void DrawUIControllerRefField(SerializedProperty property)
+        private static bool DrawUIControllerRefField(SerializedProperty property)
         {
-            if (property.objectReferenceValue == null)
+            var isNull = property.objectReferenceValue == null;
+            if (isNull)
             {
                 EditorGUILayout.HelpBox($"{property.displayName} is Required!", MessageType.Error);
             }
@@ -272,9 +282,33 @@ namespace Baracuda.Monitoring.Editor
             EditorGUILayout.PropertyField(property);
             // if (GUILayout.Button("Select", GUILayout.Width(60)))
             // {
-            //     
+            //     // Draw custom select menu...
             // }
             EditorGUILayout.EndHorizontal();
+            return !isNull;
+        }
+        
+        
+        private void DrawInlinedUIController()
+        {
+            EditorGUILayout.Space();
+            DrawLine();
+            EditorGUILayout.Space();
+            var targetObject = _monitoringUIController.objectReferenceValue;
+            var editor = CreateEditor(targetObject);
+            if (editor == null)
+            {
+                return;
+            }
+            EditorGUI.BeginChangeCheck();
+            editor.OnInspectorGUI();
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(targetObject);
+            }
+            EditorGUILayout.Space();
+            DrawLine();
+            EditorGUILayout.Space();
         }
         
         private static void DrawLine(int thickness = 1, int padding = 1)

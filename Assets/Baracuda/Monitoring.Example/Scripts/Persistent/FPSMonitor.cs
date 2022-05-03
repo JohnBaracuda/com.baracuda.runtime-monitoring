@@ -29,7 +29,7 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
          */
         
         [MonitorValue(UpdateEvent = nameof(FPSUpdated))]
-        [ValueProcessor(nameof(Processor))]
+        [ValueProcessor(nameof(FPSProcessor))]
         [Format(FontSize = 32, Position = UIPosition.TopRight, GroupElement = false)]
         private static float fps;
 
@@ -47,7 +47,7 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
         
         //--------------------------------------------------------------------------------------------------------------
         
-        public static string Processor(float value)
+        public static string FPSProcessor(float value)
         {
             stringBuilder.Clear();
             stringBuilder.Append('[');
