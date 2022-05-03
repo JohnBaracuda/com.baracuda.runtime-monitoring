@@ -28,7 +28,7 @@ namespace Baracuda.Monitoring.Interface
         object Target { get; }
 
         /// <summary>
-        /// <see cref="IMonitorProfile"/> describing the monitoring unit. 
+        /// <see cref="IMonitorProfile"/> describing the unit. 
         /// </summary>
         IMonitorProfile Profile { get; }
 

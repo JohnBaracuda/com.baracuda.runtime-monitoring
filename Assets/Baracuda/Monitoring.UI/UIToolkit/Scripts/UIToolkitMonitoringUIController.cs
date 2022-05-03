@@ -5,10 +5,10 @@ using Baracuda.Monitoring.Interface;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Baracuda.Monitoring.UI.UIToolkit
+namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 {
     [RequireComponent(typeof(UIDocument))]
-    internal class UIToolkitMonitoringDisplayController : MonitoringDisplayController, IStyleProvider
+    internal class UIToolkitMonitoringUIController : MonitoringUIController, IStyleProvider
     {
         #region --- Inspector ---
         
@@ -79,7 +79,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit
 
         #region --- Open Close ---
 
-        protected override bool IsVisible => _isVisible;
+        public override bool IsVisible => _isVisible;
 
         protected override void Show()
         {

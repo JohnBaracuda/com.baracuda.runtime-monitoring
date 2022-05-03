@@ -1,23 +1,21 @@
-Monitoring
+Runtime Monitoring
 ===
 
-Runtime Monitoring is an open source tool providing an easy way to monitor the value or state of C# objects and members. Just add the 'Monitor' attribute to a field, property, event, method or class and get its value or state displayed during runtime.
-
-Note that this documentation is currently work in progress.
+Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property, event, [method*](## "Not yet implemented") or [class*](## "Not yet implemented") and get its value or state displayed automatically in a customizable and extendable UI.
 
 
 &nbsp;
 ## Table of Contents
 
-
 - [Getting started](#getting-started)
-- [Import / Installation](#import)
-- [Settings](#settings)
+- [Import](#import)
+- [Setup](#setup)
+- [Monitoring Objects](#monitoring-objects)
 - [Value Processor](#value-processor)
 - [Update Loop](#update-loop)
 - [Update Event](#update-event)
 - [Runtime (Mono & IL2CPP)](#runtime)
-- [Display / UI](#display-ui)
+- [UI Controller](#ui-controller)
   - [UI Toolkit](#ui-toolkit)
   - [Unity UI](#unity-ui)
   - [Custom UI Implementation](#custom-ui-implementation)
@@ -41,9 +39,42 @@ public int HealthPoints { get; private set; }
 public event OnHealthChanged;
 ```
 
-```c#
-// When monitoring instances, these objects must be registered.
 
+&nbsp;
+## Import
+
+Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. 
+
+Depending on your needs you may select or deselect individual modules when importing. ```Monitoring```, ```Monitoring``` & ```Threading``` are essensial modules for this asset. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset that should work out of the box with different Unity UI Systems.
+
+ Assembly                    | Path                             | Editor           | Core  
+:-                           |:-                                |:----------------:|:----------------:         
+Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                  |:heavy_check_mark:
+Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark:|:heavy_check_mark:
+Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:
+Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                  |
+Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                  |
+
+
+&nbsp;
+## Setup
+Everything should work out of the box after a successful import. If however you want to validate that everything is set up correctly or you want to change for example the active [Monitoring UI Controller](#ui-controller), the following steps will walk you through that process.
+
++ Open the settings by navigating to (menu: Tools > Monitoring > Settings).
++ Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
++ Use the ```Monitoring UI Controller``` field to set the active UI Controller.
+
+&nbsp;
+## Monitoring Objects
+
+When monitoring non static member of a class, instances of those classes must be registered when they are created and unregistered when they are destoryed. This process can be automated or simplified, simply by inheriting from one of the following base types. 
++ ```MonitoredBehaviour```: an automatically monitored ```MonoBehaviour```
++ ```MonitoredSingleton<T>```: an automatically monitored ```MonoBehaviour``` singleton.
++ ```MonitoredScriptableObject```: an automatically monitored ```ScriptableObject```.
++ ```MonitoredObject```: an automatically monitored ```System.Object```. that implements the ```IDisposable``` interface. Please make sure to call ```Disposable``` on those objects when you no longer need them. 
+
+
+```c#
 public class Player : MonoBehaviour
 {
     [Monitor]
@@ -60,38 +91,13 @@ public class Player : MonoBehaviour
     }
 }
 
-// You can simplify this process by using on of the provided basetypes.
-// In this case MonitoredBehaviour
-
+// Simplified by inheriting from MonitoredBehaviour.
 public class Player : MonitoredBehaviour
 {
     [Monitor]
     private int healthPoints;
 }
 ```
-
-
-&nbsp;
-## Import
-
-Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) page. 
-
-Depending on your needs you may select or deselect individual modules when importing. [Monitoring](#monitoring-core "Monitoring Assembly"), [Monitoring Editor](#monitoring-editor "Monitoring Editor Assembly") & [Threading](#thread-dispatcher "Threading / Dispatcher") are essensial modules for this asset. [Monitoring Example](#monitoring-example "Monitoring Example Assembly") contains an optional example scene and [Monitoring UI](#monitoring-ui "Monitoring Preset UI Assemblies") contains UI / Display preset that should work out of the box with different Unity UI Systems.
-
- Assembly                    | Path                             | Editor           | Core  
-:-                           |:-                                |:----------------:|:----------------:         
-Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                  |:heavy_check_mark:
-Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark:|:heavy_check_mark:
-Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:
-Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                  |
-Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                  |
-
-
-&nbsp;
-## Settings
-
-Open the settings by navigating to (menu: Tools > Monitoring > Settings) 
-
 
 &nbsp;
 ## Value Processor
@@ -264,7 +270,7 @@ In order to use IL2CPP as a runtime some features are disabled or reduced and so
 
 
 &nbsp;
-## Display UI
+## UI Controller
 
 The monitoring system does not controll any UI elements. It is almost compleatly separated from UI but provides an easy way to either chose one of the prefabricated UI modules or to create a custom UI Solution based on individual preferences. 
 
@@ -313,8 +319,8 @@ Runtime Monitoring is separated into multiple assemblies / modules. Some of thos
  Assembly                    | Path                             | Editor           | Core             | Note  
 :-                           |:-                                |:----------------:|:----------------:|:- 
 Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                  |:heavy_check_mark:|
-Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark:|:heavy_check_mark:| [Thread Dispatcher](#https://github.com/JohnBaracuda/Thread-Dispatcher)
-Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:|
+Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark:|:heavy_check_mark:| 
+Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
 Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                  |                  |
 Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                  |                  | Unity 2020.1 or newer
 
@@ -334,6 +340,4 @@ Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |               
 &nbsp;
 ## Licence
 
-[MIT License](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) so do what you want but consider giving a star ⭐ or a donation to support me ❤️
-
-❤️❤️❤️ [Donations | PayPal.me](https://www.paypal.com/paypalme/johnbaracuda) ❤️❤️❤️
+[MIT License](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) so do what you want but consider giving a star ⭐ or a [Donation (PayPal.me)](https://www.paypal.com/paypalme/johnbaracuda) to support me ❤️

@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableMonitoring: 1
   openDisplayOnLoad: 1
-  monitoringDisplayController: {fileID: 4062470990811542421, guid: cc50f3b5789885343bad909dd731c281, type: 3}
-  forceSynchronousLoad: 0
+  monitoringUIController: {fileID: 4062470990811542421, guid: cc50f3b5789885343bad909dd731c281, type: 3}
   showRuntimeMonitoringObject: 0
   showRuntimeUIController: 0
   logBadImageFormatException: 1

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4062470990811542420}
   - component: {fileID: 4062470990811542421}
   m_Layer: 0
-  m_Name: Monitoring_UIElements_PFB
+  m_Name: MonitoringUIController_UIToolkit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

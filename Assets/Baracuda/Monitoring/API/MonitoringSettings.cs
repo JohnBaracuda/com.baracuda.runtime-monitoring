@@ -17,7 +17,7 @@ namespace Baracuda.Monitoring.API
         [Tooltip("When enabled, the monitoring display will be opened as soon as profiling has completed.")]
         [SerializeField] private bool openDisplayOnLoad = true;
         [Tooltip("Reference to the used MonitoringDisplay object.")]
-        [SerializeReference, SerializeField] private MonitoringDisplayController monitoringDisplayController;
+        [SerializeReference, SerializeField] private MonitoringUIController monitoringUIController;
 
         /*
          * Debugging   
@@ -117,7 +117,7 @@ namespace Baracuda.Monitoring.API
          * General   
          */
         
-        public MonitoringDisplayController DisplayControllerDisplayController => monitoringDisplayController;
+        public MonitoringUIController UIControllerUIController => monitoringUIController;
         public bool EnableMonitoring => enableMonitoring;
         public bool OpenDisplayOnLoad => openDisplayOnLoad;
         public bool ShowRuntimeMonitoringObject => showRuntimeMonitoringObject;

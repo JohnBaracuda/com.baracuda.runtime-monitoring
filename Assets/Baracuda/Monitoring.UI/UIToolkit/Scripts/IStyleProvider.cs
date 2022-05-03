@@ -1,4 +1,4 @@
-﻿namespace Baracuda.Monitoring.UI.UIToolkit
+﻿namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 {
     internal interface IStyleProvider
     {

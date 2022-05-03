@@ -1,6 +1,6 @@
 ﻿using Baracuda.Monitoring.Interface;
 
-namespace Baracuda.Monitoring.UI.UIToolkit
+namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 {
     public interface IMonitoringUIElement
     {

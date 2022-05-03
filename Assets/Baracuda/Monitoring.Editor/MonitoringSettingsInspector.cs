@@ -32,7 +32,7 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _enableMonitoring;
         private SerializedProperty _openDisplayOnLoad;
         private SerializedProperty _forceSynchronousLoad;
-        private SerializedProperty _monitoringDisplayController;
+        private SerializedProperty _monitoringUIController;
         
         private SerializedProperty _showRuntimeMonitoringObject; 
         private SerializedProperty _showRuntimeUIController;
@@ -135,7 +135,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_enableMonitoring);
                 EditorGUILayout.PropertyField(_openDisplayOnLoad);
-                DrawRequired(_monitoringDisplayController);
+                DrawUIControllerRefField(_monitoringUIController);
                 EditorGUILayout.Space();
             }
 
@@ -261,13 +261,20 @@ namespace Baracuda.Monitoring.Editor
 
         #region --- Misc ---
 
-        private static void DrawRequired(SerializedProperty property)
+        private static void DrawUIControllerRefField(SerializedProperty property)
         {
             if (property.objectReferenceValue == null)
             {
                 EditorGUILayout.HelpBox($"{property.displayName} is Required!", MessageType.Error);
             }
+
+            EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(property);
+            // if (GUILayout.Button("Select", GUILayout.Width(60)))
+            // {
+            //     
+            // }
+            EditorGUILayout.EndHorizontal();
         }
         
         private static void DrawLine(int thickness = 1, int padding = 1)

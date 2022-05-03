@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
-namespace Baracuda.Monitoring.UI.UIToolkit
+namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 {
     public class MonitoringUIElement : Label, IMonitoringUIElement
     {

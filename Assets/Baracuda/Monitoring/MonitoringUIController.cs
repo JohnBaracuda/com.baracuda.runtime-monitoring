@@ -5,11 +5,11 @@ namespace Baracuda.Monitoring
     /// <summary>
     /// Base class for monitoring ui controller.
     /// </summary>
-    public abstract class MonitoringDisplayController : MonitoredBehaviour
+    public abstract class MonitoringUIController : MonitoredBehaviour
     {
         #region --- Abstract ---
 
-        protected internal abstract bool IsVisible { get; }
+        public abstract bool IsVisible { get; }
         protected internal abstract void Show();
         protected internal abstract void Hide();
 

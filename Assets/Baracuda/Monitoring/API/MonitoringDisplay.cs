@@ -98,7 +98,7 @@ namespace Baracuda.Monitoring.API
          */
 
         // singleton instance managed internally
-        private static MonitoringDisplayController controllerInstance;
+        private static MonitoringUIController controllerInstance;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void InitializeMonitoringDisplay()
@@ -114,7 +114,7 @@ namespace Baracuda.Monitoring.API
         {
             var settings = MonitoringSettings.GetInstance();
 
-            if (settings.DisplayControllerDisplayController == null)
+            if (settings.UIControllerUIController == null)
             {
                 return;
             }
@@ -124,7 +124,7 @@ namespace Baracuda.Monitoring.API
                 return;
             }
             
-            controllerInstance = Object.Instantiate(settings.DisplayControllerDisplayController);
+            controllerInstance = Object.Instantiate(settings.UIControllerUIController);
             
             Object.DontDestroyOnLoad(controllerInstance.gameObject);
             controllerInstance.gameObject.hideFlags = settings.ShowRuntimeUIController ? HideFlags.None : HideFlags.HideInHierarchy;
