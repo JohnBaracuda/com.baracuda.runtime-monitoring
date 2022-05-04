@@ -10,6 +10,7 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 - [Getting started](#getting-started)
 - [Import](#import)
 - [Setup](#setup)
+- [Technical & Legal Information](#technical-and-legal-information)
 - [Monitoring Objects](#monitoring-objects)
 - [Value Processor](#value-processor)
 - [Update Loop](#update-loop)
@@ -94,6 +95,17 @@ Everything should work out of the box after a successful import. If however you 
 + Open the settings by navigating to (menu: Tools > Monitoring > Settings).
 + Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
 + Use the ```Monitoring UI Controller``` field in the UI Controller foldout to set the active UI Controller. The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
+
+
+&nbsp;
+## Technical and Legal Information
++ Unity Version: <b>2021.1</b><br/>
++ Scripting Backend: <b>Mono & IL2CPP</b>
++ API Compatibility: <b>.NET Standard 2.0 or .NET 4.xP</b>
++ Asset Version: <b>0.9.0</b>
++ Author: <b>© 2022 Jonathan Lang</b><br/>
++ Licence: [<b>MIT License</b>](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) <br>
+
 
 &nbsp;
 ## Monitoring Objects
