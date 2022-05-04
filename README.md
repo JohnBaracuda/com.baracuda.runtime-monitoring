@@ -18,7 +18,7 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 - [UI Controller](#ui-controller)
   - [UI Toolkit](#ui-toolkit)
   - [Unity UI](#unity-ui)
-  - [Custom UI Implementation](#custom-ui-implementation)
+- [Custom UI Controller](#custom-ui-controller)
 - [Assemblies / Modules](#assemblies-and-modules)
 - [Planned Features](#planned-features)
 - [Licence](#licence)
@@ -28,7 +28,6 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 
 ```c#
 // Place the MonitorAttribute on any field, property or event.
-
 [Monitor]
 private int healthPoints;
 
@@ -36,25 +35,39 @@ private int healthPoints;
 public int HealthPoints { get; private set; }
 
 [Monitor]
-public event OnHealthChanged;
+public event Action OnHealthChanged;
 
+[Monitor]
+public static string playerName;
+
+[Monitor]
+protected static bool IsPlayerAlive { get; set; }
+
+[Monitor]
+internal static event Action<int> OnScoreChanged;
+
+// Determine if and in what quantity the state will be evaluated.
 [MonitorField(Update = UpdateOptions.FrameUpdate)]
 private float speed; 
 
-[MonitorProperty(UpdateEvent = nameof(OnPlayerDeath))]
-public bool IsAlive { get; private set; }
+// Reduce update overhead by providing an update event.
+[MonitorProperty(UpdateEvent = nameof(OnPlayerSpawn))]
+public bool LastSpawnPosition { get; set; }
 
 [MonitorEvent]
-public static event Action<bool> OnPlayerDeath;
+public static event Action<Vector3> OnPlayerSpawn;
 
+// Monitored events display their signature, subscriber count and invokation count.
+// These options can be toggled using the MonitorEventAttribute. 
 [MonitorEvent(ShowSignature = false, ShowSubscriber = true)]
 public event OnGameStart;
 
-// Example used by FPSMonitor.cs
-[MonitorValue(UpdateEvent = nameof(FPSUpdated))]
-[ValueProcessor(nameof(FPSProcessor))]
-[Format(FontSize = 32, Position = UIPosition.TopRight, GroupElement = false)]
-private static float fps;
+// Use processor methods to customize how the value is displayed.
+[Monitor]
+[ValueProcessor(nameof(IsAliveProcessor))]
+public bool IsAlive { get; private set; }
+
+private string IsAliveProcessor(bool value) => value? "Alive" : "Dead";
 ```
 
 
@@ -63,7 +76,7 @@ private static float fps;
 
 Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. 
 
-Depending on your needs you may select or deselect individual modules when importing. ```Monitoring```, ```Monitoring``` & ```Threading``` are essensial modules for this asset. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset that should work out of the box with different Unity UI Systems.
+Depending on your needs you may select or deselect individual modules when importing. ```Monitoring```, ```Monitoring Editor``` & ```Threading``` are essensial modules for this asset. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset that should work out of the box with different Unity UI Systems.
 
  Assembly                    | Path                             | Editor           | Core  
 :-                           |:-                                |:----------------:|:----------------:         
@@ -76,7 +89,7 @@ Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |               
 
 &nbsp;
 ## Setup
-Everything should work out of the box after a successful import. If however you want to validate that everything is set up correctly or you want to change for example the active [Monitoring UI Controller](#ui-controller), the following steps will walk you through that process.
+Everything should work out of the box after a successful import. If however you want to validate that everything is set up correctly or you want to change for example the active [Monitoring UI Controller](#ui-controller), the following steps will guide you through that process.
 
 + Open the settings by navigating to (menu: Tools > Monitoring > Settings).
 + Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
@@ -85,7 +98,7 @@ Everything should work out of the box after a successful import. If however you 
 &nbsp;
 ## Monitoring Objects
 
-When monitoring non static member of a class, instances of those classes must be registered when they are created and unregistered when they are destoryed. This process can be automated or simplified, simply by inheriting from one of the following base types. 
+When monitoring non static member of a class, instances of those classes must be registered when they are created and unregistered when they are destoryed. This process can be automated or simplified, by inheriting from one of the following base types. 
 + ```MonitoredBehaviour```: an automatically monitored ```MonoBehaviour```
 + ```MonitoredSingleton<T>```: an automatically monitored ```MonoBehaviour``` singleton.
 + ```MonitoredScriptableObject```: an automatically monitored ```ScriptableObject```.
@@ -101,11 +114,15 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         MonitoringUnitManager.RegisterTarget(this);
+        // Or use the extension method:
+        this.RegisterMonitor();
     }
 
     private void OnDestroy()
     {
         MonitoringUnitManager.UnregisterTarget(this);
+        // Or use the extension method:
+        this.UnregisterMonitor();
     }
 }
 
@@ -150,11 +167,10 @@ private string IListProcessor(IList<string> elements)
 }
 ```
 
-Static processor methods can have certain overloads for objects that impliment generic collection interfaces. Those overload allow you to process the value of individual elements of the collection instead of the whole collection all at once. 
+Static processor methods can have certain overloads for objects that impliment generic collection interfaces, which allow you to process the value of individual elements of the collection instead of the whole collection all at once. 
 
 ```c#
 //IList<T> ValueProcessor
-
 [ValueProcessor(nameof(IListProcessor))] 
 [Monitor] private IList<string> names = new string[] {"Gordon", "Alyx", "Barney"};
 
@@ -174,7 +190,6 @@ private static string IListProcessorWithIndex(string element, int index)
 ```
 ```c#
 //IDictionary<TKey, TValue> ValueProcessor
-
 [ValueProcessor(nameof(IDictionaryProcessor))]
 [Monitor] private IDictionary<string, bool> isAliveDictionary = new Dictionary<string, bool>
 {
@@ -189,7 +204,6 @@ private static string IDictionaryProcessor(string name, bool isAlive)
 ```
 ```c#
 //IEnumerable<T> ValueProcessor
-
 [ValueProcessor(nameof(IEnumerableValueProcessor))]
 [Monitor] 
 private IEnumerable<int> randomNumbers = new List<int>
@@ -320,14 +334,18 @@ Currently the only implimented UI Solution. UI Toolkit is only available when us
 
 Unity UI is not yet implimented. 
 
-### Custom UI Implementation
 
-(WIP) You can create a custom UI implimentation...
+&nbsp;
+## UI Controller
 
-+ Create a new class and inherit from ```MonitoringDisplayController```
+You can create a custom UI controller by follwing the steps below. A more detailed guide how to setup a custom UI controller is coming.
+
++ Create a new class and inherit from ```MonitoringDisplayController```.
++ Impliment the abstract mehtods and custom UI logic.
 + Add the script to a new GameObject and create a prefab of it.
 + Make sure to delete the GameObject from your scene.
-+ Select the monitoring settings and serialize the prefab at General/Monitoring Display Controller.
++ Open the settings by navigating to (menu: Tools > Monitoring > Settings).
++ Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
 
 &nbsp;
 ## Assemblies and Modules
