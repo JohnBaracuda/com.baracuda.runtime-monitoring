@@ -336,7 +336,7 @@ Unity UI is not yet implimented.
 
 
 &nbsp;
-## UI Controller
+## Custom UI Controller
 
 You can create a custom UI controller by follwing the steps below. A more detailed guide how to setup a custom UI controller is coming.
 
