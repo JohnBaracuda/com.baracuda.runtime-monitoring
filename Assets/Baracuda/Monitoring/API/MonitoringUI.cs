@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.API
 {
-    public static class MonitoringDisplay
+    public static class MonitoringUI
     {
         #region --- API ---
 
@@ -54,7 +54,7 @@ namespace Baracuda.Monitoring.API
         {
             if (controllerInstance)
             {
-                controllerInstance.Show();
+                controllerInstance.ShowMonitoringUI();
             }
         }
         
@@ -63,7 +63,7 @@ namespace Baracuda.Monitoring.API
         {
             if (controllerInstance)
             {
-                controllerInstance.Hide();
+                controllerInstance.HideMonitoringUI();
             }
         }
         
@@ -75,13 +75,13 @@ namespace Baracuda.Monitoring.API
                 return false;
             }
 
-            if (controllerInstance.IsVisible)
+            if (controllerInstance.IsVisible())
             {
-                controllerInstance.Hide();
+                controllerInstance.HideMonitoringUI();
             }
             else
             {
-                controllerInstance.Show();
+                controllerInstance.ShowMonitoringUI();
             }
 
             return GetIsVisibleInternal();
@@ -90,7 +90,7 @@ namespace Baracuda.Monitoring.API
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool GetIsVisibleInternal()
         {
-            return controllerInstance != null && controllerInstance.IsVisible;
+            return controllerInstance != null && controllerInstance.IsVisible();
         }
         
         /*
@@ -105,7 +105,7 @@ namespace Baracuda.Monitoring.API
         {
             if (MonitoringSettings.GetInstance().EnableMonitoring)
             {
-                MonitoringEvents.ProfilingCompleted += OnProfilingCompletedInternal;
+                MonitoringManager.ProfilingCompleted += OnProfilingCompletedInternal;
             }
         }
 
@@ -129,8 +129,8 @@ namespace Baracuda.Monitoring.API
             Object.DontDestroyOnLoad(controllerInstance.gameObject);
             controllerInstance.gameObject.hideFlags = settings.ShowRuntimeUIController ? HideFlags.None : HideFlags.HideInHierarchy;
 
-            MonitoringEvents.UnitCreated += controllerInstance.OnUnitCreated;
-            MonitoringEvents.UnitDisposed += controllerInstance.OnUnitDisposed;
+            MonitoringManager.UnitCreated += controllerInstance.OnUnitCreated;
+            MonitoringManager.UnitDisposed += controllerInstance.OnUnitDisposed;
 
             for (var i = 0; i < staticUnits.Count; i++)
             {
@@ -144,11 +144,11 @@ namespace Baracuda.Monitoring.API
 
             if (settings.OpenDisplayOnLoad)
             {
-                controllerInstance.Show();
+                controllerInstance.ShowMonitoringUI();
             }
             else
             {
-                controllerInstance.Hide();
+                controllerInstance.HideMonitoringUI();
             }
         }
 

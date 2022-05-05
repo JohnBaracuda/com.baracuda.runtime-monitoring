@@ -62,7 +62,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 var types = await CreateAssemblyProfile(ct);
                 await CreateMonitoringProfile(types, ct);
-                await MonitoringUnitManager.CompleteProfilingAsync(ct);
+                await MonitoringManager.CompleteProfilingAsync(ct);
             }
             catch (OperationCanceledException oce)
             {

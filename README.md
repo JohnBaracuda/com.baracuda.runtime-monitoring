@@ -8,9 +8,9 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 ## Table of Contents
 
 - [Getting started](#getting-started)
+- [Technical Information](#technical-information)
 - [Import](#import)
 - [Setup](#setup)
-- [Technical & Legal Information](#technical-and-legal-information)
 - [Monitoring Objects](#monitoring-objects)
 - [Value Processor](#value-processor)
 - [Update Loop](#update-loop)
@@ -73,6 +73,14 @@ private string IsAliveProcessor(bool value) => value? "Alive" : "Dead";
 
 
 &nbsp;
+## Technical Information
++ Unity Version: <b>2021.1</b><br/>
++ Scripting Backend: <b>Mono & IL2CPP</b>
++ API Compatibility: <b>.NET Standard 2.0 or .NET 4.xP</b>
++ Asset Version: <b>0.9.0</b>
+
+
+&nbsp;
 ## Import
 
 Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. 
@@ -95,16 +103,6 @@ Everything should work out of the box after a successful import. If however you 
 + Open the settings by navigating to (menu: Tools > Monitoring > Settings).
 + Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
 + Use the ```Monitoring UI Controller``` field in the UI Controller foldout to set the active UI Controller. The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
-
-
-&nbsp;
-## Technical and Legal Information
-+ Unity Version: <b>2021.1</b><br/>
-+ Scripting Backend: <b>Mono & IL2CPP</b>
-+ API Compatibility: <b>.NET Standard 2.0 or .NET 4.xP</b>
-+ Asset Version: <b>0.9.0</b>
-+ Author: <b>© 2022 Jonathan Lang</b><br/>
-+ Licence: [<b>MIT License</b>](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) <br>
 
 
 &nbsp;
@@ -316,25 +314,23 @@ In order to use IL2CPP as a runtime some features are disabled or reduced and so
 &nbsp;
 ## UI Controller
 
-The monitoring system does not controll any UI elements. It is almost compleatly separated from UI but provides an easy way to either chose one of the prefabricated UI modules or to create a custom UI Solution based on individual preferences. 
-
-Because Unity has multiple UI systems every prefabricated UI Module is based on one of them. At the moment only UI Toolkit is implimented but Unity UI and event GUI are planned as upcoming features. Use the ```MonitoringDisplay``` API to control the current Monitoring UI, independent of its implementation.
+Use the ```MonitoringUI``` API to toggle the visiblity or active state of the current monitoring UI overlay. ```MonitoringUI``` is an accesspoint and the bridge between custom code and the active ```MonitoringUIController```. This is to offer a layer of abstraction that enables you to switch between multiple either prefabricated or custom UI implimentations or UI Controller. 
 
 ```c#
 using Baracuda.Monitoring.API;
 
 // Show the monitoring UI overlay.
-MonitoringDisplay.Show();
+MonitoringUI.Show();
 
 // Hide the monitoring UI overlay.
-MonitoringDisplay.Hide();
+MonitoringUI.Hide();
 
 // Toggle the visibility of the active monitoring display.
 // This method returns a bool indicating the new visibility state.
-MonitoringDisplay.ToggleDisplay();
+MonitoringUI.ToggleDisplay();
 
 // Returns true if the there is an active monitoring display that is also visible.
-MonitoringDisplay.IsVisible();
+MonitoringUI.IsVisible();
 ```
 
 

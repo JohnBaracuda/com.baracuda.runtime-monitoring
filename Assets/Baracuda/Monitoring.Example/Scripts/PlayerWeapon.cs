@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using UnityEngine;
 
@@ -7,12 +5,13 @@ namespace Baracuda.Monitoring.Example.Scripts
 {
     public class PlayerWeapon : MonitoredBehaviour
     {
+        #region --- Fields ---
+
         /*
          *  Inspector Fields   
          */
-        
-        [Header("Primary")]
-        [SerializeField] private float damage = 100f;
+
+        [Header("Primary")] [SerializeField] private float damage = 100f;
         [SerializeField] private bool fullAutomatic = true;
         [SerializeField] private float shotsPerSecond = 7.5f;
         [SerializeField] private int bulletsPerShot = 3;
@@ -22,26 +21,34 @@ namespace Baracuda.Monitoring.Example.Scripts
         [SerializeField] private LayerMask layerMask;
         [SerializeField] private Transform projectileSpawnPosition;
         [SerializeField] private ProjectilePool projectilePool;
-        
-        [Header("Field Of View")]
+
+        [Header("Field Of View")] 
         [SerializeField] private float defaultFOV = 90f;
+
         [SerializeField] private float zoomFOV = 40f;
         [SerializeField] private float fovSharpness = 10f;
 
         /*
          *  Private Fields   
          */
-        
-        [Monitor] 
+
+        [Monitor]
+        [Format(UIPosition.BottomLeft, FontSize = 20)]
         [ValueProcessor(nameof(CurrentAmmunitionProcessor))]
-        [Format(UIPosition.BottomLeft, FontSize = 26, GroupElement = false)]
         private int _currentAmmunition;
+
         private float _lastFireTime;
         private float _targetFOV;
         private IPlayerInput _input;
         private Camera _camera;
         private bool _canFireSemiAutomatic = true;
 
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+        
+        #region --- Weapon Logic ---
+ 
         /*
          * Value Processor   
          */
@@ -127,5 +134,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         {
             _currentAmmunition = ammunition;
         }
+        
+        #endregion
     }
 }

@@ -14,16 +14,16 @@ namespace Baracuda.Monitoring.Example.Scripts
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
-
+        
         #region --- Fields ---
 
-        //[Monitor] 
+        [Monitor]
         private bool _isAlive = true;
-        //[Monitor] 
-        private float _cooldown = 0f;
-        //[Monitor]
+        
+        [Monitor]
         private float _currentHealth;
         
+        private float _cooldown = 0f;
         private Animator _animator;
         
         #endregion
@@ -34,9 +34,6 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         private static readonly int knockdown = Animator.StringToHash("knockdown");
         private static readonly int recover = Animator.StringToHash("recover");
-
-        [Monitor]
-        private static int totalTargetsDestroyed;
         
         #endregion
 
@@ -68,7 +65,6 @@ namespace Baracuda.Monitoring.Example.Scripts
                 }
 
                 _currentHealth = 0;
-                totalTargetsDestroyed++;
                 StartCoroutine(CooldownCoroutine());
             }
         }
@@ -90,6 +86,5 @@ namespace Baracuda.Monitoring.Example.Scripts
         }
         
         #endregion
-        
     }
 }

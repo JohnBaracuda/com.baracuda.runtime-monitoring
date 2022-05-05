@@ -78,16 +78,16 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
         #region --- Open Close ---
 
-        public override bool IsVisible => _isVisible;
+        public override bool IsVisible() => _isVisible;
 
-        protected override void Show()
+        protected override void ShowMonitoringUI()
         {
             _isVisible = true;
             _uiDocument.rootVisualElement.SetEnabled(true);
             _uiDocument.rootVisualElement.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
         }
 
-        protected override void Hide()
+        protected override void HideMonitoringUI()
         {
             _isVisible = false;
             _uiDocument.rootVisualElement.SetEnabled(false);

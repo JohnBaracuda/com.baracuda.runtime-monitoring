@@ -11,7 +11,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         {
             if (Input.GetKeyDown(toggleKey))
             {
-                MonitoringDisplay.ToggleDisplay();
+                MonitoringUI.ToggleDisplay();
             }
         }
     }

@@ -14,7 +14,7 @@ namespace Baracuda.Monitoring.Internal
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Initialize()
         {
-            MonitoringEvents.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
+            MonitoringManager.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
         }
 
         private static void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
@@ -26,8 +26,8 @@ namespace Baracuda.Monitoring.Internal
             
             SetupUpdateHook();
             
-            MonitoringEvents.UnitCreated += MonitoringEventsOnUnitCreated;
-            MonitoringEvents.UnitDisposed  += MonitoringEventsOnUnitDisposed;
+            MonitoringManager.UnitCreated += MonitoringEventsOnUnitCreated;
+            MonitoringManager.UnitDisposed  += MonitoringEventsOnUnitDisposed;
                 
             for (var i = 0; i < staticUnits.Count; i++)
             {

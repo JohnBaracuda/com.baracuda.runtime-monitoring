@@ -10,14 +10,14 @@ namespace Baracuda.Monitoring.UI.GUIDrawer
             GUI.TextField(new Rect(0, 0, 300, 100), "text");
         }
 
-        public override bool IsVisible { get; } = false;
+        public override bool IsVisible() => false;
         
-        protected override void Show()
+        protected override void ShowMonitoringUI()
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void Hide()
+        protected override void HideMonitoringUI()
         {
             throw new System.NotImplementedException();
         }

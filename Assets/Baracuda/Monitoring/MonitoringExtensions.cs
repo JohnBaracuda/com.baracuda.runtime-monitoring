@@ -6,12 +6,12 @@ namespace Baracuda.Monitoring
     {
         public static void RegisterMonitor(this object target)
         {
-            MonitoringUnitManager.RegisterTarget(target);
+            MonitoringManager.RegisterTarget(target);
         }
 
         public static void UnregisterMonitor(this object target)
         {
-            MonitoringUnitManager.UnregisterTarget(target);
+            MonitoringManager.UnregisterTarget(target);
         }
     }
 }

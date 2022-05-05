@@ -12,17 +12,17 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Return true if the UI is active and false if it is not active.
         /// </summary>
-        public abstract bool IsVisible { get; }
+        public abstract bool IsVisible();
         
         /// <summary>
         /// Activate / show the ui.
         /// </summary>
-        protected internal abstract void Show();
+        protected internal abstract void ShowMonitoringUI();
         
         /// <summary>
         /// Deactivate / hide the ui.
         /// </summary>
-        protected internal abstract void Hide();
+        protected internal abstract void HideMonitoringUI();
 
         /*
          * Unit Handling   
