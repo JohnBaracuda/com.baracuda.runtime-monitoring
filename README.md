@@ -337,6 +337,24 @@ MonitoringUI.IsVisible();
 ```
 
 
+&nbsp;
+## Custom UI Controller
+
+You can create a custom UI controller by follwing the steps below. A more detailed guide how to setup a custom UI controller is coming.
+
++ Create a new class and inherit from ```MonitoringDisplayController```.
++ Impliment the abstract mehtods and custom UI logic.
++ Add the script to a new GameObject and create a prefab of it.
++ Make sure to delete the GameObject from your scene.
++ Open the settings by navigating to (menu: Tools > Monitoring > Settings).
++ Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
+
+
+&nbsp;
+## Prefabricated UI Controller
+
+Prefabricated UI Controller exist or are planned for the following UI Systems.
+
 ### UI Toolkit
 
 Currently the only implimented UI Solution. UI Toolkit is only available when using Unity 2020.1 or newer. 
@@ -350,17 +368,6 @@ Unity UI is not yet implimented.
 A very basic GUI implimentation is already supported and work in progress.
 
 
-&nbsp;
-## Custom UI Controller
-
-You can create a custom UI controller by follwing the steps below. A more detailed guide how to setup a custom UI controller is coming.
-
-+ Create a new class and inherit from ```MonitoringDisplayController```.
-+ Impliment the abstract mehtods and custom UI logic.
-+ Add the script to a new GameObject and create a prefab of it.
-+ Make sure to delete the GameObject from your scene.
-+ Open the settings by navigating to (menu: Tools > Monitoring > Settings).
-+ Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
 
 &nbsp;
 ## Assemblies and Modules
@@ -381,9 +388,10 @@ Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |               
 ## Planned Features
 
 + Unity UI implementation
-+ GUI implementation
-+ Method monitoring
++ GUI implementation (Basic implimentation already available & WIP)
++ Method monitoring (Properties can be used as a workaround)
 + Class scoped monitoring
++ Class / object monitoring (Properties returning ToString() can be used as a workaround)
 + Improved IL2CPP support / AOT generation
 + Full Compatibility with 2020.3 (LTS)
 
