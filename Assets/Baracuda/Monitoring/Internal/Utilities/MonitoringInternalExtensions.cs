@@ -78,7 +78,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
             
             target = target.Replace('_', ' ');
             
-            var chars = ListPool<char>.Get();
+            var chars = ConcurrentListPool<char>.Get();
             
             for (var i = 0; i < target.Length; i++)
             {
@@ -105,7 +105,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
             }
 
             var array = chars.ToArray();
-            ListPool<char>.Release(chars);
+            ConcurrentListPool<char>.Release(chars);
             return new string(array).ReduceWhitespace();
         }
 

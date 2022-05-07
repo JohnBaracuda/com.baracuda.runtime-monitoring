@@ -345,6 +345,10 @@ Currently the only implimented UI Solution. UI Toolkit is only available when us
 
 Unity UI is not yet implimented. 
 
+### GUI
+
+A very basic GUI implimentation is already supported and work in progress.
+
 
 &nbsp;
 ## Custom UI Controller
@@ -381,7 +385,7 @@ Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |               
 + Method monitoring
 + Class scoped monitoring
 + Improved IL2CPP support / AOT generation
-+ Compatibility with 2019.4
++ Full Compatibility with 2020.3 (LTS)
 
 
 &nbsp;
