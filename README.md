@@ -70,6 +70,8 @@ public bool IsAlive { get; private set; }
 
 private string IsAliveProcessor(bool value) => value? "Alive" : "Dead";
 ```
+![basic example](https://johnbaracuda.com/media/img/monitoring/Example_03.png)
+![event example](https://johnbaracuda.com/media/img/monitoring/Example_02.png)
 
 
 &nbsp;
@@ -227,6 +229,8 @@ private static string IEnumerableValueProcessor(int number)
 }
 ```
 
+![value processor example](https://johnbaracuda.com/media/img/monitoring/Example_01.png)
+
 &nbsp;
 ## Update Loop
 
@@ -296,7 +300,6 @@ public void ContinueGame()
     OnGameStateChanged?.Invoke();
 }
 ```
-
 
 
 &nbsp;
