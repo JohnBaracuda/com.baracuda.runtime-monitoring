@@ -8,37 +8,37 @@ namespace Baracuda.Monitoring.Interface
         string Name { get; }
         
         /// <summary>
-        /// Get the current value of the unit as a formatted string. 
+        /// Get the current value or state of the monitored member as a formatted string. 
         /// </summary>
-        string GetValueFormatted { get; }
+        string GetStateFormatted { get; }
 
         /// <summary>
-        /// Get the current value of the unit as a string.
+        /// Get the current value or state of the monitored member as a string.
         /// </summary>
-        string GetValueRaw { get; }
+        string GetStateRaw { get; }
 
         /// <summary>
-        /// Determines if the unit must be updated/refreshed from an external source.
+        /// Determines if the monitored member must be updated/refreshed from an external source.
         /// </summary>
         bool ExternalUpdateRequired { get; }
         
         /// <summary>
-        /// The target object of the unit. Null if static
+        /// The target object of the monitored member. Null if static
         /// </summary>
         object Target { get; }
 
         /// <summary>
-        /// <see cref="IMonitorProfile"/> describing the unit. 
+        /// <see cref="IMonitorProfile"/> describing the monitored member. 
         /// </summary>
         IMonitorProfile Profile { get; }
 
         /// <summary>
-        /// Force the unit to update its state. This will invoke a <see cref="MonitorUnit.ValueUpdated"/> event.
+        /// Force the monitored member to update its state. This will invoke a <see cref="MonitorUnit.ValueUpdated"/> event.
         /// </summary>
         void Refresh();
 
         /// <summary>
-        /// Event is invoked when the value of the unit has changed.
+        /// Event is invoked when the value of the monitored member has changed.
         /// </summary>
         event Action<string> ValueUpdated;
 

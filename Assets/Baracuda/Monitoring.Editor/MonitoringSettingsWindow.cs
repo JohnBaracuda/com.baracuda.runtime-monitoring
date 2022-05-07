@@ -31,8 +31,11 @@ namespace Baracuda.Monitoring.Editor
         {
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
             EditorGUI.indentLevel = 1;
-            _inspector.OnInspectorGUI();
+            _inspector.DrawCustomInspector();
             EditorGUILayout.EndScrollView();
+        
+            InspectorUtilities.DrawLine(false);
+            InspectorUtilities.DrawCopyrightNotice();
         }
     }
 }

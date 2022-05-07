@@ -138,9 +138,12 @@ namespace Baracuda.Monitoring.Editor
             content.Append('\n');
             content.Append("//Ensure that this file is located in Assembly-CSharp. Otherwise this file may not compile.");
             content.Append('\n');
+            content.Append("//https://github.com/JohnBaracuda/Runtime-Monitoring");
+            content.Append('\n');
+            
             
             content.Append('\n');
-            content.Append("#if ENABLE_IL2CPP");
+            content.Append("#if ENABLE_IL2CPP && !DISABLE_MONITORING");
             content.Append('\n');
             
             content.Append('\n');
@@ -168,7 +171,7 @@ namespace Baracuda.Monitoring.Editor
             content.Append('}');
             
             content.Append('\n');
-            content.Append("#endif //ENABLE_IL2CPP");
+            content.Append("#endif //ENABLE_IL2CPP && !DISABLE_MONITORING");
             content.Append('\n');
 
             if (string.IsNullOrWhiteSpace(filePath) || !filePath.EndsWith(".cs"))
@@ -339,7 +342,7 @@ namespace Baracuda.Monitoring.Editor
             var fullDefinition = ToGenericTypeStringFullName(typedGeneric);
             var rawDefinition = generic.MakeGenericType(targetType, valueType).ToSyntaxString();
 
-            if (fullDefinition == null || rawDefinition == null)
+            if (string.IsNullOrWhiteSpace(fullDefinition) || string.IsNullOrWhiteSpace(rawDefinition))
             {
                 return null;
             }

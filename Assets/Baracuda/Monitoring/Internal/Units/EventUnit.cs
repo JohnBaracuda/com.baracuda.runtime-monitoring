@@ -8,8 +8,8 @@ namespace Baracuda.Monitoring.Internal.Units
     {
         #region --- Properties ---
 
-        public override string GetValueFormatted => _stateFormatter(_target, _invokeCounter);
-        public override string GetValueRaw { get; } = "INVALID";
+        public override string GetStateFormatted => _stateFormatter(_target, _invokeCounter);
+        public override string GetStateRaw { get; } = "INVALID";
         public override IMonitorProfile Profile => _eventProfile;
 
         #endregion
@@ -46,13 +46,13 @@ namespace Baracuda.Monitoring.Internal.Units
      
         public override void Refresh()
         {
-            RaiseValueChanged(GetValueFormatted);
+            RaiseValueChanged(GetStateFormatted);
         }
 
         private void OnEvent()
         {
             _invokeCounter++;
-            RaiseValueChanged(GetValueFormatted);
+            RaiseValueChanged(GetStateFormatted);
         }
 
         public override void Dispose()

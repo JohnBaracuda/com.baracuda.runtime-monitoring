@@ -6,6 +6,9 @@ using Baracuda.Monitoring.Internal.Profiling;
 
 namespace Baracuda.Monitoring.Internal.Units
 {
+    /// <summary>
+    /// Object wrapping and handling the monitoring of a monitored member.
+    /// </summary>
     public abstract class MonitorUnit : IDisposable, IMonitorUnit
     {
         #region --- Delegates ---
@@ -19,31 +22,31 @@ namespace Baracuda.Monitoring.Internal.Units
         public string Name { get; }
         
         /// <summary>
-        /// Get the current value of the unit as a formatted string. 
+        /// Get the current value or state of the monitored member as a formatted string. 
         /// </summary>
-        public abstract string GetValueFormatted { get; }
+        public abstract string GetStateFormatted { get; }
         
         
         /// <summary>
-        /// Get the current value of the unit as a string.
+        /// Get the current value or state of the monitored member as a string.
         /// </summary>
-        public abstract string GetValueRaw { get; }
+        public abstract string GetStateRaw { get; }
 
 
         /// <summary>
-        /// The target object of the unit. Null if static
+        /// The target object of the monitored member. Null if static
         /// </summary>
         public object Target { get; }
       
         
         /// <summary>
-        /// Determines if the unit must be updated/refreshed from an external source.
+        /// Determines if the monitored member must be updated/refreshed from an external source.
         /// </summary>
         public bool ExternalUpdateRequired { get; protected set; } = true;
 
         
         /// <summary>
-        /// The <see cref="MonitorProfile"/> of the unit.
+        /// The <see cref="MonitorProfile"/> of the monitored member.
         /// </summary>
         public abstract IMonitorProfile Profile { get; }
         

@@ -117,8 +117,13 @@ namespace Baracuda.Monitoring.API
          * General   
          */
         
+        public bool EnableMonitoring =>
+#if !DISABLE_MONITORING
+            enableMonitoring;
+#else
+            false;
+#endif
         public MonitoringUIController UIControllerUIController => monitoringUIController;
-        public bool EnableMonitoring => enableMonitoring;
         public bool OpenDisplayOnLoad => openDisplayOnLoad;
         public bool ShowRuntimeMonitoringObject => showRuntimeMonitoringObject;
         public bool ShowRuntimeUIController => showRuntimeUIController;
@@ -171,6 +176,12 @@ namespace Baracuda.Monitoring.API
         public bool ThrowOnTypeGenerationError => throwOnTypeGenerationError;
         public int PreprocessBuildCallbackOrder => preprocessBuildCallbackOrder;
 
+        /*
+         * Const   
+         */
+
+        public const string COPYRIGHT = "© 2022 Jonathan Lang";
+        
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------

@@ -15,6 +15,8 @@ using Debug = UnityEngine.Debug;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
+#if !DISABLE_MONITORING
+    
     /// <summary>
     /// Class responsible for creating <see cref="MonitorProfile"/>s for member found in custom assemblies that were
     /// flagged to be monitored by the use of a <see cref="MonitorAttribute"/>. 
@@ -23,11 +25,18 @@ namespace Baracuda.Monitoring.Internal.Profiling
     {
         #region --- Fields ---
 
-        internal static readonly List<MonitorProfile> StaticProfiles = new List<MonitorProfile>();
-
-        internal static readonly Dictionary<Type, List<MonitorProfile>> InstanceProfiles =
+        /*
+         * Internal   
+         */
+        
+        private static readonly List<MonitorProfile> staticProfiles = new List<MonitorProfile>();
+        private static readonly Dictionary<Type, List<MonitorProfile>> instanceProfiles =
             new Dictionary<Type, List<MonitorProfile>>();
 
+        /*
+         * Private   
+         */
+        
         private static readonly List<(FieldInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
             genericFieldBaseTypes = new List<(FieldInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
 
@@ -62,7 +71,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 var types = await CreateAssemblyProfile(ct);
                 await CreateMonitoringProfile(types, ct);
-                await MonitoringManager.CompleteProfilingAsync(ct);
+                await MonitoringManager.CompleteProfilingAsync(staticProfiles, instanceProfiles, ct);
             }
             catch (OperationCanceledException oce)
             {
@@ -293,14 +302,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, fieldInfo, attribute, args);
 
                 // cache the profile
-                if (InstanceProfiles.TryGetValue(fieldInfo.DeclaringType, out var profiles))
+                if (instanceProfiles.TryGetValue(fieldInfo.DeclaringType, out var profiles))
                 {
                     profiles.Add(profile);
                 }
                 else
                 {
                     // create a new entry using the declaring type as key.
-                    InstanceProfiles.Add(fieldInfo.DeclaringType, new List<MonitorProfile> {profile});
+                    instanceProfiles.Add(fieldInfo.DeclaringType, new List<MonitorProfile> {profile});
                 }
             }
             catch (Exception exception)
@@ -334,14 +343,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     (MonitorProfile) InstanceFactory.CreateInstance(genericType, propertyInfo, attribute, args);
 
                 // cache the profile
-                if (InstanceProfiles.TryGetValue(propertyInfo.DeclaringType, out var profiles))
+                if (instanceProfiles.TryGetValue(propertyInfo.DeclaringType, out var profiles))
                 {
                     profiles.Add(profile);
                 }
                 else
                 {
                     // create a new entry using the declaring type as key.
-                    InstanceProfiles.Add(propertyInfo.DeclaringType, new List<MonitorProfile> {profile});
+                    instanceProfiles.Add(propertyInfo.DeclaringType, new List<MonitorProfile> {profile});
                 }
             }
             catch (Exception exception)
@@ -374,14 +383,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, eventInfo, attribute, args);
 
                 // cache the profile
-                if (InstanceProfiles.TryGetValue(eventInfo.DeclaringType, out var profiles))
+                if (instanceProfiles.TryGetValue(eventInfo.DeclaringType, out var profiles))
                 {
                     profiles.Add(profile);
                 }
                 else
                 {
                     // create a new entry using the declaring type as key.
-                    InstanceProfiles.Add(eventInfo.DeclaringType, new List<MonitorProfile> {profile});
+                    instanceProfiles.Add(eventInfo.DeclaringType, new List<MonitorProfile> {profile});
                 }
             }
             catch (Exception exception)
@@ -419,14 +428,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         args);
 
                 // cache the profile
-                if (InstanceProfiles.TryGetValue(concreteSubtype, out var profiles))
+                if (instanceProfiles.TryGetValue(concreteSubtype, out var profiles))
                 {
                     profiles.Add(profile);
                 }
                 else
                 {
                     // create a new entry using the declaring type as key.
-                    InstanceProfiles.Add(concreteSubtype, new List<MonitorProfile> {profile});
+                    instanceProfiles.Add(concreteSubtype, new List<MonitorProfile> {profile});
                 }
             }
             catch (Exception exception)
@@ -469,14 +478,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         attribute, args);
 
                 // cache the profile
-                if (InstanceProfiles.TryGetValue(concreteSubtype, out var profiles))
+                if (instanceProfiles.TryGetValue(concreteSubtype, out var profiles))
                 {
                     profiles.Add(profile);
                 }
                 else
                 {
                     // create a new entry using the declaring type as key.
-                    InstanceProfiles.Add(concreteSubtype, new List<MonitorProfile> {profile});
+                    instanceProfiles.Add(concreteSubtype, new List<MonitorProfile> {profile});
                 }
             }
             catch (Exception exception)
@@ -505,14 +514,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     (MonitorProfile) InstanceFactory.CreateInstance(concreteGenericType, concreteEventInfo, attribute, args);
 
                 // cache the profile
-                if (InstanceProfiles.TryGetValue(concreteSubtype, out var profiles))
+                if (instanceProfiles.TryGetValue(concreteSubtype, out var profiles))
                 {
                     profiles.Add(profile);
                 }
                 else
                 {
                     // create a new entry using the declaring type as key.
-                    InstanceProfiles.Add(concreteSubtype, new List<MonitorProfile> {profile});
+                    instanceProfiles.Add(concreteSubtype, new List<MonitorProfile> {profile});
                 }
             }
             catch (Exception exception)
@@ -622,7 +631,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, fieldInfo, attribute, args);
 
                 // cache the profile and create an instance of with the static profile.
-                StaticProfiles.Add(profile);
+                staticProfiles.Add(profile);
             }
             catch (Exception exception)
             {
@@ -653,7 +662,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                 var profile =
                     (MonitorProfile) InstanceFactory.CreateInstance(genericType, propertyInfo, attribute, args);
-                StaticProfiles.Add(profile);
+                staticProfiles.Add(profile);
             }
             catch (Exception exception)
             {
@@ -683,7 +692,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var args = new MonitorProfileCtorArgs(STATIC_FLAGS, settings);
 
                 var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, eventInfo, attribute, args);
-                StaticProfiles.Add(profile);
+                staticProfiles.Add(profile);
             }
             catch (Exception exception)
             {
@@ -723,7 +732,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         args);
 
                 // cache the profile and create an instance of with the static profile.
-                StaticProfiles.Add(profile);
+                staticProfiles.Add(profile);
             }
             catch (Exception exception)
             {
@@ -757,7 +766,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         attribute, args);
 
                 // cache the profile and create an instance of with the static profile.
-                StaticProfiles.Add(profile);
+                staticProfiles.Add(profile);
             }
             catch (Exception exception)
             {
@@ -791,7 +800,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         args);
 
                 // cache the profile and create an instance of with the static profile.
-                StaticProfiles.Add(profile);
+                staticProfiles.Add(profile);
             }
             catch (Exception exception)
             {
@@ -861,4 +870,5 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         #endregion
     }
+#endif // !DISABLE_MONITORING
 }

@@ -101,7 +101,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         sb.Append(signatureString);
                         sb.Append(" Subscriber:");
                         sb.Append(counterDelegate(target));
-                        sb.Append(" Invokes: ");
+                        sb.Append(" Invocations: ");
                         sb.Append(count);
                         return StringBuilderPool.Release(sb);
                     };
@@ -111,7 +111,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 {
                     var sb = StringBuilderPool.Get();
                     sb.Append(signatureString);
-                    sb.Append(" Invokes: ");
+                    sb.Append(" Invocations: ");
                     sb.Append(count);
                     return StringBuilderPool.Release(sb);
                 };
@@ -124,7 +124,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     var sb = StringBuilderPool.Get();
                     sb.Append(" Subscriber:");
                     sb.Append(counterDelegate(target));
-                    sb.Append(" Invokes: ");
+                    sb.Append(" Invocations: ");
                     sb.Append(count);
                     return StringBuilderPool.Release(sb);
                 };
@@ -133,7 +133,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             return (target, count) =>
             {
                 var sb = StringBuilderPool.Get();
-                sb.Append(" Invokes: ");
+                sb.Append(" Invocations: ");
                 sb.Append(count);
                 return StringBuilderPool.Release(sb);
             };

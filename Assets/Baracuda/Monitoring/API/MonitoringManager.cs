@@ -108,7 +108,10 @@ namespace Baracuda.Monitoring.API
         //--------------------------------------------------------------------------------------------------------------
         
         #region --- Private Fields ---
-
+        
+        private static List<MonitorProfile> staticMonitorProfiles = new List<MonitorProfile>();
+        private static Dictionary<Type, List<MonitorProfile>> instanceMonitorProfiles = new Dictionary<Type, List<MonitorProfile>>();
+        
         private static readonly List<MonitorUnit> staticUnits = new List<MonitorUnit>(30);
         private static readonly List<MonitorUnit> instanceUnits = new List<MonitorUnit>(30);
         
@@ -126,7 +129,7 @@ namespace Baracuda.Monitoring.API
 
         #region --- Raise Events ---
 
-        internal static void RaiseUnitCreated(MonitorUnit monitorUnit)
+        private static void RaiseUnitCreated(MonitorUnit monitorUnit)
         {
             if (!Dispatcher.IsMainThread())
             {
@@ -135,8 +138,8 @@ namespace Baracuda.Monitoring.API
             }
             UnitCreated?.Invoke(monitorUnit);
         }
-        
-        internal static void RaiseUnitDisposed(MonitorUnit monitorUnit)
+
+        private static void RaiseUnitDisposed(MonitorUnit monitorUnit)
         {
             if (!Dispatcher.IsMainThread())
             {
@@ -145,8 +148,8 @@ namespace Baracuda.Monitoring.API
             }
             UnitDisposed?.Invoke(monitorUnit);
         }
-        
-        internal static void ProfilingCompletedInternal(MonitorUnit[] staticUnits, MonitorUnit[] instanceUnits)
+
+        private static void ProfilingCompletedInternal(MonitorUnit[] staticUnits, MonitorUnit[] instanceUnits)
         {
             IsInitialized = true;
             profilingCompleted?.Invoke(staticUnits, instanceUnits);
@@ -160,7 +163,7 @@ namespace Baracuda.Monitoring.API
         #region --- Internal Target Registration ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void RegisterTargetInternal(object target)
+        private static void RegisterTargetInternal(object target)
         {
             registeredTargets.Add(target);
             if (initialInstanceUnitsCreated)
@@ -170,7 +173,7 @@ namespace Baracuda.Monitoring.API
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void UnregisterTargetInternal(object target)
+        private static void UnregisterTargetInternal(object target)
         {
             DestroyInstanceUnits(target);
             registeredTargets.Remove(target);
@@ -180,10 +183,18 @@ namespace Baracuda.Monitoring.API
         
         #region --- Internal Complete Profiling ---
 
-        internal static async Task CompleteProfilingAsync(CancellationToken ct)
+        internal static async Task CompleteProfilingAsync(
+            List<MonitorProfile> staticProfiles,
+            Dictionary<Type, List<MonitorProfile>> instanceProfiles, 
+            CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
-            CreateStaticUnits(MonitoringProfiler.StaticProfiles.ToArray());
+            
+            staticMonitorProfiles = staticProfiles;
+            instanceMonitorProfiles = instanceProfiles;
+            
+            CreateStaticUnits(staticProfiles.ToArray());
+            
             await Dispatcher.InvokeAsync(CreateInitialInstanceUnits, ct);
             await Dispatcher.InvokeAsync(() => ProfilingCompletedInternal(staticUnits.ToArray(), instanceUnits.ToArray()), ct);
         }
@@ -217,7 +228,7 @@ namespace Baracuda.Monitoring.API
                     continue;
                 }
 
-                if (!MonitoringProfiler.InstanceProfiles.TryGetValue(validTypes[i], out var profiles))
+                if (!instanceMonitorProfiles.TryGetValue(validTypes[i], out var profiles))
                 {
                     continue;
                 }

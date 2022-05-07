@@ -43,6 +43,22 @@ namespace Baracuda.Monitoring.API
             return GetIsVisibleInternal();
         }
 
+        /// <summary>
+        /// Get the current <see cref="MonitoringUIController"/>
+        /// </summary>
+        public static MonitoringUIController GetActiveUIController()
+        {
+            return GetActiveUIControllerInternal();
+        }
+
+        /// <summary>
+        /// Get the current <see cref="MonitoringUIController"/> as a concrete implementation of T.
+        /// </summary>
+        public static T GetActiveUIController<T>() where T : MonitoringUIController
+        {
+            return GetActiveUIControllerInternal() as T;
+        }
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -150,6 +166,12 @@ namespace Baracuda.Monitoring.API
             {
                 controllerInstance.HideMonitoringUI();
             }
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static MonitoringUIController GetActiveUIControllerInternal()
+        {
+            return controllerInstance;
         }
 
         #endregion

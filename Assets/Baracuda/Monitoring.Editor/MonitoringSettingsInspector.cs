@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Reflection;
 using Baracuda.Monitoring.API;
 using UnityEditor;
@@ -118,8 +116,8 @@ namespace Baracuda.Monitoring.Editor
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- GUI ---
-        
-        public override void OnInspectorGUI()
+
+        public void DrawCustomInspector()
         {
             serializedObject.Update();
             EditorGUIUtility.labelWidth = 300;
@@ -133,7 +131,14 @@ namespace Baracuda.Monitoring.Editor
             if (Foldout["General"])
             {
                 EditorGUILayout.Space();
+#if DISABLE_MONITORING
+                EditorGUILayout.HelpBox("The symbol 'DISABLE_MONITORING' is active!", MessageType.Info);
+                GUI.enabled = false;
                 EditorGUILayout.PropertyField(_enableMonitoring);
+                GUI.enabled = true;
+#else
+                EditorGUILayout.PropertyField(_enableMonitoring);
+                #endif
                 EditorGUILayout.PropertyField(_openDisplayOnLoad);
                 EditorGUILayout.Space();
             }
@@ -147,28 +152,6 @@ namespace Baracuda.Monitoring.Editor
                 }
                 EditorGUILayout.Space();
             }
-
-            if (Foldout["Documentation & Links"])
-            {
-                EditorGUILayout.Space();
-                DrawWeblinks();
-                EditorGUILayout.Space();
-            }
-            
-            if (Foldout["Debug"])
-            {
-                EditorGUILayout.Space();
-                EditorGUILayout.PropertyField(_showRuntimeMonitoringObject);
-                EditorGUILayout.PropertyField(_showRuntimeUIController);
-                EditorGUILayout.Space();
-                EditorGUILayout.PropertyField(_logBadImageFormatException);
-                EditorGUILayout.PropertyField(_logOperationCanceledException);
-                EditorGUILayout.PropertyField(_logThreadAbortException);
-                EditorGUILayout.PropertyField(_logUnknownExceptions);
-                EditorGUILayout.PropertyField(_logProcessorNotFoundException);
-                EditorGUILayout.PropertyField(_logInvalidProcessorSignatureException);
-                EditorGUILayout.Space();
-            }
             
             if (Foldout["Formatting"])
             {
@@ -177,7 +160,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_appendSymbol);
                 EditorGUILayout.PropertyField(_humanizeNames);
                 EditorGUILayout.PropertyField(_variablePrefixes);
-                DrawLine();
+                InspectorUtilities.DrawLine();
                 EditorGUILayout.PropertyField(_floatFormat);
                 EditorGUILayout.PropertyField(_integerFormat);
                 EditorGUILayout.PropertyField(_vectorFormat);
@@ -197,7 +180,22 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_wColor);
                 EditorGUILayout.Space();
             }
-
+            
+            if (Foldout["Debug"])
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.PropertyField(_showRuntimeMonitoringObject);
+                EditorGUILayout.PropertyField(_showRuntimeUIController);
+                EditorGUILayout.Space();
+                EditorGUILayout.PropertyField(_logBadImageFormatException);
+                EditorGUILayout.PropertyField(_logOperationCanceledException);
+                EditorGUILayout.PropertyField(_logThreadAbortException);
+                EditorGUILayout.PropertyField(_logUnknownExceptions);
+                EditorGUILayout.PropertyField(_logProcessorNotFoundException);
+                EditorGUILayout.PropertyField(_logInvalidProcessorSignatureException);
+                EditorGUILayout.Space();
+            }
+            
             if (Foldout["Assembly Settings"])
             {
                 EditorGUILayout.Space();
@@ -209,15 +207,30 @@ namespace Baracuda.Monitoring.Editor
             if (Foldout["IL2CPP Settings"])
             {
                 EditorGUILayout.Space();
-                DrawFilePath(_filePathIL2CPPTypes, "cs");
+                EditorGUILayout.HelpBox("Make sure to delete old files when changing paths!", MessageType.None);
+                InspectorUtilities.DrawFilePath(_filePathIL2CPPTypes, "cs");
                 EditorGUILayout.PropertyField(_useIPreprocessBuildWithReport);
                 EditorGUILayout.PropertyField(_throwOnTypeGenerationError);
                 EditorGUILayout.PropertyField(_preprocessBuildCallbackOrder);
                 DrawGenerateAotTypesButton();
                 EditorGUILayout.Space();
             }
+            
+            if (Foldout["Documentation & Links"])
+            {
+                EditorGUILayout.Space();
+                DrawWeblinks();
+                EditorGUILayout.Space();
+            }
 
             serializedObject.ApplyModifiedProperties();
+        }
+        
+        public override void OnInspectorGUI()
+        {
+            DrawCustomInspector();
+            InspectorUtilities.DrawLine(false);
+            InspectorUtilities.DrawCopyrightNotice();
         }
 
         private static void DrawWeblinks()
@@ -253,7 +266,7 @@ namespace Baracuda.Monitoring.Editor
         private static void DrawGenerateAotTypesButton()
         {
             EditorGUILayout.Space();
-            DrawLine();
+            InspectorUtilities.DrawLine();
             EditorGUILayout.Space();
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
@@ -292,7 +305,7 @@ namespace Baracuda.Monitoring.Editor
         private void DrawInlinedUIController()
         {
             EditorGUILayout.Space();
-            DrawLine();
+            InspectorUtilities.DrawLine();
             EditorGUILayout.Space();
             var targetObject = _monitoringUIController.objectReferenceValue;
             var editor = CreateEditor(targetObject);
@@ -301,57 +314,17 @@ namespace Baracuda.Monitoring.Editor
                 return;
             }
             EditorGUI.BeginChangeCheck();
+            EditorGUILayout.BeginVertical("helpbox");
+            EditorGUILayout.Space();
             editor.OnInspectorGUI();
+            EditorGUILayout.Space();
+            EditorGUILayout.EndVertical();
             if (EditorGUI.EndChangeCheck())
             {
                 EditorUtility.SetDirty(targetObject);
             }
-            EditorGUILayout.Space();
-            DrawLine();
-            EditorGUILayout.Space();
-        }
-        
-        private static void DrawLine(int thickness = 1, int padding = 1)
-        {
-            EditorGUILayout.Space();
-            var rect = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
-            rect.height = thickness;
-            rect.y += padding * .5f;
-            rect.x -= 2;
-            rect.width += 4;
-            EditorGUI.DrawRect(rect, new Color(.1f, .1f, .1f, .9f));
         }
 
-        private static void DrawFilePath(SerializedProperty property, string fileExtension)
-        {
-            if (property.propertyType == SerializedPropertyType.String)
-            {
-                var path = property.stringValue;
-                
-                GUILayout.BeginHorizontal();
-                path = EditorGUILayout.TextField(property.displayName, path);
-                if (GUILayout.Button("...", GUILayout.Width(20)))
-                {
-                    var newPath = EditorUtility.OpenFilePanel("Select File", IsValidPath(path)? path : Application.dataPath, fileExtension);
-                    path = !string.IsNullOrWhiteSpace(newPath) ? newPath : path;
-                }
-                GUILayout.EndHorizontal();
-
-                property.stringValue = IsValidPath(path)? path : Application.dataPath;
-                property.serializedObject.ApplyModifiedProperties();
-                property.serializedObject.Update();
-            }
-            else
-            {
-                throw new InvalidCastException("FilePath Property must be a string!");
-            }
-        }
-
-        private static bool IsValidPath(string path)
-        {
-            return Path.IsPathFullyQualified(path) && path.StartsWith(Application.dataPath);
-        }
-        
         #endregion
     }
 }

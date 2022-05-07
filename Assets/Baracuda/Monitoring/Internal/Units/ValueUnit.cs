@@ -81,7 +81,7 @@ namespace Baracuda.Monitoring.Internal.Units
 
         public override void Refresh()
         {
-            RaiseValueChanged(GetValueFormatted);
+            RaiseValueChanged(GetStateFormatted);
         }
 
         #endregion
@@ -90,13 +90,13 @@ namespace Baracuda.Monitoring.Internal.Units
         
         #region --- Get ---
         
-        public override string GetValueFormatted
+        public override string GetStateFormatted
         {
 #if MONITORING_DEBUG
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                Dispatcher.GuardAgainstIsNotMainThread(nameof(GetValueFormatted));
+                Dispatcher.GuardAgainstIsNotMainThread(nameof(GetStateFormatted));
                 return CompiledValueProcessor();
             }
 #else
@@ -105,19 +105,25 @@ namespace Baracuda.Monitoring.Internal.Units
 #endif
         }
 
-        public override string GetValueRaw
+        public override string GetStateRaw
         {
 #if MONITORING_DEBUG
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                Dispatcher.GuardAgainstIsNotMainThread(nameof(GetValueRaw));
+                Dispatcher.GuardAgainstIsNotMainThread(nameof(GetStateRaw));
                 return _getValueDelegate(_target).ToString();
             }
 #else
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _getValueDelegate(_target).ToString();
 #endif
+        }
+        
+        
+        public T GetValue<T>()
+        {
+            return _getValueDelegate(_target).ConvertUnsafe<TValue, T>();
         }
 
         #endregion
@@ -127,20 +133,20 @@ namespace Baracuda.Monitoring.Internal.Units
         public void SetValue(TValue value)
         {
             _setValueDelegate?.Invoke(_target, value);            
-            RaiseValueChanged(GetValueFormatted);
+            RaiseValueChanged(GetStateFormatted);
         }
-        
+
         public void SetValue(object value)
         {
             _setValueDelegate?.Invoke(_target, (TValue) value);
-            RaiseValueChanged(GetValueFormatted);
+            RaiseValueChanged(GetStateFormatted);
         }
         
 #if UNITY_2020_1_OR_NEWER
         public void SetValue<T>(T value) where T : unmanaged
         {
             _setValueDelegate?.Invoke(_target, _isValueType ? UnsafeUtility.As<T, TValue>(ref value) : value.ConvertUnsafe<T,TValue>());
-            RaiseValueChanged(GetValueFormatted);
+            RaiseValueChanged(GetStateFormatted);
         }
 #endif
         
