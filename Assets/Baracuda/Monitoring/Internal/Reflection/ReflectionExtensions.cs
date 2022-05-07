@@ -66,7 +66,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
         
         #region --- FieldInfo Getter & Setter ---
 
-#if !ENABLE_IL2CPP
+#if !ENABLE_IL2CPP && UNITY_2021_1_OR_NEWER
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Func<TTarget, TResult> CreateGetter<TTarget, TResult>(this FieldInfo field)
         {
@@ -374,18 +374,7 @@ namespace Baracuda.Monitoring.Internal.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsReadonlyRefStruct(this Type type)
         {
-            return type.IsStruct() && type.IsRefBy() && type.IsReadOnly();
-        }
-
-        public static bool IsRefBy(this Type type)
-        {
-            return type.HasAttribute<IsByRefLikeAttribute>();
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsReadOnly(this Type type)
-        {
-            return type.HasAttribute<IsReadOnlyAttribute>();
+            return type.IsStruct() && type.IsByRef;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

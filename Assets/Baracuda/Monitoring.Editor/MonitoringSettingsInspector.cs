@@ -1,5 +1,6 @@
 using System.Reflection;
 using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Internal.Utilities;
 using UnityEditor;
 using UnityEngine;
 
@@ -107,7 +108,7 @@ namespace Baracuda.Monitoring.Editor
 
         private SerializedProperty FindProperty(string member)
         {
-            var parsedMemberName = member.StartsWith('_') ? member.Remove(0, 1) : member;
+            var parsedMemberName = member.BeginsWith('_') ? member.Remove(0, 1) : member;
             return serializedObject.FindProperty(parsedMemberName);
         }
 

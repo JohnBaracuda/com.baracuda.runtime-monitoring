@@ -52,7 +52,11 @@ namespace Baracuda.Monitoring.Editor
 
         private static bool IsValidPath(string path)
         {
-            return Path.IsPathFullyQualified(path) && path.StartsWith(Application.dataPath);
+            return 
+#if UNITY_2021_1_OR_NEWER
+                Path.IsPathFullyQualified(path) && 
+#endif
+                path.StartsWith(Application.dataPath);
         }
 
         public static void DrawCopyrightNotice()

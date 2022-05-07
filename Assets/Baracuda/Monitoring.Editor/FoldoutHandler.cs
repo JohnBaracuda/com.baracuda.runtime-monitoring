@@ -60,9 +60,9 @@ namespace Baracuda.Monitoring.Editor
         public void SaveState()
         {
             var data = string.Empty;
-            foreach (var (key, value) in Data)
+            foreach (var entry in Data)
             {
-                data += $"${key}§{value}";
+                data += $"${entry.Key}§{entry.Value}";
             }
             EditorPrefs.SetString(_dataKey, data);
         }
@@ -108,9 +108,13 @@ namespace Baracuda.Monitoring.Editor
             }
             private set
             {
-                if (!Data.TryAdd(name, value))
+                if (Data.ContainsKey(name))
                 {
                     Data[name] = value;
+                }
+                else
+                {
+                    Data.Add(name, value);
                 }
             }
         }

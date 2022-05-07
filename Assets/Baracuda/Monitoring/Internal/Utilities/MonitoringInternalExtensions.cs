@@ -60,10 +60,12 @@ namespace Baracuda.Monitoring.Internal.Utilities
         
         public static string Humanize(this string target, string[] prefixes = null)
         {
+#if UNITY_2021_1_OR_NEWER
             if (IsConst(target))
             {
                 return target.Replace('_', ' ').ToLower().ToCamel();
             }
+#endif
             
             if (prefixes != null)
             {
@@ -76,7 +78,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
             
             target = target.Replace('_', ' ');
             
-            var chars = UnityEngine.Pool.ListPool<char>.Get();
+            var chars = ListPool<char>.Get();
             
             for (var i = 0; i < target.Length; i++)
             {
@@ -103,27 +105,16 @@ namespace Baracuda.Monitoring.Internal.Utilities
             }
 
             var array = chars.ToArray();
-            UnityEngine.Pool.ListPool<char>.Release(chars);
+            ListPool<char>.Release(chars);
             return new string(array).ReduceWhitespace();
-            
-            // nested methods
-            
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            bool IsConst(string input)
-            {
-                for (var i = 0; i < input.Length; i++)
-                {
-                    var character = input[i];
-                    if (!char.IsUpper(character) && character != '_')
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
         }
 
+        public static bool BeginsWith(this string str, char character)
+        {
+            return !string.IsNullOrWhiteSpace(str) && str[0] == character;
+        }
+        
+#if UNITY_2021_1_OR_NEWER
         private static string ToCamel(this string content)
         {
             Span<char> chars = stackalloc char[content.Length];
@@ -137,6 +128,22 @@ namespace Baracuda.Monitoring.Internal.Utilities
 
             return new string(chars);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool IsConst(string input)
+        {
+            for (var i = 0; i < input.Length; i++)
+            {
+                var character = input[i];
+                if (!char.IsUpper(character) && character != '_')
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+#endif
 
         private static string ReduceWhitespace(this string value)
         {
