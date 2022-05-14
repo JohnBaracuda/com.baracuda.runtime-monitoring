@@ -16,7 +16,6 @@ namespace Baracuda.Threading.Editor
             ExecutionOrderWindow.Open();
         }
         
-        [UnityEditor.MenuItem("Tools/Documentation/Dispatcher", priority = int.MaxValue)]
         [UnityEditor.MenuItem("Tools/Dispatcher/Documentation", priority = 2365)]
         private static void OpenDocumentationComponent()
         {

@@ -3,6 +3,11 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.UI.UnityUI
 {
+    /// <summary>
+    /// Disclaimer:
+    /// This class is showing the base for a Unity UI based monitoring UI Controller.
+    /// It is not complete!
+    /// </summary>
     [RequireComponent(typeof(Canvas))]
     public class UnityMonitoringUIController : MonitoringUIController
     {

@@ -45,12 +45,16 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Use to reset active filter if any are applied.
         /// </summary>
-        protected internal abstract void ResetFilter();
+        protected internal virtual void ResetFilter()
+        {
+        }
         
         /// <summary>
         /// Use to filter displayed units by their name, tags etc. 
         /// </summary>
-        protected internal abstract void Filter(string filter);
+        protected internal virtual void Filter(string filter)
+        {
+        }
 
         #endregion
     }

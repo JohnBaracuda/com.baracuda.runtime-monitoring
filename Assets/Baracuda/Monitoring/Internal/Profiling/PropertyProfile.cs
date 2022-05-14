@@ -1,8 +1,9 @@
 using System;
 using System.Reflection;
-using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Reflection;
+
 namespace Baracuda.Monitoring.Internal.Profiling
 {
     /// <typeparam name="TTarget">The Type of the properties target object</typeparam>

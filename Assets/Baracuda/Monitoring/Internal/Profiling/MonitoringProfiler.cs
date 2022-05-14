@@ -7,8 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Exceptions;
-using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Reflection;
 using Baracuda.Threading;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -103,7 +103,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
             var typeCache = new List<Type>(short.MaxValue);
             var assemblies =
-                AssemblyManagement.GetFilteredAssemblies(
+                AssemblyProfiler.GetFilteredAssemblies(
                     settings.BannedAssemblyNames,
                     settings.BannedAssemblyPrefixes);
 

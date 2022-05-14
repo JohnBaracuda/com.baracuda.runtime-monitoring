@@ -60,7 +60,9 @@ namespace Baracuda.Monitoring.Interface
         bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute;
         
         /// <summary>
-        /// Get a MonitoringMetaAttribute. Can return null!
+        /// The monitoring profiler caches every additional attribute that inherits from MonitoringMetaAttribute on
+        /// the profile. You can access these custom attributes during runtime using this method without the need of
+        /// reflection code.
         /// </summary>
         TAttribute GetMetaAttribute<TAttribute>() where TAttribute : MonitoringMetaAttribute;
     }

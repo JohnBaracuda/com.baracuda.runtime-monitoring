@@ -2,7 +2,9 @@
     "name": "Assembly-Baracuda-Monitoring-Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:ca92f98736a979747b5de3a34d731a59"
+        "GUID:ca92f98736a979747b5de3a34d731a59",
+        "GUID:8b01a9bc339a2e64e86383ce41725c2b",
+        "GUID:c5fded5a8329e50488718cdbe4db0dc3"
     ],
     "includePlatforms": [
         "Editor"

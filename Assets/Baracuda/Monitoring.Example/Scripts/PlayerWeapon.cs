@@ -1,4 +1,4 @@
-using Baracuda.Monitoring.Internal.Pooling.Concretions;
+using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts

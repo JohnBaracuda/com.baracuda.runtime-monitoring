@@ -82,20 +82,25 @@ private string IsAliveProcessor(bool value) => value? "Alive" : "Dead";
 + Asset Version: <b>0.9.0</b>
 
 
+
 &nbsp;
 ## Import
 
 Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. 
 
-Depending on your needs you may select or deselect individual modules when importing. ```Monitoring```, ```Monitoring Editor``` & ```Threading``` are essensial modules for this asset. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset that should work out of the box with different Unity UI Systems.
+Depending on your needs you may select or deselect individual modules when importing. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset that should work out of the box with different Unity UI Systems.
 
  Assembly                    | Path                             | Editor           | Core  
 :-                           |:-                                |:----------------:|:----------------:         
 Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                  |:heavy_check_mark:
 Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark:|:heavy_check_mark:
-Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:
 Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                  |
+Assembly-Baracuda-GUIDrawer  | Baracuda/Monitoring.UI/GUIDrawer |                  |
 Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                  |
+Assembly-Baracuda-UnityUI    | Baracuda/Monitoring.UI/UnityUI   |                  |
+Assembly-Baracuda-Pooling    | Baracuda/Pooling                 |                  |:heavy_check_mark:
+Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:
+Assembly-Baracuda-Reflection | Baracuda/Reflection              |                  |:heavy_check_mark:
 
 
 &nbsp;
@@ -353,7 +358,7 @@ You can create a custom UI controller by follwing the steps below. A more detail
 &nbsp;
 ## Prefabricated UI Controller
 
-Prefabricated UI Controller exist or are planned for the following UI Systems.
+Prefabricated UI Controller exist or are planned for the following UI Systems. If you create your own implimentation and 
 
 ### UI Toolkit
 
@@ -361,11 +366,11 @@ Currently the only implimented UI Solution. UI Toolkit is only available when us
 
 ### Unity UI
 
-Unity UI is not yet implimented. 
+The base for a very basic Unity UIController is already implimented. Any help extending this feature would be appreciated. 
 
 ### GUI
 
-A very basic GUI implimentation is already supported and work in progress.
+The base for a very basic GUI UIController is already implimented. Any help extending this feature would be appreciated. 
 
 
 
@@ -378,9 +383,13 @@ Runtime Monitoring is separated into multiple assemblies / modules. Some of thos
 :-                           |:-                                |:----------------:|:----------------:|:- 
 Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                  |:heavy_check_mark:|
 Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark:|:heavy_check_mark:| 
-Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
 Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                  |                  |
+Assembly-Baracuda-GUIDrawer  | Baracuda/Monitoring.UI/GUIDrawer |                  |                  |
 Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                  |                  | Unity 2020.1 or newer
+Assembly-Baracuda-UnityUI    | Baracuda/Monitoring.UI/UnityUI   |                  |                  | TMP Required
+Assembly-Baracuda-Pooling    | Baracuda/Pooling                 |                  |:heavy_check_mark:| 
+Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
+Assembly-Baracuda-Reflection | Baracuda/Reflection              |                  |:heavy_check_mark:| 
 
 
 

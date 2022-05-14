@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Pooling.Concretions;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {

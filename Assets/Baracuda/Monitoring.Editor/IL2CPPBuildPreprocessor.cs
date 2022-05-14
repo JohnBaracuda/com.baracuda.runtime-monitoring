@@ -7,11 +7,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Profiling;
-using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Pooling.Concretions;
+using Baracuda.Reflection;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -221,7 +221,7 @@ namespace Baracuda.Monitoring.Editor
         {
             var definitionList = new List<TypeDefinitionResult>(200);
             
-            foreach (var filteredAssembly in AssemblyManagement.GetFilteredAssemblies())
+            foreach (var filteredAssembly in AssemblyProfiler.GetFilteredAssemblies())
             {
                 if (IsEditorAssembly(filteredAssembly))
                 {

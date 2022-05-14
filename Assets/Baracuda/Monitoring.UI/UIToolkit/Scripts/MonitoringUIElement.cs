@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Internal.Pooling.Concretions;
+using Baracuda.Pooling.Concretions;
 using UnityEngine;
 using UnityEngine.UIElements;
 

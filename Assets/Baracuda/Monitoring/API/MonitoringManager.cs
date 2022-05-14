@@ -5,10 +5,10 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Internal.Pooling.Concretions;
 using Baracuda.Monitoring.Internal.Profiling;
-using Baracuda.Monitoring.Internal.Reflection;
 using Baracuda.Monitoring.Internal.Units;
+using Baracuda.Pooling.Concretions;
+using Baracuda.Reflection;
 using Baracuda.Threading;
 
 namespace Baracuda.Monitoring.API
