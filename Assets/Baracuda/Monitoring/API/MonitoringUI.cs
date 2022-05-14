@@ -14,7 +14,9 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         public static void Show()
         {
+#if !DISABLE_MONITORING
             ShowDisplayInternal();
+#endif
         }
 
         /// <summary>
@@ -22,7 +24,9 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         public static void Hide()
         {
+#if !DISABLE_MONITORING
             HideDisplayInternal();
+#endif
         }
 
         /// <summary>
@@ -31,7 +35,11 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         public static bool ToggleDisplay()
         {
+#if !DISABLE_MONITORING
             return ToggleDisplayInternal();
+#else
+            return false;
+#endif
         }
 
         /// <summary>
@@ -40,7 +48,11 @@ namespace Baracuda.Monitoring.API
         /// <returns></returns>
         public static bool IsVisible()
         {
+#if !DISABLE_MONITORING
             return GetIsVisibleInternal();
+#else
+            return false;
+#endif
         }
 
         /// <summary>
@@ -48,7 +60,11 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         public static MonitoringUIController GetActiveUIController()
         {
+#if !DISABLE_MONITORING
             return GetActiveUIControllerInternal();
+#else
+            return null;
+#endif
         }
 
         /// <summary>
@@ -56,7 +72,11 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         public static T GetActiveUIController<T>() where T : MonitoringUIController
         {
+#if !DISABLE_MONITORING
             return GetActiveUIControllerInternal() as T;
+#else
+            return null;
+#endif
         }
 
         /// <summary>
@@ -66,15 +86,18 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         public static void CreateMonitoringUI()
         {
+#if !DISABLE_MONITORING
             CreateMonitoringUIInternal();
+#endif
         }
 
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
 
+#if !DISABLE_MONITORING
         #region --- Internal ---
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ShowDisplayInternal()
         {
@@ -219,5 +242,6 @@ namespace Baracuda.Monitoring.API
         }
 
         #endregion
+#endif //!DISABLE_MONITORING
     }
 }

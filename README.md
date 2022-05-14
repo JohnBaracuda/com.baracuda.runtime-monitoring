@@ -20,6 +20,7 @@ I would appreciate any help in completing and improving this tool and its featur
 - [UI Controller](#ui-controller)
 - [Custom UI Controller](#custom-ui-controller)
 - [Assemblies / Modules](#assemblies-and-modules)
+- [Miscellaneous](#miscellaneous)
 - [Planned Features](#planned-features)
 - [Licence](#licence)
 
@@ -374,6 +375,11 @@ Assembly-Baracuda-Pooling    | Baracuda/Pooling                 |               
 Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
 Assembly-Baracuda-Reflection | Baracuda/Reflection              |                  |:heavy_check_mark:| 
 
+
+&nbsp;
+## Miscellaneous
+
++ Use the #define ```DISABLE_MONITORING``` to compleatly disable the internal logic of the tool. Public API will still compile so you don't have to wrap your API calls in a custom #if !DISABLE_MONITORING block.
 
 
 &nbsp;

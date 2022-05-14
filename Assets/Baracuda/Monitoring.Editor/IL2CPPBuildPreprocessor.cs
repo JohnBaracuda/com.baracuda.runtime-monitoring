@@ -19,6 +19,7 @@ using UnityEditor.Compilation;
 using UnityEngine;
 using UnityEngine.Scripting;
 using Assembly = System.Reflection.Assembly;
+using Debug = UnityEngine.Debug;
 
 namespace Baracuda.Monitoring.Editor
 {
@@ -32,13 +33,16 @@ namespace Baracuda.Monitoring.Editor
         /// </summary>
         public static void GenerateIL2CPPAheadOfTimeTypes()
         {
+#if !DISABLE_MONITORING
             OnPreprocessBuildInternal();
+#endif
         }
         
         public int callbackOrder => MonitoringSettings.GetInstance().PreprocessBuildCallbackOrder;
         
         public void OnPreprocessBuild(BuildReport report)
         {
+#if !DISABLE_MONITORING
             if (!MonitoringSettings.GetInstance().UseIPreprocessBuildWithReport)
             {
                 return;
@@ -50,6 +54,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 OnPreprocessBuildInternal();
             }
+#endif
         }
         
         #endregion
@@ -95,6 +100,7 @@ namespace Baracuda.Monitoring.Editor
         private const BindingFlags STATIC_FLAGS = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
         private const BindingFlags INSTANCE_FLAGS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
+#pragma warning disable CS0414
         private static List<string> errorLog = null;
         
         private class TypeDefinitionResult
@@ -107,10 +113,12 @@ namespace Baracuda.Monitoring.Editor
                 FullDefinition = fullDefinition;
                 RawDefinition = rawDefinition;
             }
+            
         }
         
         #endregion
 
+#if !DISABLE_MONITORING
         #region --- Preprocess ---
 
         private static void OnPreprocessBuildInternal()
@@ -213,9 +221,9 @@ namespace Baracuda.Monitoring.Editor
             errorLog.Add(error);
         }
         
-        #endregion
-
-        #region --- Profiling ---
+        /*
+         * Profiling   
+         */
 
         private static TypeDefinitionResult[] GetTypeDefinitions()
         {
@@ -271,11 +279,9 @@ namespace Baracuda.Monitoring.Editor
             return definitionList.ToArray();
         }
 
-
-        
-        #endregion
-
-        #region --- MemberInfo Profiling ---
+        /*
+         * MemberInfo Profiling   
+         */
 
           private static IEnumerable<TypeDefinitionResult> GetTypeDefinition(MemberInfo memberInfo) =>
             memberInfo switch
@@ -350,9 +356,9 @@ namespace Baracuda.Monitoring.Editor
             return new TypeDefinitionResult(fullDefinition, rawDefinition);
         }
         
-        #endregion
-
-        #region --- Helper ---
+        /*
+         * Helper   
+         */
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void CheckType(Type type, out Type validated)
@@ -493,7 +499,7 @@ namespace Baracuda.Monitoring.Editor
             
             return type.FullName?.Replace('+', '.');
         }
-        
         #endregion
+#endif //!DISABLE_MONITORING
     }
 }

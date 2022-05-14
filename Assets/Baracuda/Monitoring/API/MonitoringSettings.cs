@@ -12,7 +12,7 @@ namespace Baracuda.Monitoring.API
         /*
          * General   
          */
-
+#pragma warning disable CS0414
         [SerializeField] private bool enableMonitoring = true;
 
         [Tooltip("When enabled, monitoring UI is instantiated as soon as profiling has completed. " +
@@ -123,7 +123,7 @@ namespace Baracuda.Monitoring.API
          * General   
          */
         
-        public bool EnableMonitoring =>
+        public bool EnableMonitoring => 
 #if !DISABLE_MONITORING
             enableMonitoring;
 #else

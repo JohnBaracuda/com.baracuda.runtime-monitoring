@@ -78,7 +78,9 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         public static void RegisterTarget(object target)
         {
+#if !DISABLE_MONITORING
             RegisterTargetInternal(target);
+#endif
         }
         
         /// <summary>
@@ -86,7 +88,9 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         public static void UnregisterTarget(object target)
         {
+#if !DISABLE_MONITORING
             UnregisterTargetInternal(target);
+#endif
         }
 
         /*
@@ -128,7 +132,7 @@ namespace Baracuda.Monitoring.API
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Raise Events ---
-
+        
         private static void RaiseUnitCreated(MonitorUnit monitorUnit)
         {
             if (!Dispatcher.IsMainThread())
