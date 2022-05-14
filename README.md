@@ -379,7 +379,7 @@ Assembly-Baracuda-Reflection | Baracuda/Reflection              |               
 &nbsp;
 ## Miscellaneous
 
-+ Use the #define ```DISABLE_MONITORING``` to compleatly disable the internal logic of the tool. Public API will still compile so you don't have to wrap your API calls in a custom #if !DISABLE_MONITORING block.
++ Use the #define ```DISABLE_MONITORING``` to disable the internal logic of the tool. Public API will still compile so you don't have to wrap your API calls in a custom #if !DISABLE_MONITORING block.
 
 
 &nbsp;
