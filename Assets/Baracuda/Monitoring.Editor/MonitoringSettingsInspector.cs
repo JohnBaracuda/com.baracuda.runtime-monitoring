@@ -29,6 +29,7 @@ namespace Baracuda.Monitoring.Editor
          */
 
         private SerializedProperty _enableMonitoring;
+        private SerializedProperty _autoInstantiateUI;
         private SerializedProperty _openDisplayOnLoad;
         private SerializedProperty _forceSynchronousLoad;
         private SerializedProperty _monitoringUIController;
@@ -147,6 +148,7 @@ namespace Baracuda.Monitoring.Editor
             if (Foldout["UI Controller"])
             {
                 EditorGUILayout.Space();
+                EditorGUILayout.PropertyField(_autoInstantiateUI);
                 if (DrawUIControllerRefField(_monitoringUIController))
                 {
                     DrawInlinedUIController();

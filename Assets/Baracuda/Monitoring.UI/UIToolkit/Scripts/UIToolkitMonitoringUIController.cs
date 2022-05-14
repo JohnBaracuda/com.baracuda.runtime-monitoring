@@ -62,6 +62,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
         protected override void Awake()
         {
             base.Awake();
+            _monitorUnitDisplays.Clear();
 
             _uiDocument = GetComponent<UIDocument>();
             _frame = _uiDocument.rootVisualElement.Q<VisualElement>("frame");

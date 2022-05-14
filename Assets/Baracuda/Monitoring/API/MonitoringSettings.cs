@@ -14,6 +14,12 @@ namespace Baracuda.Monitoring.API
          */
 
         [SerializeField] private bool enableMonitoring = true;
+
+        [Tooltip("When enabled, monitoring UI is instantiated as soon as profiling has completed. " +
+                 "Otherwise MonitoringUI.CreateMonitoringUI() must be called manually.")]
+        [SerializeField] private bool autoInstantiateUI = false;
+        
+        
         [Tooltip("When enabled, the monitoring display will be opened as soon as profiling has completed.")]
         [SerializeField] private bool openDisplayOnLoad = true;
         [Tooltip("Reference to the used MonitoringDisplay object.")]
@@ -123,6 +129,7 @@ namespace Baracuda.Monitoring.API
 #else
             false;
 #endif
+        public bool AutoInstantiateUI => autoInstantiateUI;
         public MonitoringUIController UIControllerUIController => monitoringUIController;
         public bool OpenDisplayOnLoad => openDisplayOnLoad;
         public bool ShowRuntimeMonitoringObject => showRuntimeMonitoringObject;

@@ -59,6 +59,16 @@ namespace Baracuda.Monitoring.API
             return GetActiveUIControllerInternal() as T;
         }
 
+        /// <summary>
+        /// Create a MonitoringUIController instance if there is none already. Disable 'Auto Instantiate UI' in the
+        /// Monitoring Settings and use this method for more control over the timing in which the MonitoringUIController
+        /// is instantiated.
+        /// </summary>
+        public static void CreateMonitoringUI()
+        {
+            CreateMonitoringUIInternal();
+        }
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -115,6 +125,7 @@ namespace Baracuda.Monitoring.API
 
         // singleton instance managed internally
         private static MonitoringUIController controllerInstance;
+        private static bool bufferUICreation = false;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void InitializeMonitoringDisplay()
@@ -130,6 +141,39 @@ namespace Baracuda.Monitoring.API
         {
             var settings = MonitoringSettings.GetInstance();
 
+            if (settings.AutoInstantiateUI || bufferUICreation)
+            {
+                InstantiateMonitoringUI(settings, staticUnits, instanceUnits);
+            }
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void CreateMonitoringUIInternal()
+        {
+            bufferUICreation = true;
+
+            if (!MonitoringManager.IsInitialized)
+            {
+                return;
+            }
+            
+            // We return if there is an active UIController.
+            if (GetActiveUIController())
+            {
+                Debug.Log("UIController already instantiated!");
+                return;
+            }
+
+            var settings = MonitoringSettings.GetInstance();
+            var instanceUnits = MonitoringManager.GetInstanceUnits();
+            var staticUnits = MonitoringManager.GetStaticUnits();
+            InstantiateMonitoringUI(settings, instanceUnits, staticUnits);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void InstantiateMonitoringUI(MonitoringSettings settings, IReadOnlyList<IMonitorUnit> staticUnits,
+            IReadOnlyList<IMonitorUnit> instanceUnits)
+        {
             if (settings.UIControllerUIController == null)
             {
                 return;
@@ -147,7 +191,7 @@ namespace Baracuda.Monitoring.API
 
             MonitoringManager.UnitCreated += controllerInstance.OnUnitCreated;
             MonitoringManager.UnitDisposed += controllerInstance.OnUnitDisposed;
-
+            
             for (var i = 0; i < staticUnits.Count; i++)
             {
                 controllerInstance.OnUnitCreated(staticUnits[i]);

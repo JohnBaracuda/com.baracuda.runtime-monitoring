@@ -48,7 +48,7 @@ namespace Baracuda.Monitoring.API
             {
                 if (IsInitialized)
                 {
-                    value.Invoke(staticUnits, instanceUnits);
+                    value.Invoke(staticUnitCache, instanceUnitCache);
                     return;
                 }
                 profilingCompleted += value;
@@ -96,12 +96,12 @@ namespace Baracuda.Monitoring.API
         /// <summary>
         /// Get a list of monitoring units for static targets.
         /// </summary>
-        public static IReadOnlyList<MonitorUnit> GetStaticUnits() => staticUnits;
+        public static IReadOnlyList<MonitorUnit> GetStaticUnits() => staticUnitCache;
         
         /// <summary>
         /// Get a list of monitoring units for instance targets.
         /// </summary>
-        public static IReadOnlyList<MonitorUnit> GetInstanceUnits() => instanceUnits;
+        public static IReadOnlyList<MonitorUnit> GetInstanceUnits() => instanceUnitCache;
         
         #endregion
 
@@ -112,14 +112,14 @@ namespace Baracuda.Monitoring.API
         private static List<MonitorProfile> staticMonitorProfiles = new List<MonitorProfile>();
         private static Dictionary<Type, List<MonitorProfile>> instanceMonitorProfiles = new Dictionary<Type, List<MonitorProfile>>();
         
-        private static readonly List<MonitorUnit> staticUnits = new List<MonitorUnit>(30);
-        private static readonly List<MonitorUnit> instanceUnits = new List<MonitorUnit>(30);
+        private static readonly List<MonitorUnit> staticUnitCache = new List<MonitorUnit>(100);
+        private static readonly List<MonitorUnit> instanceUnitCache = new List<MonitorUnit>(100);
         
         private static readonly Dictionary<object, MonitorUnit[]> activeInstanceUnits = new Dictionary<object, MonitorUnit[]>();
         
         private static readonly List<object> registeredTargets = new List<object>(300);
         private static bool initialInstanceUnitsCreated = false;
-        
+
         private static volatile bool isInitialized = false;
         private static ProfilingCompletedListener profilingCompleted;
         
@@ -147,13 +147,6 @@ namespace Baracuda.Monitoring.API
                 return;
             }
             UnitDisposed?.Invoke(monitorUnit);
-        }
-
-        private static void ProfilingCompletedInternal(MonitorUnit[] staticUnits, MonitorUnit[] instanceUnits)
-        {
-            IsInitialized = true;
-            profilingCompleted?.Invoke(staticUnits, instanceUnits);
-            profilingCompleted = null;
         }
         
         #endregion
@@ -196,7 +189,17 @@ namespace Baracuda.Monitoring.API
             CreateStaticUnits(staticProfiles.ToArray());
             
             await Dispatcher.InvokeAsync(CreateInitialInstanceUnits, ct);
-            await Dispatcher.InvokeAsync(() => ProfilingCompletedInternal(staticUnits.ToArray(), instanceUnits.ToArray()), ct);
+            await Dispatcher.InvokeAsync(ProfilingCompletedInternal, ct);
+        }
+        
+                
+        private static void ProfilingCompletedInternal()
+        {
+            Dispatcher.GuardAgainstIsNotMainThread(nameof(ProfilingCompletedInternal));
+            
+            IsInitialized = true;
+            profilingCompleted?.Invoke(staticUnitCache, instanceUnitCache);
+            profilingCompleted = null;
         }
         
         #endregion
@@ -245,7 +248,7 @@ namespace Baracuda.Monitoring.API
                         
                     var unit = profiles[j].CreateUnit(target);
                     units.Add(unit);
-                    instanceUnits.Add(unit);
+                    instanceUnitCache.Add(unit);
                     RaiseUnitCreated(unit);
                 }
             }
@@ -294,7 +297,7 @@ namespace Baracuda.Monitoring.API
         
         private static void CreateStaticUnit(MonitorProfile staticProfile)
         {
-            staticUnits.Add(staticProfile.CreateUnit(null));
+            staticUnitCache.Add(staticProfile.CreateUnit(null));
         }
 
         #endregion
