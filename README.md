@@ -3,6 +3,7 @@ Runtime Monitoring
 
 Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property, event, [method*](## "Not yet implemented") or [class*](## "Not yet implemented") and get its value or state displayed automatically in a customizable and extendable UI.
 
+I would appreciate any help in completing and improving this tool and its features. Feel free to contact me if you have any feedback, suggestions or questions.
 
 &nbsp;
 ## Table of Contents
@@ -17,8 +18,6 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 - [Update Event](#update-event)
 - [Runtime (Mono & IL2CPP)](#runtime)
 - [UI Controller](#ui-controller)
-  - [UI Toolkit](#ui-toolkit)
-  - [Unity UI](#unity-ui)
 - [Custom UI Controller](#custom-ui-controller)
 - [Assemblies / Modules](#assemblies-and-modules)
 - [Planned Features](#planned-features)
@@ -322,7 +321,9 @@ In order to use IL2CPP as a runtime some features are disabled or reduced and so
 &nbsp;
 ## UI Controller
 
-Use the ```MonitoringUI``` API to toggle the visiblity or active state of the current monitoring UI overlay. ```MonitoringUI``` is an accesspoint and the bridge between custom code and the active ```MonitoringUIController```. This is to offer a layer of abstraction that enables you to switch between multiple either prefabricated or custom UI implimentations or UI Controller. 
+Use the ```MonitoringUI``` API to toggle the visiblity or active state of the current monitoring UI overlay. ```MonitoringUI``` is an accesspoint and the bridge between custom code and the active ```MonitoringUIController```. This is to offer a layer of abstraction that enables you to switch between multiple either prefabricated or custom UI implimentations / UI Controller.
+
+I want to add existing UI controllers for UIToolkit, UnityUI and GUI systems. However, due to time constraints, it would still take some time until I have good solutions. If you are interested in creating such a system and sharing it, please feel free to contact me. I would appreciate any help in completing and improving this tool and its features.
 
 ```c#
 using Baracuda.Monitoring.API;
@@ -342,36 +343,18 @@ MonitoringUI.IsVisible();
 ```
 
 
+
 &nbsp;
 ## Custom UI Controller
 
-You can create a custom UI controller by follwing the steps below. A more detailed guide how to setup a custom UI controller is coming.
+You can create a custom UI controller by follwing the steps below. You can take a look at the existing UI Controller implimentations to get some reference. 
 
 + Create a new class and inherit from ```MonitoringDisplayController```.
-+ Impliment the abstract mehtods and custom UI logic.
++ Impliment the abstract mehtods and create custom UI logic. 
 + Add the script to a new GameObject and create a prefab of it.
 + Make sure to delete the GameObject from your scene.
 + Open the settings by navigating to (menu: Tools > Monitoring > Settings).
 + Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
-
-
-&nbsp;
-## Prefabricated UI Controller
-
-Prefabricated UI Controller exist or are planned for the following UI Systems. If you create your own implimentation and 
-
-### UI Toolkit
-
-Currently the only implimented UI Solution. UI Toolkit is only available when using Unity 2020.1 or newer. 
-
-### Unity UI
-
-The base for a very basic Unity UIController is already implimented. Any help extending this feature would be appreciated. 
-
-### GUI
-
-The base for a very basic GUI UIController is already implimented. Any help extending this feature would be appreciated. 
-
 
 
 &nbsp;
@@ -395,6 +378,8 @@ Assembly-Baracuda-Reflection | Baracuda/Reflection              |               
 
 &nbsp;
 ## Planned Features
+
+I would appreciate any help in completing and improving this tool and its features. Feel free to contact me if you have any feedback, suggestions or questions.
 
 + Unity UI implementation
 + GUI implementation (Basic implimentation already available & WIP)
