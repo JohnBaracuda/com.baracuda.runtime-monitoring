@@ -1,9 +1,9 @@
 Runtime Monitoring
 ===
 
-Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property, event, [method*](## "Not yet implemented") or [class*](## "Not yet implemented") and get its value or state displayed automatically in a customizable and extendable UI.
+Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property or event and get its value or state displayed automatically in a customizable and extendable UI.
 
-There are still some aspects I would like to improve or expand (see [Planned Features](#planned-features)). Especaially the current UI implimentation is **currently only supporting UIToolkit** and lacks some features like filtering and grouping of displayed units aka monitored members. However, I can't afford too much time commitment due to my full-time job and other projects I'm working on. For this reason, I would appreciate any feedback and/or support.
+There are still some aspects I would like to improve or expand (see [Planned Features](#planned-features)). The current UI implimentations (UIToolkit & Unity UI) lack some features like filtering and grouping of displayed units aka monitored members. Especially the Unity UI implimentaion is very rough  and needs more work. However, I can't afford too much time commitment due to my full-time job and other projects I'm working on. For this reason, I would appreciate any feedback and/or support.
 
 
 &nbsp;
@@ -91,7 +91,7 @@ private string IsAliveProcessor(bool value) => value? "Alive" : "Dead";
 
 Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. 
 
-Depending on your needs you may select or deselect individual modules when importing. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset based on different UI Systems. Just note that UnityUI & GUIDrawer are still work in progress.
+Depending on your needs you may select or deselect individual modules when importing. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset based on different UI Systems.
 
  Assembly                    | Path                             | Editor           | Core  
 :-                           |:-                                |:----------------:|:----------------:         
@@ -391,15 +391,16 @@ Assembly-Baracuda-Reflection | Baracuda/Reflection              |               
 
 I would appreciate any help in completing and improving this tool and its features. Feel free to contact me if you have any feedback, suggestions or questions.
 
-+ Unity UI implementation (Currently work in progress but I cannot guarantee a release date)
-+ GUI implementation (Basic implimentation already available & WIP)
++ Unity UI implementation (Currently work in progress but already has very rought implimentation)
++ GUI implementation
 + Filtering & Grouping (The current UI implimentation is relatively simple and won't work well for huge amounts of monitored members. I would like to address this issue by adding multiple tabs/groups as well as a simple way to filter displayed member.)
 + Method monitoring (Properties can be used as a workaround)
 + Class scoped monitoring
 + Class / object monitoring (Properties returning ToString() can be used as a workaround)
 + Improved IL2CPP support / AOT generation
 + Full Compatibility with 2020.3 (LTS)
-+ Add the option for synchronous porofiling. (Especially to make the tool compatible for platforms without multithreading support)
++ Add the option for synchronous profiling. (Especially to make the tool compatible for platforms without multithreading support)
++ Custom update / evaluation loops or more control over the ```Tick``` loop.
 
 
 &nbsp;

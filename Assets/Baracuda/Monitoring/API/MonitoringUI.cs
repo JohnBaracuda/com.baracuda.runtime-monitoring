@@ -162,6 +162,12 @@ namespace Baracuda.Monitoring.API
         private static void OnProfilingCompletedInternal(IReadOnlyList<IMonitorUnit> staticUnits,
             IReadOnlyList<IMonitorUnit> instanceUnits)
         {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+#endif
             var settings = MonitoringSettings.GetInstance();
 
             if (settings.AutoInstantiateUI || bufferUICreation)
@@ -179,6 +185,12 @@ namespace Baracuda.Monitoring.API
             {
                 return;
             }
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+#endif
             
             // We return if there is an active UIController.
             if (GetActiveUIController())
@@ -198,11 +210,6 @@ namespace Baracuda.Monitoring.API
             IReadOnlyList<IMonitorUnit> instanceUnits)
         {
             if (settings.UIControllerUIController == null)
-            {
-                return;
-            }
-            
-            if (!Application.isPlaying)
             {
                 return;
             }
