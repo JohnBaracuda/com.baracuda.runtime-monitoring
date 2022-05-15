@@ -61,11 +61,6 @@ namespace Baracuda.Monitoring.Example.Scripts
             sb.Append(current);
             sb.Append(" / ");
             sb.Append(ammunition);
-            sb.Append(' ');
-            for (var i = 0; i < current; i++)
-            {
-                sb.Append('|');
-            }
             return StringBuilderPool.Release(sb);
         }
 

@@ -3,7 +3,7 @@
 //---------- ----------------------------- ----------
 
 //Runtime Monitoring
-//File generated: 2022-05-14 16:04:36Z
+//File generated: 2022-05-14 16:52:12Z
 //Please dont change the contents of this file. Otherwise IL2CPP runtime may not work with runtime monitoring!
 //Ensure that this file is located in Assembly-CSharp. Otherwise this file may not compile.
 //https://github.com/JohnBaracuda/Runtime-Monitoring
@@ -12,69 +12,149 @@
 
 internal class IL2CPP_AOT
 {
-    //FieldProfile<PlayerWeapon, int>
+    //PropertyProfile<MovementController, OrientationMethod>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.PlayerWeapon, System.Int32> AOT_GENERATED_TYPE_0;
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<Player.Movement.MovementController, Player.Movement.Utils.OrientationMethod> AOT_GENERATED_TYPE_0;
     
-    //FieldUnit<PlayerWeapon, int>
+    //PropertyUnit<MovementController, OrientationMethod>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.PlayerWeapon, System.Int32> AOT_GENERATED_TYPE_2;
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<Player.Movement.MovementController, Player.Movement.Utils.OrientationMethod> AOT_GENERATED_TYPE_2;
     
-    //FieldProfile<Target, bool>
+    //PropertyProfile<MovementController, Vector3>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Target, System.Boolean> AOT_GENERATED_TYPE_4;
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<Player.Movement.MovementController, UnityEngine.Vector3> AOT_GENERATED_TYPE_4;
     
-    //FieldUnit<Target, bool>
+    //PropertyUnit<MovementController, Vector3>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Target, System.Boolean> AOT_GENERATED_TYPE_6;
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<Player.Movement.MovementController, UnityEngine.Vector3> AOT_GENERATED_TYPE_6;
     
-    //FieldProfile<Target, float>
+    //FieldProfile<MovementController, Vector3>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Target, System.Single> AOT_GENERATED_TYPE_8;
+    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Player.Movement.MovementController, UnityEngine.Vector3> AOT_GENERATED_TYPE_8;
     
-    //FieldUnit<Target, float>
+    //FieldUnit<MovementController, Vector3>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Target, System.Single> AOT_GENERATED_TYPE_10;
+    Baracuda.Monitoring.Internal.Units.FieldUnit<Player.Movement.MovementController, UnityEngine.Vector3> AOT_GENERATED_TYPE_10;
+    
+    //FieldProfile<MovementController, Vector3>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Player.Movement.MovementController, UnityEngine.Vector3> AOT_GENERATED_TYPE_12;
+    
+    //FieldUnit<MovementController, Vector3>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Units.FieldUnit<Player.Movement.MovementController, UnityEngine.Vector3> AOT_GENERATED_TYPE_14;
+    
+    //FieldProfile<MovementController, float>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Player.Movement.MovementController, System.Single> AOT_GENERATED_TYPE_16;
+    
+    //FieldUnit<MovementController, float>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Units.FieldUnit<Player.Movement.MovementController, System.Single> AOT_GENERATED_TYPE_18;
     
     //FieldProfile<FPSMonitor, float>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Single> AOT_GENERATED_TYPE_12;
+    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Misc.Monitoring.FPSMonitor, System.Single> AOT_GENERATED_TYPE_20;
     
     //FieldUnit<FPSMonitor, float>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Single> AOT_GENERATED_TYPE_14;
+    Baracuda.Monitoring.Internal.Units.FieldUnit<Misc.Monitoring.FPSMonitor, System.Single> AOT_GENERATED_TYPE_22;
     
     //FieldProfile<FPSMonitor, long>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_16;
+    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Misc.Monitoring.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_24;
     
     //FieldUnit<FPSMonitor, long>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_18;
+    Baracuda.Monitoring.Internal.Units.FieldUnit<Misc.Monitoring.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_26;
     
     //FieldProfile<FPSMonitor, long>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_20;
+    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Misc.Monitoring.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_28;
     
     //FieldUnit<FPSMonitor, long>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Monitoring.Example.Scripts.Persistent.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_22;
+    Baracuda.Monitoring.Internal.Units.FieldUnit<Misc.Monitoring.FPSMonitor, System.Int64> AOT_GENERATED_TYPE_30;
     
     //PropertyProfile<VsyncMonitor, int>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<System.Object, System.Int32> AOT_GENERATED_TYPE_24;
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<System.Object, System.Int32> AOT_GENERATED_TYPE_32;
     
     //PropertyUnit<VsyncMonitor, int>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.PropertyUnit<System.Object, System.Int32> AOT_GENERATED_TYPE_26;
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<System.Object, System.Int32> AOT_GENERATED_TYPE_34;
     
     //PropertyProfile<VsyncMonitor, int>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<System.Object, System.Int32> AOT_GENERATED_TYPE_28;
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<System.Object, System.Int32> AOT_GENERATED_TYPE_36;
     
     //PropertyUnit<VsyncMonitor, int>
     [UnityEngine.Scripting.PreserveAttribute]
-    Baracuda.Monitoring.Internal.Units.PropertyUnit<System.Object, System.Int32> AOT_GENERATED_TYPE_30;
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<System.Object, System.Int32> AOT_GENERATED_TYPE_38;
+    
+    //PropertyProfile<CameraController, Vector3>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<CameraSystem.CameraController, UnityEngine.Vector3> AOT_GENERATED_TYPE_40;
+    
+    //PropertyUnit<CameraController, Vector3>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<CameraSystem.CameraController, UnityEngine.Vector3> AOT_GENERATED_TYPE_42;
+    
+    //PropertyProfile<CameraController, Quaternion>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<CameraSystem.CameraController, UnityEngine.Quaternion> AOT_GENERATED_TYPE_44;
+    
+    //PropertyUnit<CameraController, Quaternion>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<CameraSystem.CameraController, UnityEngine.Quaternion> AOT_GENERATED_TYPE_46;
+    
+    //PropertyProfile<InputManager, bool>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<Baracuda.InputManagement.InputManager, System.Boolean> AOT_GENERATED_TYPE_48;
+    
+    //PropertyUnit<InputManager, bool>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<Baracuda.InputManagement.InputManager, System.Boolean> AOT_GENERATED_TYPE_50;
+    
+    //PropertyProfile<CursorManagerModule, CursorLockMode>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<Baracuda.CursorManagement.Core.CursorManagerModule, UnityEngine.CursorLockMode> AOT_GENERATED_TYPE_52;
+    
+    //PropertyUnit<CursorManagerModule, CursorLockMode>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<Baracuda.CursorManagement.Core.CursorManagerModule, UnityEngine.CursorLockMode> AOT_GENERATED_TYPE_54;
+    
+    //PropertyProfile<CursorManagerModule, bool>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<Baracuda.CursorManagement.Core.CursorManagerModule, System.Boolean> AOT_GENERATED_TYPE_56;
+    
+    //PropertyUnit<CursorManagerModule, bool>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<Baracuda.CursorManagement.Core.CursorManagerModule, System.Boolean> AOT_GENERATED_TYPE_58;
+    
+    //FieldProfile<RuntimeConsole, Queue<Log>>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Profiling.FieldProfile<Baracuda.Console.RuntimeConsole, System.Collections.Generic.Queue<Baracuda.Console.Internal.Utils.Log>> AOT_GENERATED_TYPE_60;
+    
+    //FieldUnit<RuntimeConsole, Queue<Log>>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Units.FieldUnit<Baracuda.Console.RuntimeConsole, System.Collections.Generic.Queue<Baracuda.Console.Internal.Utils.Log>> AOT_GENERATED_TYPE_62;
+    
+    //PropertyProfile<SceneManager, bool>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<Baracuda.SceneManagement.Runtime.SceneManager, System.Boolean> AOT_GENERATED_TYPE_64;
+    
+    //PropertyUnit<SceneManager, bool>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<Baracuda.SceneManagement.Runtime.SceneManager, System.Boolean> AOT_GENERATED_TYPE_66;
+    
+    //PropertyProfile<SceneManager, int>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Profiling.PropertyProfile<Baracuda.SceneManagement.Runtime.SceneManager, System.Int32> AOT_GENERATED_TYPE_68;
+    
+    //PropertyUnit<SceneManager, int>
+    [UnityEngine.Scripting.PreserveAttribute]
+    Baracuda.Monitoring.Internal.Units.PropertyUnit<Baracuda.SceneManagement.Runtime.SceneManager, System.Int32> AOT_GENERATED_TYPE_70;
     
 }
 #endif //ENABLE_IL2CPP && !DISABLE_MONITORING

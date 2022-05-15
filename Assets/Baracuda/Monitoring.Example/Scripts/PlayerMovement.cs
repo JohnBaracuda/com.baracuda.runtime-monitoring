@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
@@ -33,7 +34,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         [SerializeField] private float killHeight = -50f;
         
         #endregion
-
+        
         //--------------------------------------------------------------------------------------------------------------
         
         #region --- Fields ---
@@ -43,7 +44,6 @@ namespace Baracuda.Monitoring.Example.Scripts
         private Transform _transform;
         private Camera _camera;
         private IPlayerInput _input;
-        private int _jumpsLeft;
         
         // Input
         private Vector2 _processedInputDir;
@@ -51,27 +51,27 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         // Movement
         private Vector3 _velocity = Vector3.zero;
+        [Monitor]
         private bool _isJumping;
+        [Monitor]
         private bool _isFalling;
         private float _lastJumpTime;
+        [Monitor]
+        private int _jumpsLeft;
         
         // Dash
+        [Monitor]
         private float _dashEnergy;
+        [Monitor]
         private bool _isDashing = false;
         private float _lastDashTime;
         private float _dashStartTime;
 
         // Ground check
         private GroundStatus _lastGroundCheck = GroundStatus.StableGround;
-        private readonly Collider[] _raycastHits = new Collider[16];
         private static int hitCount;
         private float _lastGroundedTime;
-        
-        #endregion
-
-        #region --- Properties ---
-
-        public Vector3 Velocity => _characterController.velocity;
+        private readonly Collider[] _raycastHits = new Collider[4];
         
         #endregion
         
@@ -93,8 +93,9 @@ namespace Baracuda.Monitoring.Example.Scripts
         }
 
 
-        private void Start()
+        private IEnumerator Start()
         {
+            yield return null;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }

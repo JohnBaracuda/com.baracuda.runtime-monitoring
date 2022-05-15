@@ -5,16 +5,16 @@ namespace Baracuda.Monitoring.Example.Scripts
     public class HitBox : MonoBehaviour, IDamageable
     {
         [SerializeField] private float damageMultiplier = 1f;
-        private Target _target;
+        private ShootingTarget _shootingTarget;
         
         private void Awake()
         {
-            _target = GetComponentInParent<Target>();
+            _shootingTarget = GetComponentInParent<ShootingTarget>();
         }
 
         public void TakeDamage(float damage)
         {
-            _target.TakeDamage(damage * damageMultiplier);
+            _shootingTarget.TakeDamage(damage * damageMultiplier);
         }
     }
 }

@@ -4,25 +4,24 @@ using Random = UnityEngine.Random;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
-    public class Target : MonitoredBehaviour
+    public class ShootingTarget : MonitoredBehaviour
     {
         #region --- Inspector ---
 
         [SerializeField] private float health = 200;
-        [SerializeField] private Vector2 recoverCooldown = new Vector2(1f,5f);
+        [SerializeField] private float recoverCooldownMin = 1f;
+        [SerializeField] private float recoverCooldownMax = 4f;
         
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
         
         #region --- Fields ---
-
-        [Monitor]
+        
+        [Monitor] 
         private bool _isAlive = true;
-        
-        [Monitor]
+        [Monitor] 
         private float _currentHealth;
-        
         private float _cooldown = 0f;
         private Animator _animator;
         
@@ -30,28 +29,23 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Fields: Static ---
+        #region --- Animator ---
         
         private static readonly int knockdown = Animator.StringToHash("knockdown");
         private static readonly int recover = Animator.StringToHash("recover");
         
         #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
         
         #region --- Setup ---
 
-        protected override void Awake()
+        private void Start()
         {
-            base.Awake();
             _animator = GetComponent<Animator>();
             _currentHealth = health;
         }
         
         #endregion
         
-        //--------------------------------------------------------------------------------------------------------------
-
         #region --- Damage Handling ---
 
         public void TakeDamage(float damage)
@@ -73,7 +67,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         {
             _isAlive = false;
             _animator.SetTrigger(knockdown);
-            _cooldown = Random.Range(recoverCooldown.x, recoverCooldown.y);
+            _cooldown = Random.Range(recoverCooldownMin, recoverCooldownMax);
             while (_cooldown > 0)
             {
                 _cooldown -= Time.deltaTime;
