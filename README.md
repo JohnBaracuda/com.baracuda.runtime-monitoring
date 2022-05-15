@@ -3,7 +3,8 @@ Runtime Monitoring
 
 Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property, event, [method*](## "Not yet implemented") or [class*](## "Not yet implemented") and get its value or state displayed automatically in a customizable and extendable UI.
 
-I would appreciate any help in completing and improving this tool and its features. Feel free to contact me if you have any feedback, suggestions or questions.
+There are still some aspects I would like to improve or expand (see [Planned Features](#planned-features)). Especaially the current UI implimentation is **currently only supporting UIToolkit** and lacks some features like filtering and grouping of displayed units aka monitored members. However, I can't afford too much time commitment due to my full-time job and other projects I'm working on. For this reason, I would appreciate any feedback and/or support.
+
 
 &nbsp;
 ## Table of Contents
@@ -24,11 +25,14 @@ I would appreciate any help in completing and improving this tool and its featur
 - [Planned Features](#planned-features)
 - [Licence](#licence)
 
+
 &nbsp;
 ## Getting Started
 
+
 ```c#
-// Place the MonitorAttribute on any field, property or event.
+// Place the MonitorAttribute on any field, property or event
+// to have it automatically displayed during runtime in you UI.
 [Monitor]
 private int healthPoints;
 
@@ -79,8 +83,7 @@ private string IsAliveProcessor(bool value) => value? "Alive" : "Dead";
 + Unity Version: <b>2021.1</b><br/>
 + Scripting Backend: <b>Mono & IL2CPP</b>
 + API Compatibility: <b>.NET Standard 2.0 or .NET 4.xP</b>
-+ Asset Version: <b>0.9.0</b>
-
++ Asset Version: <b>1.0.1</b>
 
 
 &nbsp;
@@ -88,7 +91,7 @@ private string IsAliveProcessor(bool value) => value? "Alive" : "Dead";
 
 Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. 
 
-Depending on your needs you may select or deselect individual modules when importing. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset that should work out of the box with different Unity UI Systems.
+Depending on your needs you may select or deselect individual modules when importing. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset based on different UI Systems. Just note that UnityUI & GUIDrawer are still work in progress.
 
  Assembly                    | Path                             | Editor           | Core  
 :-                           |:-                                |:----------------:|:----------------:         
@@ -105,10 +108,11 @@ Assembly-Baracuda-Reflection | Baracuda/Reflection              |               
 
 &nbsp;
 ## Setup
-Everything should work out of the box after a successful import. If however you want to validate that everything is set up correctly or you want to change for example the active [Monitoring UI Controller](#ui-controller), the following steps will guide you through that process.
+Everything should work out of the box after a successful import. However, if you want to validate that everything is set up correctly or you want to change for example the active [Monitoring UI Controller](#ui-controller), the following steps will guide you through that process.
 
-+ Open the settings by navigating to (menu: Tools > Monitoring > Settings).
++ Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
 + Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
++ If ```Enable Monitoring``` in the UI Controller foldout is set to ```false```, Make sure to call ```MonitoringUI.CreateMonitoringUI()``` from anywhere in you code. 
 + Use the ```Monitoring UI Controller``` field in the UI Controller foldout to set the active UI Controller. The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
 
 
@@ -387,13 +391,15 @@ Assembly-Baracuda-Reflection | Baracuda/Reflection              |               
 
 I would appreciate any help in completing and improving this tool and its features. Feel free to contact me if you have any feedback, suggestions or questions.
 
-+ Unity UI implementation
++ Unity UI implementation (Currently work in progress but I cannot guarantee a release date)
 + GUI implementation (Basic implimentation already available & WIP)
++ Filtering & Grouping (The current UI implimentation is relatively simple and won't work well for huge amounts of monitored members. I would like to address this issue by adding multiple tabs/groups as well as a simple way to filter displayed member.)
 + Method monitoring (Properties can be used as a workaround)
 + Class scoped monitoring
 + Class / object monitoring (Properties returning ToString() can be used as a workaround)
 + Improved IL2CPP support / AOT generation
 + Full Compatibility with 2020.3 (LTS)
++ Add the option for synchronous porofiling. (Especially to make the tool compatible for platforms without multithreading support)
 
 
 &nbsp;
