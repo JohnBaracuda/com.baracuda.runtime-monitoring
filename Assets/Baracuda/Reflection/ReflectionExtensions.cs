@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+#if !ENABLE_IL2CPP && UNITY_2021_3_OR_NEWER
 using System.Reflection.Emit;
+#endif
 using System.Runtime.CompilerServices;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
@@ -17,7 +19,8 @@ namespace Baracuda.Reflection
 
         public static bool TryGetCustomAttribute<T>(this MemberInfo memberInfo, out T attribute, bool inherited = false) where T : Attribute
         {
-            if (memberInfo.GetCustomAttribute<T>(inherited) is { } found)
+            var found = memberInfo.GetCustomAttribute<T>(inherited);
+            if (found != null)
             {
                 attribute = found;
                 return true;
@@ -53,7 +56,8 @@ namespace Baracuda.Reflection
         {
             foreach (var component in target.GetComponents<MonoBehaviour>())
             {
-                if (component.GetType().GetUnderlying().GetCustomAttribute<T>(inherit) is { } found)
+                var found = component.GetType().GetUnderlying().GetCustomAttribute<T>(inherit);
+                if (found != null)
                 {
                     return found;
                 }
@@ -67,10 +71,7 @@ namespace Baracuda.Reflection
             var attributes = new List<T>(3);
             foreach (var component in target.GetComponents<MonoBehaviour>())
             {
-                if (component.GetType().GetCustomAttributes<T>(inherit) is { } found)
-                {
-                    attributes.AddRange(found);
-                }
+                attributes.AddRange(component.GetType().GetCustomAttributes<T>(inherit));
             }
 
             return attributes.ToArray();
@@ -80,7 +81,8 @@ namespace Baracuda.Reflection
         {
             foreach (var component in target.GetComponents<Component>())
             {
-                if (component.GetType().GetUnderlying().GetCustomAttribute<T>(inherit) is { } found)
+                var found = component.GetType().GetUnderlying().GetCustomAttribute<T>(inherit);
+                if (found != null)
                 {
                     return found;
                 }
@@ -94,10 +96,7 @@ namespace Baracuda.Reflection
             var attributes = new List<T>(3);
             foreach (var component in target.GetComponents<Component>())
             {
-                if (component.GetType().GetUnderlying().GetCustomAttributes<T>(inherit) is { } found)
-                {
-                    attributes.AddRange(found);
-                }
+                attributes.AddRange(component.GetType().GetUnderlying().GetCustomAttributes<T>(inherit));
             }
 
             return attributes.ToArray();
@@ -133,7 +132,7 @@ namespace Baracuda.Reflection
         
         #region --- FieldInfo Getter & Setter ---
 
-#if !ENABLE_IL2CPP
+#if !ENABLE_IL2CPP && UNITY_2021_3_OR_NEWER
         public static Func<TTarget, TResult> CreateGetter<TTarget, TResult>(this FieldInfo field)
         {
             var methodName = $"{field!.ReflectedType!.FullName}.get_{field.Name}";
@@ -729,11 +728,11 @@ namespace Baracuda.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string GetSignatureString(this MethodInfo methodInfo)
         {
-            var parameters = methodInfo!.GetParameters();
+            var parameters = methodInfo.GetParameters();
 
             var stringBuilder = ConcurrentStringBuilderPool.GetDisposable();
 
-            stringBuilder.Append(methodInfo!.ReturnType.Name);
+            stringBuilder.Append(methodInfo.ReturnType.Name);
 
             if (parameters.Any())
             {
@@ -767,8 +766,8 @@ namespace Baracuda.Reflection
 
             if (type.IsGenericType)
             {
-                using var builder = ConcurrentStringBuilderPool.GetDisposable();
-                using var argBuilder = ConcurrentStringBuilderPool.GetDisposable();
+                var builder = ConcurrentStringBuilderPool.Get();
+                var argBuilder = ConcurrentStringBuilderPool.Get();
 
                 var arguments = type.GetGenericArguments();
 
@@ -776,9 +775,9 @@ namespace Baracuda.Reflection
                 {
                     var arg = ToSyntaxString(t);
 
-                    if (argBuilder.Value.Length > 0)
+                    if (argBuilder.Length > 0)
                     {
-                        argBuilder.Value.AppendFormat(", {0}", arg);
+                        argBuilder.AppendFormat(", {0}", arg);
                     }
                     else
                     {
@@ -786,15 +785,19 @@ namespace Baracuda.Reflection
                     }
                 }
 
-                if (argBuilder.Value.Length > 0)
+                if (argBuilder.Length > 0)
                 {
-                    builder.Value.AppendFormat("{0}<{1}>", type.Name.Split('`')[0],
+                    builder.AppendFormat("{0}<{1}>", type.Name.Split('`')[0],
                         argBuilder.ToString().ToTypeKeyWord());
                 }
 
                 var retType = builder.ToString().Replace('+', '.');
 
                 typeCache.Add(type, retType);
+                
+                ConcurrentStringBuilderPool.ReleaseStringBuilder(builder);
+                ConcurrentStringBuilderPool.ReleaseStringBuilder(argBuilder);
+                
                 return retType;
             }
 
@@ -804,53 +807,86 @@ namespace Baracuda.Reflection
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ToTypeKeyWord(this string typeName) =>
-            typeName switch
+        public static string ToTypeKeyWord(this string typeName)
+        {
+            switch (typeName)
             {
-                "String" => "string",
-                "Int32" => "int",
-                "Single" => "float",
-                "Boolean" => "bool",
-                "Byte" => "byte",
-                "SByte" => "sbyte",
-                "Char" => "char",
-                "Decimal" => "decimal",
-                "Double" => "double",
-                "UInt32" => "uint",
-                "Int64" => "long",
-                "UInt64" => "ulong",
-                "Int16" => "short",
-                "UInt16" => "ushort",
-                "Object" => "object",
-#if CSHARP_9_OR_LATER
-                "IntPtr"   => "nint",
-                "UIntPtr"  => "nuint",
-#endif
-                _ => typeName
-            };
+                case "String":
+                    return "string";
+                case "Int32":
+                    return "int";
+                case "Single":
+                    return "float";
+                case "Boolean":
+                    return "bool";
+                case "Byte":
+                    return "byte";
+                case "SByte":
+                    return "sbyte";
+                case "Char":
+                    return "char";
+                case "Decimal":
+                    return "decimal";
+                case "Double":
+                    return "double";
+                case "UInt32":
+                    return "uint";
+                case "Int64":
+                    return "long";
+                case "UInt64":
+                    return "ulong";
+                case "Int16":
+                    return "short";
+                case "UInt16":
+                    return "ushort";
+                case "Object":
+                    return "object";
+                default:
+                    return typeName;
+            }
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ToFullTypeName(this string typeKeyword) =>
-            typeKeyword switch
+        public static string ToFullTypeName(this string typeKeyword)
+        {
+            switch (typeKeyword)
             {
-                "string" => "System.String",
-                "sbyte" => "System.SByte",
-                "byte" => "System.Byte",
-                "short" => "System.Int16",
-                "ushort" => "System.UInt16",
-                "int" => "System.Int32",
-                "uint" => "System.UInt32",
-                "long" => "System.Int64",
-                "ulong" => "System.UInt64",
-                "char" => "System.Char",
-                "float" => "System.Single",
-                "double" => "System.Double",
-                "bool" => "System.Boolean",
-                "decimal" => "System.Decimal",
-                "void" => "System.Void",
-                "object" => "System.Object",
-                _ => typeKeyword
-            };
+                case "string":
+                    return "System.String";
+                case "sbyte":
+                    return "System.SByte";
+                case "byte":
+                    return "System.Byte";
+                case "short":
+                    return "System.Int16";
+                case "ushort":
+                    return "System.UInt16";
+                case "int":
+                    return "System.Int32";
+                case "uint":
+                    return "System.UInt32";
+                case "long":
+                    return "System.Int64";
+                case "ulong":
+                    return "System.UInt64";
+                case "char":
+                    return "System.Char";
+                case "float":
+                    return "System.Single";
+                case "double":
+                    return "System.Double";
+                case "bool":
+                    return "System.Boolean";
+                case "decimal":
+                    return "System.Decimal";
+                case "void":
+                    return "System.Void";
+                case "object":
+                    return "System.Object";
+                default:
+                    return typeKeyword;
+            }
+        }
 
         #endregion
 
@@ -1142,7 +1178,7 @@ namespace Baracuda.Reflection
             while (targetType.EqualsNone(typeof(MonoBehaviour), typeof(ScriptableObject), typeof(object)))
             {
                 typesToCheck.Add(targetType);
-                targetType = targetType!.BaseType;
+                targetType = targetType?.BaseType;
             }
             
             for (var i = typesToCheck.Count - 1; i >= 0; i--)
@@ -1165,7 +1201,7 @@ namespace Baracuda.Reflection
             while (targetType.EqualsNone(typeof(MonoBehaviour), typeof(ScriptableObject), typeof(object)))
             {
                 typesToCheck.Add(targetType);
-                targetType = targetType!.BaseType;
+                targetType = targetType?.BaseType;
             }
             
             for (var i = typesToCheck.Count - 1; i >= 0; i--)
@@ -1189,7 +1225,7 @@ namespace Baracuda.Reflection
             while (targetType.EqualsNone(typeof(MonoBehaviour), typeof(ScriptableObject), typeof(object)))
             {
                 typesToCheck.Add(targetType);
-                targetType = targetType!.BaseType;
+                targetType = targetType?.BaseType;
             }
             
             for (var i = typesToCheck.Count - 1; i >= 0; i--)
@@ -1212,7 +1248,7 @@ namespace Baracuda.Reflection
             while (targetType.EqualsNone(typeof(MonoBehaviour), typeof(ScriptableObject), typeof(object)))
             {
                 typesToCheck.Add(targetType);
-                targetType = targetType!.BaseType;
+                targetType = targetType?.BaseType;
             }
             
             for (var i = typesToCheck.Count - 1; i >= 0; i--)

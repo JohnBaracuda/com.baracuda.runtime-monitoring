@@ -84,7 +84,7 @@ namespace Baracuda.Monitoring.UI.UnityUI
 
         private MonitoringUIElement GetElementFromPool()
         {
-            return _uiElementPool.TryPop(out var element) ? element : CreateElement();
+            return _uiElementPool.Count > 0 ? _uiElementPool.Pop() : CreateElement();
         }
 
         private void ReleaseElementToPool(MonitoringUIElement element)
