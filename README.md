@@ -406,4 +406,4 @@ I would appreciate any help in completing and improving this tool and its featur
 &nbsp;
 ## Licence
 
-[MIT License](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) so do what you want as long as you don't just sell my work but consider giving a star ⭐ or a [Donation (PayPal.me)](https://www.paypal.com/paypalme/johnbaracuda) to support me ❤️
+[Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) so do what you want as long as you don't just sell my work but consider giving a star ⭐ or a [Donation (PayPal.me)](https://www.paypal.com/paypalme/johnbaracuda) to support me ❤️
