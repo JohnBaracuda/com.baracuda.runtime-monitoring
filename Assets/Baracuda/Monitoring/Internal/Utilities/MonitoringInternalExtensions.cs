@@ -27,21 +27,27 @@ namespace Baracuda.Monitoring.Internal.Utilities
          */
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool HasFlagUnsafe<TEnum>(this TEnum lhs, TEnum rhs) where TEnum : unmanaged, Enum =>
-            UnsafeUtility.SizeOf<TEnum>() switch
+        public static bool HasFlagUnsafe<TEnum>(this TEnum lhs, TEnum rhs) where TEnum : unmanaged, Enum
+        {
+            switch (UnsafeUtility.SizeOf<TEnum>())
             {
-                1 => (UnsafeUtility.As<TEnum, byte>(ref lhs) & UnsafeUtility.As<TEnum, byte>(ref rhs)) > 0,
-                2 => (UnsafeUtility.As<TEnum, ushort>(ref lhs) & UnsafeUtility.As<TEnum, ushort>(ref rhs)) > 0,
-                4 => (UnsafeUtility.As<TEnum, uint>(ref lhs) & UnsafeUtility.As<TEnum, uint>(ref rhs)) > 0,
-                8 => (UnsafeUtility.As<TEnum, ulong>(ref lhs) & UnsafeUtility.As<TEnum, ulong>(ref rhs)) > 0,
-                _ => throw new Exception($"Size of {typeof(TEnum).Name} does not match a known Enum backing type.")
-            };
+                case 1:
+                    return (UnsafeUtility.As<TEnum, byte>(ref lhs) & UnsafeUtility.As<TEnum, byte>(ref rhs)) > 0;
+                case 2:
+                    return (UnsafeUtility.As<TEnum, ushort>(ref lhs) & UnsafeUtility.As<TEnum, ushort>(ref rhs)) > 0;
+                case 4:
+                    return (UnsafeUtility.As<TEnum, uint>(ref lhs) & UnsafeUtility.As<TEnum, uint>(ref rhs)) > 0;
+                case 8:
+                    return (UnsafeUtility.As<TEnum, ulong>(ref lhs) & UnsafeUtility.As<TEnum, ulong>(ref rhs)) > 0;
+                default:
+                    throw new Exception($"Size of {typeof(TEnum).Name} does not match a known Enum backing type.");
+            }
+        }
 
         /*
-         * Color   
+         * Color
          */
-        
-                
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Colorize(this string content, Color color)
         {
@@ -61,21 +67,21 @@ namespace Baracuda.Monitoring.Internal.Utilities
         
         public static string Humanize(this string target, string[] prefixes = null)
         {
-#if UNITY_2021_1_OR_NEWER
-            if (IsConst(target))
+            if (IsConstantStringSyntax(target))
             {
-                return target.Replace('_', ' ').ToLower().ToCamel();
+                return target.Replace('_', ' ').ToCamel();
             }
-#endif
             
             if (prefixes != null)
             {
                 for (var i = 0; i < prefixes.Length; i++)
                 {
-                    target = target.Replace(prefixes[i], string.Empty);
+                    if (target.StartsWith(prefixes[i]))
+                    {
+                        target = target.Replace(prefixes[i], string.Empty);
+                    }
                 }
             }
-            
             
             target = target.Replace('_', ' ');
             
@@ -86,23 +92,22 @@ namespace Baracuda.Monitoring.Internal.Utilities
                 if (i == 0)
                 {
                     chars.Add(char.ToUpper(target[i]));
+                    continue;
                 }
-                else
+
+                if (i < target.Length - 1)
                 {
-                    if (i < target.Length - 1)
+                    if (char.IsUpper(target[i]) && !char.IsUpper(target[i + 1])
+                        || char.IsUpper(target[i]) && !char.IsUpper(target[i - 1]))
                     {
-                        if (char.IsUpper(target[i]) && !char.IsUpper(target[i + 1])
-                            || char.IsUpper(target[i]) && !char.IsUpper(target[i - 1]))
+                        if (i > 1)
                         {
-                            if (i > 1)
-                            {
-                                chars.Add(' ');
-                            }
+                            chars.Add(' ');
                         }
                     }
-
-                    chars.Add(target[i]);
                 }
+
+                chars.Add(target[i]);
             }
 
             var array = chars.ToArray();
@@ -115,23 +120,23 @@ namespace Baracuda.Monitoring.Internal.Utilities
             return !string.IsNullOrWhiteSpace(str) && str[0] == character;
         }
         
-#if UNITY_2021_1_OR_NEWER
+        
         private static string ToCamel(this string content)
         {
-            Span<char> chars = stackalloc char[content.Length];
+            var sb = ConcurrentStringBuilderPool.Get();
 
             for (var i = 0; i < content.Length; i++)
             {
                 var current = content[i];
                 var last = i > 0 ? content[i - 1] : ' ';
-                chars[i] = last == ' ' ? char.ToUpper(current) : char.ToLower(current);
+                sb.Append(last == ' ' ? char.ToUpper(current) : char.ToLower(current));
             }
 
-            return new string(chars);
+            return ConcurrentStringBuilderPool.Release(sb);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsConst(string input)
+        private static bool IsConstantStringSyntax(this string input)
         {
             for (var i = 0; i < input.Length; i++)
             {
@@ -144,7 +149,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
 
             return true;
         }
-#endif
+
 
         private static string ReduceWhitespace(this string value)
         {
