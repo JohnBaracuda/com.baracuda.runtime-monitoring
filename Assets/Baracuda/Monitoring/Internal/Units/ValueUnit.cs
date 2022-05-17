@@ -124,7 +124,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         public T GetValue<T>()
         {
-            return _getValueDelegate(_target).ConvertUnsafe<TValue, T>();
+            return _getValueDelegate(_target).ConvertFast<TValue, T>();
         }
 
         #endregion

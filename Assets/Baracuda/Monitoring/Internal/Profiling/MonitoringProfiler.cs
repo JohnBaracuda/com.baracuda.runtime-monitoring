@@ -284,10 +284,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             try
             {
+                Debug.Assert(fieldInfo.DeclaringType != null, "fieldInfo.DeclaringType != null");
+                
                 // we cannot construct an object based on a generic type definition without having a concrete
                 // subtype as a template which is the reason why we are storing this profile in a special list and 
                 // instantiate it for each subtype we find.
-                if (fieldInfo!.DeclaringType!.IsGenericType)
+                if (fieldInfo.DeclaringType.IsGenericType)
                 {
                     genericFieldBaseTypes.Add((fieldInfo, attribute, false));
                     return;
@@ -300,7 +302,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, settings);
 
                 // create a profile for the field using the the generic type and the attribute.
-                var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, fieldInfo, attribute, args);
+                var profile = (MonitorProfile) CreateInstance(genericType, fieldInfo, attribute, args);
 
                 // cache the profile
                 if (instanceProfiles.TryGetValue(fieldInfo.DeclaringType, out var profiles))
@@ -318,15 +320,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 Debug.LogException(exception);
             }
         }
-
+        
         private static void CreateInstancePropertyProfile(PropertyInfo propertyInfo, MonitorAttribute attribute)
         {
             try
             {
+                Debug.Assert(propertyInfo.DeclaringType != null, "propertyInfo.DeclaringType != null");
+                
                 // we cannot construct an object based on a generic type definition without having a concrete
                 // subtype as a template which is the reason why we are storing this profile in a special list and 
                 // instantiate it for each subtype we find.
-                if (propertyInfo!.DeclaringType!.IsGenericType)
+                if (propertyInfo.DeclaringType.IsGenericType)
                 {
                     genericPropertyBaseTypes.Add((propertyInfo, attribute, false));
                     return;
@@ -340,8 +344,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, settings);
 
                 // create a profile for the property using the the generic type and the attribute.
-                var profile =
-                    (MonitorProfile) InstanceFactory.CreateInstance(genericType, propertyInfo, attribute, args);
+                var profile = (MonitorProfile) CreateInstance(genericType, propertyInfo, attribute, args);
 
                 // cache the profile
                 if (instanceProfiles.TryGetValue(propertyInfo.DeclaringType, out var profiles))
@@ -364,10 +367,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             try
             {
+                Debug.Assert(eventInfo.DeclaringType != null, "eventInfo.DeclaringType != null");
+                
                 // we cannot construct an object based on a generic type definition without having a concrete
                 // subtype as a template which is the reason why we are storing this profile in a special list and 
                 // instantiate it for each subtype we find.
-                if (eventInfo!.DeclaringType!.IsGenericType)
+                if (eventInfo.DeclaringType.IsGenericType)
                 {
                     genericEventBaseTypes.Add((eventInfo, attribute, false));
                     return;
@@ -381,7 +386,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, settings);
 
                 // create a profile for the event. First parameter is the generic type definition.
-                var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, eventInfo, attribute, args);
+                var profile = (MonitorProfile) CreateInstance(genericType, eventInfo, attribute, args);
 
                 // cache the profile
                 if (instanceProfiles.TryGetValue(eventInfo.DeclaringType, out var profiles))
@@ -425,7 +430,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, settings);
 
                 // create a profile for the field using the the generic type and the attribute.
-                var profile = (MonitorProfile) InstanceFactory.CreateInstance(concreteGenericType, concreteFieldInfo, attribute,
+                var profile = (MonitorProfile) CreateInstance(concreteGenericType, concreteFieldInfo, attribute,
                         args);
 
                 // cache the profile
@@ -475,7 +480,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                 // create a profile for the property using the the generic type and the attribute.
                 var profile =
-                    (MonitorProfile) InstanceFactory.CreateInstance(concreteGenericType, concretePropertyInfo,
+                    (MonitorProfile) CreateInstance(concreteGenericType, concretePropertyInfo,
                         attribute, args);
 
                 // cache the profile
@@ -505,14 +510,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var concreteEventInfo = concreteSubtype.GetEventIncludeBaseTypes(eventInfo.Name, INSTANCE_FLAGS);
 
                 // create a generic type definition.
-                var concreteGenericType = typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo!.EventHandlerType);
+                var concreteGenericType = typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo.EventHandlerType);
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile =
-                    (MonitorProfile) InstanceFactory.CreateInstance(concreteGenericType, concreteEventInfo, attribute, args);
+                    (MonitorProfile) CreateInstance(concreteGenericType, concreteEventInfo, attribute, args);
 
                 // cache the profile
                 if (instanceProfiles.TryGetValue(concreteSubtype, out var profiles))
@@ -533,6 +538,16 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         #endregion
 
+        #region --- Profiling Helper ---
+        
+        private static object CreateInstance<T1, T2, T3>(Type type, T1 arg1, T2 arg2, T3 arg3)
+        {
+            var ctorArray = type.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
+            return ctorArray[0].Invoke(new object[] {arg1, arg2, arg3});
+        }
+        
+        #endregion
+        
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Static: Inspection ---
@@ -613,10 +628,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             try
             {
+                Debug.Assert(fieldInfo.DeclaringType != null, "fieldInfo.DeclaringType != null");
+                
                 // we cannot construct an object based on a generic type definition without having a concrete
                 // subtype as a template which is the reason why we are storing this profile in a special list and 
                 // instantiate it for each subtype we find.
-                if (fieldInfo!.DeclaringType!.IsGenericType)
+                if (fieldInfo.DeclaringType.IsGenericType)
                 {
                     genericFieldBaseTypes.Add((fieldInfo, attribute, true));
                     return;
@@ -629,7 +646,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var args = new MonitorProfileCtorArgs(STATIC_FLAGS, settings);
 
                 // create a profile for the field using the the generic type and the attribute.
-                var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, fieldInfo, attribute, args);
+                var profile = (MonitorProfile) CreateInstance(genericType, fieldInfo, attribute, args);
 
                 // cache the profile and create an instance of with the static profile.
                 staticProfiles.Add(profile);
@@ -646,10 +663,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             try
             {
+                Debug.Assert(propertyInfo.DeclaringType != null, "propertyInfo.DeclaringType != null");
+                
                 // we cannot construct an object based on a generic type definition without having a concrete
                 // subtype as a template which is the reason why we are storing this profile in a special list and 
                 // instantiate it for each subtype we find.
-                if (propertyInfo!.DeclaringType!.IsGenericType)
+                if (propertyInfo.DeclaringType.IsGenericType)
                 {
                     genericPropertyBaseTypes.Add((propertyInfo, attribute, true));
                     return;
@@ -662,7 +681,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var args = new MonitorProfileCtorArgs(STATIC_FLAGS, settings);
 
                 var profile =
-                    (MonitorProfile) InstanceFactory.CreateInstance(genericType, propertyInfo, attribute, args);
+                    (MonitorProfile) CreateInstance(genericType, propertyInfo, attribute, args);
                 staticProfiles.Add(profile);
             }
             catch (Exception exception)
@@ -677,10 +696,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             try
             {
+                Debug.Assert(eventInfo.DeclaringType != null, "eventInfo.DeclaringType != null");
+                
                 // we cannot construct an object based on a generic type definition without having a concrete
                 // subtype as a template which is the reason why we are storing this profile in a special list and 
                 // instantiate it for each subtype we find.
-                if (eventInfo!.DeclaringType!.IsGenericType)
+                if (eventInfo.DeclaringType.IsGenericType)
                 {
                     genericEventBaseTypes.Add((eventInfo, attribute, true));
                     return;
@@ -692,7 +713,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(STATIC_FLAGS, settings);
 
-                var profile = (MonitorProfile) InstanceFactory.CreateInstance(genericType, eventInfo, attribute, args);
+                var profile = (MonitorProfile) CreateInstance(genericType, eventInfo, attribute, args);
                 staticProfiles.Add(profile);
             }
             catch (Exception exception)
@@ -718,18 +739,23 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 // everything must be concrete when creating the generic method/ctor bellow so we have to use
                 // magic by creating a concrete type, based on a concrete subtype of a generic base type.
                 var concreteBaseType = concreteSubtype.BaseType;
-                var concreteFieldInfo = concreteBaseType!.GetField(fieldInfo.Name, STATIC_FLAGS);
+                
+                Debug.Assert(concreteBaseType != null, nameof(concreteBaseType) + " != null");
+                
+                var concreteFieldInfo = concreteBaseType.GetField(fieldInfo.Name, STATIC_FLAGS);
+                
+                Debug.Assert(concreteFieldInfo != null, nameof(concreteFieldInfo) + " != null");
 
                 // create a generic type definition.
                 var concreteGenericType =
-                    typeof(FieldProfile<,>).MakeGenericType(concreteSubtype, concreteFieldInfo!.FieldType);
+                    typeof(FieldProfile<,>).MakeGenericType(concreteSubtype, concreteFieldInfo.FieldType);
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(STATIC_FLAGS, settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile =
-                    (MonitorProfile) InstanceFactory.CreateInstance(concreteGenericType, concreteFieldInfo, attribute,
+                    (MonitorProfile) CreateInstance(concreteGenericType, concreteFieldInfo, attribute,
                         args);
 
                 // cache the profile and create an instance of with the static profile.
@@ -751,20 +777,21 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 // everything must be concrete when creating the generic method/ctor bellow so we have to use
                 // magic by creating a concrete type, based on a concrete subtype of a generic base type.
                 var concreteBaseType = concreteSubtype.BaseType;
-                var concretePropertyInfo = concreteBaseType!.GetProperty(propertyInfo.Name, STATIC_FLAGS);
+                
+                Debug.Assert(concreteBaseType != null, nameof(concreteBaseType) + " != null");
+                
+                var concretePropertyInfo = concreteBaseType.GetProperty(propertyInfo.Name, STATIC_FLAGS);
+                
+                Debug.Assert(concretePropertyInfo != null, nameof(concretePropertyInfo) + " != null");
 
                 // create a generic type definition.
-                var concreteGenericType =
-                    typeof(PropertyProfile<,>).MakeGenericType(concreteSubtype,
-                        concretePropertyInfo!.GetMethod.ReturnType);
+                var concreteGenericType = typeof(PropertyProfile<,>).MakeGenericType(concreteSubtype, concretePropertyInfo.GetMethod.ReturnType);
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(STATIC_FLAGS, settings);
 
                 // create a profile for the field using the the generic type and the attribute.
-                var profile =
-                    (MonitorProfile) InstanceFactory.CreateInstance(concreteGenericType, concretePropertyInfo,
-                        attribute, args);
+                var profile = (MonitorProfile) CreateInstance(concreteGenericType, concretePropertyInfo, attribute, args);
 
                 // cache the profile and create an instance of with the static profile.
                 staticProfiles.Add(profile);
@@ -785,20 +812,21 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 // everything must be concrete when creating the generic method/ctor bellow so we have to use
                 // magic by creating a concrete type, based on a concrete subtype of a generic base type.
                 var concreteBaseType = concreteSubtype.BaseType;
-                var concreteEventInfo = concreteBaseType!.GetEvent(eventInfo.Name, STATIC_FLAGS);
-
-
+                
+                Debug.Assert(concreteBaseType != null, nameof(concreteBaseType) + " != null");
+                
+                var concreteEventInfo = concreteBaseType.GetEvent(eventInfo.Name, STATIC_FLAGS);
+                
+                Debug.Assert(concreteEventInfo != null, nameof(concreteEventInfo) + " != null");
+                
                 // create a generic type definition.
-                var concreteGenericType =
-                    typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo!.EventHandlerType);
+                var concreteGenericType = typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo.EventHandlerType);
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(STATIC_FLAGS, settings);
 
                 // create a profile for the field using the the generic type and the attribute.
-                var profile =
-                    (MonitorProfile) InstanceFactory.CreateInstance(concreteGenericType, concreteEventInfo, attribute,
-                        args);
+                var profile = (MonitorProfile) CreateInstance(concreteGenericType, concreteEventInfo, attribute, args);
 
                 // cache the profile and create an instance of with the static profile.
                 staticProfiles.Add(profile);
@@ -870,6 +898,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         }
 
         #endregion
+        
     }
 #endif // !DISABLE_MONITORING
 }

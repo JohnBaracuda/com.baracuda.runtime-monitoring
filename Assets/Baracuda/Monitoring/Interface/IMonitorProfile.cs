@@ -53,7 +53,7 @@ namespace Baracuda.Monitoring.Interface
         /// <summary>
         /// String array that contains additional meta data & filtering options for UI.
         /// </summary>
-        public string[] Tags { get; }
+        string[] Tags { get; }
         
         /// <summary>
         /// Try to get a MonitoringMetaAttribute.

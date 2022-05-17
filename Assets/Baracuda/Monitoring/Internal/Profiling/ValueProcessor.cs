@@ -135,10 +135,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
             if (profile.UnitValueType.IsArray)
             {
                 var type = profile.UnitValueType.GetElementType();
+
+                Debug.Assert(type != null, nameof(type) + " != null");
                 
-                var genericMethod = type!.IsValueType 
-                        ? createValueTypeArrayMethod.MakeGenericMethod(type)
-                        : createReferenceTypeArrayMethod.MakeGenericMethod(type);
+                var genericMethod = type.IsValueType ? createValueTypeArrayMethod.MakeGenericMethod(type) : createReferenceTypeArrayMethod.MakeGenericMethod(type);
                 
                 return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
             }
@@ -1267,7 +1267,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                             // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
                             var func = delegateCreationMethod
                                 .Invoke(null, new object[] {processorFunc.Method, valueProfile.FormatData.Label})
-                                ?.ConvertUnsafe<object, Func<TValue, string>>();
+                                ?.ConvertFast<object, Func<TValue, string>>();
                             
                             // return the delegate if it was created successfully
                             if (func != null)
@@ -1286,7 +1286,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                             // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
                             var func = delegateCreationMethod
                                 .Invoke(null, new object[] {processorFunc.Method, valueProfile.FormatData.Label})
-                                ?.ConvertUnsafe<object, Func<TValue, string>>();
+                                ?.ConvertFast<object, Func<TValue, string>>();
                             
                             // return the delegate if it was created successfully
                             if (func != null)
@@ -1325,7 +1325,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                             // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
                             var func = delegateCreationMethod
                                 .Invoke(null, new object[] {processorFunc.Method, valueProfile.FormatData.Label})
-                                ?.ConvertUnsafe<object, Func<TValue, string>>();
+                                ?.ConvertFast<object, Func<TValue, string>>();
                             
                             // return the delegate if it was created successfully
                             if (func != null)
@@ -1356,7 +1356,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
                         var func = delegateCreationMethod
                             .Invoke(null, new object[] {processorFunc.Method, valueProfile.FormatData.Label})
-                            ?.ConvertUnsafe<object, Func<TValue, string>>();
+                            ?.ConvertFast<object, Func<TValue, string>>();
                         
                         // return the delegate if it was created successfully
                         if (func != null)

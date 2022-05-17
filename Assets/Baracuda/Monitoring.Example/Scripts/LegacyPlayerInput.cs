@@ -1,4 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang (CC BY-NC-SA 4.0)
+
+using System;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
@@ -14,6 +16,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         [SerializeField] private KeyCode primaryFireKey = KeyCode.Mouse0;
         [SerializeField] private KeyCode secondaryFireKey = KeyCode.Mouse1;
         [SerializeField] private KeyCode dashKey = KeyCode.LeftShift;
+        [SerializeField] private KeyCode toggleCursorKey = KeyCode.C;
         
         #endregion
 
@@ -34,6 +37,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         public bool SecondaryFirePressed { get; private set; }
 
         public bool DashPressed { get; private set; }
+        public event Action ToggleCursor;
 
         #endregion
         
@@ -47,6 +51,11 @@ namespace Baracuda.Monitoring.Example.Scripts
             PrimaryFirePressed = Input.GetKey(primaryFireKey);
             SecondaryFirePressed = Input.GetKey(secondaryFireKey);
             DashPressed = Input.GetKey(dashKey);
+
+            if (Input.GetKey(toggleCursorKey))
+            {
+                ToggleCursor?.Invoke();                
+            }
         }
     }
 }

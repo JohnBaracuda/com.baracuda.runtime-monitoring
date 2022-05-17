@@ -15,14 +15,19 @@ namespace Baracuda.Monitoring.Internal.Utilities
     {
         public static string AsString(this UnitType unitType)
         {
-            return unitType switch
+            switch (unitType)
             {
-                UnitType.Field => nameof(UnitType.Field),
-                UnitType.Property => nameof(UnitType.Property),
-                UnitType.Event => nameof(UnitType.Event),
-                UnitType.Method => nameof(UnitType.Method),
-                _ => throw new ArgumentOutOfRangeException(nameof(unitType), unitType, null)
-            };
+                case UnitType.Field:
+                    return nameof(UnitType.Field);
+                case UnitType.Property:
+                    return nameof(UnitType.Property);
+                case UnitType.Event:
+                    return nameof(UnitType.Event);
+                case UnitType.Method:
+                    return nameof(UnitType.Method);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(unitType), unitType, null);
+            }
         }
     }
 }

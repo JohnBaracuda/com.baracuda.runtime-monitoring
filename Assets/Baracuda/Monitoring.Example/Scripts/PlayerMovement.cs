@@ -91,6 +91,20 @@ namespace Baracuda.Monitoring.Example.Scripts
 
             _dashEnergy = dashAmount;
             _jumpsLeft = jumps;
+            
+            _input.ToggleCursor += () =>
+            {
+                if (Cursor.visible)
+                {
+                    Cursor.visible = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                }
+                else
+                {
+                    Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.None;
+                }
+            };
         }
 
 

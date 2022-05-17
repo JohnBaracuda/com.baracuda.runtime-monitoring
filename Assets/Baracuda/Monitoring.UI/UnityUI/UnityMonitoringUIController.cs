@@ -152,14 +152,19 @@ namespace Baracuda.Monitoring.UI.UnityUI
 
         private Transform GetParentForPosition(UIPosition position)
         {
-            return position switch
+            switch (position)
             {
-                UIPosition.TopLeft => upperLeftTransform,
-                UIPosition.TopRight => upperRightTransform,
-                UIPosition.BottomLeft => lowerLeftTransform,
-                UIPosition.BottomRight => lowerRightTransform,
-                _ => throw new ArgumentOutOfRangeException()
-            };
+                case UIPosition.TopLeft:
+                    return upperLeftTransform;
+                case UIPosition.TopRight:
+                    return upperRightTransform;
+                case UIPosition.BottomLeft:
+                    return lowerLeftTransform;
+                case UIPosition.BottomRight:
+                    return lowerRightTransform;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         protected override void OnUnitDisposed(IMonitorUnit unit)

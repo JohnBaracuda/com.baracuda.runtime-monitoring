@@ -17,9 +17,13 @@ namespace Baracuda.Monitoring.Internal.Utilities
         /// Converts the target to be of the specified type.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T2 ConvertUnsafe<T1, T2>(this T1 value)
+        public static T2 ConvertFast<T1, T2>(this T1 value)
         {
+#if UNITY_2020_1_OR_NEWER
             return UnsafeUtility.As<T1, T2>(ref value);
+#else
+            return (T2)(object)value;
+#endif
         }
 
         /*
@@ -29,6 +33,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasFlagUnsafe<TEnum>(this TEnum lhs, TEnum rhs) where TEnum : unmanaged, Enum
         {
+#if UNITY_2020_1_OR_NEWER
             switch (UnsafeUtility.SizeOf<TEnum>())
             {
                 case 1:
@@ -42,6 +47,9 @@ namespace Baracuda.Monitoring.Internal.Utilities
                 default:
                     throw new Exception($"Size of {typeof(TEnum).Name} does not match a known Enum backing type.");
             }
+#else
+            return lhs.HasFlag(rhs);
+#endif
         }
 
         /*
@@ -51,14 +59,13 @@ namespace Baracuda.Monitoring.Internal.Utilities
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Colorize(this string content, Color color)
         {
-            using var pooled = ConcurrentStringBuilderPool.GetDisposable();
-            var str = pooled.Value;
-            str.Append("<color=#");
-            str.Append(ColorUtility.ToHtmlStringRGBA(color));
-            str.Append('>');
-            str.Append(content);
-            str.Append("</color>");
-            return str.ToString();
+            var pooled = ConcurrentStringBuilderPool.Get();
+            pooled.Append("<color=#");
+            pooled.Append(ColorUtility.ToHtmlStringRGBA(color));
+            pooled.Append('>');
+            pooled.Append(content);
+            pooled.Append("</color>");
+            return ConcurrentStringBuilderPool.Release(pooled);
         }
 
         /*

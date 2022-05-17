@@ -45,7 +45,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
             var fontSize = formatAttribute?.FontSize ?? -1;
             var position = formatAttribute?.Position ?? UIPosition.TopLeft;
             var allowGrouping = formatAttribute?.GroupElement ?? true;
-            var group = settings.HumanizeNames? profile.UnitTargetType!.Name.Humanize() : profile.UnitTargetType!.Name;
+            var group = settings.HumanizeNames? profile.UnitTargetType.Name.Humanize() : profile.UnitTargetType.Name;
             
             if (profile.UnitTargetType.IsGenericType)
             {
@@ -62,7 +62,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
                 }
             }
             
-            format ??= settings.GetFormatStringForType(profile.UnitValueType);
+            format = format ?? settings.GetFormatStringForType(profile.UnitValueType);
 
             return new FormatData(format, showIndexer, label, fontSize, position, allowGrouping, group);
         }
