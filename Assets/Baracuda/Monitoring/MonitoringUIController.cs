@@ -1,4 +1,5 @@
-﻿using Baracuda.Monitoring.Interface;
+// Copyright (c) 2022 Jonathan Lang (CC BY-NC-SA 4.0)
+using Baracuda.Monitoring.Interface;
 
 namespace Baracuda.Monitoring
 {

@@ -1,4 +1,5 @@
-﻿namespace Baracuda.Monitoring.Internal.Utilities
+// Copyright (c) 2022 Jonathan Lang (CC BY-NC-SA 4.0)
+namespace Baracuda.Monitoring.Internal.Utilities
 {
     public enum LoggingLevel
     {

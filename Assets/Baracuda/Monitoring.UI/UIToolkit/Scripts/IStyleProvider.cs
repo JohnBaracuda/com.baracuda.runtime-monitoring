@@ -1,4 +1,5 @@
-﻿namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
+// Copyright (c) 2022 Jonathan Lang (CC BY-NC-SA 4.0)
+namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 {
     internal interface IStyleProvider
     {

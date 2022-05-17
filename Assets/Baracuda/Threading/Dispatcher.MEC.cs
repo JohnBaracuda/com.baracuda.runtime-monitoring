@@ -1,3 +1,4 @@
+// Copyright (c) 2022 Jonathan Lang (CC BY-NC-SA 4.0)
 // If you want to use the Dispatcher with More Efficient Coroutines you have to define the symbol 'EXPERIMENTAL_ENABLE_MEC',
 // create an Assembly Definition File for Mec and add it to the Dispatcher ADFs list of Assembly References.
 // Please be aware that this is a experimental feature and its implementation might drastically change in future versions.
