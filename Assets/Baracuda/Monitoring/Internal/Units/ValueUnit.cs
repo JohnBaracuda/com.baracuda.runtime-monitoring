@@ -146,7 +146,7 @@ namespace Baracuda.Monitoring.Internal.Units
 #if UNITY_2020_1_OR_NEWER
         public void SetValue<T>(T value) where T : unmanaged
         {
-            _setValueDelegate?.Invoke(_target, _isValueType ? UnsafeUtility.As<T, TValue>(ref value) : value.ConvertUnsafe<T,TValue>());
+            _setValueDelegate?.Invoke(_target, _isValueType ? UnsafeUtility.As<T, TValue>(ref value) : value.ConvertFast<T,TValue>());
             RaiseValueChanged(GetStateFormatted);
         }
 #endif
