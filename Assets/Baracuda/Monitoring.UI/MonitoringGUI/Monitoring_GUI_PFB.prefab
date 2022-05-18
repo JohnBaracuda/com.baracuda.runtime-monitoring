@@ -54,4 +54,4 @@ MonoBehaviour:
     left: 5
     right: 5
   spacing: 2
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.7058824}
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.8235294}
