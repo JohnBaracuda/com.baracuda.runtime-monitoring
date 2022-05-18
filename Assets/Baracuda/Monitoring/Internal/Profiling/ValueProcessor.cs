@@ -23,7 +23,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
     {
         #region --- Formatting ---
 
-        private const string DEFAULT_INDENT = "<pos=14>";
+        //TODO: Fix indent rich text for GUI
+        private const string DEFAULT_INDENT = "  ";//"<pos=14>";
         private const int DEFAULT_INDENT_NUM = 14;
         private const string NULL = "<color=red>NULL</color>";
 
