@@ -153,6 +153,25 @@ public class Player : MonitoredBehaviour
     [Monitor]
     private int healthPoints;
 }
+
+// Just Remember to call base.Awake and base.OnDestroy if you override these methods.
+public class Player : MonitoredBehaviour
+{
+    [Monitor]
+    private int healthPoints;
+    
+    protected override void Awake()
+    {
+        base.Awake();
+        // Your Awake code.
+    }
+    
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        // Your OnDestroy code.
+    }
+}
 ```
 
 &nbsp;
