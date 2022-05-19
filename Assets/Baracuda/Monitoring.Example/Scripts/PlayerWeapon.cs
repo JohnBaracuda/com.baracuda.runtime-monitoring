@@ -35,7 +35,7 @@ namespace Baracuda.Monitoring.Example.Scripts
          */
 
         [Monitor]
-        [Format(UIPosition.BottomLeft, FontSize = 20)]
+        [Format(UIPosition.LowerLeft, FontSize = 20)]
         [ValueProcessor(nameof(CurrentAmmunitionProcessor))]
         private int _currentAmmunition;
 

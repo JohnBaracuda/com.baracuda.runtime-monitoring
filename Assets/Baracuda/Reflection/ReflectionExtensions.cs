@@ -421,6 +421,30 @@ namespace Baracuda.Reflection
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsInt32(this Type type)
+        {
+            return type == typeof(int);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsInt64(this Type type)
+        {
+            return type == typeof(long);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsSingle(this Type type)
+        {
+            return type == typeof(float);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsDouble(this Type type)
+        {
+            return type == typeof(float);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsString(this Type type)
         {
             return type == typeof(string);

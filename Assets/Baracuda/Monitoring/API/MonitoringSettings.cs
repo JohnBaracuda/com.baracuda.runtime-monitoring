@@ -191,37 +191,6 @@ namespace Baracuda.Monitoring.API
         public const string COPYRIGHT = "© 2022 Jonathan Lang";
         
         #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Type Formatter ---
-
-        internal string GetFormatStringForType(Type type)
-        {
-            if (type.IsFloatingPoint())
-            {
-                return floatFormat;
-            }
-
-            if (type.IsVector())
-            {
-                return vectorFormat;
-            }
-
-            if (type.IsInteger())
-            {
-                return integerFormat;
-            }
-
-            if (type == typeof(Quaternion))
-            {
-                return quaternionFormat;
-            }
-
-            return null;
-        }
-
-        #endregion
         
         //--------------------------------------------------------------------------------------------------------------
         

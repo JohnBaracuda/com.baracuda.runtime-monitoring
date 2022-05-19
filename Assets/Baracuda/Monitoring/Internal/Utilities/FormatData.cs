@@ -43,7 +43,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
             var showIndexer = formatAttribute?.ShowIndexer ?? true;
             var label = formatAttribute?.Label;
             var fontSize = formatAttribute?.FontSize ?? -1;
-            var position = formatAttribute?.Position ?? UIPosition.TopLeft;
+            var position = formatAttribute?.Position ?? UIPosition.UpperLeft;
             var allowGrouping = formatAttribute?.GroupElement ?? true;
             var group = settings.HumanizeNames? profile.UnitTargetType.Name.Humanize() : profile.UnitTargetType.Name;
             
@@ -62,8 +62,6 @@ namespace Baracuda.Monitoring.Internal.Utilities
                 }
             }
             
-            format = format ?? settings.GetFormatStringForType(profile.UnitValueType);
-
             return new FormatData(format, showIndexer, label, fontSize, position, allowGrouping, group);
         }
     }

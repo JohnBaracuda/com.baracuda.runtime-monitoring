@@ -97,7 +97,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             // Transform
             if (profile.UnitValueType == typeof(Transform))
             {
-                return (Func<TValue, string>)(Delegate) CreateTransformProcessor(profile);
+                return (Func<TValue, string>)(Delegate) TransformProcessor(profile);
             }
             
             // Boolean
@@ -120,7 +120,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             // IEnumerable<bool>
             if (profile.UnitValueType.HasInterface<IEnumerable<bool>>())
             {
-                return (Func<TValue, string>) (Delegate) CreateIEnumerableBooleanProcessor(profile);
+                return (Func<TValue, string>) (Delegate) IEnumerableBooleanProcessor(profile);
             }
             
 #if !ENABLE_IL2CPP
@@ -148,103 +148,189 @@ namespace Baracuda.Monitoring.Internal.Profiling
             // IEnumerable
             if (profile.UnitValueType.IsIEnumerable(true))
             {
-                return (Func<TValue, string>) (Delegate) CreateIEnumerableProcessor(profile);
+                return (Func<TValue, string>) (Delegate) IEnumerableProcessor(profile);
             }
 
+            // Quaternion
             if (profile.UnitValueType == typeof(Quaternion))
             {
-                return (Func<TValue, string>) (Delegate) CreateQuaternionProcessor(profile);
+                return (Func<TValue, string>) (Delegate) QuaternionProcessor(profile);
             }
 
             // Vector3
             if (profile.UnitValueType == typeof(Vector3))
             {
-                return (Func<TValue, string>) (Delegate) CreateVector3Processor(profile);
+                return (Func<TValue, string>) (Delegate) Vector3Processor(profile);
             }
             
             // Vector2
             if (profile.UnitValueType == typeof(Vector2))
             {
-                return (Func<TValue, string>) (Delegate) CreateVector2Processor(profile);
+                return (Func<TValue, string>) (Delegate) Vector2Processor(profile);
             }
 
             // Color
             if (profile.UnitValueType == typeof(Color))
             {
-                return (Func<TValue, string>) (Delegate) CreateColorProcessor(profile);
+                return (Func<TValue, string>) (Delegate) ColorProcessor(profile);
             }
             
             // Color32
             if (profile.UnitValueType == typeof(Color32))
             {
-                return (Func<TValue, string>) (Delegate) CreateColor32Processor(profile);
+                return (Func<TValue, string>) (Delegate) Color32Processor(profile);
             }
 
             // Format
             if (profile.UnitValueType.HasInterface<IFormattable>() && profile.FormatData.Format != null)
             {
-                return CreateFormatProcessor<TValue>(profile);
+                return FormattedProcessor<TValue>(profile);
             }
             
             // UnityEngine.Object
             if (profile.UnitValueType.IsSubclassOrAssignable(typeof(UnityEngine.Object)))
             {
-                return (Func<TValue, string>) (Delegate) CreateUnityEngineObjectProcessor(profile);
+                return (Func<TValue, string>) (Delegate) UnityEngineObjectProcessor(profile);
+            }
+            
+            // Int32
+            if (profile.UnitValueType.IsInt32())
+            {
+                return (Func<TValue, string>) (Delegate) Int32Processor(profile);
+            }
+            
+            // Int64
+            if (profile.UnitValueType.IsInt64())
+            {
+                return (Func<TValue, string>) (Delegate) Int64Processor(profile);
+            }
+            
+            // Float
+            if (profile.UnitValueType.IsSingle())
+            {
+                return (Func<TValue, string>) (Delegate) SingleProcessor(profile);
+            }
+            
+            // Double
+            if (profile.UnitValueType.IsDouble())
+            {
+                return (Func<TValue, string>) (Delegate) DoubleProcessor(profile);
             }
 
             // Value Type
             if (profile.UnitValueType.IsValueType)
             {
-                return CreateValueProcessor<TValue>(profile);
+                return ValueTypeProcessor<TValue>(profile);
             }
             
             // Reference Type
             else
             {
-                return CreateObjectProcessor<TValue>(profile);
+                return ObjectProcessor<TValue>(profile);
             }
         }
 
-        private static Func<TValue, string> CreateObjectProcessor<TValue>(MonitorProfile profile)
+        private static Func<TValue, string> ObjectProcessor<TValue>(MonitorProfile profile)
         {
             var stringBuilder = new StringBuilder();
+            var label = profile.FormatData.Label;
             return (value) =>
             {
                 stringBuilder.Clear();
-                stringBuilder.Append(profile.FormatData.Label);
+                stringBuilder.Append(label);
                 stringBuilder.Append(": ");
                 stringBuilder.Append(value?.ToString() ?? NULL);
                 return stringBuilder.ToString();
             };
         }
         
-        private static Func<TValue, string> CreateValueProcessor<TValue>(MonitorProfile profile)
+        private static Func<TValue, string> ValueTypeProcessor<TValue>(MonitorProfile profile)
         {
             var stringBuilder = new StringBuilder();
+            var label = profile.FormatData.Label;
             return (value) =>
             {
                 stringBuilder.Clear();
-                stringBuilder.Append(profile.FormatData.Label);
+                stringBuilder.Append(label);
                 stringBuilder.Append(": ");
                 stringBuilder.Append(value);
                 return stringBuilder.ToString();
             };
         }
-
-        private static Func<TValue, string> CreateFormatProcessor<TValue>(MonitorProfile profile)
+        
+        private static Func<int, string> Int32Processor(MonitorProfile profile)
         {
             var stringBuilder = new StringBuilder();
+            var label = profile.FormatData.Label;
             return (value) =>
             {
                 stringBuilder.Clear();
-                stringBuilder.Append(profile.FormatData.Label);
+                stringBuilder.Append(label);
+                stringBuilder.Append(": ");
+                stringBuilder.Append(value);
+                return stringBuilder.ToString();
+            };
+        }
+        
+        private static Func<long, string> Int64Processor(MonitorProfile profile)
+        {
+            var stringBuilder = new StringBuilder();
+            var label = profile.FormatData.Label;
+            return (value) =>
+            {
+                stringBuilder.Clear();
+                stringBuilder.Append(label);
+                stringBuilder.Append(": ");
+                stringBuilder.Append(value);
+                return stringBuilder.ToString();
+            };
+        }
+        
+        private static Func<float, string> SingleProcessor(MonitorProfile profile)
+        {
+            var stringBuilder = new StringBuilder();
+            var label = profile.FormatData.Label;
+            return (value) =>
+            {
+                stringBuilder.Clear();
+                stringBuilder.Append(label);
+                stringBuilder.Append(": ");
+                stringBuilder.Append(value);
+                return stringBuilder.ToString();
+            };
+        }
+        
+        
+        private static Func<double, string> DoubleProcessor(MonitorProfile profile)
+        {
+            var stringBuilder = new StringBuilder();
+            var label = profile.FormatData.Label;
+            return (value) =>
+            {
+                stringBuilder.Clear();
+                stringBuilder.Append(label);
+                stringBuilder.Append(": ");
+                stringBuilder.Append(value);
+                return stringBuilder.ToString();
+            };
+        }
+        
+
+        private static Func<TValue, string> FormattedProcessor<TValue>(MonitorProfile profile)
+        {
+            var stringBuilder = new StringBuilder();
+            var label = profile.FormatData.Label;
+            return (value) =>
+            {
+                stringBuilder.Clear();
+                stringBuilder.Append(label);
                 stringBuilder.Append(": ");
                 stringBuilder.Append((value as IFormattable)?.ToString(profile.FormatData.Format, null) ?? NULL);
                 return stringBuilder.ToString();
             };
         }
         
-        private static Func<Color, string> CreateColorProcessor(MonitorProfile profile)
+        private static Func<Color, string> ColorProcessor(MonitorProfile profile)
         {
             var format = profile.FormatData.Format;
             var name = profile.FormatData.Label;
@@ -274,7 +360,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
         
-        private static Func<Color32, string> CreateColor32Processor(MonitorProfile profile)
+        private static Func<Color32, string> Color32Processor(MonitorProfile profile)
         {
             var format = profile.FormatData.Format;
             var name = profile.FormatData.Label;
@@ -304,7 +390,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
         
-        private static Func<UnityEngine.Object, string> CreateUnityEngineObjectProcessor(MonitorProfile profile)
+        private static Func<UnityEngine.Object, string> UnityEngineObjectProcessor(MonitorProfile profile)
         {
             var name = profile.FormatData.Label;
             var stringBuilder = new StringBuilder();
@@ -319,7 +405,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             };
         }
         
-        private static Func<Quaternion, string> CreateQuaternionProcessor(MonitorProfile profile)
+        private static Func<Quaternion, string> QuaternionProcessor(MonitorProfile profile)
         {
             var format = profile.FormatData.Format;
             var name = profile.FormatData.Label;
@@ -381,7 +467,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 };
         }
         
-        private static Func<Vector3, string> CreateVector3Processor(MonitorProfile profile)
+        private static Func<Vector3, string> Vector3Processor(MonitorProfile profile)
         {
             var format = profile.FormatData.Format;
             var name = profile.FormatData.Label;
@@ -437,7 +523,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
         
-        private static Func<Vector2, string> CreateVector2Processor(MonitorProfile profile)
+        private static Func<Vector2, string> Vector2Processor(MonitorProfile profile)
         {
             var format = profile.FormatData.Format;
             var label = profile.FormatData.Label;
@@ -482,7 +568,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         }
 
         
-        private static Func<IEnumerable, string> CreateIEnumerableProcessor(MonitorProfile profile)
+        private static Func<IEnumerable, string> IEnumerableProcessor(MonitorProfile profile)
         {
             var name = profile.FormatData.Label;
             var nullString = $"{name}: {NULL}";
@@ -585,9 +671,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         private static readonly MethodInfo createDictionaryProcessorMethod = typeof(ValueProcessor)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
-            .Single(methodInfo => methodInfo.Name == nameof(CreateDictionaryProcessor) && methodInfo.IsGenericMethodDefinition);
+            .Single(methodInfo => methodInfo.Name == nameof(DictionaryProcessor) && methodInfo.IsGenericMethodDefinition);
         
-        private static Func<IDictionary<TKey, TValue>, string> CreateDictionaryProcessor<TKey, TValue>(MonitorProfile profile)
+        private static Func<IDictionary<TKey, TValue>, string> DictionaryProcessor<TKey, TValue>(MonitorProfile profile)
         {
             var name = profile.FormatData.Label;
             var stringBuilder = new StringBuilder();
@@ -795,9 +881,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         private static readonly MethodInfo createReferenceTypeArrayMethod = typeof(ValueProcessor)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
-            .Single(methodInfo => methodInfo.Name == nameof(CreateReferenceTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
+            .Single(methodInfo => methodInfo.Name == nameof(ReferenceTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
         
-        private static Func<T[], string> CreateReferenceTypeArrayProcessor<T>(MonitorProfile profile)
+        private static Func<T[], string> ReferenceTypeArrayProcessor<T>(MonitorProfile profile)
         {
             var name = profile.FormatData.Label;
             var nullString = $"{name}: {NULL}";
@@ -905,9 +991,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         private static readonly MethodInfo createValueTypeArrayMethod = typeof(ValueProcessor)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
-            .Single(methodInfo => methodInfo.Name == nameof(CreateValueTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
+            .Single(methodInfo => methodInfo.Name == nameof(ValueTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
         
-        private static Func<T[], string> CreateValueTypeArrayProcessor<T>(MonitorProfile profile) where T : unmanaged
+        private static Func<T[], string> ValueTypeArrayProcessor<T>(MonitorProfile profile) where T : unmanaged
         {
             var name = profile.FormatData.Label;
             var nullString = $"{name}: {NULL}";
@@ -962,9 +1048,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         private static readonly MethodInfo createGenericIEnumerableMethod = typeof(ValueProcessor)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
-            .Single(methodInfo => methodInfo.Name == nameof(CreateGenericIEnumerableProcessor) && methodInfo.IsGenericMethodDefinition);
+            .Single(methodInfo => methodInfo.Name == nameof(GenericIEnumerableProcessor) && methodInfo.IsGenericMethodDefinition);
         
-        private static Func<IEnumerable<T>, string> CreateGenericIEnumerableProcessor<T>(MonitorProfile profile)
+        private static Func<IEnumerable<T>, string> GenericIEnumerableProcessor<T>(MonitorProfile profile)
         {
             var name = profile.FormatData.Label;
             var nullString = $"{name}: {NULL}";
@@ -1071,7 +1157,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
              }
         }
         
-        private static Func<IEnumerable<bool>, string> CreateIEnumerableBooleanProcessor(MonitorProfile profile)
+        private static Func<IEnumerable<bool>, string> IEnumerableBooleanProcessor(MonitorProfile profile)
         {
             var name = profile.FormatData.Label;
             var nullString = $"{name}: {NULL} (IEnumerable<bool>)";
@@ -1126,7 +1212,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 };
         }
         
-        private static Func<Transform, string> CreateTransformProcessor(MonitorProfile profile)
+        private static Func<Transform, string> TransformProcessor(MonitorProfile profile)
         {
             var stringBuilder = new StringBuilder();
             var name = profile.FormatData.Label;

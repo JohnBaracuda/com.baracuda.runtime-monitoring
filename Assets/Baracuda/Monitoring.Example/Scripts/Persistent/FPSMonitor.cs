@@ -31,7 +31,7 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
         
         [MonitorValue(UpdateEvent = nameof(FPSUpdated))]
         [ValueProcessor(nameof(FPSProcessor))]
-        [Format(FontSize = 32, Position = UIPosition.TopRight, GroupElement = false)]
+        [Format(FontSize = 32, Position = UIPosition.UpperRight, GroupElement = false)]
         private static float fps;
 
         [MonitorValue(Update = UpdateOptions.TickUpdate)]

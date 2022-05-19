@@ -29,6 +29,8 @@ namespace Baracuda.Monitoring.Editor
          * Serialized Properties   
          */
 
+#pragma warning disable CS0649
+#pragma warning disable CS0169
         private SerializedProperty _enableMonitoring;
         private SerializedProperty _autoInstantiateUI;
         private SerializedProperty _openDisplayOnLoad;
@@ -152,7 +154,16 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_autoInstantiateUI);
                 if (DrawUIControllerRefField(_monitoringUIController))
                 {
-                    DrawInlinedUIController();
+                    if (Application.isPlaying)
+                    {
+                        var targetObject = MonitoringUI.GetActiveUIController();
+                        DrawInlinedUIControllerPrefab(targetObject);
+                    }
+                    else
+                    {
+                        var targetObject = _monitoringUIController.objectReferenceValue;
+                        DrawInlinedUIControllerPrefab(targetObject);
+                    }
                 }
                 EditorGUILayout.Space();
             }
@@ -164,11 +175,12 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_appendSymbol);
                 EditorGUILayout.PropertyField(_humanizeNames);
                 EditorGUILayout.PropertyField(_variablePrefixes);
-                InspectorUtilities.DrawLine();
-                EditorGUILayout.PropertyField(_floatFormat);
-                EditorGUILayout.PropertyField(_integerFormat);
-                EditorGUILayout.PropertyField(_vectorFormat);
-                EditorGUILayout.PropertyField(_quaternionFormat);
+                //TODO: Add custom formatting for int, float etc.
+                // InspectorUtilities.DrawLine();
+                // EditorGUILayout.PropertyField(_floatFormat);
+                // EditorGUILayout.PropertyField(_integerFormat);
+                // EditorGUILayout.PropertyField(_vectorFormat);
+                // EditorGUILayout.PropertyField(_quaternionFormat);
                 EditorGUILayout.Space();
             }
           
@@ -306,12 +318,11 @@ namespace Baracuda.Monitoring.Editor
         }
         
         
-        private void DrawInlinedUIController()
+        private void DrawInlinedUIControllerPrefab(Object targetObject)
         {
             EditorGUILayout.Space();
             InspectorUtilities.DrawLine();
             EditorGUILayout.Space();
-            var targetObject = _monitoringUIController.objectReferenceValue;
             var editor = CreateEditor(targetObject);
             if (editor == null)
             {

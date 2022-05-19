@@ -42,7 +42,7 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// The preferred position of an individual UIElement on the canvas. 
         /// </summary>
-        public UIPosition Position { get; set; } = UIPosition.TopLeft;
+        public UIPosition Position { get; set; } = UIPosition.UpperLeft;
         
         
         public FormatAttribute(string format)
@@ -66,10 +66,19 @@ namespace Baracuda.Monitoring
 
     public enum UIPosition
     {
-        TopLeft,
-        TopRight,
-        BottomLeft,
-        BottomRight
+        UpperLeft = 0,
+        UpperRight = 1,
+        LowerLeft = 2,
+        LowerRight = 3,
+        
+        [Obsolete("Use UIPosition.UpperLeft instead!")]
+        TopLeft = 0,
+        [Obsolete("Use UIPosition.UpperRight instead!")]
+        TopRight = 1,
+        [Obsolete("Use UIPosition.LowerLeft instead!")]
+        BottomLeft = 2,
+        [Obsolete("Use UIPosition.LowerRight instead!")]
+        BottomRight = 3,
     }
 
     public static class UIPositionExtension
@@ -78,14 +87,14 @@ namespace Baracuda.Monitoring
         {
             switch (target)
             {
-                case UIPosition.TopLeft:
-                    return nameof(UIPosition.TopLeft);
-                case UIPosition.TopRight:
-                    return nameof(UIPosition.TopRight);
-                case UIPosition.BottomLeft:
-                    return nameof(UIPosition.BottomLeft);
-                case UIPosition.BottomRight:
-                    return nameof(UIPosition.BottomRight);
+                case UIPosition.UpperLeft:
+                    return nameof(UIPosition.UpperLeft);
+                case UIPosition.UpperRight:
+                    return nameof(UIPosition.UpperRight);
+                case UIPosition.LowerLeft:
+                    return nameof(UIPosition.LowerLeft);
+                case UIPosition.LowerRight:
+                    return nameof(UIPosition.LowerRight);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(target), target, null);
             }
