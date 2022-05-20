@@ -85,15 +85,15 @@ namespace Baracuda.Monitoring
     {
         public static string AsString(this UIPosition target)
         {
-            switch (target)
+            switch ((int)target)
             {
-                case UIPosition.UpperLeft:
+                case (int)UIPosition.UpperLeft:
                     return nameof(UIPosition.UpperLeft);
-                case UIPosition.UpperRight:
+                case (int)UIPosition.UpperRight:
                     return nameof(UIPosition.UpperRight);
-                case UIPosition.LowerLeft:
+                case (int)UIPosition.LowerLeft:
                     return nameof(UIPosition.LowerLeft);
-                case UIPosition.LowerRight:
+                case (int)UIPosition.LowerRight:
                     return nameof(UIPosition.LowerRight);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(target), target, null);

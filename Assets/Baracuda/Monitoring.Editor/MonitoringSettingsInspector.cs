@@ -1,9 +1,14 @@
 // Copyright (c) 2022 Jonathan Lang (CC BY-NC-SA 4.0)
+
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Utilities;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Baracuda.Monitoring.Editor
 {
@@ -17,13 +22,7 @@ namespace Baracuda.Monitoring.Editor
          */
         
         private FoldoutHandler Foldout { get; set; }
-        /*
-         * Constant Web Links   
-         */
 
-        private const string LINK_DOCUMENTATION = "https://johnbaracuda.com/monitoring.html";
-        private const string LINK_REPOSITORY = "https://github.com/johnbaracuda/Runtime-Monitoring";
-        private const string LINK_WEBSITE = "https://johnbaracuda.com/";
 
         /*
          * Serialized Properties   
@@ -80,16 +79,7 @@ namespace Baracuda.Monitoring.Editor
         {
             Foldout = new FoldoutHandler(nameof(MonitoringSettings));
             PopulateSerializedProperties();
-        }
-
-        private void OnDisable()
-        {
-            SaveState();
-        }
-
-        public void SaveState()
-        {
-            Foldout.SaveState();
+            PopulateAvailableUIController();
         }
 
         protected void PopulateSerializedProperties()
@@ -109,7 +99,7 @@ namespace Baracuda.Monitoring.Editor
                 }
             }
         }
-
+        
         private SerializedProperty FindProperty(string member)
         {
             var parsedMemberName = member.BeginsWith('_') ? member.Remove(0, 1) : member;
@@ -152,7 +142,13 @@ namespace Baracuda.Monitoring.Editor
             {
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_autoInstantiateUI);
-                if (DrawUIControllerRefField(_monitoringUIController))
+                var isNull = IsRefFieldValueNull(_monitoringUIController);
+                DrawSelectableUIController();
+                if (GUILayout.Button("Refresh"))
+                {
+                    PopulateAvailableUIController();
+                }
+                if (isNull)
                 {
                     if (Application.isPlaying)
                     {
@@ -175,12 +171,6 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_appendSymbol);
                 EditorGUILayout.PropertyField(_humanizeNames);
                 EditorGUILayout.PropertyField(_variablePrefixes);
-                //TODO: Add custom formatting for int, float etc.
-                // InspectorUtilities.DrawLine();
-                // EditorGUILayout.PropertyField(_floatFormat);
-                // EditorGUILayout.PropertyField(_integerFormat);
-                // EditorGUILayout.PropertyField(_vectorFormat);
-                // EditorGUILayout.PropertyField(_quaternionFormat);
                 EditorGUILayout.Space();
             }
           
@@ -235,11 +225,16 @@ namespace Baracuda.Monitoring.Editor
             if (Foldout["Documentation & Links"])
             {
                 EditorGUILayout.Space();
-                DrawWeblinks();
+                InspectorUtilities.DrawWeblinksWithLabel();
                 EditorGUILayout.Space();
             }
 
             serializedObject.ApplyModifiedProperties();
+
+            if (GUI.changed)
+            {
+                Foldout.SaveState();
+            }
         }
         
         public override void OnInspectorGUI()
@@ -247,36 +242,6 @@ namespace Baracuda.Monitoring.Editor
             DrawCustomInspector();
             InspectorUtilities.DrawLine(false);
             InspectorUtilities.DrawCopyrightNotice();
-        }
-
-        private static void DrawWeblinks()
-        {
-            // Documentation
-            GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Documentation", GUILayout.Width(EditorGUIUtility.labelWidth));
-            if (GUILayout.Button(LINK_DOCUMENTATION))
-            {
-                Application.OpenURL(LINK_DOCUMENTATION);
-            }
-            GUILayout.EndHorizontal();
-            
-            // Repository
-            GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Repository", GUILayout.Width(EditorGUIUtility.labelWidth));
-            if (GUILayout.Button(LINK_REPOSITORY))
-            {
-                Application.OpenURL(LINK_REPOSITORY);
-            }
-            GUILayout.EndHorizontal();
-            
-            // Website
-            GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Website", GUILayout.Width(EditorGUIUtility.labelWidth));
-            if (GUILayout.Button(LINK_WEBSITE))
-            {
-                Application.OpenURL(LINK_WEBSITE);
-            }
-            GUILayout.EndHorizontal();
         }
         
         private static void DrawGenerateAotTypesButton()
@@ -299,21 +264,14 @@ namespace Baracuda.Monitoring.Editor
 
         #region --- Misc ---
 
-        private static bool DrawUIControllerRefField(SerializedProperty property)
+        private static bool IsRefFieldValueNull(SerializedProperty property)
         {
             var isNull = property.objectReferenceValue == null;
             if (isNull)
             {
                 EditorGUILayout.HelpBox($"{property.displayName} is Required!", MessageType.Error);
             }
-
-            EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(property);
-            // if (GUILayout.Button("Select", GUILayout.Width(60)))
-            // {
-            //     // Draw custom select menu...
-            // }
-            EditorGUILayout.EndHorizontal();
             return !isNull;
         }
         
@@ -337,6 +295,53 @@ namespace Baracuda.Monitoring.Editor
             if (EditorGUI.EndChangeCheck())
             {
                 EditorUtility.SetDirty(targetObject);
+            }
+        }
+
+        #endregion
+
+        #region --- UI Controller Selection ---
+
+        private void DrawSelectableUIController()
+        {
+            if (!_availableUIController.Any())
+            {
+                return;
+            }
+            GUILayout.BeginVertical(GUI.skin.box);
+            InspectorUtilities.DrawLine(false);
+            for (var i = 0; i < _availableUIController.Count; i++)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(_availableUIController[i].name, GUILayout.Width(EditorGUIUtility.labelWidth - 7f));
+                GUILayout.Label(AssetDatabase.GetAssetPath(_availableUIController[i]));
+                if (GUILayout.Button("Set Active UIController", GUILayout.Width(175)))
+                {
+                    _monitoringUIController.objectReferenceValue = _availableUIController[i];
+                    _monitoringUIController.serializedObject.ApplyModifiedProperties();
+                }
+                GUILayout.EndHorizontal();
+            }
+            InspectorUtilities.DrawLine(false);
+            GUILayout.EndVertical();
+        }
+        
+        private readonly List<MonitoringUIController> _availableUIController = new List<MonitoringUIController>(10);
+        
+        private void PopulateAvailableUIController()
+        {
+            _availableUIController.Clear();
+            var guids = AssetDatabase.FindAssets("t:Prefab");
+            for (var i = 0; i < guids.Length; i++)
+            {
+                var guid = guids[i];
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                var gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                var controllerInterface = gameObject.GetComponent<MonitoringUIController>();
+                if (controllerInterface is MonitoringUIController controller)
+                {
+                    _availableUIController.Add(controller);
+                }
             }
         }
 

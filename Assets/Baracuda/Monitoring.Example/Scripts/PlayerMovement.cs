@@ -7,8 +7,6 @@ namespace Baracuda.Monitoring.Example.Scripts
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : MonitoredBehaviour
     {
-        [Monitor] private string[] arrayTest = new[] {"name", "sdaw  daw da wd", "WJDHIA awd ", "sdaw jaöd wkü "};
-        
         #region --- Inspector ---
 
         [Header("Movement Settings")] 

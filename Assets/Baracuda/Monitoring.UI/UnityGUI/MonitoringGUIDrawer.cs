@@ -7,7 +7,7 @@ using Baracuda.Monitoring.Interface;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.UI.MonitoringGUI
+namespace Baracuda.Monitoring.UI.UnityGUI
 {
     /// <summary>
     /// Disclaimer:
@@ -381,6 +381,7 @@ namespace Baracuda.Monitoring.UI.MonitoringGUI
         {
             OnUnitDisposedInternal(unit);
         }
+        
 
         protected override void OnUnitCreated(IMonitorUnit unit)
         {

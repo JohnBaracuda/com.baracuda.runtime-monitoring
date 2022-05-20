@@ -1,14 +1,40 @@
 // Copyright (c) 2022 Jonathan Lang (CC BY-NC-SA 4.0)
 using System;
-using System.IO;
 using Baracuda.Monitoring.API;
 using UnityEditor;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Editor
 {
-    public  class InspectorUtilities
+    public static class InspectorUtilities
     {
+        private const string LINK_DOCUMENTATION = "https://johnbaracuda.com/monitoring.html";
+        private const string LINK_REPOSITORY = "https://github.com/johnbaracuda/Runtime-Monitoring";
+        private const string LINK_WEBSITE = "https://johnbaracuda.com/";
+        private const string LINK_LICENSE = "https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE";
+        
+        private static Color TextColor => EditorGUIUtility.isProSkin? new Color(0.84f, 0.84f, 0.84f) : Color.black;
+
+        internal static GUIStyle TextStyle()
+        {
+            var style = GUI.skin.GetStyle("Box");
+            style.stretchWidth = true;
+            style.normal.textColor = TextColor;
+            style.richText = true;
+            style.alignment = TextAnchor.UpperLeft;
+            return style;
+        }
+        
+        internal static GUIStyle TitleStyle()
+        {
+            var style = GUI.skin.GetStyle("Box");
+            style.normal.textColor = TextColor;
+            style.stretchWidth = true;
+            style.richText = true;
+            style.alignment = TextAnchor.MiddleCenter;
+            return style;
+        }
+        
         internal static void DrawLine(bool spaceBefore = true)
         {
             if (spaceBefore)
@@ -50,14 +76,61 @@ namespace Baracuda.Monitoring.Editor
                 throw new InvalidCastException("FilePath Property must be a string!");
             }
         }
+        
+        public static void DrawWeblinksWithLabel()
+        {
+            // Documentation
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Documentation", GUILayout.Width(EditorGUIUtility.labelWidth));
+            if (GUILayout.Button(LINK_DOCUMENTATION))
+            {
+                Application.OpenURL(LINK_DOCUMENTATION);
+            }
+            GUILayout.EndHorizontal();
+            
+            // Repository
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Repository", GUILayout.Width(EditorGUIUtility.labelWidth));
+            if (GUILayout.Button(LINK_REPOSITORY))
+            {
+                Application.OpenURL(LINK_REPOSITORY);
+            }
+            GUILayout.EndHorizontal();
+            
+            // Website
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Website", GUILayout.Width(EditorGUIUtility.labelWidth));
+            if (GUILayout.Button(LINK_WEBSITE))
+            {
+                Application.OpenURL(LINK_WEBSITE);
+            }
+            GUILayout.EndHorizontal();
+        }
+        
+        public static void DrawWeblinks()
+        {
+            // Documentation
+            if (GUILayout.Button(new GUIContent("Documentation", LINK_DOCUMENTATION)))
+            {
+                Application.OpenURL(LINK_DOCUMENTATION);
+            }
+            
+            // Repository
+            if (GUILayout.Button(new GUIContent("GitHub Repository", LINK_REPOSITORY)))
+            {
+                Application.OpenURL(LINK_REPOSITORY);
+            }
+            
+            // Website
+            if (GUILayout.Button(new GUIContent("Website", LINK_WEBSITE)))
+            {
+                Application.OpenURL(LINK_WEBSITE);
+            }
+        }
 
         private static bool IsValidPath(string path)
         {
-            return 
-#if UNITY_2021_1_OR_NEWER
-                Path.IsPathFullyQualified(path) && 
-#endif
-                path.StartsWith(Application.dataPath);
+            return path.StartsWith(Application.dataPath);
         }
 
         public static void DrawCopyrightNotice()

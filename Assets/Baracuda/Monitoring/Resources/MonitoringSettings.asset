@@ -15,8 +15,7 @@ MonoBehaviour:
   enableMonitoring: 1
   autoInstantiateUI: 1
   openDisplayOnLoad: 1
-  monitoringUIController: {fileID: 843339411990045885, guid: a346941e8ff76a34f944fc2850d23a6e,
-    type: 3}
+  monitoringUIController: {fileID: 843339411990045885, guid: a346941e8ff76a34f944fc2850d23a6e, type: 3}
   showRuntimeMonitoringObject: 1
   showRuntimeUIController: 1
   logBadImageFormatException: 1

@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2bfa2f2462cb1c4db1b663a2903b359, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  elementSpacing: 2
   windowMargin:
     top: 5
     bot: 5
@@ -53,5 +54,5 @@ MonoBehaviour:
     bot: 0
     left: 5
     right: 5
-  spacing: 2
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8235294}
+  logStartMessage: 1
