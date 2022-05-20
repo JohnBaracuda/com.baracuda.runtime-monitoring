@@ -73,6 +73,24 @@ public event OnGameStart;
 public bool IsAlive { get; private set; }
 
 private string IsAliveProcessor(bool value) => value? "Alive" : "Dead";
+
+// Register & unregister objects with members you want to monitor.
+// This process can be simplified / automated (Take a look at Monitoring Objects)
+public class Player : MonoBehaviour
+{
+    [Monitor]
+    private int healthPoints;
+
+    private void Awake()
+    {
+        MonitoringUnitManager.RegisterTarget(this);
+    }
+
+    private void OnDestroy()
+    {
+        MonitoringUnitManager.UnregisterTarget(this);
+    }
+}
 ```
 ![basic example](https://johnbaracuda.com/media/img/monitoring/Example_03.png)
 ![event example](https://johnbaracuda.com/media/img/monitoring/Example_02.png)
