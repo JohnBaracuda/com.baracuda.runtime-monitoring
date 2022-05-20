@@ -98,10 +98,10 @@ public class Player : MonoBehaviour
 
 &nbsp;
 ## Technical Information
-+ Unity Version: <b>2021.1</b><br/>
++ Unity Version: <b>2019.4</b> (for UIToolkit <b>2020.1</b>) <br/> 
 + Scripting Backend: <b>Mono & IL2CPP</b>
 + API Compatibility: <b>.NET Standard 2.0 or .NET 4.xP</b>
-+ Asset Version: <b>1.0.2</b>
++ Asset Version: <b>1.0.7</b>
 
 
 &nbsp;
@@ -111,17 +111,17 @@ Import this asset into your project as a .unitypackage available at [Runtime-Mon
 
 Depending on your needs you may select or deselect individual modules when importing. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset based on different UI Systems.
 
- Assembly                    | Path                             | Editor           | Core  
-:-                           |:-                                |:----------------:|:----------------:         
-Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                  |:heavy_check_mark:
-Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark:|:heavy_check_mark:
-Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                  |
-Assembly-Baracuda-GUIDrawer  | Baracuda/Monitoring.UI/GUIDrawer |                  |
-Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                  |
-Assembly-Baracuda-UnityUI    | Baracuda/Monitoring.UI/UnityUI   |                  |
-Assembly-Baracuda-Pooling    | Baracuda/Pooling                 |                  |:heavy_check_mark:
-Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:
-Assembly-Baracuda-Reflection | Baracuda/Reflection              |                  |:heavy_check_mark:
+ Assembly                                | Path                               | Editor           | Core  
+:-                                       |:-                                  |:----------------:|:----------------:         
+Assembly-Baracuda-Monitoring             | Baracuda/Monitoring                |                  |:heavy_check_mark:
+Assembly-Baracuda-Editor                 | Baracuda/Monitoring.Editor         |:heavy_check_mark:|:heavy_check_mark:
+Assembly-Baracuda-Example                | Baracuda/Monitoring.Example        |                  |
+Assembly-Baracuda-Monitoring.GUI         | Baracuda/Monitoring.UI/UnityGUI    |                  |:heavy_check_mark:
+Assembly-Baracuda-Monitoring.UITookit    | Baracuda/Monitoring.UI/UIToolkit   |                  |
+Assembly-Baracuda-Monitoring.TextMeshPro | Baracuda/Monitoring.UI/TextMeshPro |                  |
+Assembly-Baracuda-Pooling                | Baracuda/Pooling                   |                  |:heavy_check_mark:
+Assembly-Baracuda-Threading              | Baracuda/Threading                 |                  |:heavy_check_mark:
+Assembly-Baracuda-Reflection             | Baracuda/Reflection                |                  |:heavy_check_mark:
 
 
 &nbsp;
@@ -131,7 +131,8 @@ Everything should work out of the box after a successful import. However, if you
 + Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
 + Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
 + If ```Enable Monitoring``` in the UI Controller foldout is set to ```false```, Make sure to call ```MonitoringUI.CreateMonitoringUI()``` from anywhere in you code. 
-+ Use the ```Monitoring UI Controller``` field in the UI Controller foldout to set the active UI Controller. The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
++ Open the setup window (menu: Tools > RuntimeMonitoring > Setup) to import optional UIController packages (recommended).
++ Use the ```Monitoring UI Controller``` field in the UI Controller foldout to set the active UI Controller. The inspector of the set UI Controller object will be inlined and can be edited from the settings window. As of version 1.0.7 available UIController in your project will be listed and can be selected by pressing their corresponding select button.
 
 
 &nbsp;
@@ -404,17 +405,17 @@ You can create a custom UI controller by follwing the steps below. You can take 
 
 Runtime Monitoring is separated into multiple assemblies / modules. Some of those modules are essential while others are not.
 
- Assembly                    | Path                             | Editor           | Core             | Note  
-:-                           |:-                                |:----------------:|:----------------:|:- 
-Assembly-Baracuda-Monitoring | Baracuda/Monitoring              |                  |:heavy_check_mark:|
-Assembly-Baracuda-Editor     | Baracuda/Monitoring.Editor       |:heavy_check_mark:|:heavy_check_mark:| 
-Assembly-Baracuda-Example    | Baracuda/Monitoring.Example      |                  |                  |
-Assembly-Baracuda-GUIDrawer  | Baracuda/Monitoring.UI/GUIDrawer |                  |                  |
-Assembly-Baracuda-UITookit   | Baracuda/Monitoring.UI/UIToolkit |                  |                  | Unity 2020.1 or newer
-Assembly-Baracuda-UnityUI    | Baracuda/Monitoring.UI/UnityUI   |                  |                  | TMP Required
-Assembly-Baracuda-Pooling    | Baracuda/Pooling                 |                  |:heavy_check_mark:| 
-Assembly-Baracuda-Threading  | Baracuda/Threading               |                  |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
-Assembly-Baracuda-Reflection | Baracuda/Reflection              |                  |:heavy_check_mark:| 
+ Assembly                                    | Path                                 | Editor           | Core             | Note  
+:-                                           |:-                                    |:----------------:|:----------------:|:- 
+Assembly-Baracuda-Monitoring                 | Baracuda/Monitoring                  |                  |:heavy_check_mark:|
+Assembly-Baracuda-Editor                     | Baracuda/Monitoring.Editor           |:heavy_check_mark:|:heavy_check_mark:| 
+Assembly-Baracuda-Example                    | Baracuda/Monitoring.Example          |                  |                  |
+Assembly-Baracuda-Monitoring.GUI             | Baracuda/Monitoring.UI/UnityGUI      |                  |:heavy_check_mark:| Default
+Assembly-Baracuda-Monitoring.UITookit        | Baracuda/Monitoring.UI/UIToolkit     |                  |                  | Unity 2020.1 or newer
+Assembly-Baracuda-Monitoring.TextMeshPro     | Baracuda/Monitoring.UI/TextMeshPro   |                  |                  | TMP Required
+Assembly-Baracuda-Pooling                    | Baracuda/Pooling                     |                  |:heavy_check_mark:| 
+Assembly-Baracuda-Threading                  | Baracuda/Threading                   |                  |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
+Assembly-Baracuda-Reflection                 | Baracuda/Reflection                  |                  |:heavy_check_mark:| 
 
 
 &nbsp;
@@ -428,8 +429,7 @@ Assembly-Baracuda-Reflection | Baracuda/Reflection              |               
 
 I would appreciate any help in completing and improving this tool and its features. Feel free to contact me if you have any feedback, suggestions or questions.
 
-+ Unity UI implementation (Currently work in progress but already has very rought implimentation)
-+ GUI implementation
++ Improved UIController based on TextMeshPro & UIToolkit
 + Filtering & Grouping (The current UI implimentation is relatively simple and won't work well for huge amounts of monitored members. I would like to address this issue by adding multiple tabs/groups as well as a simple way to filter displayed member.)
 + Method monitoring (Properties can be used as a workaround)
 + Class scoped monitoring
