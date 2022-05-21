@@ -3,7 +3,7 @@ Runtime Monitoring
 
 Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property or event and get its value or state displayed automatically in a customizable and extendable UI.
 
-There are still some aspects I would like to improve or expand (see [Planned Features](#planned-features)). The current UI implimentations (UIToolkit & Unity UI) lack some features like filtering and grouping of displayed units aka monitored members. Especially the Unity UI implimentaion is very rough  and needs more work. However, I can't afford too much time commitment due to my full-time job and other projects I'm working on. For this reason, I would appreciate any feedback and/or support.
+There are still some aspects I would like to improve or expand (see [Planned Features](#planned-features)). Especially the optional packages for supporting TextMeshPro & UIToolkit need more work and fine-tuning. However, I can't afford too much time commitment due to my full-time job and other projects I'm working on. For this reason, I would appreciate any feedback and/or support.
 
 
 &nbsp;
@@ -83,12 +83,12 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        MonitoringUnitManager.RegisterTarget(this);
+        MonitoringManager.RegisterTarget(this);
     }
 
     private void OnDestroy()
     {
-        MonitoringUnitManager.UnregisterTarget(this);
+        MonitoringManager.UnregisterTarget(this);
     }
 }
 ```
@@ -109,7 +109,7 @@ public class Player : MonoBehaviour
 
 Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. 
 
-Depending on your needs you may select or deselect individual modules when importing. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset based on different UI Systems.
+Depending on your needs you may select or deselect individual modules when importing. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset based on different UI Systems. Some packages can be imported retroactively using the setup window or by just importing their included packages located at Baracuda/Monitoring.UI
 
  Assembly                                | Path                               | Editor           | Core  
 :-                                       |:-                                  |:----------------:|:----------------:         
@@ -153,14 +153,14 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        MonitoringUnitManager.RegisterTarget(this);
+        MonitoringManager.RegisterTarget(this);
         // Or use the extension method:
         this.RegisterMonitor();
     }
 
     private void OnDestroy()
     {
-        MonitoringUnitManager.UnregisterTarget(this);
+        MonitoringManager.UnregisterTarget(this);
         // Or use the extension method:
         this.UnregisterMonitor();
     }
@@ -405,17 +405,17 @@ You can create a custom UI controller by follwing the steps below. You can take 
 
 Runtime Monitoring is separated into multiple assemblies / modules. Some of those modules are essential while others are not.
 
- Assembly                                    | Path                                 | Editor           | Core             | Note  
-:-                                           |:-                                    |:----------------:|:----------------:|:- 
-Assembly-Baracuda-Monitoring                 | Baracuda/Monitoring                  |                  |:heavy_check_mark:|
-Assembly-Baracuda-Editor                     | Baracuda/Monitoring.Editor           |:heavy_check_mark:|:heavy_check_mark:| 
-Assembly-Baracuda-Example                    | Baracuda/Monitoring.Example          |                  |                  |
-Assembly-Baracuda-Monitoring.GUI             | Baracuda/Monitoring.UI/UnityGUI      |                  |:heavy_check_mark:| Default
-Assembly-Baracuda-Monitoring.UITookit        | Baracuda/Monitoring.UI/UIToolkit     |                  |                  | Unity 2020.1 or newer
-Assembly-Baracuda-Monitoring.TextMeshPro     | Baracuda/Monitoring.UI/TextMeshPro   |                  |                  | TMP Required
-Assembly-Baracuda-Pooling                    | Baracuda/Pooling                     |                  |:heavy_check_mark:| 
-Assembly-Baracuda-Threading                  | Baracuda/Threading                   |                  |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
-Assembly-Baracuda-Reflection                 | Baracuda/Reflection                  |                  |:heavy_check_mark:| 
+ Assembly                                    | Path                                 | Core             | Note  
+:-                                           |:-                                    |:----------------:|:- 
+Assembly-Baracuda-Monitoring                 | Baracuda/Monitoring                  |:heavy_check_mark:|
+Assembly-Baracuda-Editor                     | Baracuda/Monitoring.Editor           |:heavy_check_mark:| Editor
+Assembly-Baracuda-Example                    | Baracuda/Monitoring.Example          |                  | 
+Assembly-Baracuda-Monitoring.GUI             | Baracuda/Monitoring.UI/UnityGUI      |:heavy_check_mark:| Default UI
+Assembly-Baracuda-Monitoring.UITookit        | Baracuda/Monitoring.UI/UIToolkit     |                  | Unity 2020.1 or newer
+Assembly-Baracuda-Monitoring.TextMeshPro     | Baracuda/Monitoring.UI/TextMeshPro   |                  | TMP Required
+Assembly-Baracuda-Pooling                    | Baracuda/Pooling                     |:heavy_check_mark:| 
+Assembly-Baracuda-Threading                  | Baracuda/Threading                   |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
+Assembly-Baracuda-Reflection                 | Baracuda/Reflection                  |:heavy_check_mark:| 
 
 
 &nbsp;
@@ -429,7 +429,7 @@ Assembly-Baracuda-Reflection                 | Baracuda/Reflection              
 
 I would appreciate any help in completing and improving this tool and its features. Feel free to contact me if you have any feedback, suggestions or questions.
 
-+ Improved UIController based on TextMeshPro & UIToolkit
++ Improved UIController for TextMeshPro & UIToolkit
 + Filtering & Grouping (The current UI implimentation is relatively simple and won't work well for huge amounts of monitored members. I would like to address this issue by adding multiple tabs/groups as well as a simple way to filter displayed member.)
 + Method monitoring (Properties can be used as a workaround)
 + Class scoped monitoring

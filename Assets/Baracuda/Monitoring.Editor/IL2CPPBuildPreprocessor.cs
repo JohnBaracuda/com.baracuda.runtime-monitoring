@@ -215,6 +215,7 @@ namespace Baracuda.Monitoring.Editor
                                                      "Cancelling build process!");
             }
 
+            AssetDatabase.Refresh();
             Debug.Log("Successfully Completed IL2CPP AOT Type Definition Generation");
         }
 
