@@ -7,6 +7,7 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
 {
     public class FPSMonitor : MonitoredSingleton<FPSMonitor>
     {
+#pragma warning disable
         /*
          *  Fields   
          */
@@ -32,13 +33,17 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
         [MonitorValue(UpdateEvent = nameof(FPSUpdated))]
         [ValueProcessor(nameof(FPSProcessor))]
         [Format(FontSize = 32, Position = UIPosition.UpperRight, GroupElement = false)]
-        private static float fps;
+        private float _fps;
 
-        [MonitorValue(Update = UpdateOptions.TickUpdate)]
-        private static long totalFrameCount = 0;
+#if FPS_MONITOR_TOTAL
+        //[MonitorValue(Update = UpdateOptions.TickUpdate)]
+#endif
+        private long _totalFrameCount = 0;
         
-        [MonitorValue(Update = UpdateOptions.TickUpdate)]
-        private static long fixedUpdateCount = 0;
+#if FPS_MONITOR_TOTAL_FIXED
+        //[MonitorValue(Update = UpdateOptions.TickUpdate)]
+#endif
+        private long _fixedUpdateCount = 0;
 
         /*
          *  Events   
@@ -47,6 +52,14 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
         public static event Action<float> FPSUpdated;
         
         //--------------------------------------------------------------------------------------------------------------
+        
+#if FPS_MONITOR_FORCE
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void InitializeOnLoad()
+        {
+            Promise();
+        }
+#endif
         
         public static string FPSProcessor(float value)
         {
@@ -57,22 +70,11 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
             stringBuilder.Append("</color>]");
             return stringBuilder.ToString();
         }
-
-        private void Start()
-        {
-            gameObject.hideFlags |= HideFlags.HideInHierarchy;
-        }
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void InitializeOnLoad()
-        {
-            Promise();
-        }
         
         private void Update()
         {
             frameCount++;
-            totalFrameCount++;
+            _totalFrameCount++;
             timer += Time.deltaTime / Time.timeScale;
 
             if (timer < MEASURE_PERIOD)
@@ -84,8 +86,8 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
 
             if (Math.Abs(lastMeasuredFps - lastFPS) > .1f)
             {
-                fps = lastMeasuredFps;
-                FPSUpdated?.Invoke(fps);
+                _fps = lastMeasuredFps;
+                FPSUpdated?.Invoke(_fps);
             }
                 
 
@@ -98,11 +100,32 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
 
         private void FixedUpdate()
         {
-            fixedUpdateCount++;
+            _fixedUpdateCount++;
         }
 
-        /*
-         *  Setup   
-         */
+        #region --- Vsync ---
+
+        [Monitor] 
+        [Format(FontSize = 16, Position = UIPosition.UpperRight, GroupElement = false)]
+        [ValueProcessor(nameof(ProcessorTargetFrameRate))]
+        private int TargetFrameRate => Application.targetFrameRate;
+
+        private static string ProcessorTargetFrameRate(int value)
+        {
+            return $"Target Framerate: {(value > 0 ? value.ToString() : "Unlimited")}";
+        }
+        
+        [Monitor] 
+        [Format(FontSize = 16, Position = UIPosition.UpperRight, GroupElement = false)]
+        [ValueProcessor(nameof(ProcessorVsync))]
+        private int Vsync => QualitySettings.vSyncCount;
+
+        private static string ProcessorVsync(int value)
+        {
+            return $"Vsync: {(value > 0 ? $"Vsync Count: {value}" : "Disabled")}";
+        }
+        
+        #endregion        
+        
     }
 }
