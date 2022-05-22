@@ -366,7 +366,7 @@ In order to use IL2CPP as a runtime some features are disabled or reduced and so
 
 Use the ```MonitoringUI``` API to toggle the visiblity or active state of the current monitoring UI overlay. ```MonitoringUI``` is an accesspoint and the bridge between custom code and the active ```MonitoringUIController```. This is to offer a layer of abstraction that enables you to switch between multiple either prefabricated or custom UI implimentations / UI Controller.
 
-I want to add existing UI controllers for UIToolkit, UnityUI and GUI systems. However, due to time constraints, it would still take some time until I have good solutions. If you are interested in creating such a system and sharing it, please feel free to contact me. I would appreciate any help in completing and improving this tool and its features.
+Note! Not every existing UI controllers (UIToolkit, TextMeshPro and GUI) includes every feature. I would recommend unsing the UIToolkit UI solution if possible.
 
 ```c#
 using Baracuda.Monitoring.API;
@@ -434,9 +434,9 @@ I would appreciate any help in completing and improving this tool and its featur
 + Method monitoring (Properties can be used as a workaround)
 + Class scoped monitoring
 + Class / object monitoring (Properties returning ToString() can be used as a workaround)
-+ Improved IL2CPP support / AOT generation
-+ Full Compatibility with 2020.3 (LTS)
-+ Add the option for synchronous profiling. (Especially to make the tool compatible for platforms without multithreading support)
++ Improved IL2CPP support / AOT generation.
++ Support WebGL.
++ Add the option for synchronous profiling.
 + Custom update / evaluation loops or more control over the ```Tick``` loop.
 
 
