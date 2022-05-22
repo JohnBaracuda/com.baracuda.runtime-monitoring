@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang (CC BY-NC-SA 4.0)
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Profiling;
@@ -27,6 +28,9 @@ namespace Baracuda.Monitoring.Internal.Units
         private readonly Func<TTarget, TValue> _getValueDelegate;       
         private readonly Action<TTarget, TValue> _setValueDelegate;
         private readonly bool _isValueType;
+
+        private readonly EqualityComparer<TValue> _comparer = EqualityComparer<TValue>.Default;
+        private TValue _lastValue = default;
 
         #endregion
         
@@ -82,7 +86,14 @@ namespace Baracuda.Monitoring.Internal.Units
 
         public override void Refresh()
         {
-            RaiseValueChanged(GetStateFormatted);
+            var current = GetValue();
+            
+            if (!_comparer.Equals(current, _lastValue))
+            {
+                RaiseValueChanged(GetStateFormatted);
+            }
+
+            _lastValue = current;
         }
 
         #endregion
@@ -121,10 +132,16 @@ namespace Baracuda.Monitoring.Internal.Units
 #endif
         }
         
-        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T GetValue<T>()
         {
             return _getValueDelegate(_target).ConvertFast<TValue, T>();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public TValue GetValue()
+        {
+            return _getValueDelegate(_target);
         }
 
         #endregion

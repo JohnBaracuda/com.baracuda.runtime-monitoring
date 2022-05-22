@@ -51,11 +51,17 @@ namespace Baracuda.Monitoring.Internal.Units
         /// </summary>
         public abstract IMonitorProfile Profile { get; }
         
+        /// <summary>
+        /// Unique ID
+        /// </summary>
+        public int ID { get; }
+
         #endregion
 
         #region --- Fields ---
 
         protected const string NULL = "<color=red>NULL</color>";
+        private static int id;
 
         #endregion
         
@@ -112,6 +118,7 @@ namespace Baracuda.Monitoring.Internal.Units
             Name = (target is UnityEngine.Object unityObject)
                 ? unityObject.name
                 : profile.UnitTargetType.Name;
+            ID = id++;
         }
 
         #endregion

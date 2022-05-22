@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
+using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
@@ -32,10 +34,10 @@ namespace Baracuda.Monitoring.UI.UnityGUI
 
         #region --- Fields, Properties & Nested Types ---
         
-        private readonly List<IMonitorUnit> _unitsUpperLeft = new List<IMonitorUnit>(100);
-        private readonly List<IMonitorUnit> _unitsUpperRight = new List<IMonitorUnit>(100);
-        private readonly List<IMonitorUnit> _unitsLowerLeft = new List<IMonitorUnit>(100);
-        private readonly List<IMonitorUnit> _unitsLowerRight = new List<IMonitorUnit>(100);
+        private readonly List<GUIElement> _unitsUpperLeft = new List<GUIElement>(100);
+        private readonly List<GUIElement> _unitsUpperRight = new List<GUIElement>(100);
+        private readonly List<GUIElement> _unitsLowerLeft = new List<GUIElement>(100);
+        private readonly List<GUIElement> _unitsLowerRight = new List<GUIElement>(100);
 
         private readonly GUIContent _content = new GUIContent();
         private Texture2D _backgroundTexture;
@@ -54,6 +56,35 @@ namespace Baracuda.Monitoring.UI.UnityGUI
             public float right;
         }
         
+        private class GUIElement
+        {
+            public int ID { get; }
+            public string Content { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; private set; }
+            public FormatData FormatData { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
+            
+            private readonly int _size;
+            
+            public GUIElement(IMonitorUnit unit)
+            {
+                unit.ValueUpdated += Update;
+                FormatData = unit.Profile.FormatData;
+                Content = unit.GetStateFormatted;
+                ID = unit.ID;
+                _size = Mathf.Max(FormatData.FontSize, 14);
+            }
+
+            private void Update(string text)
+            {
+                var sb = StringBuilderPool.Get();
+                sb.Append("<size=");
+                sb.Append(_size);
+                sb.Append('>');
+                sb.Append(text);
+                sb.Append("</size>");
+                Content = StringBuilderPool.Release(sb);
+            }
+        }
+
         private readonly ref struct ScreenData
         {
             public readonly float width;
@@ -132,9 +163,8 @@ namespace Baracuda.Monitoring.UI.UnityGUI
             
             for (var i = 0; i < _unitsUpperLeft.Count; i++)
             {
-                var unit = _unitsUpperLeft[i];
-                var formatData = unit.Profile.FormatData;
-                var displayString = WithFontSize(unit.GetStateFormatted, formatData.FontSize);
+                var guiElement = _unitsUpperLeft[i];
+                var displayString = guiElement.Content;
                 _content.text = displayString;
                 
                 var textRect = new Rect();
@@ -183,9 +213,8 @@ namespace Baracuda.Monitoring.UI.UnityGUI
             
             for (var i = _unitsLowerLeft.Count - 1; i >= 0; i--)
             {
-                var unit = _unitsLowerLeft[i];
-                var formatData = unit.Profile.FormatData;
-                var displayString = WithFontSize(unit.GetStateFormatted, formatData.FontSize);
+                var guiElement = _unitsLowerLeft[i];
+                var displayString = guiElement.Content;
                 _content.text = displayString;
                 
                 var textRect = new Rect();
@@ -252,9 +281,8 @@ namespace Baracuda.Monitoring.UI.UnityGUI
             
             for (var i = 0; i < _unitsUpperRight.Count; i++)
             {
-                var unit = _unitsUpperRight[i];
-                var formatData = unit.Profile.FormatData;
-                var displayString = WithFontSize(unit.GetStateFormatted, formatData.FontSize);
+                var guiElement = _unitsUpperRight[i];
+                var displayString = guiElement.Content;
                 _content.text = displayString;
 
                 var textRect = new Rect();
@@ -304,9 +332,8 @@ namespace Baracuda.Monitoring.UI.UnityGUI
             
             for (var i = _unitsLowerRight.Count - 1; i >= 0; i--)
             {
-                var unit = _unitsLowerRight[i];
-                var formatData = unit.Profile.FormatData;
-                var displayString = WithFontSize(unit.GetStateFormatted, formatData.FontSize);
+                var guiElement = _unitsLowerRight[i];
+                var displayString = guiElement.Content;
                 _content.text = displayString;
                 
                 var textRect = new Rect();
@@ -398,16 +425,16 @@ namespace Baracuda.Monitoring.UI.UnityGUI
             switch (unit.Profile.FormatData.Position)
             {
                 case UIPosition.UpperLeft:
-                    _unitsUpperLeft.Add(unit);
+                    _unitsUpperLeft.Add(new GUIElement(unit));
                     break;
                 case UIPosition.UpperRight:
-                    _unitsUpperRight.Add(unit);
+                    _unitsUpperRight.Add(new GUIElement(unit));
                     break;
                 case UIPosition.LowerLeft:
-                    _unitsLowerLeft.Add(unit);
+                    _unitsLowerLeft.Add(new GUIElement(unit));
                     break;
                 case UIPosition.LowerRight:
-                    _unitsLowerRight.Add(unit);
+                    _unitsLowerRight.Add(new GUIElement(unit));
                     break;
             }
         }
@@ -418,39 +445,20 @@ namespace Baracuda.Monitoring.UI.UnityGUI
             switch (unit.Profile.FormatData.Position)
             {
                 case UIPosition.UpperLeft:
-                    _unitsUpperLeft.Remove(unit);
+                    _unitsUpperLeft.Remove(_unitsUpperLeft.First(element => element.ID == unit.ID));
                     break;
                 case UIPosition.UpperRight:
-                    _unitsUpperRight.Remove(unit);
+                    _unitsUpperRight.Remove(_unitsUpperRight.First(element => element.ID == unit.ID));
                     break;
                 case UIPosition.LowerLeft:
-                    _unitsLowerLeft.Remove(unit);
+                    _unitsLowerLeft.Remove(_unitsLowerLeft.First(element => element.ID == unit.ID));
                     break;
                 case UIPosition.LowerRight:
-                    _unitsLowerRight.Remove(unit);
+                    _unitsLowerRight.Remove(_unitsLowerRight.First(element => element.ID == unit.ID));
                     break;
             }
         }
         
-        #endregion
-        
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Misc ---
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static string WithFontSize(string str, int size)
-        {
-            size = Mathf.Max(size, 14);
-            var sb = StringBuilderPool.Get();
-            sb.Append("<size=");
-            sb.Append(size);
-            sb.Append('>');
-            sb.Append(str);
-            sb.Append("</size>");
-            return StringBuilderPool.Release(sb);
-        }
-
         #endregion
     }
 }

@@ -11,6 +11,7 @@ using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Pooling.Concretions;
 using Baracuda.Reflection;
 using Baracuda.Threading;
+using UnityEngine;
 
 namespace Baracuda.Monitoring.API
 {
@@ -128,6 +129,11 @@ namespace Baracuda.Monitoring.API
         private static volatile bool isInitialized = false;
         private static ProfilingCompletedListener profilingCompleted;
         
+                
+#if DEBUG
+        private static readonly HashSet<object> registeredObjects = new HashSet<object>();
+#endif
+        
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
@@ -163,6 +169,18 @@ namespace Baracuda.Monitoring.API
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void RegisterTargetInternal(object target)
         {
+#if DEBUG
+            if (registeredObjects.Contains(target))
+            {
+                Debug.LogWarning($"{target} is already registered as a <b>Monitoring Target</b>!" +
+                                 $"\nEnsure to not call <b>{nameof(MonitoringManager)}.{nameof(RegisterTarget)}</b> " +
+                                 $"multiple times and don't make calls to " +
+                                 $"<b>{nameof(MonitoringManager)}.{nameof(RegisterTarget)}</b> in classes inheriting from " +
+                                 $"<b>{nameof(MonitoredBehaviour)}</b>, <b>{nameof(MonitoredObject)}</b> or similar!");
+                return;
+            }
+            registeredObjects.Add(target);
+#endif
             registeredTargets.Add(target);
             if (initialInstanceUnitsCreated)
             {
@@ -173,6 +191,14 @@ namespace Baracuda.Monitoring.API
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void UnregisterTargetInternal(object target)
         {
+#if DEBUG
+            if (!registeredObjects.Contains(target))
+            {
+                Debug.LogWarning($"{target} is not registered! Ensure to not call {nameof(UnregisterTargetInternal)} multiple times!");
+                return;
+            }
+            registeredObjects.Remove(target);
+#endif
             DestroyInstanceUnits(target);
             registeredTargets.Remove(target);
         }

@@ -36,12 +36,12 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
         private float _fps;
 
 #if FPS_MONITOR_TOTAL
-        //[MonitorValue(Update = UpdateOptions.TickUpdate)]
+        [MonitorValue(Update = UpdateOptions.TickUpdate)]
 #endif
         private long _totalFrameCount = 0;
         
 #if FPS_MONITOR_TOTAL_FIXED
-        //[MonitorValue(Update = UpdateOptions.TickUpdate)]
+        [MonitorValue(Update = UpdateOptions.TickUpdate)]
 #endif
         private long _fixedUpdateCount = 0;
 

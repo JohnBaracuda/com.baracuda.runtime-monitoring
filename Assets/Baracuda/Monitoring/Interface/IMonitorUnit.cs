@@ -47,5 +47,10 @@ namespace Baracuda.Monitoring.Interface
         /// Event is invoked when the unit is being disposed.
         /// </summary>
         event Action Disposing;
+        
+        /// <summary>
+        /// Unique Id
+        /// </summary>
+        int ID { get; }
     }
 }
