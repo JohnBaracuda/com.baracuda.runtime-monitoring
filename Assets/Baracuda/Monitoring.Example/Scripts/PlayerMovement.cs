@@ -45,6 +45,8 @@ namespace Baracuda.Monitoring.Example.Scripts
         private Transform _transform;
         private Camera _camera;
         private IPlayerInput _input;
+        private Vector3 _spawnPosition;
+        private Quaternion _spawnRotation;
         
         // Input
         private Vector2 _processedInputDir;
@@ -113,6 +115,9 @@ namespace Baracuda.Monitoring.Example.Scripts
             yield return null;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            var self = transform;
+            _spawnPosition = self.position;
+            _spawnRotation = self.rotation;
         }
 
         #endregion
@@ -134,8 +139,8 @@ namespace Baracuda.Monitoring.Example.Scripts
         {
             if (_transform.position.y <= killHeight)
             {
-                _transform.position = Vector3.zero;
-                _transform.rotation = Quaternion.identity;
+                _transform.position = _spawnPosition;
+                _transform.rotation = _spawnRotation;
                 _camera.transform.localRotation = Quaternion.identity;
                 _rotationX = 0;
             }
