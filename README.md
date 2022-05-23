@@ -23,6 +23,7 @@ There are still some aspects I would like to improve or expand (see [Planned Fea
 - [Assemblies / Modules](#assemblies-and-modules)
 - [Miscellaneous](#miscellaneous)
 - [Planned Features](#planned-features)
+- [Support Me ❤️](#support-me)
 - [Licence](#licence)
 
 
@@ -441,6 +442,17 @@ I would appreciate any help in completing and improving this tool and its featur
 
 
 &nbsp;
+## Support Me
+
+I spend a lot of time working on this and other free assets to make sure as many people as possible can use my tools regardless of their financial status. Any kind of support I get helps me keep doing this, so consider leaving a star ⭐ making a donation or follow me on my socials to support me ❤️
+
++ [Donation (PayPal.me)](https://www.paypal.com/paypalme/johnbaracuda)
++ [Linktree](https://linktr.ee/JohnBaracuda)
++ [Twitter](https://twitter.com/JohnBaracuda)
++ [Itch](https://johnbaracuda.itch.io/)
+
+
+&nbsp;
 ## Licence
 
-[Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) so do what you want as long as you don't just sell my work but consider giving a star ⭐ or a [Donation (PayPal.me)](https://www.paypal.com/paypalme/johnbaracuda) to support me ❤️
+[Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) TLDR: You can use this tool for anything you want, including commercial products, as long as you're not just selling my work or using it for some other morally questionable or condemnable act.
