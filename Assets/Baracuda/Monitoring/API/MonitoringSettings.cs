@@ -13,13 +13,15 @@ namespace Baracuda.Monitoring.API
         /*
          * General   
          */
+        
 #pragma warning disable CS0414
         [SerializeField] private bool enableMonitoring = true;
 
         [Tooltip("When enabled, monitoring UI is instantiated as soon as profiling has completed. " +
                  "Otherwise MonitoringUI.CreateMonitoringUI() must be called manually.")]
         [SerializeField] private bool autoInstantiateUI = false;
-        
+        [Tooltip("When enabled, initial profiling will be processed asynchronous on a background thread. (Disabled for WebGL)")]
+        [SerializeField] private bool asyncProfiling = true;
         
         [Tooltip("When enabled, the monitoring display will be opened as soon as profiling has completed.")]
         [SerializeField] private bool openDisplayOnLoad = true;
@@ -130,7 +132,19 @@ namespace Baracuda.Monitoring.API
 #else
             false;
 #endif
+        public bool AsyncProfiling =>
+#if !UNITY_WEBGL
+            asyncProfiling;
+#else
+            false;
+#endif
+        
         public bool AutoInstantiateUI => autoInstantiateUI;
+        
+        /*
+         * UI Controller   
+         */
+        
         public MonitoringUIController UIControllerUIController => monitoringUIController;
         public bool OpenDisplayOnLoad => openDisplayOnLoad;
         public bool ShowRuntimeMonitoringObject => showRuntimeMonitoringObject;

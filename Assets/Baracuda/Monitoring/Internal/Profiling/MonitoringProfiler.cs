@@ -63,9 +63,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
         private static void InitializeRuntimeReflection()
         {
             settings = MonitoringSettings.GetInstance();
+            ExceptionLogging.Initialize(settings);
+            ValueProcessorFactory.Initialize(settings);
 
-            Task.Run(() => InitializeProfilingAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
-            //InitializeProfiling(CancellationToken.None);
+            if (settings.AsyncProfiling)
+            {
+                Task.Run(() => InitializeProfilingAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
+            }
+            else
+            {
+                InitializeProfiling(CancellationToken.None);
+            }
         }
 
         

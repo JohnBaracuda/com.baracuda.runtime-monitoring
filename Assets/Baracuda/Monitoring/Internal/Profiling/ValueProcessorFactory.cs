@@ -12,7 +12,6 @@ using Baracuda.Monitoring.Internal.Exceptions;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
-using Baracuda.Threading;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
@@ -27,16 +26,34 @@ namespace Baracuda.Monitoring.Internal.Profiling
         private const string DEFAULT_INDENT = "  ";
         private const int DEFAULT_INDENT_NUM = 2;
         private const string NULL = "<color=red>NULL</color>";
-
-        private static readonly MonitoringSettings settings = Dispatcher.InvokeAsync(MonitoringSettings.GetInstance).Result;
         
-        private static readonly string xColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.XColor)}>";
-        private static readonly string yColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.YColor)}>";
-        private static readonly string zColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.ZColor)}>";
-        private static readonly string wColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.WColor)}>";
+        private static string xColor;
+        private static string yColor;
+        private static string zColor;
+        private static string wColor;
+
+        private static string trueColored;
+        private static string falseColored;
         
         #endregion
                 
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Setup ---
+
+        internal static void Initialize(MonitoringSettings settings)
+        {
+            xColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.XColor)}>";
+            yColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.YColor)}>";
+            zColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.ZColor)}>";
+            wColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.WColor)}>";
+
+            trueColored = "TRUE".Colorize(settings.TrueColor);
+            falseColored = "FALSE".Colorize(settings.FalseColor);
+        }
+        
+        #endregion
+        
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Reflection Fields ---
@@ -1330,9 +1347,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         private static Func<bool, string> CreateBooleanProcessor(MonitorProfile profile)
         {
-            var tureString  =  $"{profile.FormatData.Label}: {"TRUE".Colorize(settings.TrueColor)}";
-            var falseString =  $"{profile.FormatData.Label}: {"FALSE".Colorize(settings.FalseColor)}";
-            return (value) => value ? tureString : falseString;
+            var trueString  =  $"{profile.FormatData.Label}: {trueColored}";
+            var falseString =  $"{profile.FormatData.Label}: {falseColored}";
+            return (value) => value ? trueString : falseString;
         }
 
         #endregion

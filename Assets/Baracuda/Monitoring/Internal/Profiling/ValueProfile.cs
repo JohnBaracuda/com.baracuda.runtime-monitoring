@@ -73,9 +73,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
             // Value Processor
             var processorName = memberInfo.GetCustomAttribute<ValueProcessorAttribute>()?.Processor;
 
-            // TODO: This is causing a crash when called synchronous
-            _instanceValueProcessorDelegate = ValueProcessorFactory.FindCustomInstanceProcessor(processorName, this);
-            _staticValueProcessorDelegate = ValueProcessorFactory.FindCustomStaticProcessor(processorName, this);
+            if (processorName != null)
+            {
+                _instanceValueProcessorDelegate = ValueProcessorFactory.FindCustomInstanceProcessor(processorName, this);
+                _staticValueProcessorDelegate = ValueProcessorFactory.FindCustomStaticProcessor(processorName, this);
+            }
             if (_staticValueProcessorDelegate == null && _instanceValueProcessorDelegate == null)
             {
                 _fallbackValueProcessorDelegate = ValueProcessorFactory.CreateTypeSpecificProcessor<TValue>(this);

@@ -634,13 +634,14 @@ namespace Baracuda.Reflection
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic, bool includeSelf)
+        public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic, bool includeSelf, int maxDepth = 7)
         {
             if (!includeSelf && toCheck == generic)
             {
                 return false;
             }
 
+            var index = 0;
             while (toCheck != null && toCheck != typeof(object))
             {
                 var current = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
@@ -650,6 +651,10 @@ namespace Baracuda.Reflection
                 }
 
                 toCheck = toCheck.BaseType;
+                if (index++ > maxDepth)
+                {
+                    return false;
+                }
             }
 
             return false;

@@ -115,8 +115,8 @@ namespace Baracuda.Monitoring.UI.UnityGUI
         
 #if UNITY_EDITOR
         private readonly string _warningMessage =
-            "Using the GUI MonitoringUIController may cause serious performance overhead! " +
-            "It is recommended to use either the TextMeshPro or UIToolkit based Controller instead! " +
+            "Using the GUI MonitoringUIController may cause performance overhead! " +
+            "It is recommended to use the TextMeshPro or UIToolkit based Controller instead! " +
             "\nYou can disable this message from the settings window: <b>Tools > RuntimeMonitoring > Settings: UI Controller > Log Start Message</b>";
 #endif 
         

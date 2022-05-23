@@ -33,7 +33,7 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _enableMonitoring;
         private SerializedProperty _autoInstantiateUI;
         private SerializedProperty _openDisplayOnLoad;
-        private SerializedProperty _forceSynchronousLoad;
+        private SerializedProperty _asyncProfiling;
         private SerializedProperty _monitoringUIController;
         
         private SerializedProperty _showRuntimeMonitoringObject; 
@@ -126,14 +126,8 @@ namespace Baracuda.Monitoring.Editor
             if (Foldout["General"])
             {
                 EditorGUILayout.Space();
-#if DISABLE_MONITORING
-                EditorGUILayout.HelpBox("The symbol 'DISABLE_MONITORING' is active!", MessageType.Info);
-                GUI.enabled = false;
-                EditorGUILayout.PropertyField(_enableMonitoring);
-                GUI.enabled = true;
-#else
-                EditorGUILayout.PropertyField(_enableMonitoring);
-                #endif
+                DrawEnableMonitoring();
+                DrawAsyncProfiling();
                 EditorGUILayout.PropertyField(_openDisplayOnLoad);
                 EditorGUILayout.Space();
             }
@@ -236,6 +230,31 @@ namespace Baracuda.Monitoring.Editor
                 Foldout.SaveState();
             }
         }
+
+        private void DrawEnableMonitoring()
+        {
+#if DISABLE_MONITORING
+                EditorGUILayout.HelpBox("The symbol 'DISABLE_MONITORING' is active!", MessageType.Info);
+                GUI.enabled = false;
+                EditorGUILayout.PropertyField(_enableMonitoring);
+                GUI.enabled = true;
+#else
+            EditorGUILayout.PropertyField(_enableMonitoring);
+#endif
+        }
+        
+             
+        private void DrawAsyncProfiling()
+        {
+#if UNITY_WEBGL
+            GUI.enabled = false;
+            EditorGUILayout.Toggle(new GUIContent(_asyncProfiling.displayName, _asyncProfiling.tooltip), false);
+            GUI.enabled = true;
+#else
+            EditorGUILayout.PropertyField(_asyncProfiling);
+#endif
+        }
+        
         
         public override void OnInspectorGUI()
         {

@@ -10,7 +10,12 @@ namespace Baracuda.Monitoring.Internal.Exceptions
 {
     internal static class ExceptionLogging
     {
-        private static readonly MonitoringSettings settings = Dispatcher.InvokeAsync(MonitoringSettings.GetInstance).Result;
+        private static MonitoringSettings monitoringSettings;
+        
+        internal static void Initialize(MonitoringSettings settings)
+        {
+            monitoringSettings = settings;
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void LogException<T>(T exception, LoggingLevel loggingLevel) where T : Exception
@@ -41,11 +46,11 @@ namespace Baracuda.Monitoring.Internal.Exceptions
             switch (exception)
             {
                 case ProcessorNotFoundException processorNotFound:
-                    LogException(processorNotFound, settings.LogProcessorNotFoundException);
+                    LogException(processorNotFound, monitoringSettings.LogProcessorNotFoundException);
                     break;
                 
                 case InvalidProcessorSignatureException invalidProcessorSignature:
-                    LogException(invalidProcessorSignature, settings.LogInvalidProcessorSignatureException);
+                    LogException(invalidProcessorSignature, monitoringSettings.LogInvalidProcessorSignatureException);
                     break;
             }
         }
