@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang (CC BY-NC-SA 4.0)
+// Copyright (c) 2022 Jonathan Lang
 namespace Baracuda.Monitoring.Interface
 {
     public interface IValueUnit

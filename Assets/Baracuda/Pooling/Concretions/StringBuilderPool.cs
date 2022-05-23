@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang (CC BY-NC-SA 4.0)
+// Copyright (c) 2022 Jonathan Lang
 using System.Text;
 using Baracuda.Pooling.Abstractions;
 using Baracuda.Pooling.Utils;
