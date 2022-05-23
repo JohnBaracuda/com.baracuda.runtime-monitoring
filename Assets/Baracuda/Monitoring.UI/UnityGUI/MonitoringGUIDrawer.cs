@@ -63,14 +63,16 @@ namespace Baracuda.Monitoring.UI.UnityGUI
             public FormatData FormatData { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
             
             private readonly int _size;
+            private readonly string _targetName;
             
             public GUIElement(IMonitorUnit unit)
             {
                 unit.ValueUpdated += Update;
                 FormatData = unit.Profile.FormatData;
-                Content = unit.GetStateFormatted;
                 ID = unit.ID;
+                _targetName = unit.Profile.UnitTargetType.Name;
                 _size = Mathf.Max(FormatData.FontSize, 14);
+                Update(unit.GetStateFormatted);
             }
 
             private void Update(string text)
@@ -79,6 +81,8 @@ namespace Baracuda.Monitoring.UI.UnityGUI
                 sb.Append("<size=");
                 sb.Append(_size);
                 sb.Append('>');
+                // sb.Append(_targetName);
+                // sb.Append(" | ");
                 sb.Append(text);
                 sb.Append("</size>");
                 Content = StringBuilderPool.Release(sb);

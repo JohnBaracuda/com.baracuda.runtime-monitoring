@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Exceptions;
@@ -19,13 +20,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
     /// <summary>
     /// Class creates custom ValueProcessor delegates for Monitoring units based on their values type.
     /// </summary>
-    internal static class ValueProcessor
+    internal static class ValueProcessorFactory
     {
         #region --- Formatting ---
 
-        //TODO: Fix indent rich text for GUI
-        private const string DEFAULT_INDENT = "  ";//"<pos=14>";
-        private const int DEFAULT_INDENT_NUM = 14;
+        private const string DEFAULT_INDENT = "  ";
+        private const int DEFAULT_INDENT_NUM = 2;
         private const string NULL = "<color=red>NULL</color>";
 
         private static readonly MonitoringSettings settings = Dispatcher.InvokeAsync(MonitoringSettings.GetInstance).Result;
@@ -66,20 +66,36 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         #region --- Misc ---
         
-        private static string CreateIndentString(MonitorProfile profile)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string GetIndentStringForProfile(MonitorProfile profile)
         {
-            return profile.TryGetMetaAttribute<FormatAttribute>(out var attribute)
-                ? attribute.ElementIndent >= 0 ? $"<pos={attribute.ElementIndent.ToString()}>" : DEFAULT_INDENT
-                : DEFAULT_INDENT;
+            var indent = CreateIndentValueForProfile(profile);
+            return GetIndentStringForValue(indent);
         }
-
-        private static int CreateIndentValue(MonitorProfile profile)
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int CreateIndentValueForProfile(MonitorProfile profile)
         {
             return profile.TryGetMetaAttribute<FormatAttribute>(out var attribute)
                 ? attribute.ElementIndent >= 0 ? attribute.ElementIndent : DEFAULT_INDENT_NUM
                 : DEFAULT_INDENT_NUM;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string GetIndentStringForValue(int indent)
+        {
+            if (indentStringCache.TryGetValue(indent, out var result))
+            {
+                return result;
+            }
+
+            result = new string(' ', indent);
+            indentStringCache.Add(indent, result);
+            return result;
+        }
+
+        private static readonly Dictionary<int, string> indentStringCache = new Dictionary<int, string>();
+
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
@@ -573,7 +589,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             var name = profile.FormatData.Label;
             var nullString = $"{name}: {NULL}";
             var stringBuilder = new StringBuilder();
-            var indent = CreateIndentString(profile);
+            var indent = GetIndentStringForProfile(profile);
             
             if (profile.UnitValueType.IsSubclassOrAssignable(typeof(UnityEngine.Object)))
             {
@@ -669,7 +685,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
         
-        private static readonly MethodInfo createDictionaryProcessorMethod = typeof(ValueProcessor)
+        private static readonly MethodInfo createDictionaryProcessorMethod = typeof(ValueProcessorFactory)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .Single(methodInfo => methodInfo.Name == nameof(DictionaryProcessor) && methodInfo.IsGenericMethodDefinition);
         
@@ -677,7 +693,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             var name = profile.FormatData.Label;
             var stringBuilder = new StringBuilder();
-            var indent = CreateIndentString(profile);
+            var nullString = $"{name}: {NULL}";
+            var indent = GetIndentStringForProfile(profile);
             
             if (typeof(TKey).IsValueType)
             {
@@ -686,6 +703,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     return profile.FormatData.ShowIndexer
                         ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
+                            if (value == null)
+                            {
+                                return nullString;
+                            }
                             var index = 0;
                             stringBuilder.Clear();
                             stringBuilder.Append(name);
@@ -710,6 +731,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         })
                         : (value) =>
                         {
+                            if (value == null)
+                            {
+                                return nullString;
+                            }
+                            
                             stringBuilder.Clear();
                             stringBuilder.Append(name);
 
@@ -734,6 +760,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     return profile.FormatData.ShowIndexer
                         ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
+                            if (value == null)
+                            {
+                                return nullString;
+                            }
+                            
                             var index = 0;
                             stringBuilder.Clear();
                             stringBuilder.Append(name);
@@ -758,6 +789,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         })
                         : (value) =>
                         {
+                            if (value == null)
+                            {
+                                return nullString;
+                            }
+                            
                             stringBuilder.Clear();
                             stringBuilder.Append(name);
 
@@ -785,6 +821,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     return profile.FormatData.ShowIndexer
                         ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
+                            if (value == null)
+                            {
+                                return nullString;
+                            }
+                            
                             var index = 0;
                             stringBuilder.Clear();
                             stringBuilder.Append(name);
@@ -809,6 +850,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         })
                         : (value) =>
                         {
+                            if (value == null)
+                            {
+                                return nullString;
+                            }
+                            
                             stringBuilder.Clear();
                             stringBuilder.Append(name);
 
@@ -833,6 +879,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     return profile.FormatData.ShowIndexer
                         ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
+                            if (value == null)
+                            {
+                                return nullString;
+                            }
+                            
                             var index = 0;
                             stringBuilder.Clear();
                             stringBuilder.Append(name);
@@ -857,6 +908,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                         })
                         : (value) =>
                         {
+                            if (value == null)
+                            {
+                                return nullString;
+                            }
+                            
                             stringBuilder.Clear();
                             stringBuilder.Append(name);
 
@@ -879,7 +935,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
         
-        private static readonly MethodInfo createReferenceTypeArrayMethod = typeof(ValueProcessor)
+        private static readonly MethodInfo createReferenceTypeArrayMethod = typeof(ValueProcessorFactory)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .Single(methodInfo => methodInfo.Name == nameof(ReferenceTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
         
@@ -888,7 +944,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             var name = profile.FormatData.Label;
             var nullString = $"{name}: {NULL}";
             var stringBuilder = new StringBuilder();
-            var indent = CreateIndentString(profile);
+            var indent = GetIndentStringForProfile(profile);
             
             if(typeof(T).IsSubclassOrAssignable(typeof(UnityEngine.Object)))
             {
@@ -989,7 +1045,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
         
-        private static readonly MethodInfo createValueTypeArrayMethod = typeof(ValueProcessor)
+        private static readonly MethodInfo createValueTypeArrayMethod = typeof(ValueProcessorFactory)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .Single(methodInfo => methodInfo.Name == nameof(ValueTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
         
@@ -998,7 +1054,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             var name = profile.FormatData.Label;
             var nullString = $"{name}: {NULL}";
             var stringBuilder = new StringBuilder();
-            var indent = CreateIndentString(profile);
+            var indent = GetIndentStringForProfile(profile);
 
             return profile.FormatData.ShowIndexer
                 ? (Func<T[], string>) ((value) =>
@@ -1046,7 +1102,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 };
         }
         
-        private static readonly MethodInfo createGenericIEnumerableMethod = typeof(ValueProcessor)
+        private static readonly MethodInfo createGenericIEnumerableMethod = typeof(ValueProcessorFactory)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .Single(methodInfo => methodInfo.Name == nameof(GenericIEnumerableProcessor) && methodInfo.IsGenericMethodDefinition);
         
@@ -1055,7 +1111,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             var name = profile.FormatData.Label;
             var nullString = $"{name}: {NULL}";
             var stringBuilder = new StringBuilder();
-            var indent = CreateIndentString(profile);
+            var indent = GetIndentStringForProfile(profile);
             
             // Unity objects might not be properly initialized in builds leading to a false result when performing a null check.
 #if UNITY_EDITOR
@@ -1164,7 +1220,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             var tureString  =  $"<color=green>TRUE</color>";
             var falseString =  $"<color=red>FALSE</color>";
             var stringBuilder = new StringBuilder();
-            var indent = CreateIndentString(profile);
+            var indent = GetIndentStringForProfile(profile);
 
             return profile.FormatData.ShowIndexer
                 ? (Func<IEnumerable<bool>, string>) ((value) =>
@@ -1214,11 +1270,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         private static Func<Transform, string> TransformProcessor(MonitorProfile profile)
         {
-            var stringBuilder = new StringBuilder();
+            var sb = new StringBuilder();
             var name = profile.FormatData.Label;
             var nullString = $"{name}: {NULL}";
-            var indentValue = CreateIndentValue(profile);
-
+            var indentValue = CreateIndentValueForProfile(profile) * 2;
+            var cachedString = default(string);
+            
             return (value) =>
             {
                 if (value == null)
@@ -1226,31 +1283,43 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     return nullString;
                 }
 
-                stringBuilder.Clear();
-                stringBuilder.Append(name);
+                if (!value.hasChanged && cachedString != null)
+                {
+                    return cachedString;
+                }
+
+                sb.Clear();
+                sb.Append(name + value.hasChanged);
+                sb.Append("\n-");
+                sb.Append(GetIndentStringForValue(indentValue));
+                sb.Append('-');
+                sb.Append(' ');
+                sb.Append(value.ToString());
                 
-                var layer = 1;
                 foreach (Transform element in value)
                 {
-                    stringBuilder.Append("\n- <pos=");
-                    stringBuilder.Append((layer * indentValue).ToString());
-                    stringBuilder.Append('>');
-                    stringBuilder.Append(element.ToString());
+                    sb.Append("\n-");
+                    sb.Append(GetIndentStringForValue(indentValue));
+                    sb.Append('-');
+                    sb.Append(' ');
+                    sb.Append(element.ToString());
                     
                     foreach (Transform child in element)
                     {
-                        Traverse(child, layer, ref stringBuilder);
+                        Traverse(child, 1, ref sb);
                     }
                 }
-                
-                return stringBuilder.ToString();
+
+                cachedString = sb.ToString();
+                return cachedString;
 
                 void Traverse(Transform parent, int i, ref StringBuilder builder)
                 {
-                    builder.Append("\n- <pos=");
-                    builder.Append((++i * indentValue).ToString());
-                    builder.Append('>');
-                    builder.Append(parent);
+                    builder.Append("\n-");
+                    builder.Append(GetIndentStringForValue(++i * indentValue));
+                    builder.Append('-');
+                    builder.Append(' ');
+                    builder.Append(parent.ToString());
                     foreach (Transform child in parent)
                     {
                         Traverse(child, i, ref builder);
@@ -1479,9 +1548,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
         /// <typeparam name="TTarget">the <see cref="Type"/> of the profiles Target instance</typeparam>
         /// <typeparam name="TValue">the <see cref="Type"/> of the profiles value instance</typeparam>
         /// <returns></returns>
-        internal static Func<TTarget, TValue, string> FindCustomInstanceProcessor<TTarget, TValue>(
-            string processor,
-            ValueProfile<TTarget, TValue> valueProfile) where TTarget : class
+        public static Func<TTarget, TValue, string> FindCustomInstanceProcessor<TTarget, TValue>(
+            string processor, ValueProfile<TTarget, TValue> valueProfile) where TTarget : class
         {
             try
             {
@@ -1490,7 +1558,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 {
                     return null;
                 }
-
+            
                 var declaringType = valueProfile.UnitTargetType;
                 var valueType = valueProfile.UnitValueType;
                 
@@ -1542,7 +1610,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         #region --- Value Processor: Ilist With Index Argument ---
 
         private static readonly MethodInfo genericIListWithIndexCreateMethod =
-            typeof(ValueProcessor).GetMethod(nameof(CreateIListFuncWithIndexArgument), STATIC_FLAGS);
+            typeof(ValueProcessorFactory).GetMethod(nameof(CreateIListFuncWithIndexArgument), STATIC_FLAGS);
         
         /// <summary>
         /// Creates a delegate that accepts an input of type <see cref="IList{TElement}"/> and returns a string, using
@@ -1604,7 +1672,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         #region --- Value Processor: Ilist Without Index Argument ---
 
         private static readonly MethodInfo genericIListWithoutIndexCreateMethod =
-            typeof(ValueProcessor).GetMethod(nameof(CreateIListFuncWithoutIndexArgument), STATIC_FLAGS);
+            typeof(ValueProcessorFactory).GetMethod(nameof(CreateIListFuncWithoutIndexArgument), STATIC_FLAGS);
         
         private static Func<TInput, string> CreateIListFuncWithoutIndexArgument<TInput, TElement>(MethodInfo processor, string name) where TInput : IList<TElement>
         {
@@ -1659,7 +1727,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         
         private static readonly MethodInfo genericIDictionaryCreateMethod =
-            typeof(ValueProcessor).GetMethod(nameof(CreateIDictionaryFunc), STATIC_FLAGS);
+            typeof(ValueProcessorFactory).GetMethod(nameof(CreateIDictionaryFunc), STATIC_FLAGS);
 
         private static Func<TInput, string> CreateIDictionaryFunc<TInput, TKey, TValue>(MethodInfo processor, string name) where TInput : IDictionary<TKey, TValue>
         {
@@ -1713,7 +1781,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         #region --- Value Processor: Ienumerable ---
 
         private static readonly MethodInfo genericIEnumerableProcessorMethod =
-            typeof(ValueProcessor).GetMethod(nameof(CreateIEnumerableFunc), STATIC_FLAGS);
+            typeof(ValueProcessorFactory).GetMethod(nameof(CreateIEnumerableFunc), STATIC_FLAGS);
         
         private static Func<TInput, string> CreateIEnumerableFunc<TInput, TElement>(MethodInfo processor, string name) where TInput : IEnumerable<TElement>
         {

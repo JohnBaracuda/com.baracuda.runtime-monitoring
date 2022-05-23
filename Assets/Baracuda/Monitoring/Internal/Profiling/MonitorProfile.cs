@@ -62,8 +62,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
             UnitValueType = unitValueType;
             UnitType = unityType;
             UpdateOptions = attribute.Update;
+#if UNITY_2020_1_OR_NEWER
             IsStatic = args.ReflectedMemberFlags.HasFlagUnsafe(BindingFlags.Static);
-            
+#else
+            var intFlag = (int) args.ReflectedMemberFlags;
+            IsStatic = intFlag.HasFlag32((int) BindingFlags.Static);
+#endif
             var settings = args.Settings;
             
             foreach (var monitoringMetaAttribute in memberInfo.GetCustomAttributes<MonitoringMetaAttribute>())

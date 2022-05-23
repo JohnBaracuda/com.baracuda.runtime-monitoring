@@ -25,11 +25,15 @@ namespace Baracuda.Monitoring.Internal.Units
         protected readonly StringDelegate CompiledValueProcessor;
         
         private readonly TTarget _target;
-        private readonly Func<TTarget, TValue> _getValueDelegate;       
-        private readonly Action<TTarget, TValue> _setValueDelegate;
+        private readonly Func<TTarget, TValue> _getValue;       
+        private readonly Action<TTarget, TValue> _setValue;
         private readonly bool _isValueType;
 
-        private readonly EqualityComparer<TValue> _comparer = EqualityComparer<TValue>.Default;
+        /*
+         * Comparison   
+         */
+        
+        private static readonly EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
         private TValue _lastValue = default;
 
         #endregion
@@ -45,8 +49,8 @@ namespace Baracuda.Monitoring.Internal.Units
             ValueProfile<TTarget, TValue> valueProfile) : base(target, valueProfile)
         {
             _target = target;
-            _getValueDelegate = getValue;
-            _setValueDelegate = setValue;
+            _getValue = getValue;
+            _setValue = setValue;
             
             _isValueType = typeof(TValue).IsValueType;
             
@@ -59,10 +63,6 @@ namespace Baracuda.Monitoring.Internal.Units
                 {
                     ExternalUpdateRequired = false;
                 }
-                else
-                {
-                    Debug.Log("Failed");
-                }
             }
         }
 
@@ -74,7 +74,7 @@ namespace Baracuda.Monitoring.Internal.Units
         
         private StringDelegate CompileValueProcessor(Func<TValue, string> func)
         {
-            return () => func(_getValueDelegate(_target)) ?? NULL;
+            return () => func(_getValue(_target)) ?? NULL;
         }
 
 
@@ -87,8 +87,15 @@ namespace Baracuda.Monitoring.Internal.Units
         public override void Refresh()
         {
             var current = GetValue();
-            
-            if (!_comparer.Equals(current, _lastValue))
+
+            if (_isValueType)
+            {
+                if (!comparer.Equals(current, _lastValue))
+                {
+                    RaiseValueChanged(GetStateFormatted);
+                }
+            }
+            else
             {
                 RaiseValueChanged(GetStateFormatted);
             }
@@ -104,44 +111,26 @@ namespace Baracuda.Monitoring.Internal.Units
         
         public override string GetStateFormatted
         {
-#if MONITORING_DEBUG
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                Dispatcher.GuardAgainstIsNotMainThread(nameof(GetStateFormatted));
-                return CompiledValueProcessor();
-            }
-#else
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => CompiledValueProcessor();
-#endif
         }
 
         public override string GetStateRaw
         {
-#if MONITORING_DEBUG
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                Dispatcher.GuardAgainstIsNotMainThread(nameof(GetStateRaw));
-                return _getValueDelegate(_target).ToString();
-            }
-#else
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _getValueDelegate(_target).ToString();
-#endif
+            get => _getValue(_target).ToString();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T GetValue<T>()
         {
-            return _getValueDelegate(_target).ConvertFast<TValue, T>();
+            return _getValue(_target).ConvertFast<TValue, T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TValue GetValue()
         {
-            return _getValueDelegate(_target);
+            return _getValue(_target);
         }
 
         #endregion
@@ -150,23 +139,21 @@ namespace Baracuda.Monitoring.Internal.Units
    
         public void SetValue(TValue value)
         {
-            _setValueDelegate?.Invoke(_target, value);            
+            _setValue?.Invoke(_target, value);            
             RaiseValueChanged(GetStateFormatted);
         }
 
         public void SetValue(object value)
         {
-            _setValueDelegate?.Invoke(_target, (TValue) value);
+            _setValue?.Invoke(_target, (TValue) value);
             RaiseValueChanged(GetStateFormatted);
         }
         
-#if UNITY_2020_1_OR_NEWER
         public void SetValue<T>(T value) where T : unmanaged
         {
-            _setValueDelegate?.Invoke(_target, _isValueType ? UnsafeUtility.As<T, TValue>(ref value) : value.ConvertFast<T,TValue>());
+            _setValue?.Invoke(_target,  value.ConvertFast<T,TValue>());
             RaiseValueChanged(GetStateFormatted);
         }
-#endif
         
         #endregion
         

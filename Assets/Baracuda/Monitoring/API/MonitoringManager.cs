@@ -223,6 +223,21 @@ namespace Baracuda.Monitoring.API
             await Dispatcher.InvokeAsync(ProfilingCompletedInternal, ct);
         }
         
+        internal static void CompleteProfiling(
+            List<MonitorProfile> staticProfiles,
+            Dictionary<Type, List<MonitorProfile>> instanceProfiles, 
+            CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+            
+            staticMonitorProfiles = staticProfiles;
+            instanceMonitorProfiles = instanceProfiles;
+            
+            CreateStaticUnits(staticProfiles.ToArray());
+            CreateInitialInstanceUnits();
+            ProfilingCompletedInternal();
+        }
+        
                 
         private static void ProfilingCompletedInternal()
         {

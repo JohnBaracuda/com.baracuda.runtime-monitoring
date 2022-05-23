@@ -457,11 +457,18 @@ namespace Baracuda.Monitoring.Editor
                 {
                     continue;
                 }
-
+#if UNITY_2020_1_OR_NEWER
                 if (unityAssembly.flags.HasFlagUnsafe(AssemblyFlags.EditorAssembly))
                 {
                     return true;
                 }
+#else
+                var intFlag = (int) unityAssembly.flags;
+                if (intFlag.HasFlag32((int)AssemblyFlags.EditorAssembly))
+                {
+                    return true;
+                }
+#endif
             }
 
             return false;

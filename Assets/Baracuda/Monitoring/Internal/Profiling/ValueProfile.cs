@@ -3,6 +3,8 @@ using System;
 using System.Reflection;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Threading;
+using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
@@ -70,12 +72,13 @@ namespace Baracuda.Monitoring.Internal.Profiling
             
             // Value Processor
             var processorName = memberInfo.GetCustomAttribute<ValueProcessorAttribute>()?.Processor;
-            
-            _instanceValueProcessorDelegate = Profiling.ValueProcessor.FindCustomInstanceProcessor(processorName,  this);
-            _staticValueProcessorDelegate = Profiling.ValueProcessor.FindCustomStaticProcessor(processorName, this);
+
+            // TODO: This is causing a crash when called synchronous
+            _instanceValueProcessorDelegate = ValueProcessorFactory.FindCustomInstanceProcessor(processorName, this);
+            _staticValueProcessorDelegate = ValueProcessorFactory.FindCustomStaticProcessor(processorName, this);
             if (_staticValueProcessorDelegate == null && _instanceValueProcessorDelegate == null)
             {
-                _fallbackValueProcessorDelegate = Profiling.ValueProcessor.CreateTypeSpecificProcessor<TValue>(this);
+                _fallbackValueProcessorDelegate = ValueProcessorFactory.CreateTypeSpecificProcessor<TValue>(this);
             }
         }
 

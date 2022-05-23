@@ -52,6 +52,11 @@ namespace Baracuda.Monitoring.Internal.Utilities
 #endif
         }
 
+        public static bool HasFlag32(this int lhs, int rhs)
+        {
+            return ((uint)lhs & (uint)rhs) > 0; 
+        }
+
         /*
          * Color
          */

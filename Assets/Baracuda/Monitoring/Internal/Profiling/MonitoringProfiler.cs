@@ -63,15 +63,46 @@ namespace Baracuda.Monitoring.Internal.Profiling
         private static void InitializeRuntimeReflection()
         {
             settings = MonitoringSettings.GetInstance();
+
             Task.Run(() => InitializeProfilingAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
+            //InitializeProfiling(CancellationToken.None);
+        }
+
+        
+        private static void InitializeProfiling(CancellationToken ct)
+        {
+            try
+            {
+                var types = CreateAssemblyProfile(ct);
+                CreateMonitoringProfile(types, ct);
+                MonitoringManager.CompleteProfiling(staticProfiles, instanceProfiles, ct);
+            }
+            catch (OperationCanceledException oce)
+            {
+                ExceptionLogging.LogException(oce, settings.LogOperationCanceledException);
+            }
+            catch (ThreadAbortException tae)
+            {
+                ExceptionLogging.LogException(tae, settings.LogThreadAbortException);
+            }
+            catch (Exception exception)
+            {
+                ExceptionLogging.LogException(exception, settings.LogUnknownExceptions);
+            }
+            finally
+            {
+                genericFieldBaseTypes.Clear();
+                genericPropertyBaseTypes.Clear();
+                genericEventBaseTypes.Clear();
+            }
         }
         
         private static async Task InitializeProfilingAsync(CancellationToken ct)
         {
             try
             {
-                var types = await CreateAssemblyProfile(ct);
-                await CreateMonitoringProfile(types, ct);
+                var types = CreateAssemblyProfile(ct);
+                CreateMonitoringProfile(types, ct);
                 await MonitoringManager.CompleteProfilingAsync(staticProfiles, instanceProfiles, ct);
             }
             catch (OperationCanceledException oce)
@@ -98,7 +129,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Assembly & Profiling   
          */
 
-        private static Task<Type[]> CreateAssemblyProfile(CancellationToken ct)
+        private static Type[] CreateAssemblyProfile(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -125,7 +156,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     {
                         continue;
                     }
-
                     if (type.HasAttribute<DisableMonitoringAttribute>())
                     {
                         continue;
@@ -135,10 +165,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
             }
 
-            return Task.FromResult(typeCache.ToArray());
+            return typeCache.ToArray();
         }
         
-        private static Task CreateMonitoringProfile(Type[] types, CancellationToken ct)
+        private static void CreateMonitoringProfile(Type[] types, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
             
@@ -148,26 +178,26 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var staticFields = types[i].GetFields(STATIC_FLAGS);
                 var staticProperties = types[i].GetProperties(STATIC_FLAGS);
                 var staticEvents = types[i].GetEvents(STATIC_FLAGS);
-
+            
                 InspectStaticFields(staticFields);
                 InspectStaticProperties(staticProperties);
                 InspectStaticEvents(staticEvents);
             }
-
+            
             ct.ThrowIfCancellationRequested();
-
+            
             // inspect instance member
             for (var i = 0; i < types.Length; i++)
             {
                 var instanceFields = types[i].GetFields(INSTANCE_FLAGS);
                 var instanceProperties = types[i].GetProperties(INSTANCE_FLAGS);
                 var instanceEvents = types[i].GetEvents(INSTANCE_FLAGS);
-
+            
                 InspectInstanceFields(instanceFields);
                 InspectInstanceProperties(instanceProperties);
                 InspectInstanceEvents(instanceEvents);
             }
-
+            
             ct.ThrowIfCancellationRequested();
 
 
@@ -178,17 +208,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 postProfileAction += PostProfileGenericTypeFieldInfo;
             }
-
+            
             if (genericPropertyBaseTypes.Any())
             {
                 postProfileAction += PostProfileGenericTypePropertyInfo;
             }
-
+            
             if (genericEventBaseTypes.Any())
             {
                 postProfileAction += PostProfileGenericTypeEventInfo;
             }
-
+            
             if (postProfileAction != null)
             {
                 for (var i = 0; i < types.Length; i++)
@@ -196,10 +226,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     postProfileAction(types[i]);
                 }
             }
-
-            ct.ThrowIfCancellationRequested();
             
-            return Task.CompletedTask;
+            ct.ThrowIfCancellationRequested();
         }
         
         #endregion

@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang (CC BY-NC-SA 4.0)
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
@@ -8,7 +9,7 @@ namespace Baracuda.Monitoring.Example.Scripts
     public class PlayerMovement : MonitoredBehaviour
     {
         #region --- Inspector ---
-
+        
         [Header("Movement Settings")] 
         [SerializeField] private float movementSpeed = 16.5f;
         [SerializeField] private float jumpForce = 8f;
@@ -108,7 +109,6 @@ namespace Baracuda.Monitoring.Example.Scripts
                 }
             };
         }
-
 
         private IEnumerator Start()
         {
