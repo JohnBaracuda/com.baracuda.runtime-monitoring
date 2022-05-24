@@ -428,17 +428,16 @@ Assembly-Baracuda-Reflection                 | Baracuda/Reflection              
 &nbsp;
 ## Planned Features
 
-I would appreciate any help in completing and improving this tool and its features. Feel free to contact me if you have any feedback, suggestions or questions.
+Any help is appreciated. Feel free to contact me if you have any feedback, suggestions or questions.
 
-+ Improved UIController for TextMeshPro & UIToolkit
-+ Filtering & Grouping (The current UI implimentation is relatively simple and won't work well for huge amounts of monitored members. I would like to address this issue by adding multiple tabs/groups as well as a simple way to filter displayed member.)
++ Tag / Tab based filtering system for UIToolkit, TextMeshPro & IMGUI solutions.
++ Better grouping for IMGUI & TextMeshPro solution. (like grouping in the UIToolkit solution)
 + Method monitoring (Properties can be used as a workaround)
 + Class scoped monitoring
-+ Class / object monitoring (Properties returning ToString() can be used as a workaround)
++ Instance monitoring (Properties returning ToString() can be used as a workaround)
 + Improved IL2CPP support / AOT generation.
-+ Support WebGL.
-+ Add the option for synchronous profiling.
-+ Custom update / evaluation loops or more control over the ```Tick``` loop.
++ Custom update / evaluation loops.
++ Optional Monitoring Editor Window.
 
 
 &nbsp;
@@ -455,4 +454,4 @@ I spend a lot of time working on this and other free assets to make sure as many
 &nbsp;
 ## Licence
 
-[Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) TLDR: You can use this tool for anything you want, including commercial products, as long as you're not just selling my work or using it for some other morally questionable or condemnable act.
+[MIT](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) You can use this tool for anything you want, including commercial products, as long as you're not just selling my work or using it for some other morally questionable or condemnable act.
