@@ -356,10 +356,7 @@ public void ContinueGame()
 
 ### Scripting Backend Compatibility
 
-The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono & IL2CPP runtimes are supported.
-
-### Mono
-Mono runtime works without any limitations.
+The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono & IL2CPP runtimes are supported. Mono runtime works without any limitations.
 
 ### IL2CPP
 RTM is making extensive use of dynamic type & method creation during its profiling process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation) In order to use IL2CPP, some features are disabled and some types must be generated during a build process. These types are required to satisfy IL2CPP AOT type generation.
