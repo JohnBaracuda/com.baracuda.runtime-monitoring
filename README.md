@@ -17,8 +17,7 @@ There are still some aspects I would like to improve or expand (see [Planned Fea
 - [Value Processor](#value-processor)
 - [Update Loop](#update-loop)
 - [Update Event](#update-event)
-- [Scripting Backend Compatibility](#scripting-backend-compatibility)
-- [Platform Compatibility](#platform-compatibility)
+- [Compatibility](#compatibility)
 - [UI Controller](#ui-controller)
 - [Custom UI Controller](#custom-ui-controller)
 - [Assemblies / Modules](#assemblies-and-modules)
@@ -353,7 +352,9 @@ public void ContinueGame()
 
 
 &nbsp;
-## Scripting Backend Compatibility
+## Compatibility
+
+### Scripting Backend Compatibility
 
 The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono & IL2CPP runtimes are supported.
 
@@ -366,7 +367,7 @@ RTM is making extensive use of dynamic type & method creation during its profili
 
 
 &nbsp;
-## Platform Compatibility
+### Platform Compatibility
 
 I can't test all of these platforms for compatibility. Let me know if you have tested any platform that is NA or not listed here.
 
@@ -500,6 +501,7 @@ Any help is appreciated. Feel free to contact me if you have any feedback, sugge
 + Optional Monitoring Editor Window.
 + Improved tutorial how to create a custom UI Controller.
 + Add custom types for monitored arrays and other collections. 
++ Add to OpenUPM
 
 
 &nbsp;
