@@ -1293,27 +1293,26 @@ namespace Baracuda.Monitoring.Internal.Profiling
             var indentValue = CreateIndentValueForProfile(profile) * 2;
             var cachedString = default(string);
             
-            return (value) =>
+            return (transform) =>
             {
-                if (value == null)
+                if (transform == null)
                 {
                     return nullString;
                 }
 
-                if (!value.hasChanged && cachedString != null)
+                if (!transform.hasChanged && cachedString != null)
                 {
                     return cachedString;
                 }
 
                 sb.Clear();
-                sb.Append(name + value.hasChanged);
                 sb.Append("\n-");
                 sb.Append(GetIndentStringForValue(indentValue));
                 sb.Append('-');
                 sb.Append(' ');
-                sb.Append(value.ToString());
+                sb.Append(transform.ToString());
                 
-                foreach (Transform element in value)
+                foreach (Transform element in transform)
                 {
                     sb.Append("\n-");
                     sb.Append(GetIndentStringForValue(indentValue));

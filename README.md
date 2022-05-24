@@ -17,7 +17,8 @@ There are still some aspects I would like to improve or expand (see [Planned Fea
 - [Value Processor](#value-processor)
 - [Update Loop](#update-loop)
 - [Update Event](#update-event)
-- [Runtime (Mono & IL2CPP)](#runtime)
+- [Scripting Backend Compatibility](#scripting-backend-compatibility)
+- [Platform Compatibility](#platform-compatibility)
 - [UI Controller](#ui-controller)
 - [Custom UI Controller](#custom-ui-controller)
 - [Assemblies / Modules](#assemblies-and-modules)
@@ -350,16 +351,39 @@ public void ContinueGame()
 ```
 
 
-&nbsp;
-## Runtime
 
-The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono & IL2CPP runtimes are supported. Mono runtime works without any limitations.
+&nbsp;
+## Scripting Backend Compatibility
+
+The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono & IL2CPP runtimes are supported.
+
+### Mono
+Mono runtime works without any limitations.
 
 ### IL2CPP
+RTM is making extensive use of dynamic type & method creation during its profiling process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation) In order to use IL2CPP, some features are disabled and some types must be generated during a build process. These types are required to satisfy IL2CPP AOT type generation.
 
-Monitoring is making extensive use of dynamic type & method creation during its initialization process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation)
 
-In order to use IL2CPP as a runtime some features are disabled or reduced and some types must be generated during a build process, that can then be used by the IL2CPP runtime as templates. You can configure the IL2CPP AOT type generation from the monitoring settings.
+
+&nbsp;
+## Platform Compatibility
+
+I can't test all of these platforms for compatibility. Let me know if you have tested any platform that is NA or not listed here.
+
+Platform              | Compatible       | Note                    |        
+:-                    |:-                |:-                       |             
+Windows Standalone    |:heavy_check_mark:|                         |
+Linux Standalone      |NA                |                         |
+Mac Standalone        |NA                |                         |
+IOS                   |NA                |                         |
+Android               |NA                |                         |
+WebGL                 |:heavy_check_mark:|Async profiling disabled |
+Stadia                |NA                |                         |
+XBox One              |NA                |                         |
+XSX                   |NA                |                         |
+PlayStation 4         |NA                |                         |
+PlayStation 5         |NA                |                         |
+
 
 
 &nbsp;
@@ -401,6 +425,42 @@ You can create a custom UI controller by follwing the steps below. You can take 
 + Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
 
 
+
+&nbsp;
+## Optimizations
+
+In general RTM tries to be as optimizerd as possible by reducing allocations where ever possible and by doing a lot of the heavy work during the initial profiling. However due to the nature of some types and the creation of strings, allocations cannot be prevented. If performance is a sensitive aspect of your project, here are some tips and tricks to keep in mind.
+
+### Reference Types & Value Types
+Since there is no easy way to check whether the actual value of a reference type has changed when it is evaluated, a monitored ReferenceType is processed with ToString() each time it is evaluated. This, by default happens either every Update or Tick cycle and may generate a lot of garbage in a very short time, without much scope for automatic optimization. For this reason, it is recommended to pass an UpdateEvent for the monitored value whenever possible to reduce memory allocations. Of course, this shouldn't matter much if you're only debugging one value, but could be detrimental if you want to keep monitoring your member in a release or shipped build. The same is not true for monitored ValueTypes, as these are compared to a cached value to ensure that an update event and a string creation is only triggered when the value has actually changed.
+
+
+### Collections
+Because collections are ReferenceTypes the same applies here but on an even greater scale. Pass an update event when ever possible if you intend to monitor a collection over a longer period. Now because the example below requires a lot of boiler plate code I would not recommend this if you just want to quickly debug the values of a collection. I also want to mention that a better solution is planned and WIP.  
+
+```C#
+[MonitorValue(UpdateEvent = nameof(OnNamesChanged))]
+public List<string> Names = new List<string>() {"Riebeckite", "Prisoner", "Feldspar"};
+
+private event Action OnNamesChanged;
+
+public void AddName(string name)
+{
+    Names.Add(name);
+    OnNamesChanged();
+}
+
+public void RemoveName(string name)
+{
+    Names.Remove(name);
+    OnNamesChanged();
+}
+```
+
+### Transform
+Monitored Transforms are another type that have the potential to create a lot of garbage. A simple thing you could do to reduce overhead is to control the Transform.hasChanged flag on the Transform itself. The monitoring unit/handler will check the flag and only raise an update event if the flag is set to true. (which it is unless changed manually) Unity is not controlling Transform.hasChanged.
+
+
 &nbsp;
 ## Assemblies and Modules
 
@@ -438,6 +498,8 @@ Any help is appreciated. Feel free to contact me if you have any feedback, sugge
 + Improved IL2CPP support / AOT generation.
 + Custom update / evaluation loops.
 + Optional Monitoring Editor Window.
++ Improved tutorial how to create a custom UI Controller.
++ Add custom types for monitored arrays and other collections. 
 
 
 &nbsp;
