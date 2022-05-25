@@ -498,6 +498,7 @@ Any help is appreciated. Feel free to contact me if you have any feedback, sugge
 + Optional Monitoring Editor Window.
 + Improved tutorial how to create a custom UI Controller.
 + Add custom types for monitored arrays and other collections. 
++ Better separation of API and internal logic.
 + Add to OpenUPM
 
 
