@@ -5,6 +5,8 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 
 There are still some aspects I would like to improve or expand (see [Planned Features](#planned-features)). Especially the optional packages for supporting TextMeshPro & UIToolkit need more work and fine-tuning. However, I can't afford too much time commitment due to my full-time job and other projects I'm working on. For this reason, I would appreciate any feedback and/or support.
 
+Runtime Monitoring can also be found on the [Asset Store!](https://u3d.as/2QxJ)
+
 
 &nbsp;
 ## Table of Contents
@@ -498,6 +500,7 @@ Any help is appreciated. Feel free to contact me if you have any feedback, sugge
 + Optional Monitoring Editor Window.
 + Improved tutorial how to create a custom UI Controller.
 + Add custom types for monitored arrays and other collections. 
++ Better optimization contoll.
 + Better separation of API and internal logic.
 + Add to OpenUPM
 
