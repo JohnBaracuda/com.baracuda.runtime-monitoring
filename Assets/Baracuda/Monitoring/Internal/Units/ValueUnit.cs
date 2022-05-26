@@ -27,13 +27,8 @@ namespace Baracuda.Monitoring.Internal.Units
         private readonly TTarget _target;
         private readonly Func<TTarget, TValue> _getValue;       
         private readonly Action<TTarget, TValue> _setValue;
-        private readonly bool _isValueType;
-
-        /*
-         * Comparison   
-         */
+        private readonly ValueProfile<TTarget,TValue>.IsDirtyDelegate _checkIsDirty;
         
-        private static readonly EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
         private TValue _lastValue = default;
 
         #endregion
@@ -52,9 +47,9 @@ namespace Baracuda.Monitoring.Internal.Units
             _getValue = getValue;
             _setValue = setValue;
             
-            _isValueType = typeof(TValue).IsValueType;
-            
             CompiledValueProcessor = CompileValueProcessor(valueProcessor);
+
+            _checkIsDirty = valueProfile.IsDirtyFunc;
             
             if (valueProfile.CustomUpdateEventAvailable)
             {
@@ -77,7 +72,6 @@ namespace Baracuda.Monitoring.Internal.Units
             return () => func(_getValue(_target)) ?? NULL;
         }
 
-
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
@@ -87,15 +81,8 @@ namespace Baracuda.Monitoring.Internal.Units
         public override void Refresh()
         {
             var current = GetValue();
-
-            if (_isValueType)
-            {
-                if (!comparer.Equals(current, _lastValue))
-                {
-                    RaiseValueChanged(GetStateFormatted);
-                }
-            }
-            else
+            
+            if (_checkIsDirty(ref current, ref _lastValue))
             {
                 RaiseValueChanged(GetStateFormatted);
             }
@@ -140,18 +127,22 @@ namespace Baracuda.Monitoring.Internal.Units
         public void SetValue(TValue value)
         {
             _setValue?.Invoke(_target, value);            
+            _lastValue = value;
             RaiseValueChanged(GetStateFormatted);
         }
 
         public void SetValue(object value)
         {
             _setValue?.Invoke(_target, (TValue) value);
+            _lastValue = (TValue) value;
             RaiseValueChanged(GetStateFormatted);
         }
         
         public void SetValue<T>(T value) where T : unmanaged
         {
-            _setValue?.Invoke(_target,  value.ConvertFast<T,TValue>());
+            var converted = value.ConvertFast<T, TValue>();
+            _setValue?.Invoke(_target, converted);
+            _lastValue = converted;
             RaiseValueChanged(GetStateFormatted);
         }
         

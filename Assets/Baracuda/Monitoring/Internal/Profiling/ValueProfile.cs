@@ -1,8 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Reflection;
 using Baracuda.Threading;
 using UnityEngine;
 
@@ -19,6 +21,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
         /// </summary>
         internal bool CustomUpdateEventAvailable { get; }
         
+        internal IsDirtyDelegate IsDirtyFunc { get; }
+        
         #endregion
         
         #region --- Fields ---
@@ -27,6 +31,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
         private readonly NotifyHandleDelegate<TTarget> _addNotifyDelegate; //event without passed TValue param
         private readonly UpdateHandleDelegate<TTarget, TValue> _removeUpdateDelegate; //preferred event type
         private readonly NotifyHandleDelegate<TTarget> _removeNotifyDelegate; //event without passed TValue param
+        
+        public delegate bool IsDirtyDelegate(ref TValue lastValue, ref TValue newValue);
         
         #endregion
 
@@ -37,6 +43,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
         private readonly Func<TTarget, TValue, string> _instanceValueProcessorDelegate;
         private readonly Func<TValue, string> _staticValueProcessorDelegate;
         private readonly Func<TValue, string> _fallbackValueProcessorDelegate;
+        
+        private static readonly EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
         
         protected Func<TValue, string> ValueProcessor(TTarget target)
         {
@@ -82,6 +90,23 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 _fallbackValueProcessorDelegate = ValueProcessorFactory.CreateTypeSpecificProcessor<TValue>(this);
             }
+
+            IsDirtyFunc = CreateIsDirtyDelegate(unitValueType);
+        }
+
+        private static IsDirtyDelegate CreateIsDirtyDelegate(Type memberType)
+        {
+            if (memberType.IsValueType)
+            {
+                return (ref TValue lastValue, ref TValue newValue) => !comparer.Equals(lastValue, newValue);
+            }
+
+            if (memberType.IsString())
+            {
+                return (ref TValue lastValue, ref TValue newValue) => !ReferenceEquals(lastValue, newValue);
+            }
+
+            return (ref TValue lastValue, ref TValue newValue) => true;
         }
 
 
