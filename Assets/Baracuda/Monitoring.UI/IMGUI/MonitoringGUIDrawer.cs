@@ -9,7 +9,7 @@ using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.UI.UnityGUI
+namespace Baracuda.Monitoring.UI.IMGUI
 {
     /// <summary>
     /// Disclaimer:
@@ -81,8 +81,6 @@ namespace Baracuda.Monitoring.UI.UnityGUI
                 sb.Append("<size=");
                 sb.Append(_size);
                 sb.Append('>');
-                // sb.Append(_targetName);
-                // sb.Append(" | ");
                 sb.Append(text);
                 sb.Append("</size>");
                 Content = StringBuilderPool.Release(sb);
@@ -91,15 +89,15 @@ namespace Baracuda.Monitoring.UI.UnityGUI
 
         private readonly ref struct ScreenData
         {
-            public readonly float width;
-            public readonly float height;
-            public readonly float halfHeight;
+            public readonly float Width;
+            public readonly float Height;
+            public readonly float HalfHeight;
 
             public ScreenData(float width, float height)
             {
-                this.width = width;
-                this.height = height;
-                halfHeight = height * .5f;
+                this.Width = width;
+                this.Height = height;
+                HalfHeight = height * .5f;
             }
         }
         
@@ -177,7 +175,7 @@ namespace Baracuda.Monitoring.UI.UnityGUI
                 var elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
 
                 maxWidth = Mathf.Max(maxWidth, elementRect.width);
-                if (elementRect.y + elementRect.height + lastLowerLeftHeight > screenData.height && elementRect.height < screenData.height)
+                if (elementRect.y + elementRect.height + lastLowerLeftHeight > screenData.Height && elementRect.height < screenData.Height)
                 {
                     topLeftRows++;
                     yPos = windowMargin.top;
@@ -211,7 +209,7 @@ namespace Baracuda.Monitoring.UI.UnityGUI
         private void DrawLowerLeft(Context ctx,  ScreenData screenData)
         {
             var xPos = windowMargin.left;
-            var yPos = screenData.height - windowMargin.bot;
+            var yPos = screenData.Height - windowMargin.bot;
             var maxWidth = 0f;
             var maxHeight = 0f;
             
@@ -227,16 +225,16 @@ namespace Baracuda.Monitoring.UI.UnityGUI
                 var elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
 
                 maxWidth = Mathf.Max(maxWidth, elementRect.width);
-                if (topLeftRows > 1 && screenData.height - yPos > screenData.halfHeight)
+                if (topLeftRows > 1 && screenData.Height - yPos > screenData.HalfHeight)
                 {
-                    yPos = screenData.height - windowMargin.bot;
+                    yPos = screenData.Height - windowMargin.bot;
                     xPos += maxWidth + elementSpacing;
                     maxWidth = 0f;
                     elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
                 }
-                else if (topLeftRows == 1 && screenData.height - yPos > screenData.height)
+                else if (topLeftRows == 1 && screenData.Height - yPos > screenData.Height)
                 {
-                    yPos = screenData.height - windowMargin.bot;
+                    yPos = screenData.Height - windowMargin.bot;
                     xPos += maxWidth + elementSpacing;
                     maxWidth = 0f;
                     elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
@@ -246,7 +244,7 @@ namespace Baracuda.Monitoring.UI.UnityGUI
                 GUI.Label(textRect, displayString);
                 
                 yPos -= elementRect.height + elementSpacing;
-                maxHeight = Mathf.Max(screenData.height - yPos, maxHeight);
+                maxHeight = Mathf.Max(screenData.Height - yPos, maxHeight);
             }
             
             lastLowerLeftHeight = maxHeight;
@@ -278,7 +276,7 @@ namespace Baracuda.Monitoring.UI.UnityGUI
         
         private void DrawUpperRight(Context ctx,  ScreenData screenData)
         { 
-            var xPos = screenData.width;
+            var xPos = screenData.Width;
             var yPos = windowMargin.top;
             var maxWidth = 0f;
             topRightRows = 1;
@@ -295,7 +293,7 @@ namespace Baracuda.Monitoring.UI.UnityGUI
                 var elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
 
                 maxWidth = Mathf.Max(maxWidth, elementRect.width);
-                if (elementRect.y + elementRect.height + lastLowerRightHeight > screenData.height && elementRect.height < screenData.height)
+                if (elementRect.y + elementRect.height + lastLowerRightHeight > screenData.Height && elementRect.height < screenData.Height)
                 {
                     topRightRows++;
                     yPos = windowMargin.top;
@@ -329,8 +327,8 @@ namespace Baracuda.Monitoring.UI.UnityGUI
         
         private void DrawLowerRight(Context ctx,  ScreenData screenData)
         {
-            var xPos = screenData.width;
-            var yPos = screenData.height - windowMargin.bot;
+            var xPos = screenData.Width;
+            var yPos = screenData.Height - windowMargin.bot;
             var maxWidth = 0f;
             var maxHeight = 0f;
             
@@ -346,16 +344,16 @@ namespace Baracuda.Monitoring.UI.UnityGUI
                 var elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
 
                 maxWidth = Mathf.Max(maxWidth, elementRect.width);
-                if (topRightRows > 1 && screenData.height - yPos > screenData.halfHeight)
+                if (topRightRows > 1 && screenData.Height - yPos > screenData.HalfHeight)
                 {
-                    yPos = screenData.height - windowMargin.bot;
+                    yPos = screenData.Height - windowMargin.bot;
                     xPos -= maxWidth + elementSpacing;
                     maxWidth = 0f;
                     elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
                 }
-                else if (topRightRows == 1 && screenData.height - yPos > screenData.height)
+                else if (topRightRows == 1 && screenData.Height - yPos > screenData.Height)
                 {
-                    yPos = screenData.height - windowMargin.bot;
+                    yPos = screenData.Height - windowMargin.bot;
                     xPos -= maxWidth + elementSpacing;
                     maxWidth = 0f;
                     elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
@@ -365,7 +363,7 @@ namespace Baracuda.Monitoring.UI.UnityGUI
                 GUI.Label(textRect, displayString);
                 
                 yPos -= elementRect.height + elementSpacing;
-                maxHeight = Mathf.Max(screenData.height - yPos, maxHeight);
+                maxHeight = Mathf.Max(screenData.Height - yPos, maxHeight);
             }
             
             lastLowerRightHeight = maxHeight;

@@ -11,7 +11,6 @@ namespace Baracuda.Monitoring.Editor
         private const string LINK_DOCUMENTATION = "https://johnbaracuda.com/monitoring.html";
         private const string LINK_REPOSITORY = "https://github.com/johnbaracuda/Runtime-Monitoring";
         private const string LINK_WEBSITE = "https://johnbaracuda.com/";
-        private const string LINK_LICENSE = "https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE";
         
         private static Color TextColor => EditorGUIUtility.isProSkin? new Color(0.84f, 0.84f, 0.84f) : Color.black;
 
@@ -32,6 +31,13 @@ namespace Baracuda.Monitoring.Editor
             style.stretchWidth = true;
             style.richText = true;
             style.alignment = TextAnchor.MiddleCenter;
+            return style;
+        }
+        
+        internal static GUIStyle RichTextStyle()
+        {
+            var style = GUI.skin.GetStyle("Label");
+            style.richText = true;
             return style;
         }
         

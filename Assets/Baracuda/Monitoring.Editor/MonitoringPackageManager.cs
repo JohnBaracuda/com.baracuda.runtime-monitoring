@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Baracuda.Monitoring.Internal.Utilities;
 using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
@@ -10,27 +11,23 @@ using Object = UnityEngine.Object;
 
 namespace Baracuda.Monitoring.Editor
 {
-    internal class MonitoringInstaller : EditorWindow
+    internal class MonitoringPackageManager : EditorWindow
     {
         #region --- Fields ---
 
         private Vector2 _scrollPosition;
 
         private readonly string _setupText =
-            "<size=13>The default UIController for this tool is based on the Unity GUI system, which can lead to additional performance overhead. " +
-            "I would advise to import and use either the TextMeshPro or UIToolkit based UIController. " +
-            "Select the zip containing the .unitypackage via the buttons below.</size>";
+            "<size=13>The default UIController for this tool is based on the IMGUI system, which can lead to additional performance overhead. " +
+            "I would advise to import and use either the TextMeshPro or UIToolkit based Solutions instead.</size>";
 
         private FoldoutHandler Foldout { get; set; }
         
-        private const string TMP_PACKAGE_ID = "com.unity.textmeshpro";
-        private static bool lockImport = false;
-
         #endregion
 
         #region --- Setup ---
 
-        private static bool DidInstallerRun() => EditorPrefs.GetBool(nameof(MonitoringInstaller), false);
+        private static bool DidInstallerRun() => EditorPrefs.GetBool(nameof(MonitoringPackageManager), false);
 
         [InitializeOnLoadMethod]
         private static void ValidateInstaller()
@@ -40,12 +37,12 @@ namespace Baracuda.Monitoring.Editor
                 return;
             }
 
-            Run();
+            Open();
         }
 
-        public static void Run()
+        public static void Open()
         {
-            GetWindow<MonitoringInstaller>("Runtime Monitoring Setup").Show();
+            GetWindow<MonitoringPackageManager>("Monitoring Packages").Show();
         }
 
         private void OnEnable()
@@ -55,7 +52,7 @@ namespace Baracuda.Monitoring.Editor
 
         private void OnDisable()
         {
-            EditorPrefs.SetBool(nameof(MonitoringInstaller), true);
+            EditorPrefs.SetBool(nameof(MonitoringPackageManager), true);
         }
 
         #endregion
@@ -75,7 +72,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.Space();
             }
 
-            if (Foldout["Additional Packages"])
+            if (Foldout["Packages"])
             {
                 EditorGUILayout.Space();
 
@@ -84,17 +81,12 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.Space();
             }
 
-            if (Foldout["Web Links"])
+            if (Foldout["Web Links & More"])
             {
                 EditorGUILayout.Space();
 
                 InspectorUtilities.DrawWeblinks();
 
-                EditorGUILayout.Space();
-            }
-
-            if (Foldout["More"])
-            {
                 EditorGUILayout.Space();
 
                 if (GUILayout.Button(new GUIContent("Open Settings", "Tools > Runtime Monitoring > Settings")))
@@ -102,7 +94,7 @@ namespace Baracuda.Monitoring.Editor
                     MonitoringSettingsWindow.Open();
                 }
 
-                EditorGUILayout.Space();
+                InspectorUtilities.DrawLine();
             }
 
             GUILayout.EndScrollView();
@@ -124,8 +116,27 @@ namespace Baracuda.Monitoring.Editor
 
         private void DrawAdditionalPackages()
         {
+            
+            // IMGUI
             GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"));
-            GUILayout.Label("TextMeshPro Support", InspectorUtilities.TitleStyle());
+            GUILayout.Label("IMGUI Package (default)", InspectorUtilities.TitleStyle());
+            
+            if (GUILayout.Button(_showPackage))
+            {
+                MoveToPackagePath("RuntimeMonitoring_IMGUI");
+            }
+            if (GUILayout.Button(_importPackage))
+            {
+                ImportPackage("RuntimeMonitoring_IMGUI");
+            }
+            
+            EditorGUILayout.Space();
+            GUILayout.EndVertical();
+            
+            // uGUI TextMeshPro
+            EditorGUILayout.Space();
+            GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"));
+            GUILayout.Label("TextMeshPro Package", InspectorUtilities.TitleStyle());
             
             if (GUILayout.Button(_showPackage))
             {
@@ -137,18 +148,13 @@ namespace Baracuda.Monitoring.Editor
             }
             
             EditorGUILayout.Space();
-            
-            if (GUILayout.Button(new GUIContent("Import TextMeshPro", "Import com.unity.textmeshpro")))
-            {
-                ImportTextMeshPro();
-            }
-            
-            EditorGUILayout.Space();
             GUILayout.EndVertical();
+            
+            // UIToolkit
             EditorGUILayout.Space();
             GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"));
-
             GUILayout.Label("UIToolkit (Unity 2021.1 Or Higher)", InspectorUtilities.TitleStyle());
+            
             if (GUILayout.Button(_showPackage))
             {
                 MoveToPackagePath("RuntimeMonitoring_UIToolkit");
@@ -201,58 +207,6 @@ namespace Baracuda.Monitoring.Editor
                 Debug.LogError($"Import failed! <b>{packageName}.unitypackage</b> was not found! Did you delete or exclude this file on import?");
             }
         }
-
-        
-        private static async void ImportTextMeshPro()
-        {
-            try
-            {
-                if (lockImport)
-                {
-                    return;
-                }
-                
-                lockImport = true;
-                
-                var result = await AwaitResult(Client.Search(TMP_PACKAGE_ID));
-
-                if (result == StatusCode.Success)
-                {
-                    Debug.Log(TMP_PACKAGE_ID + " is already installed!");
-                    return;
-                }
-                
-                var request = await AwaitResult(Client.Add(TMP_PACKAGE_ID));
-                
-                if (request == StatusCode.Success)
-                {
-                    Debug.Log("Installed " + TMP_PACKAGE_ID);
-                }
-                else if (request >= StatusCode.Failure)
-                {
-                    
-                }
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-            }
-            finally
-            {
-                lockImport = false;
-            }
-            
-            async Task<StatusCode> AwaitResult(Request request)
-            {
-                while (!request.IsCompleted)
-                {
-                    await Task.Delay(25);
-                }
-
-                return request.Status;
-            }
-        }
-        
 
         #endregion
     }

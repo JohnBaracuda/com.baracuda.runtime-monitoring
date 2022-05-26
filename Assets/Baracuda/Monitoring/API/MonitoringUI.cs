@@ -223,6 +223,12 @@ namespace Baracuda.Monitoring.API
             MonitoringManager.UnitCreated += controllerInstance.OnUnitCreated;
             MonitoringManager.UnitDisposed += controllerInstance.OnUnitDisposed;
             
+            Application.quitting += () =>
+            {
+                MonitoringManager.UnitCreated -= controllerInstance.OnUnitCreated;
+                MonitoringManager.UnitDisposed -= controllerInstance.OnUnitDisposed;
+            };
+            
             for (var i = 0; i < staticUnits.Count; i++)
             {
                 controllerInstance.OnUnitCreated(staticUnits[i]);

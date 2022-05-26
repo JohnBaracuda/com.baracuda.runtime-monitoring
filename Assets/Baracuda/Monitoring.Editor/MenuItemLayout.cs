@@ -12,10 +12,10 @@ namespace Baracuda.Monitoring.Editor
             MonitoringSettingsWindow.Open();
         }
         
-        [MenuItem("Tools/Runtime Monitoring/Setup", priority = 2500)]
+        [MenuItem("Tools/Runtime Monitoring/Optional Packages", priority = 2406)]
         private static void RunMonitoringInstaller()
         {
-            MonitoringInstaller.Run();
+            MonitoringPackageManager.Open();
         }
         
         [MenuItem("Tools/Runtime Monitoring/Documentation", priority = 2407)]

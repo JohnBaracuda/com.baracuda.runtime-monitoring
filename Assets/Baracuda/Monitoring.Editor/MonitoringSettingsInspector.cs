@@ -332,17 +332,28 @@ namespace Baracuda.Monitoring.Editor
             for (var i = 0; i < _availableUIController.Count; i++)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(_availableUIController[i].name, GUILayout.Width(EditorGUIUtility.labelWidth - 7f));
-                GUILayout.Label(AssetDatabase.GetAssetPath(_availableUIController[i]));
-                if (GUILayout.Button("Set Active UIController", GUILayout.Width(175)))
+                var isSelected = _monitoringUIController.objectReferenceValue == _availableUIController[i];
+                GUILayout.Label(BoldIf(_availableUIController[i].name, isSelected), InspectorUtilities.RichTextStyle(), GUILayout.Width(EditorGUIUtility.labelWidth - 7f));
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("Set Active UIController", GUILayout.Width(200)))
                 {
                     _monitoringUIController.objectReferenceValue = _availableUIController[i];
                     _monitoringUIController.serializedObject.ApplyModifiedProperties();
+                }
+                if (GUILayout.Button("Select", GUILayout.Width(75)))
+                {
+                    Selection.activeObject = _availableUIController[i];
+                    EditorGUIUtility.PingObject(_availableUIController[i]);
                 }
                 GUILayout.EndHorizontal();
             }
             InspectorUtilities.DrawLine(false);
             GUILayout.EndVertical();
+
+            string BoldIf(string content, bool condition)
+            {
+                return condition ? $"<b>{content}</b>" : content;
+            }
         }
         
         private readonly List<MonitoringUIController> _availableUIController = new List<MonitoringUIController>(10);
@@ -356,8 +367,8 @@ namespace Baracuda.Monitoring.Editor
                 var guid = guids[i];
                 var path = AssetDatabase.GUIDToAssetPath(guid);
                 var gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                var controllerInterface = gameObject.GetComponent<MonitoringUIController>();
-                if (controllerInterface is MonitoringUIController controller)
+                var controller = gameObject.GetComponent<MonitoringUIController>();
+                if (controller != null)
                 {
                     _availableUIController.Add(controller);
                 }
