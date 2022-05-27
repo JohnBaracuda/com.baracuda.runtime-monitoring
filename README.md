@@ -501,6 +501,7 @@ Any help is appreciated. Feel free to contact me if you have any feedback, sugge
 + Improved tutorial how to create a custom UI Controller.
 + Add custom types for monitored arrays and other collections. 
 + Better optimization contoll.
++ Global value processor. (like property drawer)
 + Better separation of API and internal logic.
 + Add to OpenUPM
 

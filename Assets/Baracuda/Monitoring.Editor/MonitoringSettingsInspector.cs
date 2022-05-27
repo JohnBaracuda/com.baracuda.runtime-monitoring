@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -80,6 +81,41 @@ namespace Baracuda.Monitoring.Editor
             Foldout = new FoldoutHandler(nameof(MonitoringSettings));
             PopulateSerializedProperties();
             PopulateAvailableUIController();
+            
+            AssetDatabase.importPackageCompleted -= ImportPackageCompleted;
+            AssetDatabase.importPackageCompleted += ImportPackageCompleted;
+        }
+
+        private void OnDisable()
+        {
+            AssetDatabase.importPackageCompleted -= ImportPackageCompleted;
+        }
+
+        private void ImportPackageCompleted(string packageName)
+        {
+            PopulateAvailableUIController();
+            
+            if (!_availableUIController.Any())
+            {
+                return;
+            }
+
+            if (!packageName.StartsWith("RuntimeMonitoring"))
+            {
+                return;
+            }
+            
+            for (var i = 0; i < _availableUIController.Count; i++)
+            {
+                var controllerName = _availableUIController[i].name.Replace("MonitoringUIController_", "");
+                var package =  packageName.Replace("RuntimeMonitoring_", "");
+                if (package == controllerName)
+                {
+                    _monitoringUIController.objectReferenceValue = _availableUIController[i];
+                    _monitoringUIController.serializedObject.ApplyModifiedProperties();
+                    break;
+                }
+            }
         }
 
         protected void PopulateSerializedProperties()
@@ -134,28 +170,12 @@ namespace Baracuda.Monitoring.Editor
 
             if (Foldout["UI Controller"])
             {
-                EditorGUILayout.Space();
-                EditorGUILayout.PropertyField(_autoInstantiateUI);
-                var isNull = IsRefFieldValueNull(_monitoringUIController);
-                DrawSelectableUIController();
-                if (GUILayout.Button("Refresh"))
-                {
-                    PopulateAvailableUIController();
-                }
-                if (isNull)
-                {
-                    if (Application.isPlaying)
-                    {
-                        var targetObject = MonitoringUI.GetActiveUIController();
-                        DrawInlinedUIControllerPrefab(targetObject);
-                    }
-                    else
-                    {
-                        var targetObject = _monitoringUIController.objectReferenceValue;
-                        DrawInlinedUIControllerPrefab(targetObject);
-                    }
-                }
-                EditorGUILayout.Space();
+                DrawUIController();
+            }
+
+            if (Foldout["Optional Packages"])
+            {
+                DrawAdditionalPackages();
             }
             
             if (Foldout["Formatting"])
@@ -231,6 +251,37 @@ namespace Baracuda.Monitoring.Editor
             }
         }
 
+        private void DrawUIController()
+        {
+            EditorGUILayout.Space();
+            EditorGUILayout.PropertyField(_autoInstantiateUI);
+            var isNotNull = IsRefFieldValueNull(_monitoringUIController);
+            DrawSelectableUIController();
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Refresh", GUILayout.Width(80), GUILayout.Height(25)))
+            {
+                PopulateAvailableUIController();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            if (isNotNull)
+            {
+                if (Application.isPlaying)
+                {
+                    var targetObject = MonitoringUI.GetActiveUIController();
+                    DrawInlinedUIControllerPrefab(targetObject);
+                }
+                else
+                {
+                    var targetObject = _monitoringUIController.objectReferenceValue;
+                    DrawInlinedUIControllerPrefab(targetObject);
+                }
+            }
+            EditorGUILayout.Space();
+        }
+
         private void DrawEnableMonitoring()
         {
 #if DISABLE_MONITORING
@@ -297,7 +348,6 @@ namespace Baracuda.Monitoring.Editor
         
         private void DrawInlinedUIControllerPrefab(Object targetObject)
         {
-            EditorGUILayout.Space();
             InspectorUtilities.DrawLine();
             EditorGUILayout.Space();
             var editor = CreateEditor(targetObject);
@@ -323,36 +373,43 @@ namespace Baracuda.Monitoring.Editor
 
         private void DrawSelectableUIController()
         {
-            if (!_availableUIController.Any())
+            try
             {
-                return;
-            }
-            GUILayout.BeginVertical(GUI.skin.box);
-            InspectorUtilities.DrawLine(false);
-            for (var i = 0; i < _availableUIController.Count; i++)
-            {
-                GUILayout.BeginHorizontal();
-                var isSelected = _monitoringUIController.objectReferenceValue == _availableUIController[i];
-                GUILayout.Label(BoldIf(_availableUIController[i].name, isSelected), InspectorUtilities.RichTextStyle(), GUILayout.Width(EditorGUIUtility.labelWidth - 7f));
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Set Active UIController", GUILayout.Width(200)))
+                if (!_availableUIController.Any())
                 {
-                    _monitoringUIController.objectReferenceValue = _availableUIController[i];
-                    _monitoringUIController.serializedObject.ApplyModifiedProperties();
+                    return;
                 }
-                if (GUILayout.Button("Select", GUILayout.Width(75)))
+                GUILayout.BeginVertical(GUI.skin.box);
+                InspectorUtilities.DrawLine(false);
+                for (var i = 0; i < _availableUIController.Count; i++)
                 {
-                    Selection.activeObject = _availableUIController[i];
-                    EditorGUIUtility.PingObject(_availableUIController[i]);
+                    GUILayout.BeginHorizontal();
+                    var isSelected = _monitoringUIController.objectReferenceValue == _availableUIController[i];
+                    GUILayout.Label(BoldIf(_availableUIController[i].name, isSelected), InspectorUtilities.RichTextStyle(), GUILayout.Width(EditorGUIUtility.labelWidth - 7f));
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button("Set Active UIController", GUILayout.Width(200)))
+                    {
+                        _monitoringUIController.objectReferenceValue = _availableUIController[i];
+                        _monitoringUIController.serializedObject.ApplyModifiedProperties();
+                    }
+                    if (GUILayout.Button("Select", GUILayout.Width(75)))
+                    {
+                        Selection.activeObject = _availableUIController[i];
+                        EditorGUIUtility.PingObject(_availableUIController[i]);
+                    }
+                    GUILayout.EndHorizontal();
                 }
-                GUILayout.EndHorizontal();
-            }
-            InspectorUtilities.DrawLine(false);
-            GUILayout.EndVertical();
+                InspectorUtilities.DrawLine(false);
+                GUILayout.EndVertical();
 
-            string BoldIf(string content, bool condition)
+                string BoldIf(string content, bool condition)
+                {
+                    return condition ? $"<b>{content}</b>" : content;
+                }
+            }
+            catch (MissingReferenceException)
             {
-                return condition ? $"<b>{content}</b>" : content;
+                PopulateSerializedProperties();
             }
         }
         
@@ -372,6 +429,128 @@ namespace Baracuda.Monitoring.Editor
                 {
                     _availableUIController.Add(controller);
                 }
+            }
+        }
+
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Package GUI ---
+
+        private readonly GUIContent _showPackage =
+            new GUIContent("Show Package", "Open and select the package in the project window");
+
+        private readonly GUIContent _importPackage = 
+            new GUIContent("Import Package", "Import the package into your project. This will open an import dialogue.");
+
+        private void DrawAdditionalPackages()
+        {
+            EditorGUILayout.Space();
+            const int HORIZONTAL_THRESHOLD = 700;
+            var currentViewWidth = EditorGUIUtility.currentViewWidth -20;
+            var makeHorizontal = currentViewWidth > HORIZONTAL_THRESHOLD;
+            var verticalWidth = makeHorizontal? currentViewWidth / 3 : currentViewWidth;
+            
+            if (makeHorizontal)
+            {
+                GUILayout.BeginHorizontal();
+            }
+            
+            // IMGUI
+            GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"), GUILayout.MaxWidth(verticalWidth));
+            GUILayout.Label("IMGUI Package (default)", InspectorUtilities.TitleStyle());
+            
+            if (GUILayout.Button(_showPackage))
+            {
+                MoveToPackagePath("RuntimeMonitoring_IMGUI");
+            }
+            if (GUILayout.Button(_importPackage))
+            {
+                ImportPackage("RuntimeMonitoring_IMGUI");
+            }
+            
+            EditorGUILayout.Space();
+            GUILayout.EndVertical();
+            
+            // uGUI TextMeshPro
+            EditorGUILayout.Space();
+            GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"), GUILayout.MaxWidth(verticalWidth));
+            GUILayout.Label("TextMeshPro Package", InspectorUtilities.TitleStyle());
+            
+            if (GUILayout.Button(_showPackage))
+            {
+                MoveToPackagePath("RuntimeMonitoring_TextMeshPro");
+            }
+            if (GUILayout.Button(_importPackage))
+            {
+                ImportPackage("RuntimeMonitoring_TextMeshPro");
+            }
+            
+            EditorGUILayout.Space();
+            GUILayout.EndVertical();
+            
+            // UIToolkit
+            EditorGUILayout.Space();
+            GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"), GUILayout.MaxWidth(verticalWidth));
+            GUILayout.Label("UIToolkit (Unity 2021.1 Or Higher)", InspectorUtilities.TitleStyle());
+            
+            if (GUILayout.Button(_showPackage))
+            {
+                MoveToPackagePath("RuntimeMonitoring_UIToolkit");
+            }
+
+            if (GUILayout.Button(_importPackage))
+            {
+                ImportPackage("RuntimeMonitoring_UIToolkit");
+            }
+            EditorGUILayout.Space();
+            GUILayout.EndVertical();
+            
+            if (makeHorizontal)
+            {
+                GUILayout.EndHorizontal();
+            }
+            EditorGUILayout.Space();
+        }
+        
+        #endregion
+        
+        #region --- Package Installation ---
+
+        private static string GetPackagePath(string packageName)
+        {
+            var assets = AssetDatabase.FindAssets(packageName);
+            var assetGuid = assets.FirstOrDefault();
+            var assetPath = AssetDatabase.GUIDToAssetPath(assetGuid);
+            return assetPath;
+        }
+        
+        private static void MoveToPackagePath(string packageName)
+        {
+            var assetPath = GetPackagePath(packageName);
+            var asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+            if (asset != null)
+            {
+                Selection.activeObject = asset;
+                EditorGUIUtility.PingObject(asset);
+            }
+            else
+            {
+                Debug.LogError($"Operation failed! <b>{packageName}.unitypackage</b> was not found! Did you delete or exclude this file on import?");
+            }
+        }
+
+        private static void ImportPackage(string packageName)
+        {
+            var assetPath = GetPackagePath(packageName);
+            if (!string.IsNullOrWhiteSpace(assetPath))
+            {
+                AssetDatabase.ImportPackage(assetPath, true);
+            }
+            else
+            {
+                Debug.LogError($"Import failed! <b>{packageName}.unitypackage</b> was not found! Did you delete or exclude this file on import?");
             }
         }
 
