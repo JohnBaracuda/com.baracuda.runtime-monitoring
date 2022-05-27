@@ -621,6 +621,10 @@ namespace Baracuda.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasInterface<T>(this Type type) where T : class
         {
+            if (type == typeof(T))
+            {
+                return true;
+            }
             for (var i = 0; i < type.GetInterfaces().Length; i++)
             {
                 var @interface = type.GetInterfaces()[i];

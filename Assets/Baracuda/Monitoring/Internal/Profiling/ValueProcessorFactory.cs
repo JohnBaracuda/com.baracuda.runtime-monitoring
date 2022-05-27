@@ -221,7 +221,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
             
             // UnityEngine.Object
-            if (profile.UnitValueType.IsSubclassOrAssignable(typeof(UnityEngine.Object)))
+            if (profile.UnitValueType.IsSubclassOf(typeof(UnityEngine.Object)))
             {
                 return (Func<TValue, string>) (Delegate) UnityEngineObjectProcessor(profile);
             }
@@ -1307,10 +1307,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                 sb.Clear();
                 sb.Append("\n-");
-                sb.Append(GetIndentStringForValue(indentValue));
-                sb.Append('-');
                 sb.Append(' ');
-                sb.Append(transform.ToString());
+                sb.Append(transform.name);
                 
                 foreach (Transform element in transform)
                 {
@@ -1318,7 +1316,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     sb.Append(GetIndentStringForValue(indentValue));
                     sb.Append('-');
                     sb.Append(' ');
-                    sb.Append(element.ToString());
+                    sb.Append(element.name);
                     
                     foreach (Transform child in element)
                     {
@@ -1335,7 +1333,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     builder.Append(GetIndentStringForValue(++i * indentValue));
                     builder.Append('-');
                     builder.Append(' ');
-                    builder.Append(parent.ToString());
+                    builder.Append(parent.name);
                     foreach (Transform child in parent)
                     {
                         Traverse(child, i, ref builder);
