@@ -42,7 +42,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             return new EventUnit<TTarget, TDelegate>((TTarget) target, _formatState, this);
         }
        
-        public EventProfile(EventInfo eventInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args) 
+        private EventProfile(EventInfo eventInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args) 
             : base(eventInfo, attribute, typeof(TTarget), typeof(TDelegate), UnitType.Event, args)
         {
             _eventInfo = eventInfo;
