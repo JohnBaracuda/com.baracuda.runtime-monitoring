@@ -5,7 +5,7 @@ using UnityEngine.Scripting;
 namespace Baracuda.Monitoring
 {
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
     public sealed class FormatAttribute : MonitoringMetaAttribute
     {
         /// <summary>
