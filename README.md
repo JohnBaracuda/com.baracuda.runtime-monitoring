@@ -9,7 +9,7 @@ Runtime Monitoring is also available on the [Asset Store!](https://u3d.as/2QxJ)
 
 &nbsp;
 
-[![Youtube Preview](https://johnBaracuda.com/meida/img/monitoring/Thumbnail.png)](https://www.youtube.com/watch?v=Ir4KPjykYUM)
+[![Youtube Preview](https://johnBaracuda.com/media/img/monitoring/Thumbnail.png)](https://www.youtube.com/watch?v=Ir4KPjykYUM)
 
 &nbsp;
 ## Table of Contents
