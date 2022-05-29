@@ -23,7 +23,12 @@ namespace Baracuda.Monitoring.UI.IMGUI
         [SerializeField] private float elementSpacing = 2f;
         [SerializeField] private MarginOrPadding windowMargin;
         [SerializeField] private MarginOrPadding elementPadding;
-        
+
+        [Header("Scaling")]
+        [SerializeField] private bool overrideScale;
+        //TODO: Add/implement an attribute that hides the field if the overrideScale is false
+        [SerializeField] private float scale;
+
         [Header("Coloring")]
         [SerializeField] private Color backgroundColor = Color.black;
 
@@ -41,6 +46,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
         private readonly GUIContent _content = new GUIContent();
         private Texture2D _backgroundTexture;
+        private Vector3 _scale = Vector3.one;
 
         private static float lastLowerLeftHeight;
         private static float lastLowerRightHeight;
@@ -129,7 +135,9 @@ namespace Baracuda.Monitoring.UI.IMGUI
             _backgroundTexture = new Texture2D(1, 1);
             _backgroundTexture.SetPixel(0, 0, backgroundColor);
             _backgroundTexture.Apply();
-            
+
+            UpdateScale();
+
 #if UNITY_EDITOR
             if (logStartMessage)
             {
@@ -137,15 +145,35 @@ namespace Baracuda.Monitoring.UI.IMGUI
             }
 #endif
         }
-        
+
+        private void OnValidate()
+        {
+            UpdateScale();
+        }
+
+        private void UpdateScale()
+        {
+#if UNITY_EDITOR
+            _scale = overrideScale ?
+                new Vector3(scale, scale, 1) :
+                new Vector3(UnityEditor.EditorGUIUtility.pixelsPerPoint, UnityEditor.EditorGUIUtility.pixelsPerPoint, 1);
+#else
+            if (overrideScale)
+            {
+                _scale = new Vector3(scale, scale, 1);
+            }
+#endif
+        }
+
         #endregion
 
         #region --- GUI ---
         
         private void OnGUI()
         {
+            GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, _scale);
             var ctx = new Context(GUI.skin.label);
-            var screenData = new ScreenData(Screen.width, Screen.height);
+            var screenData = new ScreenData(Screen.width / _scale.x, Screen.height / _scale.y);
             DrawUpperLeft(ctx, screenData);
             DrawUpperRight(ctx, screenData);
             DrawLowerLeft(ctx, screenData);
