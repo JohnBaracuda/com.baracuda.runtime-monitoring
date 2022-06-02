@@ -21,7 +21,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
     /// </summary>
     internal static partial class ValueProcessorFactory
     {
-        #region --- API ---
+        /*
+         * API   
+         */
 
         /// <summary>
         /// Creates a default type specific processor to format the <see cref="TValue"/> depending on its exact type.
@@ -34,12 +36,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
             return CreateTypeSpecificProcessorInternal<TValue>(profile);
         }
         
-        #endregion
         
         //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Internal ---
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Func<TValue, string> CreateTypeSpecificProcessorInternal<TValue>(MonitorProfile profile)
         {
@@ -55,6 +54,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return (Func<TValue, string>)(Delegate) CreateBooleanProcessor(profile);
             }
             
+            //TODO: make AOT types for this
 #if !ENABLE_IL2CPP
             // Dictionary<TKey, TValue>
             if (profile.UnitValueType.IsGenericIDictionary())
@@ -72,7 +72,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return (Func<TValue, string>) (Delegate) IEnumerableBooleanProcessor(profile);
             }
             
-#if !ENABLE_IL2CPP
+            //TODO: make AOT types for this //Test this
             // IEnumerable<T>
             if (profile.UnitValueType.IsGenericIEnumerable(true))
             {
@@ -81,6 +81,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
             }
 
+#if !ENABLE_IL2CPP
             // Array<T>
             if (profile.UnitValueType.IsArray)
             {
@@ -178,178 +179,5 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return ReferenceTypeProcessor<TValue>(profile);
             }
         }
-
-        #endregion
-        
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Value Processor: Ilist With Index Argument ---
-
-        private static readonly MethodInfo genericIListWithIndexCreateMethod =
-            typeof(ValueProcessorFactory).GetMethod(nameof(CreateIListFuncWithIndexArgument), STATIC_FLAGS);
-        
-        /// <summary>
-        /// Creates a delegate that accepts an input of type <see cref="IList{TElement}"/> and returns a string, using
-        /// a custom value processor with a signature <see cref="string"/>(<see cref="TElement"/> element <see cref="Int32"/> index)<br/>
-        /// </summary>
-        /// <param name="processor">the <see cref="MethodInfo"/> of the previously validated processor</param>
-        /// <param name="name">the name of the <see cref="ValueUnit{TTarget,TValue}"/></param>
-        /// <typeparam name="TInput">the exact argument/input type of the processors method. This type must be assignable from <see cref="IList{TElement}"/></typeparam>
-        /// <typeparam name="TElement">the element type of the IList</typeparam>
-        /// <returns></returns>
-        private static Func<TInput, string> CreateIListFuncWithIndexArgument<TInput, TElement>(MethodInfo processor, string name) where TInput : IList<TElement>
-        {
-            try
-            {
-                // create a matching delegate with the processors method info.
-                var listDelegate = (Func<TElement, int, string>)Delegate.CreateDelegate(typeof(Func<TElement, int, string>), processor);
-                
-                // create a matching null string.
-                var nullString = $"{name}: {NULL}";
-                
-                // create a stringBuilder object to be used by the lambda.
-                var stringBuilder = new StringBuilder();
-
-                #region --- Processor Code ---
-
-                return (value) =>
-                {
-                    // check that the passed value is not null.
-                    if (value != null)
-                    {
-                        stringBuilder.Clear();
-                        stringBuilder.Append(name);
-                        for (int i = 0; i < value.Count; i++)
-                        {
-                            stringBuilder.Append(Environment.NewLine);
-                            stringBuilder.Append(DEFAULT_INDENT);
-                            stringBuilder.Append(listDelegate(value[i], i));
-                        }
-                        return stringBuilder.ToString();
-                    }
-
-                    return nullString;
-                };
-
-                #endregion 
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-            }
-
-            return null;
-        }
-
-        #endregion
-        
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Value Processor: Ilist Without Index Argument ---
-
-        private static readonly MethodInfo genericIListWithoutIndexCreateMethod =
-            typeof(ValueProcessorFactory).GetMethod(nameof(CreateIListFuncWithoutIndexArgument), STATIC_FLAGS);
-        
-        private static Func<TInput, string> CreateIListFuncWithoutIndexArgument<TInput, TElement>(MethodInfo processor, string name) where TInput : IList<TElement>
-        {
-            try
-            {
-                // create a matching delegate with the processors method info.
-                var listDelegate = (Func<TElement, string>)Delegate.CreateDelegate(typeof(Func<TElement, string>), processor);
-                
-                // create a matching null string.
-                var nullString = $"{name}: {NULL}";
-
-                // create a stringBuilder object to be used by the lambda.
-                var stringBuilder = new StringBuilder();
-
-                #region --- Processor Code ---
-
-                return (value) =>
-                {
-                    // check that the passed value is not null.
-                    if (value != null)
-                    {
-                        stringBuilder.Clear();
-                        stringBuilder.Append(name);
-                        
-                        for (int i = 0; i < value.Count; i++)
-                        {
-                            stringBuilder.Append(Environment.NewLine);
-                            stringBuilder.Append(DEFAULT_INDENT);
-                            stringBuilder.Append(listDelegate(value[i]));
-                        }
-                        return stringBuilder.ToString();
-                    }
-
-                    return nullString;
-                };
-
-                #endregion 
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-            }
-
-            return null;
-        }
-
-        #endregion
-        
-        //--------------------------------------------------------------------------------------------------------------
-        
-        #region --- Value Processor: Dictionary ---
-
-        
-        private static readonly MethodInfo genericIDictionaryCreateMethod =
-            typeof(ValueProcessorFactory).GetMethod(nameof(CreateIDictionaryFunc), STATIC_FLAGS);
-
-        private static Func<TInput, string> CreateIDictionaryFunc<TInput, TKey, TValue>(MethodInfo processor, string name) where TInput : IDictionary<TKey, TValue>
-        {
-            try
-            {
-                // create a matching delegate with the processors method info.
-                var genericFunc = (Func<TKey,TValue,string>)Delegate.CreateDelegate(typeof(Func<TKey,TValue,string>), processor);
-
-                // create a matching null string.
-                var nullString = $"{name}: {NULL}";
-                
-                // create a stringBuilder object to be used by the lambda.
-                var stringBuilder = new StringBuilder();
-                
-                #region --- Processor Code ---
-
-                return (value) =>
-                {
-                    // check that the passed value is not null.
-                    if (value != null)
-                    {
-                        stringBuilder.Clear();
-                        stringBuilder.Append(name);
-                        
-                        foreach (KeyValuePair<TKey, TValue> valuePair in value)
-                        {
-                            stringBuilder.Append(Environment.NewLine);
-                            stringBuilder.Append(DEFAULT_INDENT);
-                            stringBuilder.Append(genericFunc(valuePair.Key, valuePair.Value));
-                        }
-                        return stringBuilder.ToString();
-                    }
-
-                    return nullString;
-                };
-
-                #endregion
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-            }
-
-            return null;
-        }
-
-        #endregion
     }
 }

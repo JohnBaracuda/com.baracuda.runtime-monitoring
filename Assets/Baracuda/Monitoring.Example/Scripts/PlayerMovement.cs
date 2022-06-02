@@ -1,6 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
@@ -8,6 +7,9 @@ namespace Baracuda.Monitoring.Example.Scripts
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : MonitoredBehaviour
     {
+        [Monitor]
+        private Vector3 Position => transform.position;
+        
         #region --- Inspector ---
         
         [Header("Movement Settings")] 
