@@ -10,7 +10,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * General   
          */
         
-        private static Func<TValue, string> ReferenceTypeProcessor<TValue>(MonitorProfile profile)
+        private static Func<TValue, string> DefaultProcessor<TValue>(MonitorProfile profile)
         {
             var stringBuilder = new StringBuilder();
             var label = profile.FormatData.Label;

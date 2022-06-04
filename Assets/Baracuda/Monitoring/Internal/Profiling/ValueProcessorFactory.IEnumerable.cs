@@ -121,28 +121,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         #region --- Generic IEnumerable ---
 
-        [Preserve]
-        [MethodImpl(MethodImplOptions.NoOptimization)]
-        private static void __AOT()
-        {
-            DoThrow();
-            
-            GenericIEnumerableProcessor<object>(null);
-            GenericIEnumerableProcessor<bool>(null);
-            GenericIEnumerableProcessor<byte>(null);
-            GenericIEnumerableProcessor<short>(null);
-            GenericIEnumerableProcessor<int>(null);
-            GenericIEnumerableProcessor<long>(null);
-            GenericIEnumerableProcessor<float>(null);
-            GenericIEnumerableProcessor<double>(null);
-            GenericIEnumerableProcessor<Enum8>(null);
-            GenericIEnumerableProcessor<Enum16>(null);
-            GenericIEnumerableProcessor<Enum32>(null);
-            GenericIEnumerableProcessor<Enum64>(null);
-
-            void DoThrow() => throw new InvalidOperationException("Illegal AOT Method call!");
-        }
-
         private static readonly MethodInfo createGenericIEnumerableMethod = typeof(ValueProcessorFactory)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .Single(methodInfo =>
@@ -311,6 +289,5 @@ namespace Baracuda.Monitoring.Internal.Profiling
         }
         
         #endregion
-        
     }
 }

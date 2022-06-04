@@ -85,6 +85,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 _instanceValueProcessorDelegate = ValueProcessorFactory.FindCustomInstanceProcessor(processorName, this);
                 _staticValueProcessorDelegate = ValueProcessorFactory.FindCustomStaticProcessor(processorName, this);
+                //TODO: Processor not found
             }
             if (_staticValueProcessorDelegate == null && _instanceValueProcessorDelegate == null)
             {

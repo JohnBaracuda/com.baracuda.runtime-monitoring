@@ -1,6 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -11,7 +12,7 @@ using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Pooling.Concretions;
 using Baracuda.Reflection;
 using Baracuda.Threading;
-using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Baracuda.Monitoring.API
 {
@@ -74,25 +75,27 @@ namespace Baracuda.Monitoring.API
         /*
          * Target Object Registration   
          */
-        
+
         /// <summary>
         /// Register an object that is monitored during runtime.
         /// </summary>
+#if DISABLE_MONITORING
+        [Conditional("FALSE")]
+#endif
         public static void RegisterTarget(object target)
         {
-#if !DISABLE_MONITORING
             RegisterTargetInternal(target);
-#endif
         }
         
         /// <summary>
         /// Unregister an object that is monitored during runtime.
         /// </summary>
+#if DISABLE_MONITORING
+        [Conditional("FALSE")]
+#endif
         public static void UnregisterTarget(object target)
         {
-#if !DISABLE_MONITORING
             UnregisterTargetInternal(target);
-#endif
         }
 
         /*

@@ -36,9 +36,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
             return CreateTypeSpecificProcessorInternal<TValue>(profile);
         }
         
-        
         //--------------------------------------------------------------------------------------------------------------
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Func<TValue, string> CreateTypeSpecificProcessorInternal<TValue>(MonitorProfile profile)
         {
@@ -54,46 +53,70 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return (Func<TValue, string>)(Delegate) CreateBooleanProcessor(profile);
             }
             
-            //TODO: make AOT types for this
-#if !ENABLE_IL2CPP
             // Dictionary<TKey, TValue>
             if (profile.UnitValueType.IsGenericIDictionary())
             {
-                var keyType   = profile.UnitValueType.GetGenericArguments()[0];
-                var valueType = profile.UnitValueType.GetGenericArguments()[1];
-                var genericMethod = createDictionaryProcessorMethod.MakeGenericMethod(keyType, valueType);
-                return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
+                try
+                {
+                    var keyType = profile.UnitValueType.GetGenericArguments()[0];
+                    var valueType = profile.UnitValueType.GetGenericArguments()[1];
+                    var genericMethod = createDictionaryProcessorMethod.MakeGenericMethod(keyType, valueType);
+                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[] {profile});
+                }
+#pragma warning disable CS0618
+                //IL2CPP runtime does throw this exception!
+                catch (ExecutionEngineException engineException)
+#pragma warning restore CS0618
+                {
+                    Debug.LogException(engineException);
+                }
             }
-#endif
-
+            
+            // Array<T>
+            if (profile.UnitValueType.IsArray)
+            {
+                try
+                {
+                    var type = profile.UnitValueType.GetElementType();
+                
+                    Debug.Assert(type != null, nameof(type) + " != null");
+                
+                    var genericMethod = type.IsValueType ? createValueTypeArrayMethod.MakeGenericMethod(type) : createReferenceTypeArrayMethod.MakeGenericMethod(type);
+                
+                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
+                }
+#pragma warning disable CS0618 
+                //IL2CPP runtime does throw this exception!
+                catch (ExecutionEngineException engineException)
+#pragma warning restore CS0618
+                {
+                    Debug.LogException(engineException);
+                }
+            } 
+            
             // IEnumerable<bool>
             if (profile.UnitValueType.HasInterface<IEnumerable<bool>>())
             {
                 return (Func<TValue, string>) (Delegate) IEnumerableBooleanProcessor(profile);
             }
             
-            //TODO: make AOT types for this //Test this
             // IEnumerable<T>
             if (profile.UnitValueType.IsGenericIEnumerable(true))
             {
-                var type = profile.UnitValueType.GetElementType() ?? profile.UnitValueType.GetGenericArguments()[0];
-                var genericMethod = createGenericIEnumerableMethod.MakeGenericMethod(type);
-                return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
+                try
+                {
+                    var type = profile.UnitValueType.GetElementType() ?? profile.UnitValueType.GetGenericArguments()[0];
+                    var genericMethod = createGenericIEnumerableMethod.MakeGenericMethod(type);
+                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
+                }
+#pragma warning disable CS0618 
+                //IL2CPP runtime does throw this exception!
+                catch (ExecutionEngineException engineException)
+#pragma warning restore CS0618
+                {
+                    Debug.LogException(engineException);
+                }
             }
-
-#if !ENABLE_IL2CPP
-            // Array<T>
-            if (profile.UnitValueType.IsArray)
-            {
-                var type = profile.UnitValueType.GetElementType();
-
-                Debug.Assert(type != null, nameof(type) + " != null");
-                
-                var genericMethod = type.IsValueType ? createValueTypeArrayMethod.MakeGenericMethod(type) : createReferenceTypeArrayMethod.MakeGenericMethod(type);
-                
-                return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
-            }
-#endif
             
             // IEnumerable
             if (profile.UnitValueType.IsIEnumerable(true))
@@ -176,7 +199,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             // Reference Type
             else
             {
-                return ReferenceTypeProcessor<TValue>(profile);
+                return DefaultProcessor<TValue>(profile);
             }
         }
     }

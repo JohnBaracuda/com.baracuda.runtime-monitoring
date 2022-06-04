@@ -50,7 +50,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 // validate that the processor is not null.
                 if (processorMethod == null)
                 {
-                    ExceptionLogging.LogException(new ProcessorNotFoundException(processor, declaringType));
                     return null;
                 }
 
@@ -254,7 +253,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                 if (processorMethod == null)
                 {
-                    ExceptionLogging.LogException(new ProcessorNotFoundException(processor, declaringType));
                     return null;
                 }
 
