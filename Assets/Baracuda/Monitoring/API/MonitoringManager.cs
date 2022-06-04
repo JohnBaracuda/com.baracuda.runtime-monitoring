@@ -17,7 +17,7 @@ using Debug = UnityEngine.Debug;
 namespace Baracuda.Monitoring.API
 {
     /// <summary>
-    /// Class manages monitoring and offers public API
+    /// Class offers public API and manages monitoring processes.
     /// </summary>
     public static class MonitoringManager
     {
@@ -79,23 +79,23 @@ namespace Baracuda.Monitoring.API
         /// <summary>
         /// Register an object that is monitored during runtime.
         /// </summary>
-#if DISABLE_MONITORING
-        [Conditional("FALSE")]
-#endif
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void RegisterTarget(object target)
         {
+#if !DISABLE_MONITORING
             RegisterTargetInternal(target);
+#endif
         }
         
         /// <summary>
         /// Unregister an object that is monitored during runtime.
         /// </summary>
-#if DISABLE_MONITORING
-        [Conditional("FALSE")]
-#endif
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void UnregisterTarget(object target)
         {
+#if !DISABLE_MONITORING
             UnregisterTargetInternal(target);
+#endif
         }
 
         /*
@@ -105,12 +105,12 @@ namespace Baracuda.Monitoring.API
         /// <summary>
         /// Get a list of monitoring units for static targets.
         /// </summary>
-        public static IReadOnlyList<MonitorUnit> GetStaticUnits() => staticUnitCache;
+        public static IReadOnlyList<IMonitorUnit> GetStaticUnits() => staticUnitCache;
         
         /// <summary>
         /// Get a list of monitoring units for instance targets.
         /// </summary>
-        public static IReadOnlyList<MonitorUnit> GetInstanceUnits() => instanceUnitCache;
+        public static IReadOnlyList<IMonitorUnit> GetInstanceUnits() => instanceUnitCache;
         
         #endregion
 
@@ -118,7 +118,6 @@ namespace Baracuda.Monitoring.API
         
         #region --- Private Fields ---
         
-        private static List<MonitorProfile> staticMonitorProfiles = new List<MonitorProfile>();
         private static Dictionary<Type, List<MonitorProfile>> instanceMonitorProfiles = new Dictionary<Type, List<MonitorProfile>>();
         
         private static readonly List<MonitorUnit> staticUnitCache = new List<MonitorUnit>(100);
@@ -139,8 +138,6 @@ namespace Baracuda.Monitoring.API
         
         #endregion
         
-        //--------------------------------------------------------------------------------------------------------------
-
         #region --- Raise Events ---
         
         private static void RaiseUnitCreated(MonitorUnit monitorUnit)
@@ -166,8 +163,15 @@ namespace Baracuda.Monitoring.API
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
+
+        /*
+         * Conditional Compilation   
+         */
+
+        #region --- Internal ---
         
-        #region --- Internal Target Registration ---
+#if !DISABLE_MONITORING
+        #region --- Target Registration ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void RegisterTargetInternal(object target)
@@ -208,7 +212,7 @@ namespace Baracuda.Monitoring.API
 
         #endregion
         
-        #region --- Internal Complete Profiling ---
+        #region --- Complete Profiling ---
 
         internal static async Task CompleteProfilingAsync(
             List<MonitorProfile> staticProfiles,
@@ -217,7 +221,6 @@ namespace Baracuda.Monitoring.API
         {
             ct.ThrowIfCancellationRequested();
             
-            staticMonitorProfiles = staticProfiles;
             instanceMonitorProfiles = instanceProfiles;
             
             CreateStaticUnits(staticProfiles.ToArray());
@@ -233,7 +236,6 @@ namespace Baracuda.Monitoring.API
         {
             ct.ThrowIfCancellationRequested();
             
-            staticMonitorProfiles = staticProfiles;
             instanceMonitorProfiles = instanceProfiles;
             
             CreateStaticUnits(staticProfiles.ToArray());
@@ -348,6 +350,10 @@ namespace Baracuda.Monitoring.API
         {
             staticUnitCache.Add(staticProfile.CreateUnit(null));
         }
+
+        #endregion
+        
+#endif //DISABLE_MONITORING
 
         #endregion
     }

@@ -9,21 +9,21 @@ namespace Baracuda.Monitoring.IL2CPP
     {
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
-        internal static void AOTValueTypeArray<T>() where T : unmanaged
+        public static void AOTValueTypeArray<T>() where T : unmanaged
         {
             ValueProcessorFactory.AOTValueTypeArray<T>();
         }
         
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
-        internal static void AOTReferenceTypeArray<T>()
+        public static void AOTReferenceTypeArray<T>()
         {
             ValueProcessorFactory.AOTReferenceTypeArray<T>();
         }
         
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
-        internal static void AOTDictionary<TKey, TValue>()
+        public static void AOTDictionary<TKey, TValue>()
         {
             ValueProcessorFactory.AOTDictionary<TKey, TValue>();
         }
