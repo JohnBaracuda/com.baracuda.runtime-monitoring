@@ -88,9 +88,12 @@ Assets/TextMeshPro/*
 Assets/Baracuda/Monitoring.UI/TextMeshPro
 Assets/Baracuda/Monitoring.UI/TextMeshPro/**
 Assets/Baracuda/Monitoring.UI/TextMeshPro/*
+Assets/Baracuda/Monitoring.UI/UIToolkit
+Assets/Baracuda/Monitoring.UI/UIToolkit/**
+Assets/Baracuda/Monitoring.UI/UIToolkit/*
 
 Assets/Baracuda/IL2CPP.meta
 Assets/Baracuda/IL2CPP/IL2CPP_AOT.cs.meta
 Assets/TextMeshPro.meta
-Assets/TextMeshPro.meta
 Assets/Baracuda/Monitoring.UI/TextMeshPro.meta
+Assets/Baracuda/Monitoring.UI/UIToolkit.meta
