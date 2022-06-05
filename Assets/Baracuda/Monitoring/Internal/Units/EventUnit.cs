@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
+using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Profiling;
 
@@ -9,8 +10,6 @@ namespace Baracuda.Monitoring.Internal.Units
     {
         #region --- Properties ---
 
-        public override string GetStateFormatted => _stateFormatter(_target, _invokeCounter);
-        public override string GetStateRaw { get; } = "INVALID";
         public override IMonitorProfile Profile => _eventProfile;
 
         #endregion
@@ -39,27 +38,34 @@ namespace Baracuda.Monitoring.Internal.Units
             _eventProfile = eventProfile;
             _stateFormatter = stateFormatter;
             _eventHandler = eventProfile.CreateMatchingDelegate(OnEvent);
-            eventProfile.SubscribeEventHandler(target, _eventHandler);
-            ExternalUpdateRequired = eventProfile.Refresh;
+            eventProfile.SubscribeToEvent(target, _eventHandler);
         }
         
         //--------------------------------------------------------------------------------------------------------------
      
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override string GetState()
+        {
+            return _stateFormatter(_target, _invokeCounter);
+        }
+
         public override void Refresh()
         {
-            RaiseValueChanged(GetStateFormatted);
+            var state = GetState();
+            RaiseValueChanged(state);
         }
 
         private void OnEvent()
         {
             _invokeCounter++;
-            RaiseValueChanged(GetStateFormatted);
+            var state = GetState();
+            RaiseValueChanged(state);
         }
 
         public override void Dispose()
         {
             base.Dispose();
-            _eventProfile.RemoveEventHandler(_target, _eventHandler);
+            _eventProfile.UnsubscribeFromEvent(_target, _eventHandler);
         }
     }
 }

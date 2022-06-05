@@ -4,10 +4,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Pooling.Concretions;
 using Baracuda.Reflection;
+using JetBrains.Annotations;
+using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
@@ -15,7 +18,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
     {
         #region --- Fields & Properties ---
 
-        public bool Refresh { get; } = true;
         public bool ShowSignature { get; } = true;
         public bool ShowSubscriber { get;  } = true;
         public bool ShowTrueCount { get; } = false;
@@ -58,11 +60,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
             var removeMethod = eventInfo.GetRemoveMethod(true);
             var getterDelegate = eventInfo.AsFieldInfo().CreateGetter<TTarget, Delegate>();
             
-            var counterDelegate = CreateCounterExpression(getterDelegate, ShowTrueCount);
             _subscribe = CreateExpression(addMethod);
             _remove = CreateExpression(removeMethod);
+            var counterDelegate = CreateCounterExpression(getterDelegate, ShowTrueCount);
             
-            _formatState = CreateStateFormatter(counterDelegate);
+            _formatState = CreateStateFormatter(counterDelegate, args.Settings);
         }
         
         private static Action<TTarget, Delegate> CreateExpression(MethodInfo methodInfo)
@@ -72,12 +74,25 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         private static Func<TTarget, int> CreateCounterExpression(Func<TTarget, Delegate> func, bool trueCount)
         {
-            if(trueCount)
+#if ENABLE_IL2CPP
+            if (trueCount)
             {
-                return  target => func(target).GetInvocationList().Length;
+                return (TTarget target) => func(target)?.GetInvocationList().Length ?? 0;
             }
-
-            return target => func(target).GetInvocationList().Length - 1;
+            else
+            {
+                return (TTarget target) => func(target)?.GetInvocationList().Length - 1 ?? 0;
+            }
+#else
+            if (trueCount)
+            {
+                return (TTarget target) => func(target).GetInvocationList().Length;
+            }
+            else
+            {
+                return (TTarget target) => func(target).GetInvocationList().Length - 1;
+            }
+#endif
         }
         
         #endregion
@@ -85,12 +100,13 @@ namespace Baracuda.Monitoring.Internal.Profiling
         //--------------------------------------------------------------------------------------------------------------   
 
         #region --- State Foramtting ---
+        
 
-        private StateFormatDelegate CreateStateFormatter(Func<TTarget, int> counterDelegate)
+        private StateFormatDelegate CreateStateFormatter(Func<TTarget, int> counterDelegate, MonitoringSettings settings)
         {
             if (ShowSignature)
             {
-                var signatureString = _eventInfo.GetEventSignatureString();
+                var signatureString = _eventInfo.GetEventSignatureString().Colorize(settings.EventColor);
 
                 if (ShowSubscriber)
                 {
@@ -144,7 +160,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         #region --- Event Handler ---
 
-        internal void SubscribeEventHandler(TTarget target, Delegate eventHandler)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void SubscribeToEvent(TTarget target, Delegate eventHandler)
         {
 #if ENABLE_IL2CPP
             if (eventHandler == null)
@@ -155,7 +172,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
             _subscribe(target, eventHandler);
         }
 
-        internal void RemoveEventHandler(TTarget target, Delegate eventHandler)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void UnsubscribeFromEvent(TTarget target, Delegate eventHandler)
         {
 #if ENABLE_IL2CPP
             if (eventHandler == null)
@@ -170,7 +188,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Matching Delegate    
          */
 
-         /// <summary>
+        /// <summary>
         /// Returns a delegate with 
         /// </summary>
         /// <param name="action"></param>
@@ -195,29 +213,59 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             var handlerType = _eventInfo.EventHandlerType;
             
-            if (handlerType == typeof(Action))
+            if (handlerType.IsAssignableFrom(typeof(Action)))
             {
                 return action;
             }
-
-            if (handlerType == typeof(Action<float>))
+            
+            if (handlerType.IsAssignableFrom(typeof(Action<bool>)))
             {
-                return new Action<float>(_ => action());
+                return new Action<bool>(_ => action());
             }
             
-            if (handlerType == typeof(Action<int>))
+            if (handlerType.IsAssignableFrom(typeof(Action<int>)))
             {
                 return new Action<int>(_ => action());
             }
             
-            if (handlerType == typeof(Action<string>))
+            if (handlerType.IsAssignableFrom(typeof(Action<float>)))
+            {
+                return new Action<float>(_ => action());
+            }
+            
+            if (handlerType.IsAssignableFrom(typeof(Action<Vector2>)))
+            {
+                return new Action<Vector2>(_ => action());
+            }
+            
+            if (handlerType.IsAssignableFrom(typeof(Action<Vector3>)))
+            {
+                return new Action<Vector3>(_ => action());
+            }
+            
+            if (handlerType.IsAssignableFrom(typeof(Action<Vector4>)))
+            {
+                return new Action<Vector4>(_ => action());
+            }
+            
+            if (handlerType.IsAssignableFrom(typeof(Action<Quaternion>)))
+            {
+                return new Action<Quaternion>(_ => action());
+            }
+            
+            if (handlerType.IsAssignableFrom(typeof(Action<Color>)))
+            {
+                return new Action<Color>(_ => action());
+            }
+            
+            if (handlerType.IsAssignableFrom(typeof(Action<string>)))
             {
                 return new Action<string>(_ => action());
             }
             
-            if (handlerType == typeof(Action<bool>))
+            if (handlerType.IsAssignableFrom(typeof(Action<object>)))
             {
-                return new Action<bool>(_ => action());
+                return new Action<object>(_ => action());
             }
 
             return null;

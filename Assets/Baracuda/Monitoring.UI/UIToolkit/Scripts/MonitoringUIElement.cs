@@ -77,7 +77,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                 SetupInstanceUnit(rootVisualElement, monitorUnit, profile, provider);
             }
 
-            UpdateGUI(Unit.GetStateFormatted);
+            UpdateGUI(Unit.GetState());
         }
 
         private void SetupInstanceUnit(VisualElement rootVisualElement, IMonitorUnit monitorUnit, IMonitorProfile profile, IStyleProvider provider)

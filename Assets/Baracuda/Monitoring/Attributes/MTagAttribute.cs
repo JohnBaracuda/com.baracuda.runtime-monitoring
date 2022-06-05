@@ -9,16 +9,26 @@ namespace Baracuda.Monitoring
     /// </summary>
     [Preserve]
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
-    public sealed class MonitoringTagAttribute : MonitoringMetaAttribute
+    public class MTagAttribute : MonitoringMetaAttribute
     {
         public string[] Tags { get; }
 
-        public MonitoringTagAttribute(string tag)
+        public MTagAttribute(string tag)
         {
             Tags = new[] {tag};
         }
         
-        public MonitoringTagAttribute(params string[] tags)
+        public MTagAttribute(string tag1, string tag2)
+        {
+            Tags = new[] {tag1, tag2};
+        }
+        
+        public MTagAttribute(string tag1, string tag2, string tag3)
+        {
+            Tags = new[] {tag1, tag2, tag3};
+        }
+        
+        public MTagAttribute(params string[] tags)
         {
             Tags = tags;
         }

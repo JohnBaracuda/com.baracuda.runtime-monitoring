@@ -12,8 +12,9 @@ using UnityEngine;
 namespace Baracuda.Monitoring.UI.IMGUI
 {
     /// <summary>
-    /// Disclaimer:
+    /// Disclaimer!!!
     /// This class is showing the base for a GUI based monitoring UI Controller.
+    /// I recommend using either the TextMesh Pro based uGUI solution or the UIToolkit solution instead.
     /// </summary>
     public class MonitoringGUIDrawer : MonitoringUIController
     {
@@ -69,16 +70,14 @@ namespace Baracuda.Monitoring.UI.IMGUI
             public FormatData FormatData { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
             
             private readonly int _size;
-            private readonly string _targetName;
             
             public GUIElement(IMonitorUnit unit)
             {
                 unit.ValueUpdated += Update;
                 FormatData = unit.Profile.FormatData;
-                ID = unit.ID;
-                _targetName = unit.Profile.UnitTargetType.Name;
+                ID = unit.UniqueID;
                 _size = Mathf.Max(FormatData.FontSize, 14);
-                Update(unit.GetStateFormatted);
+                Update(unit.GetState());
             }
 
             private void Update(string text)
@@ -101,8 +100,8 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
             public ScreenData(float width, float height)
             {
-                this.Width = width;
-                this.Height = height;
+                Width = width;
+                Height = height;
                 HalfHeight = height * .5f;
             }
         }
@@ -475,16 +474,16 @@ namespace Baracuda.Monitoring.UI.IMGUI
             switch (unit.Profile.FormatData.Position)
             {
                 case UIPosition.UpperLeft:
-                    _unitsUpperLeft.Remove(_unitsUpperLeft.First(element => element.ID == unit.ID));
+                    _unitsUpperLeft.Remove(_unitsUpperLeft.First(element => element.ID == unit.UniqueID));
                     break;
                 case UIPosition.UpperRight:
-                    _unitsUpperRight.Remove(_unitsUpperRight.First(element => element.ID == unit.ID));
+                    _unitsUpperRight.Remove(_unitsUpperRight.First(element => element.ID == unit.UniqueID));
                     break;
                 case UIPosition.LowerLeft:
-                    _unitsLowerLeft.Remove(_unitsLowerLeft.First(element => element.ID == unit.ID));
+                    _unitsLowerLeft.Remove(_unitsLowerLeft.First(element => element.ID == unit.UniqueID));
                     break;
                 case UIPosition.LowerRight:
-                    _unitsLowerRight.Remove(_unitsLowerRight.First(element => element.ID == unit.ID));
+                    _unitsLowerRight.Remove(_unitsLowerRight.First(element => element.ID == unit.UniqueID));
                     break;
             }
         }

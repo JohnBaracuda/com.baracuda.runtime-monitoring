@@ -1,4 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
+
 using System;
 using System.Text;
 using UnityEngine;
@@ -30,20 +31,11 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
          *  FPS Monitor   
          */
         
-        [MonitorValue(UpdateEvent = nameof(FPSUpdated))]
-        [ValueProcessor(nameof(FPSProcessor))]
-        [Format(FontSize = 32, Position = UIPosition.UpperRight, GroupElement = false)]
+        [Monitor]
+        [MValueProcessor(nameof(FPSProcessor))]
+        [MUpdateEvent(nameof(FPSUpdated))]
+        [MFormatOptions(FontSize = 32, Position = UIPosition.UpperRight, GroupElement = false)]
         private float _fps;
-
-#if FPS_MONITOR_TOTAL
-        [MonitorValue(Update = UpdateOptions.TickUpdate)]
-#endif
-        private long _totalFrameCount = 0;
-        
-#if FPS_MONITOR_TOTAL_FIXED
-        [MonitorValue(Update = UpdateOptions.TickUpdate)]
-#endif
-        private long _fixedUpdateCount = 0;
 
         /*
          *  Events   
@@ -52,14 +44,6 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
         public static event Action<float> FPSUpdated;
         
         //--------------------------------------------------------------------------------------------------------------
-        
-#if FPS_MONITOR_FORCE
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void InitializeOnLoad()
-        {
-            Promise();
-        }
-#endif
         
         public static string FPSProcessor(float value)
         {
@@ -74,7 +58,6 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
         private void Update()
         {
             frameCount++;
-            _totalFrameCount++;
             timer += Time.deltaTime / Time.timeScale;
 
             if (timer < MEASURE_PERIOD)
@@ -98,16 +81,11 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
             timer = rest;
         }
 
-        private void FixedUpdate()
-        {
-            _fixedUpdateCount++;
-        }
-
         #region --- Vsync ---
 
         [Monitor] 
-        [Format(FontSize = 16, Position = UIPosition.UpperRight, GroupElement = false)]
-        [ValueProcessor(nameof(ProcessorTargetFrameRate))]
+        [MFormatOptions(FontSize = 16, Position = UIPosition.UpperRight, GroupElement = false)]
+        [MValueProcessor(nameof(ProcessorTargetFrameRate))]
         private int TargetFrameRate => Application.targetFrameRate;
 
         private static string ProcessorTargetFrameRate(int value)
@@ -116,8 +94,8 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
         }
         
         [Monitor] 
-        [Format(FontSize = 16, Position = UIPosition.UpperRight, GroupElement = false)]
-        [ValueProcessor(nameof(ProcessorVsync))]
+        [MFormatOptions(FontSize = 16, Position = UIPosition.UpperRight, GroupElement = false)]
+        [MValueProcessor(nameof(ProcessorVsync))]
         private int Vsync => QualitySettings.vSyncCount;
 
         private static string ProcessorVsync(int value)

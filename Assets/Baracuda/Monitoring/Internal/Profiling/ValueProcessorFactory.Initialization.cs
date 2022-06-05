@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿// Copyright (c) 2022 Jonathan Lang
+using System.Reflection;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Utilities;
 using UnityEngine;

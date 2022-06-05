@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2022 Jonathan Lang
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Baracuda.Monitoring.Internal.Profiling
@@ -25,7 +26,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CreateIndentValueForProfile(MonitorProfile profile)
         {
-            return profile.TryGetMetaAttribute<FormatAttribute>(out var attribute)
+            return profile.TryGetMetaAttribute<MFormatOptionsAttribute>(out var attribute)
                 ? attribute.ElementIndent >= 0 ? attribute.ElementIndent : DEFAULT_INDENT_NUM
                 : DEFAULT_INDENT_NUM;
         }

@@ -5,8 +5,6 @@ using System.Reflection;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
-using Baracuda.Threading;
-using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
@@ -66,26 +64,58 @@ namespace Baracuda.Monitoring.Internal.Profiling
             MonitorProfileCtorArgs args) 
             : base(memberInfo, attribute, unitTargetType, unitValueType, unitType, args)
         {
-            if (attribute is MonitorValueAttribute valueAttribute && !string.IsNullOrWhiteSpace(valueAttribute.UpdateEvent))
+            if (TryGetMetaAttribute<MUpdateEventAttribute>(out var updateEventAttribute) && !string.IsNullOrWhiteSpace(updateEventAttribute.UpdateEvent))
+            {
+                _addUpdateDelegate    = CreateUpdateHandlerDelegate<TTarget, TValue>(updateEventAttribute.UpdateEvent, this, true);
+                _addNotifyDelegate    = CreateNotifyHandlerDelegate<TTarget>        (updateEventAttribute.UpdateEvent, this, true);
+                _removeUpdateDelegate = CreateUpdateHandlerDelegate<TTarget, TValue>(updateEventAttribute.UpdateEvent, this, false);
+                _removeNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>        (updateEventAttribute.UpdateEvent, this, false);
+
+                if (_addUpdateDelegate != null || _addNotifyDelegate != null)
+                {
+                    RequiresUpdate = false;
+                }
+            }
+            
+            if (attribute is MonitorValueAttribute valueAttribute)
             {
                 SetAccessEnabled = valueAttribute.EnableSetAccess;
                 
-                _addUpdateDelegate    = CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, true);
-                _addNotifyDelegate    = CreateNotifyHandlerDelegate<TTarget>        (valueAttribute.UpdateEvent, this, true);
-                _removeUpdateDelegate = CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, false);
-                _removeNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>        (valueAttribute.UpdateEvent, this, false);
-            }
+                //TODO: Obsolete! Remove in 2.0
+                #region --- OBSOLETE ---
 
+#pragma warning disable CS0618
+                if (RequiresUpdate && !string.IsNullOrWhiteSpace(valueAttribute.UpdateEvent))
+                {
+                    _addUpdateDelegate =
+                        CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, true);
+                    _addNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>(valueAttribute.UpdateEvent, this, true);
+                    _removeUpdateDelegate =
+                        CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, false);
+                    _removeNotifyDelegate =
+                        CreateNotifyHandlerDelegate<TTarget>(valueAttribute.UpdateEvent, this, false);
+
+                    if (_addUpdateDelegate != null || _addNotifyDelegate != null)
+                    {
+                        RequiresUpdate = false;
+                    }
+                }
+#pragma warning restore CS0618
+
+                #endregion
+            }
+            
             CustomUpdateEventAvailable = _addUpdateDelegate != null || _addNotifyDelegate != null;
             
-            // Value Processor
-            var processorName = memberInfo.GetCustomAttribute<ValueProcessorAttribute>()?.Processor;
-
-            if (processorName != null)
+            if (TryGetMetaAttribute<MValueProcessorAttribute>(out var valueProcessorAttribute))
             {
+                var processorName = valueProcessorAttribute.Processor;
                 _instanceValueProcessorDelegate = ValueProcessorFactory.FindCustomInstanceProcessor(processorName, this);
                 _staticValueProcessorDelegate = ValueProcessorFactory.FindCustomStaticProcessor(processorName, this);
-                //TODO: Processor not found
+                if (_instanceValueProcessorDelegate == null && _staticValueProcessorDelegate == null)
+                {
+                    ExceptionLogging.LogValueProcessNotFound(processorName, unitTargetType);
+                }
             }
             if (_staticValueProcessorDelegate == null && _instanceValueProcessorDelegate == null)
             {
@@ -119,13 +149,13 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return true;
             }
 
-            if (_addNotifyDelegate == null)
+            if (_addNotifyDelegate != null)
             {
-                return false;
+                _addNotifyDelegate(target, refreshAction);
+                return true;
             }
 
-            _addNotifyDelegate(target, refreshAction);
-            return true;
+            return false;
         }
 
 
@@ -220,9 +250,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     ? instanceEvent.GetAddMethod(true)
                     : instanceEvent.GetRemoveMethod(true);
 
-                var action =
-                    (NotifyHandleDelegate<T>) Delegate.CreateDelegate(typeof(NotifyHandleDelegate<T>),
-                        method, false);
+                var action = (NotifyHandleDelegate<T>) Delegate.CreateDelegate(typeof(NotifyHandleDelegate<T>), method, false);
                 if (action != null)
                 {
                     return action;

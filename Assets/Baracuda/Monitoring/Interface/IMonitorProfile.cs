@@ -30,6 +30,8 @@ namespace Baracuda.Monitoring.Interface
         /// </summary>
         UpdateOptions UpdateOptions { get; }
         
+        bool RequiresUpdate { get; }
+        
         /// <summary>
         /// The target or declaring type of the monitored member.
         /// </summary>

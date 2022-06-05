@@ -37,7 +37,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
         
         internal static FormatData Create(MonitorProfile profile, MonitoringSettings settings)
         {
-            var formatAttribute = profile.GetMetaAttribute<FormatAttribute>();
+            var formatAttribute = profile.GetMetaAttribute<MFormatOptionsAttribute>();
 
             var format = formatAttribute?.Format;
             var showIndexer = formatAttribute?.ShowIndexer ?? true;

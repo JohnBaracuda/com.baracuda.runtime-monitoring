@@ -1,12 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
+
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Monitoring.Internal.Utilities;
-using Baracuda.Threading;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Units
@@ -18,7 +16,7 @@ namespace Baracuda.Monitoring.Internal.Units
     /// </summary>
     /// <typeparam name="TTarget"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public abstract class ValueUnit<TTarget, TValue> : MonitorUnit, IValueUnit where TTarget : class
+    public abstract class ValueUnit<TTarget, TValue> : MonitorUnit, IValueUnit<TValue> where TTarget : class
     {
         #region --- Fields ---
         
@@ -53,10 +51,9 @@ namespace Baracuda.Monitoring.Internal.Units
             
             if (valueProfile.CustomUpdateEventAvailable)
             {
-                var subscribed = valueProfile.TrySubscribeToUpdateEvent(target, Refresh, SetValue);
-                if (subscribed)
+                if (!valueProfile.TrySubscribeToUpdateEvent(target, Refresh, SetValue))
                 {
-                    ExternalUpdateRequired = false;
+                    Debug.LogWarning($"Could not subscribe {Name} to update event!");
                 }
             }
         }
@@ -84,7 +81,8 @@ namespace Baracuda.Monitoring.Internal.Units
             
             if (_checkIsDirty(ref current, ref _lastValue))
             {
-                RaiseValueChanged(GetStateFormatted);
+                var state = GetState();
+                RaiseValueChanged(state);
             }
 
             _lastValue = current;
@@ -95,27 +93,27 @@ namespace Baracuda.Monitoring.Internal.Units
         //--------------------------------------------------------------------------------------------------------------
         
         #region --- Get ---
-        
-        public override string GetStateFormatted
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => CompiledValueProcessor();
-        }
 
-        public override string GetStateRaw
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override string GetState()
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _getValue(_target).ToString();
+            return CompiledValueProcessor();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T GetValue<T>()
+        public TValue GetValue()
+        {
+            return _getValue(_target);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T GetValueConverted<T>()
         {
             return _getValue(_target).ConvertFast<TValue, T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TValue GetValue()
+        public object GetValueAsObject()
         {
             return _getValue(_target);
         }
@@ -128,14 +126,16 @@ namespace Baracuda.Monitoring.Internal.Units
         {
             _setValue?.Invoke(_target, value);            
             _lastValue = value;
-            RaiseValueChanged(GetStateFormatted);
+            var state = GetState();
+            RaiseValueChanged(state);
         }
 
         public void SetValue(object value)
         {
             _setValue?.Invoke(_target, (TValue) value);
             _lastValue = (TValue) value;
-            RaiseValueChanged(GetStateFormatted);
+            var state = GetState();
+            RaiseValueChanged(state);
         }
         
         public void SetValue<T>(T value) where T : unmanaged
@@ -143,7 +143,8 @@ namespace Baracuda.Monitoring.Internal.Units
             var converted = value.ConvertFast<T, TValue>();
             _setValue?.Invoke(_target, converted);
             _lastValue = converted;
-            RaiseValueChanged(GetStateFormatted);
+            var state = GetState();
+            RaiseValueChanged(state);
         }
         
         #endregion

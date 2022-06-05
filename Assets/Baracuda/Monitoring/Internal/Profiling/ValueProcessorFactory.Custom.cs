@@ -1,9 +1,9 @@
-﻿using System;
+﻿// Copyright (c) 2022 Jonathan Lang
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Baracuda.Monitoring.Internal.Exceptions;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
@@ -63,7 +63,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                 if (!parameterInfos.Any())
                 {
-                    ExceptionLogging.LogException(new InvalidProcessorSignatureException(processor, declaringType));
+                    ExceptionLogging.LogInvalidProcessorSignature(processor, declaringType);
                     return null;
                 }
 
@@ -268,7 +268,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                 if (!parameterInfos.Any())
                 {
-                    ExceptionLogging.LogException(new InvalidProcessorSignatureException(processor, declaringType));
+                    ExceptionLogging.LogInvalidProcessorSignature(processor, declaringType);
                     return null;
                 }
 

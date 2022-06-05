@@ -1,9 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Profiling;
-using Baracuda.Pooling.Concretions;
+using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Units
 {
@@ -20,31 +21,20 @@ namespace Baracuda.Monitoring.Internal.Units
         
         #region --- Properties ---
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Name { get; }
-        
+
         /// <summary>
         /// Get the current value or state of the monitored member as a formatted string. 
         /// </summary>
-        public abstract string GetStateFormatted { get; }
-        
-        
-        /// <summary>
-        /// Get the current value or state of the monitored member as a string.
-        /// </summary>
-        public abstract string GetStateRaw { get; }
-
+        public abstract string GetState();
 
         /// <summary>
         /// The target object of the monitored member. Null if static
         /// </summary>
         public object Target { get; }
-      
-        
-        /// <summary>
-        /// Determines if the monitored member must be updated/refreshed from an external source.
-        /// </summary>
-        public bool ExternalUpdateRequired { get; protected set; } = true;
-
         
         /// <summary>
         /// The <see cref="MonitorProfile"/> of the monitored member.
@@ -52,16 +42,42 @@ namespace Baracuda.Monitoring.Internal.Units
         public abstract IMonitorProfile Profile { get; }
         
         /// <summary>
-        /// Unique ID
+        /// Unique UniqueID
         /// </summary>
-        public int ID { get; }
+        public int UniqueID { get; }
+        
+        /// <summary>
+        /// The active state of the unit. Only active units are updated / evaluated.
+        /// </summary>
+        public bool Enabled
+        {
+            get => _isActive;
+            set
+            {
+                if (_isActive == value)
+                {
+                    return;
+                }
+
+                _isActive = value;
+                ActiveStateChanged?.Invoke(_isActive);
+            }
+        }
+
+        #endregion
+
+        #region --- Obsolete ---
+        
+        public string GetStateFormatted => GetState();
+        public string GetStateRaw => (this as IValueUnit)?.GetValueAsObject().ToString();
 
         #endregion
 
         #region --- Fields ---
 
         protected const string NULL = "<color=red>NULL</color>";
-        private static int id;
+        private static int backingID;
+        private bool _isActive = true;
 
         #endregion
         
@@ -71,7 +87,7 @@ namespace Baracuda.Monitoring.Internal.Units
         /// Force the unit to update its state. This will invoke a <see cref="ValueUpdated"/> event.
         /// </summary>
         public abstract void Refresh();
-        
+
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
@@ -87,6 +103,11 @@ namespace Baracuda.Monitoring.Internal.Units
         /// Event is invoked when the unit is being disposed.
         /// </summary>
         public event Action Disposing;
+
+        /// <summary>
+        /// Event is invoked when the units active state has changed.
+        /// </summary>
+        public event Action<bool> ActiveStateChanged; 
 
         #endregion
         
@@ -118,7 +139,7 @@ namespace Baracuda.Monitoring.Internal.Units
             Name = (target is UnityEngine.Object unityObject)
                 ? unityObject.name
                 : profile.UnitTargetType.Name;
-            ID = id++;
+            UniqueID = backingID++;
         }
 
         #endregion
@@ -130,18 +151,6 @@ namespace Baracuda.Monitoring.Internal.Units
         public virtual void Dispose()
         {
             RaiseDisposing();
-        }
-        
-        public override string ToString()
-        {
-            var sb = StringBuilderPool.Get();
-            sb.Append("Label: ");
-            sb.Append(Profile.FormatData.Label);
-            sb.Append(" :: Target:");
-            sb.Append(Target?.ToString() ?? NULL);
-            sb.Append(" :: Update:");
-            sb.Append(ExternalUpdateRequired.ToString());
-            return StringBuilderPool.Release(sb);
         }
 
         #endregion

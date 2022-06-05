@@ -44,7 +44,7 @@ namespace Baracuda.Monitoring.Internal
         
         private static void MonitoringEventsOnUnitCreated(IMonitorUnit unit)
         {
-            if (unit.ExternalUpdateRequired)
+            if (unit.Profile.RequiresUpdate)
             {
                 switch (unit.Profile.UpdateOptions)
                 {
@@ -62,7 +62,7 @@ namespace Baracuda.Monitoring.Internal
 
         private static void MonitoringEventsOnUnitDisposed(IMonitorUnit unit)
         {
-            if (unit.ExternalUpdateRequired)
+            if (unit.Profile.RequiresUpdate)
             {
                 switch (unit.Profile.UpdateOptions)
                 {

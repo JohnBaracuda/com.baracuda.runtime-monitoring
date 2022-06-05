@@ -44,7 +44,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             }
             
             monitorUnit.ValueUpdated += _updateValue;
-            _updateValue(monitorUnit.GetStateFormatted);
+            _updateValue(monitorUnit.GetState());
         }
         
         #endregion

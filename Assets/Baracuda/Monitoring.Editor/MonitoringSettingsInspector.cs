@@ -56,13 +56,14 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _vectorFormat;
         private SerializedProperty _quaternionFormat;
         
-        private SerializedProperty _classColor;
         private SerializedProperty _trueColor;
         private SerializedProperty _falseColor;
         private SerializedProperty _xColor;
         private SerializedProperty _yColor;
         private SerializedProperty _zColor;
         private SerializedProperty _wColor;
+        private SerializedProperty _classColor;
+        private SerializedProperty _eventColor;
         
         private SerializedProperty _bannedAssemblyPrefixes;
         private SerializedProperty _bannedAssemblyNames;
@@ -191,13 +192,14 @@ namespace Baracuda.Monitoring.Editor
             if (Foldout["Color"])
             {
                 EditorGUILayout.Space();
-                EditorGUILayout.PropertyField(_classColor);
                 EditorGUILayout.PropertyField(_trueColor);
                 EditorGUILayout.PropertyField(_falseColor);
                 EditorGUILayout.PropertyField(_xColor);
                 EditorGUILayout.PropertyField(_yColor);
                 EditorGUILayout.PropertyField(_zColor);
                 EditorGUILayout.PropertyField(_wColor);
+                EditorGUILayout.PropertyField(_classColor);
+                EditorGUILayout.PropertyField(_eventColor);
                 EditorGUILayout.Space();
             }
             

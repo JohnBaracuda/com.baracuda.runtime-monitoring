@@ -17,6 +17,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         public MemberInfo MemberInfo { get; }
         public UnitType UnitType { get; }
         public UpdateOptions UpdateOptions { get; }
+        public bool RequiresUpdate { get; protected set; } = true;
         public Type UnitTargetType { get; }
         public Type UnitValueType { get; }
         public bool IsStatic { get; }
@@ -81,7 +82,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             tags.Add(FormatData.Label);
             tags.Add(UnitType.AsString());
             tags.Add(IsStatic ? "Static" : "Instance");
-            if (TryGetMetaAttribute<MonitoringTagAttribute>(out var categoryAttribute))
+            if (TryGetMetaAttribute<MTagAttribute>(out var categoryAttribute))
             {
                 tags.AddRange(categoryAttribute.Tags);
             }

@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Internal.Exceptions;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
 using Baracuda.Threading;
@@ -85,17 +84,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 CreateMonitoringProfile(types, ct);
                 MonitoringManager.CompleteProfiling(staticProfiles, instanceProfiles, ct);
             }
-            catch (OperationCanceledException oce)
+            catch (OperationCanceledException operationCanceledException)
             {
-                ExceptionLogging.LogException(oce, settings.LogOperationCanceledException);
+                ExceptionLogging.LogOperationCancelledException(operationCanceledException);
             }
-            catch (ThreadAbortException tae)
+            catch (ThreadAbortException threadAbortException)
             {
-                ExceptionLogging.LogException(tae, settings.LogThreadAbortException);
+                ExceptionLogging.LogThreadAbortedException(threadAbortException);
             }
             catch (Exception exception)
             {
-                ExceptionLogging.LogException(exception, settings.LogUnknownExceptions);
+                ExceptionLogging.LogException(exception);
             }
             finally
             {
@@ -115,15 +114,15 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
             catch (OperationCanceledException oce)
             {
-                ExceptionLogging.LogException(oce, settings.LogOperationCanceledException);
+                ExceptionLogging.LogOperationCancelledException(oce);
             }
             catch (ThreadAbortException tae)
             {
-                ExceptionLogging.LogException(tae, settings.LogThreadAbortException);
+                ExceptionLogging.LogThreadAbortedException(tae);
             }
             catch (Exception exception)
             {
-                ExceptionLogging.LogException(exception, settings.LogUnknownExceptions);
+                ExceptionLogging.LogException(exception);
             }
             finally
             {
@@ -257,11 +256,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    ExceptionLogging.LogException(badImageFormatException, settings.LogBadImageFormatException);
+                    ExceptionLogging.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    ExceptionLogging.LogException(exception, settings.LogUnknownExceptions);
+                    ExceptionLogging.LogException(exception);
                 }
             }
         }
@@ -279,11 +278,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    ExceptionLogging.LogException(badImageFormatException, settings.LogBadImageFormatException);
+                    ExceptionLogging.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    ExceptionLogging.LogException(exception, settings.LogUnknownExceptions);
+                    ExceptionLogging.LogException(exception);
                 }
             }
         }
@@ -301,11 +300,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    ExceptionLogging.LogException(badImageFormatException, settings.LogBadImageFormatException);
+                    ExceptionLogging.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    ExceptionLogging.LogException(exception, settings.LogUnknownExceptions);
+                    ExceptionLogging.LogException(exception);
                 }
             }
         }
@@ -601,11 +600,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    ExceptionLogging.LogException(badImageFormatException, settings.LogBadImageFormatException);
+                    ExceptionLogging.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    ExceptionLogging.LogException(exception, settings.LogUnknownExceptions);
+                    ExceptionLogging.LogException(exception);
                 }
             }
         }
@@ -623,11 +622,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    ExceptionLogging.LogException(badImageFormatException, settings.LogBadImageFormatException);
+                    ExceptionLogging.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    ExceptionLogging.LogException(exception, settings.LogUnknownExceptions);
+                    ExceptionLogging.LogException(exception);
                 }
             }
         }
@@ -645,11 +644,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    ExceptionLogging.LogException(badImageFormatException, settings.LogBadImageFormatException);
+                    ExceptionLogging.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    ExceptionLogging.LogException(exception, settings.LogUnknownExceptions);
+                    ExceptionLogging.LogException(exception);
                 }
             }
         }

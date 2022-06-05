@@ -6,7 +6,7 @@ namespace Baracuda.Monitoring
 {
     [Preserve]
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
-    public sealed class FormatAttribute : MonitoringMetaAttribute
+    public class MFormatOptionsAttribute : MonitoringMetaAttribute
     {
         /// <summary>
         /// Custom format string used to display the members value if possible.
@@ -45,17 +45,17 @@ namespace Baracuda.Monitoring
         public UIPosition Position { get; set; } = UIPosition.UpperLeft;
         
         
-        public FormatAttribute(string format)
+        public MFormatOptionsAttribute(string format)
         {
             Format = format;
         }
         
-        public FormatAttribute(UIPosition position)
+        public MFormatOptionsAttribute(UIPosition position)
         {
             Position = position;
         }
 
-        public FormatAttribute()
+        public MFormatOptionsAttribute()
         {
         }
     }

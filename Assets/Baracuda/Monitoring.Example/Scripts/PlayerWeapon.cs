@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
-using Baracuda.Monitoring.API;
+
+using System;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
@@ -35,10 +36,14 @@ namespace Baracuda.Monitoring.Example.Scripts
          */
 
         [Monitor]
-        [Format(UIPosition.LowerLeft, FontSize = 20)]
-        [ValueProcessor(nameof(CurrentAmmunitionProcessor))]
+        [MUpdateEvent(nameof(OnAmmoChanged))]
+        [MFormatOptions(UIPosition.LowerLeft, FontSize = 20)]
+        [MValueProcessor(nameof(CurrentAmmunitionProcessor))]
         private int _currentAmmunition;
 
+        [Monitor]
+        private event Action<int> OnAmmoChanged;
+        
         private float _lastFireTime;
         private float _targetFOV;
         private IPlayerInput _input;
@@ -75,6 +80,7 @@ namespace Baracuda.Monitoring.Example.Scripts
             _input = GetComponent<IPlayerInput>();
             _camera = GetComponentInChildren<Camera>();
             _currentAmmunition = ammunition;
+            OnAmmoChanged?.Invoke(_currentAmmunition);
         }
 
         private void Update()
@@ -93,6 +99,7 @@ namespace Baracuda.Monitoring.Example.Scripts
                 for (var i = 0; i < bulletsPerShot; i++)
                 {
                     _currentAmmunition--;
+                    OnAmmoChanged?.Invoke(_currentAmmunition);
                     var projectile = projectilePool.GetProjectileFromPool();
                     projectile.Setup(
                         position: projectileSpawnPosition.position,
@@ -130,6 +137,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         public void ReplenishAmmunition()
         {
             _currentAmmunition = ammunition;
+            OnAmmoChanged?.Invoke(_currentAmmunition);
         }
         
         #endregion

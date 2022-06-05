@@ -1,4 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
+
 using System;
 using UnityEngine.Scripting;
 
@@ -10,7 +11,7 @@ namespace Baracuda.Monitoring
     /// </summary>
     [Preserve]
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ValueProcessorAttribute : Attribute
+    public class MValueProcessorAttribute : MonitoringMetaAttribute
     {
         public string Processor { get; }
         
@@ -20,7 +21,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         /// <param name="processorMethod">The name of the method you want to use as a value processor.</param>
         /// <footer>Note: use the nameof keyword to pass the name of the method.</footer> 
-        public ValueProcessorAttribute(string processorMethod)
+        public MValueProcessorAttribute(string processorMethod)
         {
             Processor = processorMethod;
         }
