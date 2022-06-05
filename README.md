@@ -495,20 +495,29 @@ Assembly-Baracuda-Reflection                 | Baracuda/Reflection              
 
 Any help is appreciated. Feel free to contact me if you have any feedback, suggestions or questions.
 
-+ Tag / Tab based filtering system for UIToolkit, TextMeshPro & IMGUI solutions.
-+ Better grouping for IMGUI & TextMeshPro solution. (like grouping in the UIToolkit solution)
+### General
++ Add to OpenUPM
+
+### UI
++ Tag / Tab based filtering system for TextMeshPro base uGUI.
++ Tag / Tab based filtering system for UIToolkit.
++ Potential to create "virtual" units and have custom controll about what is displayed.
++ More control / options to customize color.
+
+### Core System
++ Optional Monitoring Editor Window.
 + Method monitoring (Properties can be used as a workaround)
 + Class scoped monitoring
-+ Instance monitoring (Properties returning ToString() can be used as a workaround)
 + Improved IL2CPP support / AOT generation.
 + Custom update / evaluation loops.
-+ Optional Monitoring Editor Window.
-+ Improved tutorial how to create a custom UI Controller.
-+ Add custom types for monitored arrays and other collections. 
++ Add custom types for monitored arrays and other collections.
 + Better optimization contoll.
 + Global value processor. (like property drawer)
 + Better separation of API and internal logic.
-+ Add to OpenUPM
+
+### Documentation
++ Guide how to create a custom UI Controller.
++ Guide how to customize UI (background color etc.)
 
 
 &nbsp;
