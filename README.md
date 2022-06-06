@@ -147,10 +147,11 @@ Everything should work out of the box after a successful import. However, if you
 ## Monitoring Objects
 
 When monitoring non static member of a class, instances of those classes must be registered when they are created and unregistered when they are destoryed. This process can be automated or simplified, by inheriting from one of the following base types. 
-+ ```MonitoredBehaviour```: an automatically monitored ```MonoBehaviour```
-+ ```MonitoredSingleton<T>```: an automatically monitored ```MonoBehaviour``` singleton.
-+ ```MonitoredScriptableObject```: an automatically monitored ```ScriptableObject```.
++ ```MonitoredBehaviour```: an automatically monitored ```MonoBehaviour```. Ensure to call ```base.Awake()``` and ```base.OnDestroy()```. 
++ ```MonitoredSingleton<T>```: an automatically monitored ```MonoBehaviour``` singleton. Ensure to call ```base.Awake()``` and ```base.OnDestroy()```. 
++ ```MonitoredScriptableObject```: an automatically monitored ```ScriptableObject```. nsure to call ```base.OnEnable()``` and ```base.OnDisable()```. 
 + ```MonitoredObject```: an automatically monitored ```System.Object```. that implements the ```IDisposable``` interface. Please make sure to call ```Disposable``` on those objects when you no longer need them. 
+
 
 
 ```c#
