@@ -1,11 +1,13 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Pooling.Concretions;
+using Baracuda.Reflection;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
@@ -82,6 +84,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
             tags.Add(FormatData.Label);
             tags.Add(UnitType.AsString());
             tags.Add(IsStatic ? "Static" : "Instance");
+            tags.Add(UnitTargetType.Name);
+            tags.Add(UnitValueType.Name.ToTypeKeyWord());
             if (TryGetMetaAttribute<MTagAttribute>(out var categoryAttribute))
             {
                 tags.AddRange(categoryAttribute.Tags);

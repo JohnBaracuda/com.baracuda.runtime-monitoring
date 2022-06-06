@@ -30,7 +30,12 @@ namespace Baracuda.Monitoring.Internal
         protected override void Awake()
         {
             base.Awake();
-            gameObject.hideFlags = MonitoringSettings.GetInstance().ShowRuntimeMonitoringObject ? HideFlags.None : HideFlags.HideInHierarchy;
+            
+            var hideFlag = MonitoringSettings.GetInstance().ShowRuntimeMonitoringObject 
+                ? HideFlags.None 
+                : HideFlags.HideInHierarchy;
+            
+            gameObject.hideFlags = hideFlag;
         }
 
         private void LateUpdate()

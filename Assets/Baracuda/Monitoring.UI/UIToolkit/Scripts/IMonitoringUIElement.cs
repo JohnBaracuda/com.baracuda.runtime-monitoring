@@ -7,6 +7,5 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
     {
         IMonitorUnit Unit { get; }
         string[] Tags { get; }
-        void SetVisible(bool value);
     }
 }

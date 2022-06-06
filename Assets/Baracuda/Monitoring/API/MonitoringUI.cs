@@ -1,8 +1,11 @@
 // Copyright (c) 2022 Jonathan Lang
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Baracuda.Monitoring.API
 {
@@ -89,6 +92,26 @@ namespace Baracuda.Monitoring.API
         {
 #if !DISABLE_MONITORING
             CreateMonitoringUIInternal();
+#endif
+        }
+
+        /// <summary>
+        /// Filter displayed units by their name, tags etc. 
+        /// </summary>
+        public static void Filter(string filter)
+        {
+#if !DISABLE_MONITORING
+            FilterInternal(filter);
+#endif
+        }
+
+        /// <summary>
+        /// Reset active filter.
+        /// </summary>
+        public static void ResetFilter()
+        {
+#if !DISABLE_MONITORING
+            ResetFilterInternal();
 #endif
         }
 
@@ -253,6 +276,41 @@ namespace Baracuda.Monitoring.API
         private static MonitoringUIController GetActiveUIControllerInternal()
         {
             return controllerInstance;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void ResetFilterInternal()
+        {
+            foreach (var unit in MonitoringManager.GetAllMonitoringUnits())
+            {
+                unit.Enabled = true;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void FilterInternal(string filter)
+        {
+            var list = MonitoringManager.GetAllMonitoringUnits();
+            for (var i = 0; i < list.Count; i++)
+            {
+                var unit = list[i];
+                var tags = unit.Profile.Tags;
+                var unitEnabled = false;
+                if (unit.Name.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                {
+                    unit.Enabled = true;
+                    continue;
+                }
+                for (var j = 0; j < tags.Length; j++)
+                {
+                    if (tags[j].IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                    {
+                        unitEnabled = true;
+                        break;
+                    }
+                }
+                unit.Enabled = unitEnabled;
+            }
         }
 
         #endregion

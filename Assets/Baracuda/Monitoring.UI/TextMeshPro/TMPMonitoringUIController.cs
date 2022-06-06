@@ -1,13 +1,17 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Interface;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Baracuda.Monitoring.UI.TextMeshPro
 {
+    
+    
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(UIControllerComponents))]
     public class TMPMonitoringUIController : MonitoringUIController
@@ -31,8 +35,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
 
         private Stack<MonitoringUIElement> _uiElementPool;
         private Stack<MonitoringUIGroup> _uiGroupPool;
-        private Dictionary<IMonitorUnit, MonitoringUIElement> _activeMonitoringUIElement;
-        private Dictionary<IMonitorUnit, MonitoringUIGroup> _activeMonitoringUIGroups;
+        private Dictionary<IMonitorUnit, MonitoringUIElement> _activeMonitoringUIElements;
         private Dictionary<object, MonitoringUIGroup> _activeGroups;
         private Dictionary<string, MonitoringUIGroup> _activeGroupsStr;
         private Transform _transform;
@@ -51,7 +54,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             _components = GetComponent<UIControllerComponents>();
             _uiElementPool = new Stack<MonitoringUIElement>(initialElementPoolSize);
             _uiGroupPool = new Stack<MonitoringUIGroup>(initialGroupPoolSize);
-            _activeMonitoringUIElement = new Dictionary<IMonitorUnit, MonitoringUIElement>();
+            _activeMonitoringUIElements = new Dictionary<IMonitorUnit, MonitoringUIElement>();
             _activeGroups = new Dictionary<object, MonitoringUIGroup>(initialGroupPoolSize);
             _activeGroupsStr = new Dictionary<string, MonitoringUIGroup>(initialGroupPoolSize); 
             
@@ -149,12 +152,12 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             element.SetParent(parent);
             element.Setup(unit);
             element.SetGameObjectActive();
-            _activeMonitoringUIElement.Add(unit, element);
+            _activeMonitoringUIElements.Add(unit, element);
         }
         protected override void OnUnitDisposed(IMonitorUnit unit)
         {
-            var element = _activeMonitoringUIElement[unit];
-            _activeMonitoringUIElement.Remove(unit);
+            var element = _activeMonitoringUIElements[unit];
+            _activeMonitoringUIElements.Remove(unit);
             element.ResetElement();
             element.SetGameObjectInactive();
             element.SetParent(_transform);
@@ -162,7 +165,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
 
             if (_activeGroups.TryGetValue(unit.Target, out var uiGroup))
             {
-                uiGroup.ChildCount--;
+                uiGroup.RemoveChild(unit);
                 if (uiGroup.ChildCount > 0)
                 {
                     return;
@@ -172,20 +175,6 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
                 uiGroup.SetParent(_transform);
                 _uiGroupPool.Push(uiGroup);
             }
-        }
-        
-        #endregion
-
-        #region --- Filtering ---
-
-        protected override void ResetFilter()
-        {
-            
-        }
-
-        protected override void Filter(string filter)
-        {
-            
         }
         
         #endregion
@@ -211,15 +200,15 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
 
                 if (_activeGroupsStr.TryGetValue(groupName, out var uiGroup))
                 {
-                    uiGroup.ChildCount++;
+                    uiGroup.AddChild(unit);
                     return uiGroup.transform;
                 }
 
                 uiGroup = GetGroupFromPool();
                 uiGroup.SetTitle(groupName);
-                uiGroup.ChildCount++;
                 uiGroup.SetParent(GetPositionTransform(position));
                 uiGroup.SetGameObjectActive();
+                uiGroup.AddChild(unit);
                 _activeGroupsStr.Add(groupName, uiGroup);
                 return uiGroup.transform;
             }
@@ -229,16 +218,16 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
 
                 if (_activeGroups.TryGetValue(unit.Target, out var uiGroup))
                 {
-                    uiGroup.ChildCount++;
+                    uiGroup.AddChild(unit);
                     return uiGroup.transform;
                 }
 
                 uiGroup = GetGroupFromPool();
                 var title = $"{groupName} | {(unit.Target is UnityEngine.Object obj ? obj.name : unit.Target.ToString())}";
                 uiGroup.SetTitle(title);
-                uiGroup.ChildCount++;
                 uiGroup.SetParent(GetPositionTransform(position));
                 uiGroup.SetGameObjectActive();
+                uiGroup.AddChild(unit);
                 _activeGroups.Add(unit.Target, uiGroup);
                 return uiGroup.transform;
             }

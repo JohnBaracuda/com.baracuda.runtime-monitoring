@@ -24,7 +24,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
         [SerializeField] private float elementSpacing = 2f;
         [SerializeField] private MarginOrPadding windowMargin;
         [SerializeField] private MarginOrPadding elementPadding;
-
+        
         [Header("Scaling")]
         [SerializeField] private bool overrideScale;
         //TODO: Add/implement an attribute that hides the field if the overrideScale is false
@@ -65,6 +65,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
         
         private class GUIElement
         {
+            public bool Enabled { get; private set; }
             public int ID { get; }
             public string Content { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; private set; }
             public FormatData FormatData { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
@@ -74,6 +75,8 @@ namespace Baracuda.Monitoring.UI.IMGUI
             public GUIElement(IMonitorUnit unit)
             {
                 unit.ValueUpdated += Update;
+                unit.ActiveStateChanged += SetActive;
+                Enabled = unit.Enabled;
                 FormatData = unit.Profile.FormatData;
                 ID = unit.UniqueID;
                 _size = Mathf.Max(FormatData.FontSize, 14);
@@ -89,6 +92,11 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 sb.Append(text);
                 sb.Append("</size>");
                 Content = StringBuilderPool.Release(sb);
+            }
+
+            private void SetActive(bool activeState)
+            {
+                Enabled = activeState;
             }
         }
 
@@ -193,6 +201,10 @@ namespace Baracuda.Monitoring.UI.IMGUI
             for (var i = 0; i < _unitsUpperLeft.Count; i++)
             {
                 var guiElement = _unitsUpperLeft[i];
+                if (!guiElement.Enabled)
+                {
+                    continue;
+                }
                 var displayString = guiElement.Content;
                 _content.text = displayString;
                 
@@ -243,6 +255,10 @@ namespace Baracuda.Monitoring.UI.IMGUI
             for (var i = _unitsLowerLeft.Count - 1; i >= 0; i--)
             {
                 var guiElement = _unitsLowerLeft[i];
+                if (!guiElement.Enabled)
+                {
+                    continue;
+                }
                 var displayString = guiElement.Content;
                 _content.text = displayString;
                 
@@ -311,6 +327,10 @@ namespace Baracuda.Monitoring.UI.IMGUI
             for (var i = 0; i < _unitsUpperRight.Count; i++)
             {
                 var guiElement = _unitsUpperRight[i];
+                if (!guiElement.Enabled)
+                {
+                    continue;
+                }
                 var displayString = guiElement.Content;
                 _content.text = displayString;
 
@@ -362,6 +382,10 @@ namespace Baracuda.Monitoring.UI.IMGUI
             for (var i = _unitsLowerRight.Count - 1; i >= 0; i--)
             {
                 var guiElement = _unitsLowerRight[i];
+                if (!guiElement.Enabled)
+                {
+                    continue;
+                }
                 var displayString = guiElement.Content;
                 _content.text = displayString;
                 

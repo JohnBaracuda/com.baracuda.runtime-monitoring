@@ -4,6 +4,12 @@ using System;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
+    public enum InputMode
+    {
+        Character = 0,
+        UserInterface = 1
+    }
+    
     public interface IPlayerInput
     {
         float Vertical { get; }
@@ -17,7 +23,6 @@ namespace Baracuda.Monitoring.Example.Scripts
         bool SecondaryFirePressed { get; }
 
         bool DashPressed { get; }
-
-        event Action ToggleCursor;
+        event Action<InputMode> InputModeChanged;
     }
 }

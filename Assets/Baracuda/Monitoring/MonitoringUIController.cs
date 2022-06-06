@@ -1,4 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
+
+using System;
 using Baracuda.Monitoring.Interface;
 
 namespace Baracuda.Monitoring
@@ -39,24 +41,22 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected internal abstract void OnUnitDisposed(IMonitorUnit unit);
 
-        /*
-         * Filtering   
-         */
+        #endregion
 
-        /// <summary>
-        /// Use to reset active filter if any are applied.
-        /// </summary>
-        protected internal virtual void ResetFilter()
+        #region --- Obsolete ---
+
+        [Obsolete("use MonitoringUI.ResetFilter() instead")]
+        protected virtual void ResetFilter()
         {
+            throw new InvalidOperationException();
+        }
+
+        [Obsolete("use MonitoringUI.Filter() instead")]
+        protected virtual void Filter(string filter)
+        {
+            throw new InvalidOperationException();
         }
         
-        /// <summary>
-        /// Use to filter displayed units by their name, tags etc. 
-        /// </summary>
-        protected internal virtual void Filter(string filter)
-        {
-        }
-
         #endregion
     }
 }

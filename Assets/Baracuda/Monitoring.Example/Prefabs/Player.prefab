@@ -457,11 +457,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bbf44e307f442a99a607e7bf33ff4ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputMode: 0
   jumpKey: 32
   primaryFireKey: 323
   secondaryFireKey: 324
   dashKey: 304
   toggleCursorKey: 99
+  toggleFilterKey: 286
 --- !u!143 &8485219938503472850
 CharacterController:
   m_ObjectHideFlags: 0

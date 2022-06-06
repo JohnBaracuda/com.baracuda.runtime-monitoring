@@ -1,6 +1,8 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Pooling.Concretions;
@@ -19,6 +21,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
             settings ? settings : settings = MonitoringSettings.GetInstance();
 
         private static MonitoringSettings settings;
+        private VisualElement _parent;
 
         #endregion
 
@@ -50,6 +53,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
             Unit = monitorUnit;
             Unit.ValueUpdated += UpdateGUI;
             Unit.Disposing += OnDisposing;
+            Unit.ActiveStateChanged += UpdateActiveState;
 
             var profile = monitorUnit.Profile;
             pickingMode = PickingMode.Ignore;
@@ -101,10 +105,10 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
             if (profile.FormatData.AllowGrouping)
             {
-                if (!objectGroups.TryGetValue(monitorUnit.Target, out var parentElement))
+                if (!objectGroups.TryGetValue(monitorUnit.Target, out _parent))
                 {
                     // Add styles to parent
-                    parentElement = new VisualElement
+                    _parent = new VisualElement
                     {
                         pickingMode = PickingMode.Ignore,
                         style =
@@ -114,7 +118,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                     };
                     for (var i = 0; i < provider.InstanceGroupStyles.Length; i++)
                     {
-                        parentElement.AddToClassList(provider.InstanceGroupStyles[i]);
+                        _parent.AddToClassList(provider.InstanceGroupStyles[i]);
                     }
 
                     // Add styles to label
@@ -126,13 +130,13 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                         label.AddToClassList(provider.InstanceLabelStyles[i]);
                     }
 
-                    parentElement.Add(label);
-                    rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(parentElement);
-                    objectGroups.Add(monitorUnit.Target, parentElement);
+                    _parent.Add(label);
+                    rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(_parent);
+                    objectGroups.Add(monitorUnit.Target, _parent);
                 }
 
-                parentElement ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
-                parentElement.Add(this);
+                _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
+                _parent.Add(this);
             }
             else
             {
@@ -161,10 +165,10 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
             if (profile.FormatData.AllowGrouping)
             {
-                if (!typeGroups.TryGetValue(profile.UnitTargetType, out var parentElement))
+                if (!typeGroups.TryGetValue(profile.UnitTargetType, out _parent))
                 {
                     // Add styles to parent
-                    parentElement = new VisualElement
+                    _parent = new VisualElement
                     {
                         pickingMode = PickingMode.Ignore,
                         style =
@@ -174,7 +178,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                     };
                     for (var i = 0; i < provider.StaticGroupStyles.Length; i++)
                     {
-                        parentElement.AddToClassList(provider.StaticGroupStyles[i]);
+                        _parent.AddToClassList(provider.StaticGroupStyles[i]);
                     }
 
                     // Add styles to label
@@ -184,13 +188,13 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                         label.AddToClassList(provider.StaticLabelStyles[i]);
                     }
 
-                    parentElement.Add(label);
-                    rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(parentElement);
-                    typeGroups.Add(profile.UnitTargetType, parentElement);
+                    _parent.Add(label);
+                    rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(_parent);
+                    typeGroups.Add(profile.UnitTargetType, _parent);
                 }
 
-                parentElement ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
-                parentElement.Add(this);
+                _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
+                _parent.Add(this);
             }
             else
             {
@@ -206,22 +210,24 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
         {
             Unit.ValueUpdated -= UpdateGUI;
             Unit.Disposing -= OnDisposing;
+            Unit.ActiveStateChanged -= UpdateActiveState;
+            _parent = null;
 
             RemoveFromHierarchy();
             
             // Because the unit could have been the only unit in a group we have to check for that case and remove the group if necessary. 
-            if (typeGroups.TryGetValue(Unit.Profile.UnitTargetType, out var groupParent))
+            if (typeGroups.TryGetValue(Unit.Profile.UnitTargetType, out _parent))
             {
-                if (groupParent.childCount <= 1)
+                if (_parent.childCount <= 1)
                 {
-                    groupParent.RemoveFromHierarchy();
+                    _parent.RemoveFromHierarchy();
                     typeGroups.Remove(Unit.Profile.UnitTargetType);
                 }
             }
             
-            if  (objectGroups.TryGetValue(Unit.Target, out groupParent) && groupParent.childCount <= 1)
+            if  (objectGroups.TryGetValue(Unit.Target, out _parent) && _parent.childCount <= 1)
             {
-                groupParent.RemoveFromHierarchy();
+                _parent.RemoveFromHierarchy();
                 objectGroups.Remove(Unit.Target);
             }
         }
@@ -234,9 +240,19 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
             text = content;
         }
 
-        public void SetVisible(bool value)
+        private void UpdateActiveState(bool activeState)
         {
-            style.display = new StyleEnum<DisplayStyle>(value ? DisplayStyle.Flex : DisplayStyle.None);
+            this.SetVisible(activeState);
+            _parent?.SetVisible(_parent.Children().Count(child => child.style.display.value != DisplayStyle.None) > 1);
+        }
+    }
+
+    internal static class UIToolkitExtensions
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetVisible(this VisualElement element, bool value)
+        {
+            element.style.display = new StyleEnum<DisplayStyle>(value ? DisplayStyle.Flex : DisplayStyle.None);
         }
     }
 }

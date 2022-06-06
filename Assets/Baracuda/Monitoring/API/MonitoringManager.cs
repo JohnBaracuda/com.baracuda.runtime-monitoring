@@ -1,7 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -112,6 +111,11 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         public static IReadOnlyList<IMonitorUnit> GetInstanceUnits() => instanceUnitCache;
         
+        /// <summary>
+        /// Get a list of all monitoring units.
+        /// </summary>
+        public static IReadOnlyList<IMonitorUnit> GetAllMonitoringUnits() => monitoringUnitCache;
+        
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -122,6 +126,7 @@ namespace Baracuda.Monitoring.API
         
         private static readonly List<MonitorUnit> staticUnitCache = new List<MonitorUnit>(100);
         private static readonly List<MonitorUnit> instanceUnitCache = new List<MonitorUnit>(100);
+        private static readonly List<MonitorUnit> monitoringUnitCache = new List<MonitorUnit>(200);
         
         private static readonly Dictionary<object, MonitorUnit[]> activeInstanceUnits = new Dictionary<object, MonitorUnit[]>();
         
@@ -300,6 +305,7 @@ namespace Baracuda.Monitoring.API
                     var unit = profiles[j].CreateUnit(target);
                     units.Add(unit);
                     instanceUnitCache.Add(unit);
+                    monitoringUnitCache.Add(unit);
                     RaiseUnitCreated(unit);
                 }
             }
@@ -327,8 +333,11 @@ namespace Baracuda.Monitoring.API
 
             for (var i = 0; i < units.Length; i++)
             {
-                units[i].Dispose();
-                RaiseUnitDisposed(units[i]);
+                var unit = units[i];
+                unit.Dispose();
+                instanceUnitCache.Remove(unit);
+                monitoringUnitCache.Remove(unit);
+                RaiseUnitDisposed(unit);
             }
                 
             activeInstanceUnits.Remove(target);
@@ -348,7 +357,9 @@ namespace Baracuda.Monitoring.API
         
         private static void CreateStaticUnit(MonitorProfile staticProfile)
         {
-            staticUnitCache.Add(staticProfile.CreateUnit(null));
+            var staticUnit = staticProfile.CreateUnit(null);
+            staticUnitCache.Add(staticUnit);
+            monitoringUnitCache.Add(staticUnit);
         }
 
         #endregion

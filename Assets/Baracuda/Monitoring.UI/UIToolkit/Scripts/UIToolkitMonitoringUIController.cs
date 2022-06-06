@@ -40,6 +40,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
         #region --- Fields ---
 
+        // ReSharper disable once CollectionNeverQueried.Local
         private readonly Dictionary<IMonitorUnit, IMonitoringUIElement> _monitorUnitDisplays = new Dictionary<IMonitorUnit, IMonitoringUIElement>();
         
         private UIDocument _uiDocument;
@@ -111,33 +112,6 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
             _monitorUnitDisplays.Remove(monitorUnit);
         }
         
-        #endregion
-
-        #region --- Filter ---
-        
-        protected override void ResetFilter()
-        {
-            foreach (var pair in _monitorUnitDisplays)
-            {
-                pair.Value.SetVisible(true);
-            }
-        }
-        
-        protected override void Filter(string filter)
-        {
-            if (string.IsNullOrWhiteSpace(filter))
-            {
-                ResetFilter();
-                return;
-            }
-            
-            foreach (var pair in _monitorUnitDisplays)
-            {
-                pair.Value.SetVisible(pair.Value.Tags.Any(unitTag =>
-                    unitTag.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0));
-            }
-        }
-
         #endregion
     }
 }

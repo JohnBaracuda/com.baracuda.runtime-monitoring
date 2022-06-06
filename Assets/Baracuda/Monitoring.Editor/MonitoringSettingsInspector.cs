@@ -92,6 +92,11 @@ namespace Baracuda.Monitoring.Editor
             AssetDatabase.importPackageCompleted -= ImportPackageCompleted;
         }
 
+        internal void Refresh()
+        {
+            PopulateAvailableUIController();
+        }
+        
         private void ImportPackageCompleted(string packageName)
         {
             PopulateAvailableUIController();
@@ -264,7 +269,7 @@ namespace Baracuda.Monitoring.Editor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Refresh", GUILayout.Width(80), GUILayout.Height(25)))
             {
-                PopulateAvailableUIController();
+                Refresh();
             }
             EditorGUILayout.EndHorizontal();
 
