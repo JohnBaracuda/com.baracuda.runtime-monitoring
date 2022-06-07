@@ -24,11 +24,12 @@ There are still some aspects I would like to improve or expand (see [Planned Fea
 - [Value Processor](#value-processor)
 - [Update Loop](#update-loop)
 - [Update Event](#update-event)
-- [Compatibility](#compatibility)
+- [Runtime](#runtime)
+- [Runtime Compatibility](#runtime-compatibility)
+- [UI Formatting](#ui-formatting)
 - [UI Controller](#ui-controller)
 - [Custom UI Controller](#custom-ui-controller)
 - [Assemblies / Modules](#assemblies-and-modules)
-- [Miscellaneous](#miscellaneous)
 - [Planned Features](#planned-features)
 - [Support Me ❤️](#support-me)
 - [Licence](#licence)
@@ -77,7 +78,7 @@ public event OnGameStart;
 
 // Use processor methods to customize how the value is displayed.
 [Monitor]
-[ValueProcessor(nameof(IsAliveProcessor))]
+[MValueProcessor(nameof(IsAliveProcessor))]
 public bool IsAlive { get; private set; }
 
 private string IsAliveProcessor(bool value) => value? "Alive" : "Dead";
@@ -205,12 +206,12 @@ public class Player : MonitoredBehaviour
 &nbsp;
 ## Value Processor
 
-You can add the ValueProcessorAttribute to a monitored field or porperty to gain more controll of its string representation. Use the attibute to pass the name of a method that will be used to parse the current value to a string.
+You can add the MValueProcessorAttribute to a monitored field or porperty to gain more controll of its string representation. Use the attibute to pass the name of a method that will be used to parse the current value to a string.
 
 The value processor method must accept a value of the monitored members type, can be both static and non static (when monitoring a non non static member) and must return a string.
 
 ```c#
-[ValueProcessor(nameof(IsAliveProcessor))]
+[MValueProcessor(nameof(IsAliveProcessor))]
 [Monitor] 
 private bool isAlive;
 
@@ -220,7 +221,7 @@ private string IsAliveProcessor(bool isAliveValue)
 }
 ```
 ```c#
-[ValueProcessor(nameof(IListProcessor))] 
+[MValueProcessor(nameof(IListProcessor))] 
 [Monitor] private IList<string> names = new string[] {"Gordon", "Alyx", "Barney"};
 
 private string IListProcessor(IList<string> elements)
@@ -239,7 +240,7 @@ Static processor methods can have certain overloads for objects that impliment g
 
 ```c#
 //IList<T> ValueProcessor
-[ValueProcessor(nameof(IListProcessor))] 
+[MValueProcessor(nameof(IListProcessor))] 
 [Monitor] private IList<string> names = new string[] {"Gordon", "Alyx", "Barney"};
 
 private static string IListProcessor(string element)
@@ -248,7 +249,7 @@ private static string IListProcessor(string element)
 }
 
 
-[ValueProcessor(nameof(IListProcessorWithIndex))] 
+[MValueProcessor(nameof(IListProcessorWithIndex))] 
 [Monitor] private IList<string> Names => names;
 
 private static string IListProcessorWithIndex(string element, int index)
@@ -258,7 +259,7 @@ private static string IListProcessorWithIndex(string element, int index)
 ```
 ```c#
 //IDictionary<TKey, TValue> ValueProcessor
-[ValueProcessor(nameof(IDictionaryProcessor))]
+[MValueProcessor(nameof(IDictionaryProcessor))]
 [Monitor] private IDictionary<string, bool> isAliveDictionary = new Dictionary<string, bool>
 {
     {"Bondrewd", true}, 
@@ -272,7 +273,7 @@ private static string IDictionaryProcessor(string name, bool isAlive)
 ```
 ```c#
 //IEnumerable<T> ValueProcessor
-[ValueProcessor(nameof(IEnumerableValueProcessor))]
+[MValueProcessor(nameof(IEnumerableValueProcessor))]
 [Monitor] 
 private IEnumerable<int> randomNumbers = new List<int>
 {
@@ -326,7 +327,8 @@ Passing an event will slightly reduce performance overhead for values or member 
 private int healthPoints;
 public event Action<int> OnHealthChanged;
 
-[Monitor(UpdateEvent = nameof(OnHealthChanged))]
+[Monitor]
+[MUpdateEvent(nameof(OnHealthChanged))]
 public int HealthPoints 
 {
     get => healthPoints;
@@ -339,7 +341,8 @@ public int HealthPoints
 ```
 
 ```c#
-[Monitor(UpdateEvent = nameof(OnGameStateChanged))]
+[Monitor]
+[MUpdateEvent(nameof(OnGameStateChanged))]
 private bool isGamePaused;
 
 public event Action OnGameStateChanged;
@@ -357,10 +360,14 @@ public void ContinueGame()
 }
 ```
 
+&nbsp;
+## Runtime
+
++ Use the #define ```DISABLE_MONITORING``` to disable the internal logic of the tool. Public API will still compile so you don't have to wrap your API calls in a custom #if !DISABLE_MONITORING block.
 
 
 &nbsp;
-## Compatibility
+## Runtime Compatibility
 
 ### Scripting Backend Compatibility
 
@@ -390,6 +397,38 @@ XSX                   |NA                |                         |
 PlayStation 4         |NA                |                         |
 PlayStation 5         |NA                |                         |
 
+&nbsp;
+## UI Formatting
+
+Use the ```MFormatOptionsAttribute``` to pass additional formatting options. 
+
+```c#
+// Will be displayed as "Value: 3.141"
+[Monitor]
+[MFormatOptions(Format = "0.000")]
+private float _pi = 3.14159265359;
+
+// Will be displayed as "Health Points: 100"
+[Monitor]
+[MFormatOptions(Label = "Health Points")]
+private int _hp = 100;
+
+// Will be displayed at the lower right corner of the screen.
+[Monitor]
+[MFormatOptions(IPosition = UIPosition.LowerRight)]
+private string _version = "2.0.1";
+
+// Will be displayed with a font size of 32.
+[Monitor]
+[MFormatOptions(FontSize = 32)]
+private string _message = "Hello";
+
+
+// Will not be displayed as part of a group.
+[Monitor]
+[MFormatOptions(GroupElement = false)]
+private int _fps;
+```
 
 
 &nbsp;
@@ -415,7 +454,6 @@ MonitoringUI.ToggleDisplay();
 // Returns true if the there is an active monitoring display that is also visible.
 MonitoringUI.IsVisible();
 ```
-
 
 
 &nbsp;
@@ -445,7 +483,8 @@ Since there is no easy way to check whether the actual value of a reference type
 Because collections are ReferenceTypes the same applies here but on an even greater scale. Pass an update event when ever possible if you intend to monitor a collection over a longer period. Now because the example below requires a lot of boiler plate code I would not recommend this if you just want to quickly debug the values of a collection. I also want to mention that a better solution is planned and WIP.  
 
 ```C#
-[MonitorValue(UpdateEvent = nameof(OnNamesChanged))]
+[Monitor]
+[MUpdateEvent(nameof(OnNamesChanged))]
 public List<string> Names = new List<string>() {"Riebeckite", "Prisoner", "Feldspar"};
 
 private event Action OnNamesChanged;
@@ -483,12 +522,6 @@ Assembly-Baracuda-Monitoring.TextMeshPro     | Baracuda/Monitoring.UI/TextMeshPr
 Assembly-Baracuda-Pooling                    | Baracuda/Pooling                     |:heavy_check_mark:| 
 Assembly-Baracuda-Threading                  | Baracuda/Threading                   |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
 Assembly-Baracuda-Reflection                 | Baracuda/Reflection                  |:heavy_check_mark:| 
-
-
-&nbsp;
-## Miscellaneous
-
-+ Use the #define ```DISABLE_MONITORING``` to disable the internal logic of the tool. Public API will still compile so you don't have to wrap your API calls in a custom #if !DISABLE_MONITORING block.
 
 
 &nbsp;
