@@ -21,6 +21,7 @@ There are still some aspects I would like to improve or expand (see [Planned Fea
 - [Import](#import)
 - [Setup](#setup)
 - [Monitoring Objects](#monitoring-objects)
+- [Attributes](#attributes)
 - [Value Processor](#value-processor)
 - [Update Loop](#update-loop)
 - [Update Event](#update-event)
@@ -65,7 +66,8 @@ internal static event Action<int> OnScoreChanged;
 private float speed; 
 
 // Reduce update overhead by providing an update event.
-[MonitorProperty(UpdateEvent = nameof(OnPlayerSpawn))]
+[Monitor]
+[MUpdateEvent(nameof(OnPlayerSpawn))]
 public bool LastSpawnPosition { get; set; }
 
 [MonitorEvent]
@@ -202,6 +204,31 @@ public class Player : MonitoredBehaviour
     }
 }
 ```
+
+&nbsp;
+## Attributes
+
+C# attributes are a fundamental aspect of this tool. Runtime Monitoring uses attributes not only to determine which C# member to monitor, but also to customize the way in which that process happens. For this reason, the attributes used by RTM are divided into two broad categories, first the "Monitoring Attributes" to determine which C# member to monitor, and second the "Meta Attributes" to customize how a member is monitored.
+
+### Monitoring Attributes
+Attribute                   | Code               | Base Type             | Description|     
+:-                          |:-                  |:-                     |:-     |      
+MonitorAttribute            |`[Monitor]`         | Attribute             | Monitor a field, property, event or method|
+MonitorValueAttribute       |`[MonitorValue]`    | MonitorAttribute      | Monitor a field or property|
+MonitorPropertyAttribute    |`[MonitorProperty]` | MonitorValueAttribute | Monitor a property      |
+MonitorFieldAttribute       |`[MonitorField]`    | MonitorValueAttribute | Monitor a field      |
+MonitorEventAttribute       |`[MonitorEvent]`    | MonitorAttribute      | Monitor an event      |
+
+### Meta Attributes
+Attribute                                    | Code               | Base Type               | Description|     
+:-                                           |:-                  |:-                       |:-     |      
+MFormatOptionsAttribute                      |`[MFormatOptions]`  | MonitoringMetaAttribute | Provide optional formatting (e.g fontsize)|
+MTagAttribute                                |`[MTag]`            | MonitoringMetaAttribute | Provide optional tags used for filtering |
+[MUpdateEventAttribute](#update-event)       |`[MUpdateEvent]`    | MonitoringMetaAttribute | Provide an event that will trigger an refresh/update |
+[MValueProcessorAttribute](#value-processor) |`[MValueProcessor]` | MonitoringMetaAttribute | Provide a method that will process the value before it is displayed as a string |
+MStyleAttribute                              |`[MStyle]`          | MonitoringMetaAttribute | UIToolkit only. Provide optional style names |
+
+
 
 &nbsp;
 ## Value Processor
