@@ -44,7 +44,7 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 + Depending on the Unity version and your preferences, import and optional UIController package (recommended).
 + Use the `Monitoring UI Controller` field in the UI Controller foldout or use the `Set Active UIController` button on a listed Element to set the active UI Controller.
 + The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
-
+![basic example](https://johnbaracuda.com/media/img/monitoring/Example_06.png)
 
 &nbsp;
 ## Getting Started
