@@ -142,7 +142,7 @@ namespace Baracuda.Monitoring.Editor
                 content.Append(result.FullDefinition);
                 content.Append(' ');
                 content.Append("AOT_GENERATED_TYPE_");
-                content.Append(index++);
+                content.Append(index);
                 content.Append(';');
                 content.Append("\n    ");
             }
