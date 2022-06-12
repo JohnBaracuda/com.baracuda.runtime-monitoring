@@ -23,7 +23,6 @@ namespace Baracuda.Monitoring
         /// </summary>
         public bool EnableSetAccess { get; set; }
         
-        [Obsolete("use MUpdateEventAttribute instead!")]
         public string UpdateEvent { get; set; } = null;
     }
 }

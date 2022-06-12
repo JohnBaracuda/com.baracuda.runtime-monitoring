@@ -82,18 +82,16 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 SetAccessEnabled = valueAttribute.EnableSetAccess;
                 
                 //TODO: Obsolete! Remove in 2.0
+                //TODO: Make optional instead of obsolete. Print a warning in debug if both, attribute and property provide a update event.
                 #region --- OBSOLETE ---
 
 #pragma warning disable CS0618
                 if (RequiresUpdate && !string.IsNullOrWhiteSpace(valueAttribute.UpdateEvent))
                 {
-                    _addUpdateDelegate =
-                        CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, true);
-                    _addNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>(valueAttribute.UpdateEvent, this, true);
-                    _removeUpdateDelegate =
-                        CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, false);
-                    _removeNotifyDelegate =
-                        CreateNotifyHandlerDelegate<TTarget>(valueAttribute.UpdateEvent, this, false);
+                    _addUpdateDelegate    = _addUpdateDelegate    ?? CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, true);
+                    _addNotifyDelegate    = _addNotifyDelegate    ?? CreateNotifyHandlerDelegate<TTarget>        (valueAttribute.UpdateEvent, this, true);
+                    _removeUpdateDelegate = _removeUpdateDelegate ?? CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, false);
+                    _removeNotifyDelegate = _removeNotifyDelegate ?? CreateNotifyHandlerDelegate<TTarget>        (valueAttribute.UpdateEvent, this, false);
 
                     if (_addUpdateDelegate != null || _addNotifyDelegate != null)
                     {

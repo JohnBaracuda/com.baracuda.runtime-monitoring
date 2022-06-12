@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Experimental;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
 using Baracuda.Threading;
@@ -596,6 +597,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     if (staticFields[i].TryGetCustomAttribute<MonitorAttribute>(out var attribute, true))
                     {
                         CreateStaticFieldProfile(staticFields[i], attribute);
+                    }
+
+                    if (staticFields[i].FieldType.IsSubclassOf(typeof(MonitoredType)))
+                    {
+                        CreateStaticFieldProfile(staticFields[i], new MonitorAttribute());
                     }
                 }
                 catch (BadImageFormatException badImageFormatException)

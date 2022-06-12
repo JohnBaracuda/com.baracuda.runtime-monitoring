@@ -4,12 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
-using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
-using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {

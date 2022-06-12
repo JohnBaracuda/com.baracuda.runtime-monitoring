@@ -17,7 +17,7 @@ namespace Baracuda.Monitoring.Internal
         internal event Action OnTick;
 
         /*
-         * Tick loop fields   
+         * Tick loop fields
          */
 
         private float _tickTimer = 0;
@@ -54,7 +54,6 @@ namespace Baracuda.Monitoring.Internal
                 _tickTimer = 0;
             }
         }
-
 
         protected override void OnDestroy()
         {
