@@ -3,11 +3,9 @@ Runtime Monitoring
 
 Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property or event and get its value or state displayed automatically in a customizable and extendable UI.
 
-There are still some aspects I would like to improve or expand (see [Planned Features](#planned-features)). Especially the optional packages for supporting TextMeshPro & UIToolkit need more work and fine-tuning. However, I can't afford too much time commitment due to my full-time job and other projects I'm working on. For this reason, I would appreciate any feedback and/or support.
-
 &nbsp;
 
-## Runtime Monitoring is also available on the [Asset Store!](https://u3d.as/2QxJ)
+### Also available on the [Asset Store!](https://u3d.as/2QxJ)
 
 &nbsp;
 
@@ -16,20 +14,23 @@ There are still some aspects I would like to improve or expand (see [Planned Fea
 &nbsp;
 ## Table of Contents
 
+- [Setup](#setup)
 - [Getting started](#getting-started)
 - [Technical Information](#technical-information)
 - [Import](#import)
-- [Setup](#setup)
-- [Monitoring Objects](#monitoring-objects)
+- [Monitoring Instance Member](#monitoring-instance-member)
+- [Monitoring Static Membmer](#monitoring-static-member)
 - [Attributes](#attributes)
 - [Value Processor](#value-processor)
 - [Update Loop](#update-loop)
 - [Update Event](#update-event)
+- [Monitoring Events](#monitoring-events)
 - [Runtime](#runtime)
 - [Runtime Compatibility](#runtime-compatibility)
 - [UI Formatting](#ui-formatting)
 - [UI Controller](#ui-controller)
 - [Custom UI Controller](#custom-ui-controller)
+- [Troubleshooting](#troubleshooting)
 - [Assemblies / Modules](#assemblies-and-modules)
 - [Planned Features](#planned-features)
 - [Support Me ❤️](#support-me)
@@ -37,8 +38,16 @@ There are still some aspects I would like to improve or expand (see [Planned Fea
 
 
 &nbsp;
-## Getting Started
+## Setup
++ Download and import Runtime Monitoring.
++ Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
++ Depending on the Unity version and your preferences, import and optional UIController package (recommended).
++ Use the `Monitoring UI Controller` field in the UI Controller foldout or use the `Set Active UIController` button on a listed Element to set the active UI Controller.
++ The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
 
+
+&nbsp;
+## Getting Started
 
 ```c#
 // Place the MonitorAttribute on any field, property or event
@@ -104,7 +113,6 @@ public class Player : MonoBehaviour
 }
 ```
 ![basic example](https://johnbaracuda.com/media/img/monitoring/Example_03.png)
-![event example](https://johnbaracuda.com/media/img/monitoring/Example_02.png)
 
 
 &nbsp;
@@ -136,18 +144,7 @@ Assembly-Baracuda-Reflection             | Baracuda/Reflection                | 
 
 
 &nbsp;
-## Setup
-Everything should work out of the box after a successful import. However, if you want to validate that everything is set up correctly or you want to change for example the active [Monitoring UI Controller](#ui-controller), the following steps will guide you through that process.
-
-+ Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
-+ Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
-+ If ```Enable Monitoring``` in the UI Controller foldout is set to ```false```, Make sure to call ```MonitoringUI.CreateMonitoringUI()``` from anywhere in you code. 
-+ Open the setup window (menu: Tools > RuntimeMonitoring > Setup) to import optional UIController packages (recommended).
-+ Use the ```Monitoring UI Controller``` field in the UI Controller foldout to set the active UI Controller. The inspector of the set UI Controller object will be inlined and can be edited from the settings window. As of version 1.0.7 available UIController in your project will be listed and can be selected by pressing their corresponding select button.
-
-
-&nbsp;
-## Monitoring Objects
+## Monitoring Instance Member
 
 When monitoring non static member of a class, instances of those classes must be registered when they are created and unregistered when they are destoryed. This process can be automated or simplified, by inheriting from one of the following base types. 
 + ```MonitoredBehaviour```: an automatically monitored ```MonoBehaviour```. Ensure to call ```base.Awake()``` and ```base.OnDestroy()```. 
@@ -204,6 +201,32 @@ public class Player : MonitoredBehaviour
     }
 }
 ```
+
+
+&nbsp;
+## Monitoring Static Member
+
+When monitoring static member you just need to add the Monitor Attribute. 
+
+```c#
+
+public static class SystemSettings
+{
+    // Static field in a static class.
+    [Monitor] 
+    private static bool enableVSync;
+}
+
+public class Enemy : MonoBehaviour
+{
+    // Static property in non static class
+    [Monitor]
+    private static int ActiveEnemyCount { get; private set; }
+}
+
+```
+
+
 
 &nbsp;
 ## Attributes
@@ -387,6 +410,17 @@ public void ContinueGame()
 }
 ```
 
+
+
+&nbsp;
+## Monitoring Events
+
+You can not only monitor the value of a field or property, but also the state of an event. Use the MonitorEvent Attribute to customize how the state of the monitored event is displayed. Both concrete delegates and `Action` / `Action<T>` are valid event Handler types.
+
+![event example](https://johnbaracuda.com/media/img/monitoring/Example_02.png)
+
+
+
 &nbsp;
 ## Runtime
 
@@ -531,6 +565,16 @@ public void RemoveName(string name)
 
 ### Transform
 Monitored Transforms are another type that have the potential to create a lot of garbage. A simple thing you could do to reduce overhead is to control the Transform.hasChanged flag on the Transform itself. The monitoring unit/handler will check the flag and only raise an update event if the flag is set to true. (which it is unless changed manually) Unity is not controlling Transform.hasChanged.
+
+
+
+&nbsp;
+## Troubleshooting
+
++ Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
++ Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
++ If ```Enable Monitoring``` in the UI Controller foldout is set to ```false```, Make sure to call ```MonitoringUI.CreateMonitoringUI()``` from anywhere in you code. 
+
 
 
 &nbsp;
