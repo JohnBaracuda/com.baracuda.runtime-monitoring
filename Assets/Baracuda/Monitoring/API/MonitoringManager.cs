@@ -122,6 +122,8 @@ namespace Baracuda.Monitoring.API
         
         #region --- Private Fields ---
         
+        
+        
         private static Dictionary<Type, List<MonitorProfile>> instanceMonitorProfiles = new Dictionary<Type, List<MonitorProfile>>();
         
         private static readonly List<MonitorUnit> staticUnitCache = new List<MonitorUnit>(100);
@@ -229,25 +231,19 @@ namespace Baracuda.Monitoring.API
             instanceMonitorProfiles = instanceProfiles;
             
             CreateStaticUnits(staticProfiles.ToArray());
-            
-            await Dispatcher.InvokeAsync(CreateInitialInstanceUnits, ct);
-            await Dispatcher.InvokeAsync(ProfilingCompletedInternal, ct);
+
+            if (Dispatcher.IsMainThread())
+            {
+                CreateInitialInstanceUnits();
+                ProfilingCompletedInternal();
+            }
+            else
+            {
+                await Dispatcher.InvokeAsync(CreateInitialInstanceUnits, ct);
+                await Dispatcher.InvokeAsync(ProfilingCompletedInternal, ct);
+            }
         }
-        
-        internal static void CompleteProfiling(
-            List<MonitorProfile> staticProfiles,
-            Dictionary<Type, List<MonitorProfile>> instanceProfiles, 
-            CancellationToken ct)
-        {
-            ct.ThrowIfCancellationRequested();
-            
-            instanceMonitorProfiles = instanceProfiles;
-            
-            CreateStaticUnits(staticProfiles.ToArray());
-            CreateInitialInstanceUnits();
-            ProfilingCompletedInternal();
-        }
-        
+       
                 
         private static void ProfilingCompletedInternal()
         {

@@ -59,8 +59,21 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         #region --- Profiling Task ---
 
+#if UNITY_EDITOR && MONITORING_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        private static void InitializeRuntimeReflectionEditor()
+        {
+            InitializeProfiling(Dispatcher.RuntimeToken);
+        }
+#endif
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         private static void InitializeRuntimeReflection()
+        {
+            InitializeProfiling(Dispatcher.RuntimeToken);
+        }
+
+        private static void InitializeProfiling(CancellationToken ct)
         {
             settings = MonitoringSettings.GetInstance();
             ExceptionLogging.Initialize(settings);
@@ -68,44 +81,15 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
             if (settings.AsyncProfiling)
             {
-                Task.Run(() => InitializeProfilingAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
+                Task.Run(() => BeginProfilingAsync(ct), ct);
             }
             else
             {
-                InitializeProfiling(CancellationToken.None);
-            }
-        }
-
-        
-        private static void InitializeProfiling(CancellationToken ct)
-        {
-            try
-            {
-                var types = CreateAssemblyProfile(ct);
-                CreateMonitoringProfile(types, ct);
-                MonitoringManager.CompleteProfiling(staticProfiles, instanceProfiles, ct);
-            }
-            catch (OperationCanceledException operationCanceledException)
-            {
-                ExceptionLogging.LogOperationCancelledException(operationCanceledException);
-            }
-            catch (ThreadAbortException threadAbortException)
-            {
-                ExceptionLogging.LogThreadAbortedException(threadAbortException);
-            }
-            catch (Exception exception)
-            {
-                ExceptionLogging.LogException(exception);
-            }
-            finally
-            {
-                genericFieldBaseTypes.Clear();
-                genericPropertyBaseTypes.Clear();
-                genericEventBaseTypes.Clear();
+                BeginProfilingAsync(ct).Wait(ct);
             }
         }
         
-        private static async Task InitializeProfilingAsync(CancellationToken ct)
+        private static async Task BeginProfilingAsync(CancellationToken ct)
         {
             try
             {
@@ -130,6 +114,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 genericFieldBaseTypes.Clear();
                 genericPropertyBaseTypes.Clear();
                 genericEventBaseTypes.Clear();
+                Debug.Log($"Completed Profiling: Instance: {instanceProfiles.Count.ToString()} | Static: {staticProfiles.Count.ToString()}");
             }
         }
 
