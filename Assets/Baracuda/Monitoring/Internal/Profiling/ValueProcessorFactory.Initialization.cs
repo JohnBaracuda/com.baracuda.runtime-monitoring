@@ -6,12 +6,12 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
-    internal static partial class ValueProcessorFactory
+    internal partial class ValueProcessorFactory
     {
         /*
          * Fields   
          */
-
+        
         private const string DEFAULT_INDENT = "  ";
         private const int DEFAULT_INDENT_NUM = 2;
         private const string NULL = "<color=red>NULL</color>";
@@ -51,7 +51,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Setup   
          */
 
-        internal static void Initialize(MonitoringSettings settings)
+        internal static void Create(MonitoringSettings settings)
         {
             xColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.XColor)}>";
             yColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.YColor)}>";

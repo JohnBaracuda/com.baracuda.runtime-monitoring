@@ -19,7 +19,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
         private readonly LoggingLevel _badImageFormatLevel;
         private readonly LoggingLevel _defaultLevel;
         
-        internal static void Initialize(MonitoringSettings settings)
+        internal static void Create(MonitoringSettings settings)
         {
             instance = new ExceptionLogging(settings);
         }

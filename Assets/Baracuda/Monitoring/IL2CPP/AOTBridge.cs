@@ -27,6 +27,13 @@ namespace Baracuda.Monitoring.IL2CPP
         {
             ValueProcessorFactory.AOTDictionary<TKey, TValue>();
         }
+        
+        [Preserve]
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public static void AOTEnumerable<T>()
+        {
+            ValueProcessorFactory.AOTEnumerable<T>();
+        }
     }
 }
 #endif

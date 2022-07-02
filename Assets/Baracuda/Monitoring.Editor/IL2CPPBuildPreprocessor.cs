@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.IL2CPP;
 using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
@@ -25,6 +26,9 @@ using Debug = UnityEngine.Debug;
 
 namespace Baracuda.Monitoring.Editor
 {
+    // Review:
+    // Type definition generation could be simplified. Remove return values and just create a list that the types are
+    // added to during an initial profiling process.
     public class IL2CPPBuildPreprocessor : IPreprocessBuildWithReport
     {
         #region --- Interface & Public Access ---
@@ -69,17 +73,26 @@ namespace Baracuda.Monitoring.Editor
 
         private const BindingFlags INSTANCE_FLAGS = BindingFlags.Instance | BindingFlags.Public |
                                                     BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+        
+        
+        private static readonly string preserveAttribute = $"[{typeof(PreserveAttribute).FullName}]";
+        private static readonly string methodImpAttribute = $"[{typeof(MethodImplAttribute).FullName}({typeof(MethodImplOptions).FullName}.{MethodImplOptions.NoOptimization.ToString()})]";
+        private static readonly string aotBridgeClass = $"{typeof(AOTBridge).FullName}";
+
+        private static readonly HashSet<Type> uniqueTypes = new HashSet<Type>();
 
 #pragma warning disable CS0414
         private static List<string> errorLog = null;
 
         private class TypeDefinitionResult
         {
+            public readonly Type Type;
             public readonly string FullDefinition;
             public readonly string RawDefinition;
 
-            public TypeDefinitionResult(string fullDefinition, string rawDefinition)
+            public TypeDefinitionResult(Type type, string fullDefinition, string rawDefinition)
             {
+                Type = type;
                 FullDefinition = fullDefinition;
                 RawDefinition = rawDefinition;
             }
@@ -98,6 +111,7 @@ namespace Baracuda.Monitoring.Editor
             Debug.Log($"Starting IL2CPP AOT Type Definition Generation.\nFilePath: {filePath}");
 
             errorLog = new List<string>();
+            uniqueTypes.Clear();
             var typeDefinitionResults = GetTypeDefinitions();
 
             var content = new StringBuilder();
@@ -120,7 +134,7 @@ namespace Baracuda.Monitoring.Editor
             content.Append('\n');
             content.Append("//https://github.com/JohnBaracuda/Runtime-Monitoring");
             content.Append('\n');
-
+            
 
             content.Append('\n');
             content.Append("#if ENABLE_IL2CPP && !DISABLE_MONITORING");
@@ -128,6 +142,7 @@ namespace Baracuda.Monitoring.Editor
 
             content.Append('\n');
             content.Append("internal class IL2CPP_AOT\n{");
+            
             for (var index = 0; index < typeDefinitionResults.Length; index++)
             {
                 var result = typeDefinitionResults[index];
@@ -135,9 +150,7 @@ namespace Baracuda.Monitoring.Editor
                 content.Append("//");
                 content.Append(result.RawDefinition);
                 content.Append("\n    ");
-                content.Append('[');
-                content.Append(typeof(PreserveAttribute).FullName);
-                content.Append(']');
+                content.Append(preserveAttribute);
                 content.Append("\n    ");
                 content.Append(result.FullDefinition);
                 content.Append(' ');
@@ -146,6 +159,64 @@ namespace Baracuda.Monitoring.Editor
                 content.Append(';');
                 content.Append("\n    ");
             }
+            
+            content.Append('\n');
+            content.Append("\n    ");
+            content.Append(preserveAttribute);
+            content.Append("\n    ");
+            content.Append(methodImpAttribute);
+            content.Append("\n    ");
+            content.Append("private static void AOT()");
+            content.Append("\n    ");
+            content.Append("{");
+            
+            foreach (var uniqueType in uniqueTypes)
+            {
+                if (uniqueType.IsValueTypeArray())
+                {
+                    content.Append("\n        ");
+                    content.Append(aotBridgeClass);
+                    content.Append('.');
+                    content.Append("AOTValueTypeArray");
+                    content.Append('<');
+                    content.Append(uniqueType.GetElementType()?.FullName);
+                    content.Append(">();");
+                }
+                else if (uniqueType.IsArray)
+                {
+                    content.Append("\n        ");
+                    content.Append(aotBridgeClass);
+                    content.Append('.');
+                    content.Append("AOTReferenceTypeArray");
+                    content.Append('<');
+                    content.Append(uniqueType.GetElementType()?.FullName);
+                    content.Append(">();");
+                }
+                else if (uniqueType.IsGenericIDictionary())
+                {
+                    content.Append("\n        ");
+                    content.Append(aotBridgeClass);
+                    content.Append('.');
+                    content.Append("AOTDictionary");
+                    content.Append('<');
+                    content.Append(uniqueType.GetGenericArguments()[0].FullName);
+                    content.Append(',');
+                    content.Append(uniqueType.GetGenericArguments()[1].FullName);
+                    content.Append(">();");
+                }
+                else if (uniqueType.IsGenericIEnumerable())
+                {
+                    content.Append("\n        ");
+                    content.Append(aotBridgeClass);
+                    content.Append('.');
+                    content.Append("AOTEnumerable");
+                    content.Append('<');
+                    content.Append(uniqueType.GetGenericArguments()[0].FullName);
+                    content.Append(">();");
+                }
+            }
+            content.Append("\n    ");
+            content.Append("}");
 
             content.Append('\n');
             content.Append('}');
@@ -343,7 +414,8 @@ namespace Baracuda.Monitoring.Editor
                 return null;
             }
 
-            return new TypeDefinitionResult(fullDefinition, rawDefinition);
+            uniqueTypes.Add(valueType);
+            return new TypeDefinitionResult(parsedValueType, fullDefinition, rawDefinition);
         }
 
         /*

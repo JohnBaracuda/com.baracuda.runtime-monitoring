@@ -36,6 +36,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
         }
         
         [Preserve]
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        internal static void AOTEnumerable<T>()
+        {
+            GuardAOTRuntimeMethodCall();
+            GenericIEnumerableProcessor<T>(null);
+        }
+        
+        [Preserve]
         private static void GuardAOTRuntimeMethodCall()
         {
             throw new InvalidOperationException("Illegal AOT Method call!");
@@ -141,6 +149,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             DictionaryProcessor<object, Quaternion>(null);
             DictionaryProcessor<object, Color>(null);
             DictionaryProcessor<object, Color32>(null);
+            DictionaryProcessor<dynamic, dynamic>(null);
         }
 #endif
 

@@ -449,7 +449,7 @@ namespace Baracuda.Reflection
         {
             return type == typeof(string);
         }
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsStruct(this Type type)
         {
@@ -492,6 +492,18 @@ namespace Baracuda.Reflection
             return excludeStrings
                 ? type.GetInterface(nameof(IEnumerable)) != null && !type.IsString()
                 : type.GetInterface(nameof(IEnumerable)) != null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsValueTypeArray(this Type type)
+        {
+            return type.IsArray && type.IsElementValueType();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsElementValueType(this Type type)
+        {
+            return type.GetElementType()?.IsValueType ?? false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

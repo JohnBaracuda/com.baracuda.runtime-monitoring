@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Experimental;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
@@ -47,14 +46,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return (Func<TValue, string>)(Delegate) TransformProcessor(profile);
             }
 
-            if (profile.UnitValueType.IsSubclassOf(typeof(MonitoredType)))
-            {
-                //TODO: Array
-                //TODO: List
-                //TODO: Dictionary
-                //TODO: IEnumerable
-            }
-            
             // Boolean
             if (profile.UnitValueType == typeof(bool))
             {

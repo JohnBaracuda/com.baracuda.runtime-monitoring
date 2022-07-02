@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Experimental;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
 using Baracuda.Threading;
@@ -76,8 +75,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
         private static void InitializeProfiling(CancellationToken ct)
         {
             settings = MonitoringSettings.GetInstance();
-            ExceptionLogging.Initialize(settings);
-            ValueProcessorFactory.Initialize(settings);
+            ExceptionLogging.Create(settings);
+            ValueProcessorFactory.Create(settings);
 
             if (settings.AsyncProfiling)
             {
@@ -114,7 +113,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 genericFieldBaseTypes.Clear();
                 genericPropertyBaseTypes.Clear();
                 genericEventBaseTypes.Clear();
-                Debug.Log($"Completed Profiling: Instance: {instanceProfiles.Count.ToString()} | Static: {staticProfiles.Count.ToString()}");
             }
         }
 
@@ -582,11 +580,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     if (staticFields[i].TryGetCustomAttribute<MonitorAttribute>(out var attribute, true))
                     {
                         CreateStaticFieldProfile(staticFields[i], attribute);
-                    }
-
-                    if (staticFields[i].FieldType.IsSubclassOf(typeof(MonitoredType)))
-                    {
-                        CreateStaticFieldProfile(staticFields[i], new MonitorAttribute());
                     }
                 }
                 catch (BadImageFormatException badImageFormatException)
