@@ -134,7 +134,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             .Single(methodInfo =>
                 methodInfo.Name == nameof(ValueTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
 
-        private static Func<T[], string> ValueTypeArrayProcessor<T>(MonitorProfile profile) where T : unmanaged
+        private static Func<T[], string> ValueTypeArrayProcessor<T>(MonitorProfile profile) where T : struct
         {
             var name = profile.FormatData.Label;
             var nullString = $"{name}: {NULL}";

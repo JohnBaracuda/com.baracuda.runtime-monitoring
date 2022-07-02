@@ -4,11 +4,39 @@ using System;
 using System.Collections.Generic;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
     public class PlayerWeapon : MonitoredBehaviour
     {
+        [Preserve]
+        public enum TestEnum : short
+        {
+            Test
+        }
+        
+        [Preserve]
+        public struct MyStruct
+        {
+            int test;
+            private string test2;
+        }
+        
+        [Monitor] [Preserve] private Dictionary<int, int> intintDic;
+        [Monitor] [Preserve] private Dictionary<string, Exception> stringExceptionDic;
+        [Monitor] [Preserve] private Dictionary<TestEnum, TestEnum> nestedExceptionDic;
+        [Monitor] [Preserve] private Dictionary<MyStruct, MyStruct> structDic;
+        [Monitor] [Preserve] private IEnumerable<int> intEnum;
+        [Monitor] [Preserve] private IEnumerable<string> stringEnum;
+        [Monitor] [Preserve] private IEnumerable<HideFlags> flagsEnum;
+        [Monitor] [Preserve] private IEnumerable<TestEnum> testEnum;
+        [Monitor] [Preserve] private IEnumerable<MyStruct> strEnum;
+        [Monitor] [Preserve] private bool[] boolArray;
+        [Monitor] [Preserve] private HideFlags[] flagsArray;
+        [Monitor] [Preserve] private TestEnum[] testEnumArray;
+        [Monitor] [Preserve] private MyStruct[] MyStructArray;
+        
         #region --- Fields ---
 
         /*

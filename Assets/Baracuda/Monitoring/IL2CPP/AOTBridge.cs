@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring.IL2CPP
     {
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
-        public static void AOTValueTypeArray<T>() where T : unmanaged
+        public static void AOTValueTypeArray<T>() where T : struct
         {
             ValueProcessorFactory.AOTValueTypeArray<T>();
         }

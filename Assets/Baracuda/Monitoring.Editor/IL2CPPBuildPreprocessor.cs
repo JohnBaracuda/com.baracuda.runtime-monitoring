@@ -179,7 +179,7 @@ namespace Baracuda.Monitoring.Editor
                     content.Append('.');
                     content.Append("AOTValueTypeArray");
                     content.Append('<');
-                    content.Append(uniqueType.GetElementType()?.FullName);
+                    content.Append(ToGenericTypeStringFullName(uniqueType.GetElementType()));
                     content.Append(">();");
                 }
                 else if (uniqueType.IsArray)
@@ -189,7 +189,7 @@ namespace Baracuda.Monitoring.Editor
                     content.Append('.');
                     content.Append("AOTReferenceTypeArray");
                     content.Append('<');
-                    content.Append(uniqueType.GetElementType()?.FullName);
+                    content.Append(ToGenericTypeStringFullName(uniqueType.GetElementType()));
                     content.Append(">();");
                 }
                 else if (uniqueType.IsGenericIDictionary())
@@ -199,9 +199,9 @@ namespace Baracuda.Monitoring.Editor
                     content.Append('.');
                     content.Append("AOTDictionary");
                     content.Append('<');
-                    content.Append(uniqueType.GetGenericArguments()[0].FullName);
+                    content.Append(ToGenericTypeStringFullName(uniqueType.GetGenericArguments()[0]));
                     content.Append(',');
-                    content.Append(uniqueType.GetGenericArguments()[1].FullName);
+                    content.Append(ToGenericTypeStringFullName(uniqueType.GetGenericArguments()[1]));
                     content.Append(">();");
                 }
                 else if (uniqueType.IsGenericIEnumerable())
@@ -211,7 +211,7 @@ namespace Baracuda.Monitoring.Editor
                     content.Append('.');
                     content.Append("AOTEnumerable");
                     content.Append('<');
-                    content.Append(uniqueType.GetGenericArguments()[0].FullName);
+                    content.Append(ToGenericTypeStringFullName(uniqueType.GetGenericArguments()[0]));
                     content.Append(">();");
                 }
             }
@@ -395,6 +395,11 @@ namespace Baracuda.Monitoring.Editor
 
         private static TypeDefinitionResult CreateTypeDefinitionFor(Type generic, Type targetType, Type valueType)
         {
+            if (valueType.IsGenericParameter)
+            {
+                return null;
+            }
+            
             CheckType(generic, out var parsedGenericType);
             CheckType(targetType, out var parsedTargetType);
             CheckType(valueType, out var parsedValueType);
@@ -441,10 +446,6 @@ namespace Baracuda.Monitoring.Editor
             {
                 validated = typeof(object);
                 return;
-            }
-
-            if (type.IsStruct())
-            {
             }
 
             if (type.IsEnum)
@@ -556,21 +557,23 @@ namespace Baracuda.Monitoring.Editor
                 {
                     Debug.Assert(type.FullName != null, "type.FullName != null");
                     builder.AppendFormat("{0}<{1}>", type.FullName.Split('`')[0],
-                        argBuilder.ToString());
+                        argBuilder);
                 }
 
                 var retType = builder.ToString();
 
-                typeCacheFullName.Add(type, retType);
+                typeCacheFullName.Add(type, retType.Replace('+', '.'));
 
                 ConcurrentStringBuilderPool.ReleaseStringBuilder(builder);
                 ConcurrentStringBuilderPool.ReleaseStringBuilder(argBuilder);
                 return retType.Replace('+', '.');
             }
 
-            typeCacheFullName.Add(type, type.FullName);
-
-            return type.FullName?.Replace('+', '.');
+            Debug.Assert(type.FullName != null, $"type.FullName != null | {type.Name}, {type.DeclaringType}");
+            
+            var returnValue = type.FullName.Replace('+', '.');
+            typeCacheFullName.Add(type, returnValue);
+            return returnValue;
         }
 
         #endregion

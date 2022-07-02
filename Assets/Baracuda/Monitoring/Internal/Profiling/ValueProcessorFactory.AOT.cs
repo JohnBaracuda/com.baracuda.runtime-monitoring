@@ -13,7 +13,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 #if ENABLE_IL2CPP || UNITY_EDITOR
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
-        internal static void AOTValueTypeArray<T>() where T : unmanaged
+        internal static void AOTValueTypeArray<T>() where T : struct
         {
             GuardAOTRuntimeMethodCall();
             ValueTypeArrayProcessor<T>(null);
