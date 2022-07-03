@@ -106,8 +106,9 @@ namespace Baracuda.Monitoring.Editor
 
         private static void OnPreprocessBuildInternal()
         {
-            var filePath = MonitoringSettings.GetInstance().FilePathIL2CPPTypes;
+            var textFile = MonitoringSettings.GetInstance().ScriptFileIL2CPP;
             var throwOnError = MonitoringSettings.GetInstance().ThrowOnTypeGenerationError;
+            var filePath = AssetDatabase.GetAssetPath(textFile);
             Debug.Log($"Starting IL2CPP AOT Type Definition Generation.\nFilePath: {filePath}");
 
             errorLog = new List<string>();
@@ -126,11 +127,9 @@ namespace Baracuda.Monitoring.Editor
             content.Append("//File generated: ");
             content.Append(DateTime.Now.ToString("u"));
             content.Append('\n');
-            content.Append(
-                "//Please dont change the contents of this file. Otherwise IL2CPP runtime may not work with runtime monitoring!");
+            content.Append("//Please dont change the contents of this file. Otherwise IL2CPP runtime may not work with runtime monitoring!");
             content.Append('\n');
-            content.Append(
-                "//Ensure that this file is located in Assembly-CSharp. Otherwise this file may not compile.");
+            content.Append("//Ensure that this file is located in Assembly-CSharp. Otherwise this file may not compile.");
             content.Append('\n');
             content.Append("//https://github.com/JohnBaracuda/Runtime-Monitoring");
             content.Append('\n');
@@ -224,12 +223,7 @@ namespace Baracuda.Monitoring.Editor
             content.Append('\n');
             content.Append("#endif //ENABLE_IL2CPP && !DISABLE_MONITORING");
             content.Append('\n');
-
-            if (string.IsNullOrWhiteSpace(filePath) || !filePath.EndsWith(".cs"))
-            {
-                filePath = Path.Combine(Application.dataPath, "IL2CPP_AOT.cs");
-            }
-
+            
             var directoryPath = Path.GetDirectoryName(filePath);
             if (!string.IsNullOrWhiteSpace(directoryPath) && !Directory.Exists(directoryPath))
             {

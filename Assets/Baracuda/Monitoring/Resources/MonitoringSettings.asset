@@ -45,7 +45,7 @@ MonoBehaviour:
   - Assembly-Plugin
   - DOTween
   bannedAssemblyNames: []
-  filePathIL2CPPTypes: G:/Unity/Monitoring/Assets/Baracuda/IL2CPP/IL2CPP_AOT.cs
+  scriptFileIL2CPP: {fileID: 11500000, guid: 021dac3b4a2d167478f116f18f99ae61, type: 3}
   useIPreprocessBuildWithReport: 1
   throwOnTypeGenerationError: 1
   preprocessBuildCallbackOrder: 0

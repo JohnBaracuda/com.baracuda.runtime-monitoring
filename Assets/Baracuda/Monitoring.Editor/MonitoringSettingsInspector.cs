@@ -68,7 +68,7 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _bannedAssemblyPrefixes;
         private SerializedProperty _bannedAssemblyNames;
         
-        private SerializedProperty _filePathIL2CPPTypes;
+        private SerializedProperty _scriptFileIL2CPP;
         private SerializedProperty _useIPreprocessBuildWithReport;
         private SerializedProperty _throwOnTypeGenerationError;
         private SerializedProperty _preprocessBuildCallbackOrder;
@@ -235,7 +235,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 EditorGUILayout.Space();
                 EditorGUILayout.HelpBox("Make sure to delete old files when changing paths!", MessageType.None);
-                InspectorUtilities.DrawFilePath(_filePathIL2CPPTypes, "cs");
+                DrawRequired(_scriptFileIL2CPP);
                 EditorGUILayout.PropertyField(_useIPreprocessBuildWithReport);
                 EditorGUILayout.PropertyField(_throwOnTypeGenerationError);
                 EditorGUILayout.PropertyField(_preprocessBuildCallbackOrder);
@@ -262,7 +262,7 @@ namespace Baracuda.Monitoring.Editor
         {
             EditorGUILayout.Space();
             EditorGUILayout.PropertyField(_autoInstantiateUI);
-            var isNotNull = IsRefFieldValueNull(_monitoringUIController);
+            var isNotNull = DrawRequired(_monitoringUIController);
             DrawSelectableUIController();
 
             EditorGUILayout.BeginHorizontal();
@@ -341,7 +341,7 @@ namespace Baracuda.Monitoring.Editor
 
         #region --- Misc ---
 
-        private static bool IsRefFieldValueNull(SerializedProperty property)
+        private static bool DrawRequired(SerializedProperty property)
         {
             var isNull = property.objectReferenceValue == null;
             if (isNull)
