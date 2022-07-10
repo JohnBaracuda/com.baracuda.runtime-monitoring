@@ -27,40 +27,41 @@ namespace Baracuda.Monitoring.Internal.Profiling
         /// <summary>
         /// Creates a default type specific processor to format the <see cref="TValue"/> depending on its exact type.
         /// </summary>
-        /// <param name="profile">The target <see cref="MonitorProfile"/></param>
         /// <typeparam name="TValue">The type of the value that should be parsed/formatted</typeparam>
         /// <returns></returns>
-        internal static Func<TValue, string> CreateTypeSpecificProcessor<TValue>(MonitorProfile profile)
+        internal static Func<TValue, string> CreateProcessorForType<TValue>(FormatData formatData)
         {
-            return CreateTypeSpecificProcessorInternal<TValue>(profile);
+            return CreateTypeSpecificProcessorInternal<TValue>(formatData);
         }
         
         //--------------------------------------------------------------------------------------------------------------
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Func<TValue, string> CreateTypeSpecificProcessorInternal<TValue>(MonitorProfile profile)
+        private static Func<TValue, string> CreateTypeSpecificProcessorInternal<TValue>(FormatData formatData)
         {
+            var type = typeof(TValue);
+            
             // Transform
-            if (profile.UnitValueType == typeof(Transform))
+            if (type == typeof(Transform))
             {
-                return (Func<TValue, string>)(Delegate) TransformProcessor(profile);
+                return (Func<TValue, string>)(Delegate) TransformProcessor(formatData);
             }
 
             // Boolean
-            if (profile.UnitValueType == typeof(bool))
+            if (type == typeof(bool))
             {
-                return (Func<TValue, string>)(Delegate) CreateBooleanProcessor(profile);
+                return (Func<TValue, string>)(Delegate) CreateBooleanProcessor(formatData);
             }
             
             // Dictionary<TKey, TValue>
-            if (profile.UnitValueType.IsGenericIDictionary())
+            if (type.IsGenericIDictionary())
             {
                 try
                 {
-                    var keyType = profile.UnitValueType.GetGenericArguments()[0];
-                    var valueType = profile.UnitValueType.GetGenericArguments()[1];
+                    var keyType = type.GetGenericArguments()[0];
+                    var valueType = type.GetGenericArguments()[1];
                     var genericMethod = createDictionaryProcessorMethod.MakeGenericMethod(keyType, valueType);
-                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[] {profile});
+                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[] {formatData});
                 }
 #pragma warning disable CS0618
                 //IL2CPP runtime does throw this exception!
@@ -72,17 +73,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
             
             // Array<T>
-            if (profile.UnitValueType.IsArray)
+            if (type.IsArray)
             {
                 try
                 {
-                    var type = profile.UnitValueType.GetElementType();
+                    var elementType = type.GetElementType();
                 
-                    Debug.Assert(type != null, nameof(type) + " != null");
+                    Debug.Assert(elementType != null, nameof(elementType) + " != null");
                 
-                    var genericMethod = type.IsValueType ? createValueTypeArrayMethod.MakeGenericMethod(type) : createReferenceTypeArrayMethod.MakeGenericMethod(type);
+                    var genericMethod = elementType.IsValueType ? createValueTypeArrayMethod.MakeGenericMethod(elementType) : createReferenceTypeArrayMethod.MakeGenericMethod(elementType);
                 
-                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
+                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{formatData});
                 }
 #pragma warning disable CS0618 
                 //IL2CPP runtime does throw this exception!
@@ -94,19 +95,19 @@ namespace Baracuda.Monitoring.Internal.Profiling
             } 
             
             // IEnumerable<bool>
-            if (profile.UnitValueType.HasInterface<IEnumerable<bool>>())
+            if (type.HasInterface<IEnumerable<bool>>())
             {
-                return (Func<TValue, string>) (Delegate) IEnumerableBooleanProcessor(profile);
+                return (Func<TValue, string>) (Delegate) IEnumerableBooleanProcessor(formatData);
             }
             
             // IEnumerable<T>
-            if (profile.UnitValueType.IsGenericIEnumerable(true))
+            if (type.IsGenericIEnumerable(true))
             {
                 try
                 {
-                    var type = profile.UnitValueType.GetElementType() ?? profile.UnitValueType.GetGenericArguments()[0];
-                    var genericMethod = createGenericIEnumerableMethod.MakeGenericMethod(type);
-                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{profile});
+                    var elementType = type.GetElementType() ?? type.GetGenericArguments()[0];
+                    var genericMethod = createGenericIEnumerableMethod.MakeGenericMethod(elementType);
+                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{formatData});
                 }
 #pragma warning disable CS0618 
                 //IL2CPP runtime does throw this exception!
@@ -118,87 +119,87 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
             
             // IEnumerable
-            if (profile.UnitValueType.IsIEnumerable(true))
+            if (type.IsIEnumerable(true))
             {
-                return (Func<TValue, string>) (Delegate) IEnumerableProcessor(profile);
+                return (Func<TValue, string>) (Delegate) IEnumerableProcessor(formatData, type);
             }
 
             // Quaternion
-            if (profile.UnitValueType == typeof(Quaternion))
+            if (type == typeof(Quaternion))
             {
-                return (Func<TValue, string>) (Delegate) QuaternionProcessor(profile);
+                return (Func<TValue, string>) (Delegate) QuaternionProcessor(formatData);
             }
 
             // Vector3
-            if (profile.UnitValueType == typeof(Vector3))
+            if (type == typeof(Vector3))
             {
-                return (Func<TValue, string>) (Delegate) Vector3Processor(profile);
+                return (Func<TValue, string>) (Delegate) Vector3Processor(formatData);
             }
             
             // Vector2
-            if (profile.UnitValueType == typeof(Vector2))
+            if (type == typeof(Vector2))
             {
-                return (Func<TValue, string>) (Delegate) Vector2Processor(profile);
+                return (Func<TValue, string>) (Delegate) Vector2Processor(formatData);
             }
 
             // Color
-            if (profile.UnitValueType == typeof(Color))
+            if (type == typeof(Color))
             {
-                return (Func<TValue, string>) (Delegate) ColorProcessor(profile);
+                return (Func<TValue, string>) (Delegate) ColorProcessor(formatData);
             }
             
             // Color32
-            if (profile.UnitValueType == typeof(Color32))
+            if (type == typeof(Color32))
             {
-                return (Func<TValue, string>) (Delegate) Color32Processor(profile);
+                return (Func<TValue, string>) (Delegate) Color32Processor(formatData);
             }
 
             // Format
-            if (profile.UnitValueType.HasInterface<IFormattable>() && profile.FormatData.Format != null)
+            if (type.HasInterface<IFormattable>() && formatData.Format != null)
             {
-                return FormattedProcessor<TValue>(profile);
+                return FormattedProcessor<TValue>(formatData);
             }
             
             // UnityEngine.Object
-            if (profile.UnitValueType.IsSubclassOf(typeof(UnityEngine.Object)))
+            if (type.IsSubclassOf(typeof(UnityEngine.Object)))
             {
-                return (Func<TValue, string>) (Delegate) UnityEngineObjectProcessor(profile);
+                return (Func<TValue, string>) (Delegate) UnityEngineObjectProcessor(formatData);
             }
             
             // Int32
-            if (profile.UnitValueType.IsInt32())
+            if (type.IsInt32())
             {
-                return (Func<TValue, string>) (Delegate) Int32Processor(profile);
+                return (Func<TValue, string>) (Delegate) Int32Processor(formatData);
             }
             
             // Int64
-            if (profile.UnitValueType.IsInt64())
+            if (type.IsInt64())
             {
-                return (Func<TValue, string>) (Delegate) Int64Processor(profile);
+                return (Func<TValue, string>) (Delegate) Int64Processor(formatData);
             }
             
             // Float
-            if (profile.UnitValueType.IsSingle())
+            if (type.IsSingle())
             {
-                return (Func<TValue, string>) (Delegate) SingleProcessor(profile);
+                return (Func<TValue, string>) (Delegate) SingleProcessor(formatData);
             }
             
             // Double
-            if (profile.UnitValueType.IsDouble())
+            if (type.IsDouble())
             {
-                return (Func<TValue, string>) (Delegate) DoubleProcessor(profile);
+                return (Func<TValue, string>) (Delegate) DoubleProcessor(formatData);
             }
 
             // Value Type
-            if (profile.UnitValueType.IsValueType)
+            if (type.IsValueType)
             {
-                return ValueTypeProcessor<TValue>(profile);
+                return ValueTypeProcessor<TValue>(formatData);
             }
             
             // Reference Type
             else
             {
-                return DefaultProcessor<TValue>(profile);
+                return DefaultProcessor<TValue>(formatData);
             }
         }
     }

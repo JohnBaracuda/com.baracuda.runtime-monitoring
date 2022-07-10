@@ -20,10 +20,7 @@ public class FilterController : MonoBehaviour
     {
         uiParent.SetActive(inputMode == InputMode.UserInterface);
     }
-
-    /// <summary>
-    /// Called by ui
-    /// </summary>
+    
     public void OnInputChanged(string input)
     {
         if (string.IsNullOrWhiteSpace(input))

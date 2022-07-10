@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
+using Baracuda.Monitoring.Internal.Utilities;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -296,14 +297,14 @@ namespace Baracuda.Monitoring.API
                 var unit = list[i];
                 var tags = unit.Profile.Tags;
                 var unitEnabled = false;
-                if (unit.Name.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                if (unit.Name.NoSpace().IndexOf(filter.NoSpace(), StringComparison.CurrentCultureIgnoreCase) >= 0)
                 {
                     unit.Enabled = true;
                     continue;
                 }
                 for (var j = 0; j < tags.Length; j++)
                 {
-                    if (tags[j].IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                    if (tags[j].NoSpace().IndexOf(filter.NoSpace(), StringComparison.CurrentCultureIgnoreCase) >= 0)
                     {
                         unitEnabled = true;
                         break;

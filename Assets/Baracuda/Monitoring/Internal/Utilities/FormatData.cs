@@ -12,15 +12,18 @@ namespace Baracuda.Monitoring.Internal.Utilities
         public string Label { get; }
         public int FontSize { get; }
         public UIPosition Position { get; }
+        public int ElementIndent { get; }
         
         public bool AllowGrouping { get; }
         public string Group { get; }
+        
+        public MonitoringSettings Settings { get; }
 
         /*
          * Ctor   
          */
                 
-        private FormatData(string format, bool showIndexer, string label, int fontSize, UIPosition position, bool allowGrouping, string group)
+        private FormatData(string format, bool showIndexer, string label, int fontSize, UIPosition position, bool allowGrouping, string group, int indent, MonitoringSettings settings)
         {
             Format = format;
             ShowIndexer = showIndexer;
@@ -29,6 +32,8 @@ namespace Baracuda.Monitoring.Internal.Utilities
             Position = position;
             AllowGrouping = allowGrouping;
             Group = group;
+            ElementIndent = indent;
+            Settings = settings;
         }
 
         /*
@@ -45,6 +50,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
             var fontSize = formatAttribute?.FontSize ?? -1;
             var position = formatAttribute?.Position ?? UIPosition.UpperLeft;
             var allowGrouping = formatAttribute?.GroupElement ?? true;
+            var indent = formatAttribute?.ElementIndent ?? -1;
             var group = settings.HumanizeNames? profile.UnitTargetType.Name.Humanize() : profile.UnitTargetType.Name;
             
             if (profile.UnitTargetType.IsGenericType)
@@ -62,7 +68,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
                 }
             }
             
-            return new FormatData(format, showIndexer, label, fontSize, position, allowGrouping, group);
+            return new FormatData(format, showIndexer, label, fontSize, position, allowGrouping, group, indent, settings);
         }
     }
 }

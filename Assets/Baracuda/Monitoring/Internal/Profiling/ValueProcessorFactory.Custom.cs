@@ -24,13 +24,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
         /// Types assignable from <see cref="IEnumerable{T}"/>
         /// </summary>
         /// <param name="processor">name of the method declared as a value processor</param>
-        /// <param name="valueProfile">the profile of the <see cref="ValueUnit{TTarget,TValue}"/></param>
         /// <typeparam name="TTarget">the <see cref="Type"/> of the profiles Target instance</typeparam>
         /// <typeparam name="TValue">the <see cref="Type"/> of the profiles value instance</typeparam>
         /// <returns></returns>
         internal static Func<TValue, string> FindCustomStaticProcessor<TTarget, TValue>(
             string processor,
-            ValueProfile<TTarget, TValue> valueProfile) where TTarget : class
+            FormatData formatData) where TTarget : class
         {
             try
             {
@@ -41,8 +40,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
 
                 // setup
-                var declaringType = valueProfile.UnitTargetType;
-                var valueType = valueProfile.UnitValueType;
+                var declaringType = typeof(TTarget);
+                var valueType = typeof(TValue);
 
                 // get the processor method.
                 var processorMethod = declaringType.GetMethod(processor, STATIC_FLAGS);
@@ -100,7 +99,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                             // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
                             var func = delegateCreationMethod
-                                .Invoke(null, new object[] {processorFunc.Method, valueProfile.FormatData.Label})
+                                .Invoke(null, new object[] {processorFunc.Method, formatData.Label})
                                 ?.ConvertFast<object, Func<TValue, string>>();
 
                             // return the delegate if it was created successfully
@@ -122,7 +121,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                             // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
                             var func = delegateCreationMethod
-                                .Invoke(null, new object[] {processorFunc.Method, valueProfile.FormatData.Label})
+                                .Invoke(null, new object[] {processorFunc.Method, formatData.Label})
                                 ?.ConvertFast<object, Func<TValue, string>>();
 
                             // return the delegate if it was created successfully
@@ -161,7 +160,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                             // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
                             var func = delegateCreationMethod
-                                .Invoke(null, new object[] {processorFunc.Method, valueProfile.FormatData.Label})
+                                .Invoke(null, new object[] {processorFunc.Method, formatData.Label})
                                 ?.ConvertFast<object, Func<TValue, string>>();
 
                             // return the delegate if it was created successfully
@@ -193,7 +192,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
                         // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
                         var func = delegateCreationMethod
-                            .Invoke(null, new object[] {processorFunc.Method, valueProfile.FormatData.Label})
+                            .Invoke(null, new object[] {processorFunc.Method, formatData.Label})
                             ?.ConvertFast<object, Func<TValue, string>>();
 
                         // return the delegate if it was created successfully
@@ -231,12 +230,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
         /// Types assignable from <see cref="IEnumerable{T}"/>
         /// </summary>
         /// <param name="processor">name of the method declared as a value processor</param>
-        /// <param name="valueProfile">the profile of the <see cref="ValueUnit{TTarget,TValue}"/></param>
+        /// <param name="formatData"></param>
         /// <typeparam name="TTarget">the <see cref="Type"/> of the profiles Target instance</typeparam>
         /// <typeparam name="TValue">the <see cref="Type"/> of the profiles value instance</typeparam>
         /// <returns></returns>
         internal static Func<TTarget, TValue, string> FindCustomInstanceProcessor<TTarget, TValue>(
-            string processor, ValueProfile<TTarget, TValue> valueProfile) where TTarget : class
+            string processor, FormatData formatData) where TTarget : class
         {
             try
             {
@@ -246,8 +245,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     return null;
                 }
 
-                var declaringType = valueProfile.UnitTargetType;
-                var valueType = valueProfile.UnitValueType;
+                var declaringType = typeof(TTarget);
+                var valueType = typeof(TValue);
 
                 var processorMethod = declaringType.GetMethod(processor, INSTANCE_FLAGS);
 

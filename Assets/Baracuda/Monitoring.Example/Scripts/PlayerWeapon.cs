@@ -11,32 +11,6 @@ namespace Baracuda.Monitoring.Example.Scripts
     {
         #region --- Fields ---
 
-        [MonitorMethod("Friend", 120)]
-        public static string GetName(string value, int health, bool va = true)
-        {
-            return value + health + va;
-        }
-        
-        [MonitorMethod]
-        public static string GetName()
-        {
-            return "Player";
-        }
-        
-        [MonitorMethod]
-        public void Test1(out string str)
-        {
-            str = "Hello World";
-        }
-        
-        [MonitorMethod(30)]
-        public static void VoidWithOutParameter(out int arg)
-        {
-            arg = count;
-        }
-
-        private static int count;
-
         /*
          *  Inspector Fields   
          */
@@ -115,7 +89,6 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         private void Update()
         {
-            count++;
             var deltaTime = Time.deltaTime;
             PreformRaycast();
             

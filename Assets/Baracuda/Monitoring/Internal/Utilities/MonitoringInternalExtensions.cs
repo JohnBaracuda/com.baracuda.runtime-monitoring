@@ -76,6 +76,11 @@ namespace Baracuda.Monitoring.Internal.Utilities
         /*
          * Text Manipulation   
          */
+
+        public static string NoSpace(this string str)
+        {
+            return str.Replace(" ", "");
+        }
         
         public static string Humanize(this string target, string[] prefixes = null)
         {

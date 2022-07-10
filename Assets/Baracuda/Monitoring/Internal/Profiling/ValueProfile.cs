@@ -104,8 +104,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
             if (TryGetMetaAttribute<MValueProcessorAttribute>(out var valueProcessorAttribute))
             {
                 var processorName = valueProcessorAttribute.Processor;
-                _instanceValueProcessorDelegate = ValueProcessorFactory.FindCustomInstanceProcessor(processorName, this);
-                _staticValueProcessorDelegate = ValueProcessorFactory.FindCustomStaticProcessor(processorName, this);
+                _instanceValueProcessorDelegate = ValueProcessorFactory.FindCustomInstanceProcessor<TTarget, TValue>(processorName, FormatData);
+                _staticValueProcessorDelegate = ValueProcessorFactory.FindCustomStaticProcessor<TTarget, TValue>(processorName, FormatData);
                 if (_instanceValueProcessorDelegate == null && _staticValueProcessorDelegate == null)
                 {
                     ExceptionLogging.LogValueProcessNotFound(processorName, unitTargetType);
@@ -113,7 +113,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
             if (_staticValueProcessorDelegate == null && _instanceValueProcessorDelegate == null)
             {
-                _fallbackValueProcessorDelegate = ValueProcessorFactory.CreateTypeSpecificProcessor<TValue>(this);
+                _fallbackValueProcessorDelegate = ValueProcessorFactory.CreateProcessorForType<TValue>(FormatData);
             }
 
             IsDirtyFunc = CreateIsDirtyFunction(unitValueType);

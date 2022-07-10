@@ -9,6 +9,18 @@ using Baracuda.Reflection;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
+    public readonly struct MethodResult
+    {
+        public readonly bool IsVoid;
+        public readonly string[] Results;
+
+        public MethodResult(bool isVoid, string[] results)
+        {
+            IsVoid = isVoid;
+            Results = results;
+        }
+    }
+    
     public sealed class MethodProfile<TTarget, TValue> : ValueProfile<TTarget, TValue> where TTarget : class
     {
         private readonly Func<TTarget, TValue> _getValueDelegate;
@@ -48,8 +60,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
         private static Func<TTarget, TValue> CreateGetDelegate(MethodInfo methodInfo, object[] parameter)
         {
             var isVoid = methodInfo.ReturnType == typeof(void);
-            
-            
             
             if (isVoid)
             {

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 using System;
 using System.Text;
+using Baracuda.Monitoring.Internal.Utilities;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
@@ -11,10 +12,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * General   
          */
         
-        private static Func<TValue, string> DefaultProcessor<TValue>(MonitorProfile profile)
+        private static Func<TValue, string> DefaultProcessor<TValue>(FormatData formatData)
         {
             var stringBuilder = new StringBuilder();
-            var label = profile.FormatData.Label;
+            var label = formatData.Label;
             return (value) =>
             {
                 stringBuilder.Clear();
@@ -29,16 +30,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Formatted   
          */
         
-        private static Func<TValue, string> FormattedProcessor<TValue>(MonitorProfile profile)
+        private static Func<TValue, string> FormattedProcessor<TValue>(FormatData formatData)
         {
             var stringBuilder = new StringBuilder();
-            var label = profile.FormatData.Label;
+            var label = formatData.Label;
+            var format = formatData.Format;
             return (value) =>
             {
                 stringBuilder.Clear();
                 stringBuilder.Append(label);
                 stringBuilder.Append(": ");
-                stringBuilder.Append((value as IFormattable)?.ToString(profile.FormatData.Format, null) ?? NULL);
+                stringBuilder.Append((value as IFormattable)?.ToString(format, null) ?? NULL);
                 return stringBuilder.ToString();
             };
         }
@@ -47,9 +49,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Unity Objects   
          */
         
-        private static Func<UnityEngine.Object, string> UnityEngineObjectProcessor(MonitorProfile profile)
+        private static Func<UnityEngine.Object, string> UnityEngineObjectProcessor(FormatData formatData)
         {
-            var name = profile.FormatData.Label;
+            var name = formatData.Label;
             var stringBuilder = new StringBuilder();
 
             return (value) =>
@@ -63,12 +65,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
         }
         
                 
-        private static Func<Transform, string> TransformProcessor(MonitorProfile profile)
+        private static Func<Transform, string> TransformProcessor(FormatData formatData)
         {
             var sb = new StringBuilder();
-            var name = profile.FormatData.Label;
+            var name = formatData.Label;
             var nullString = $"{name}: {NULL}";
-            var indentValue = CreateIndentValueForProfile(profile) * 2;
+            var indentValue = CreateIndentValueForProfile(formatData) * 2;
             var cachedString = default(string);
             
             return (transform) =>
@@ -84,7 +86,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
 
                 sb.Clear();
-                sb.Append("\n-");
+                sb.Append(name);
+                sb.Append(":\n-");
                 sb.Append(' ');
                 sb.Append(transform.name);
                 

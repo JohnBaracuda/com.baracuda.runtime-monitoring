@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
 using Object = UnityEngine.Object;
 
@@ -17,16 +18,16 @@ namespace Baracuda.Monitoring.Internal.Profiling
             .Single(methodInfo =>
                 methodInfo.Name == nameof(ReferenceTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
 
-        private static Func<T[], string> ReferenceTypeArrayProcessor<T>(MonitorProfile profile)
+        private static Func<T[], string> ReferenceTypeArrayProcessor<T>(FormatData formatData)
         {
-            var name = profile.FormatData.Label;
+            var name = formatData.Label;
             var nullString = $"{name}: {NULL}";
             var stringBuilder = new StringBuilder();
-            var indent = GetIndentStringForProfile(profile);
+            var indent = GetIndentStringForProfile(formatData);
 
             if (typeof(T).IsSubclassOrAssignable(typeof(Object)))
             {
-                return profile.FormatData.ShowIndexer
+                return formatData.ShowIndexer
                     ? (Func<T[], string>) ((value) =>
                     {
                         if (value == null)
@@ -73,7 +74,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
             else
             {
-                if (profile.FormatData.ShowIndexer)
+                if (formatData.ShowIndexer)
                 {
                     return (value) =>
                     {
@@ -134,14 +135,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
             .Single(methodInfo =>
                 methodInfo.Name == nameof(ValueTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
 
-        private static Func<T[], string> ValueTypeArrayProcessor<T>(MonitorProfile profile) where T : struct
+        private static Func<T[], string> ValueTypeArrayProcessor<T>(FormatData formatData) where T : struct
         {
-            var name = profile.FormatData.Label;
+            var name = formatData.Label;
             var nullString = $"{name}: {NULL}";
             var stringBuilder = new StringBuilder();
-            var indent = GetIndentStringForProfile(profile);
+            var indent = GetIndentStringForProfile(formatData);
 
-            return profile.FormatData.ShowIndexer
+            return formatData.ShowIndexer
                 ? (Func<T[], string>) ((value) =>
                 {
                     if (value == null)
