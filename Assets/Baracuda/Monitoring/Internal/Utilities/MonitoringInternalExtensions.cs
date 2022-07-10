@@ -132,7 +132,6 @@ namespace Baracuda.Monitoring.Internal.Utilities
             return !string.IsNullOrWhiteSpace(str) && str[0] == character;
         }
         
-        
         private static string ToCamel(this string content)
         {
             var sb = ConcurrentStringBuilderPool.Get();

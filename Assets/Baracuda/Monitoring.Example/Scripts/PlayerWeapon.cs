@@ -1,10 +1,9 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using System;
-using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
@@ -43,8 +42,9 @@ namespace Baracuda.Monitoring.Example.Scripts
         [MValueProcessor(nameof(CurrentAmmunitionProcessor))]
         private int _currentAmmunition;
 
-        [Monitor]
-        private event Action<int> OnAmmoChanged;
+        [MonitorEvent]
+        public event Action<int> OnAmmoChanged;
+
         
         private float _lastFireTime;
         private float _targetFOV;
@@ -76,6 +76,7 @@ namespace Baracuda.Monitoring.Example.Scripts
          *  Logic   
          */
 
+        [MethodImpl(MethodImplOptions.NoOptimization)]
         protected override void Awake()
         {
             base.Awake();
@@ -83,6 +84,12 @@ namespace Baracuda.Monitoring.Example.Scripts
             _camera = GetComponentInChildren<Camera>();
             _currentAmmunition = ammunition;
             OnAmmoChanged?.Invoke(_currentAmmunition);
+            OnAmmoChanged += OnOnAmmoChanged;
+        }
+
+        private void OnOnAmmoChanged(int obj)
+        {
+            
         }
 
         private void Update()

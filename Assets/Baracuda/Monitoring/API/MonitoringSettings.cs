@@ -104,14 +104,16 @@ namespace Baracuda.Monitoring.API
         [Header("Types")]
         [SerializeField] private Color classColor = new Color(0.49f, 0.49f, 1f);
         [SerializeField] private Color eventColor = new Color(1f, 0.92f, 0.53f);
+        [SerializeField] private Color sceneNameColor = new Color(1f, 0.67f, 0.85f);
+        [SerializeField] private Color targetObjectColor = new Color(0.39f, 0.72f, 1f);
+        [SerializeField] private Color methodColor = new Color(0.56f, 0.98f, 0.53f);
 
         #endregion
 
         #region --- Assembly Settings ---
 
         [SerializeField]
-        [Tooltip(
-            "Assemblies with matching prefixes are ignored when creating a monitoring profile during initialization. Note that Unity, System and other core assemblies will always be ignored.")]
+        [Tooltip("Assemblies with matching prefixes are ignored when creating a monitoring profile during initialization. Note that Unity, System and other core assemblies will always be ignored.")]
         private string[] bannedAssemblyPrefixes = new string[]
         {
             "Assembly-Plugin",
@@ -205,7 +207,10 @@ namespace Baracuda.Monitoring.API
         public Color YColor => yColor;
         public Color ZColor => zColor;
         public Color WColor => wColor;
-        
+
+        public Color MethodColor => methodColor;
+        public Color SceneNameColor => sceneNameColor;
+        public Color TargetObjectColor => targetObjectColor;
         public Color ClassColor => classColor;
         public Color EventColor => eventColor;
 

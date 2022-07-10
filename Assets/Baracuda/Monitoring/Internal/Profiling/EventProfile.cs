@@ -4,12 +4,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Pooling.Concretions;
 using Baracuda.Reflection;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
@@ -18,9 +18,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
     {
         #region --- Fields & Properties ---
 
-        public bool ShowSignature { get; } = true;
-        public bool ShowSubscriber { get;  } = true;
-        public bool ShowTrueCount { get; } = false;
+        public bool ShowSubscriberCount { get; } = true;
+        public bool ShowInvokeCounter { get; } = true;
+        public bool ShowTrueCount { get; } = true;
+        public bool ShowSubscriberInfo { get; } = true;
         
         public delegate string StateFormatDelegate(TTarget target, int invokeCount);
 
@@ -52,8 +53,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
             if (attribute is MonitorEventAttribute eventAttribute)
             {
                 ShowTrueCount = eventAttribute.ShowTrueCount;
-                ShowSubscriber = eventAttribute.ShowSubscriber;
-                ShowSignature = eventAttribute.ShowSignature;
+                ShowSubscriberCount = eventAttribute.ShowSubscriberCount;
+                ShowInvokeCounter = eventAttribute.ShowInvokeCounter;
+                ShowSubscriberInfo = eventAttribute.ShowSubscriberInfo;
             }
             
             var addMethod = eventInfo.GetAddMethod(true);
@@ -62,11 +64,15 @@ namespace Baracuda.Monitoring.Internal.Profiling
             
             _subscribe = CreateExpression(addMethod);
             _remove = CreateExpression(removeMethod);
+
+            var elementIndent = CalculateElementIndent();
+
             var counterDelegate = CreateCounterExpression(getterDelegate, ShowTrueCount);
+            var subDelegate = ShowSubscriberInfo? CreateSubscriberDataExpression(getterDelegate, args.Settings, elementIndent) : null;
             
-            _formatState = CreateStateFormatter(counterDelegate, args.Settings);
+            _formatState = CreateDisplayEventStateDelegate(counterDelegate, subDelegate, args.Settings);
         }
-        
+
         private static Action<TTarget, Delegate> CreateExpression(MethodInfo methodInfo)
         {
             return (target, @delegate) => methodInfo.Invoke(target, new object[]{@delegate});
@@ -94,64 +100,182 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
 #endif
         }
-        
+
+        private static Func<TTarget, string> CreateSubscriberDataExpression(Func<TTarget, Delegate> func, MonitoringSettings settings, int elementIndent)
+        {
+            var sb = new StringBuilder();
+            var indentString = new string(' ', elementIndent);
+            return target =>
+            {
+                sb.Clear();
+                var delegates = func(target).GetInvocationList();
+                for (var i = 0; i < delegates.Length; i++)
+                {
+                    var item = delegates[i];
+                    var delegateTarget = item.Target;
+                    sb.Append('\n');
+                    sb.Append(indentString);
+                    sb.Append('[');
+                    sb.Append(i);
+                    sb.Append(']');
+                    sb.Append(' ');
+                    sb.Append(item.Method.DeclaringType?.ToSyntaxString().Colorize(settings.ClassColor) ?? "NULL".Colorize(Color.red));
+                    sb.Append(settings.AppendSymbol);
+                    sb.Append(item.Method.Name.Colorize(settings.MethodColor));
+                    
+                    if (!(delegateTarget is Component component))
+                    {
+                        continue;
+                    }
+
+                    if (component != null)
+                    {
+                        sb.Append(' ');
+                        sb.Append('(');
+                        sb.Append(component.gameObject.scene.name.Colorize(settings.SceneNameColor));
+                        sb.Append(' ');
+                        sb.Append(component.name.Colorize(settings.TargetObjectColor));
+                        sb.Append(')');
+                    }
+                    else
+                    {
+                        sb.Append(' ');
+                        sb.Append("NULL! Target was destroyed!".Colorize(Color.red));
+                    }
+                }
+
+                return sb.ToString();
+            };
+        }
+
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------   
 
         #region --- State Foramtting ---
-        
 
-        private StateFormatDelegate CreateStateFormatter(Func<TTarget, int> counterDelegate, MonitoringSettings settings)
+        private StateFormatDelegate CreateDisplayEventStateDelegate(Func<TTarget, int> counterDelegate, Func<TTarget, string> subInfoDelegate, MonitoringSettings settings)
         {
-            if (ShowSignature)
+            var signatureSb = ConcurrentStringBuilderPool.Get();
+            if (settings.AddClassName)
             {
-                var signatureString = _eventInfo.GetEventSignatureString().Colorize(settings.EventColor);
+                signatureSb.Append(UnitTargetType.Name.Colorize(settings.ClassColor));
+                signatureSb.Append(settings.AppendSymbol);
+            }
+            signatureSb.Append(_eventInfo.GetEventSignatureString().Colorize(settings.EventColor));
 
-                if (ShowSubscriber)
+            var signatureString = ConcurrentStringBuilderPool.Release(signatureSb);
+            
+            if (ShowSubscriberCount)
+            {
+                if (ShowInvokeCounter)
                 {
-                    return (target, count) =>
+                    if (subInfoDelegate != null)
                     {
-                        var sb = StringBuilderPool.Get();
-                        sb.Append(signatureString);
-                        sb.Append(" Subscriber:");
-                        sb.Append(counterDelegate(target));
-                        sb.Append(" Invocations: ");
-                        sb.Append(count);
-                        return StringBuilderPool.Release(sb);
-                    };
+                        return (target, count) =>
+                        {
+                            var sb = StringBuilderPool.Get();
+                            sb.Append(signatureString);
+                            sb.Append(" Subscriber:");
+                            sb.Append(counterDelegate(target));
+                            sb.Append(" Invocations: ");
+                            sb.Append(count);
+                            sb.Append(subInfoDelegate?.Invoke(target));
+                            return StringBuilderPool.Release(sb);
+                        }; 
+                    }
+                    else
+                    {
+                        return (target, count) =>
+                        {
+                            var sb = StringBuilderPool.Get();
+                            sb.Append(signatureString);
+                            sb.Append(" Subscriber:");
+                            sb.Append(counterDelegate(target));
+                            sb.Append(" Invocations: ");
+                            sb.Append(count);
+                            return StringBuilderPool.Release(sb);
+                        }; 
+                    }
                 }
-
-                return (target, count) =>
+                else //!ShowInvokeCounter
                 {
-                    var sb = StringBuilderPool.Get();
-                    sb.Append(signatureString);
-                    sb.Append(" Invocations: ");
-                    sb.Append(count);
-                    return StringBuilderPool.Release(sb);
-                };
+                    if (subInfoDelegate != null)
+                    {
+                        return (target, count) =>
+                        {
+                            var sb = StringBuilderPool.Get();
+                            sb.Append(signatureString);
+                            sb.Append(" Subscriber:");
+                            sb.Append(counterDelegate(target));
+                            sb.Append(subInfoDelegate?.Invoke(target));
+                            return StringBuilderPool.Release(sb);
+                        }; 
+                    }
+                    else
+                    {
+                        return (target, count) =>
+                        {
+                            var sb = StringBuilderPool.Get();
+                            sb.Append(signatureString);
+                            sb.Append(" Subscriber:");
+                            sb.Append(counterDelegate(target));
+                            return StringBuilderPool.Release(sb);
+                        }; 
+                    }
+                }
             }
-
-            if (ShowSubscriber)
+            else //!ShowSubscriberCount
             {
-                return (target, count) =>
+                if (ShowInvokeCounter)
                 {
-                    var sb = StringBuilderPool.Get();
-                    sb.Append(" Subscriber:");
-                    sb.Append(counterDelegate(target));
-                    sb.Append(" Invocations: ");
-                    sb.Append(count);
-                    return StringBuilderPool.Release(sb);
-                };
+                    if (subInfoDelegate != null)
+                    {
+                        return (target, count) =>
+                        {
+                            var sb = StringBuilderPool.Get();
+                            sb.Append(signatureString);
+                            sb.Append(" Invocations: ");
+                            sb.Append(count);
+                            sb.Append(subInfoDelegate?.Invoke(target));
+                            return StringBuilderPool.Release(sb);
+                        }; 
+                    }
+                    else 
+                    {
+                        return (target, count) =>
+                        {
+                            var sb = StringBuilderPool.Get();
+                            sb.Append(signatureString);
+                            sb.Append(" Invocations: ");
+                            sb.Append(count);
+                            return StringBuilderPool.Release(sb);
+                        }; 
+                    }
+                }
+                else //!ShowInvokeCounter
+                {
+                    if (subInfoDelegate != null)
+                    {
+                        return (target, count) =>
+                        {
+                            var sb = StringBuilderPool.Get();
+                            sb.Append(signatureString);
+                            sb.Append(subInfoDelegate?.Invoke(target));
+                            return StringBuilderPool.Release(sb);
+                        }; 
+                    }
+                    else
+                    {
+                        return (target, count) =>
+                        {
+                            var sb = StringBuilderPool.Get();
+                            sb.Append(signatureString);
+                            return StringBuilderPool.Release(sb);
+                        }; 
+                    }
+                }
             }
-
-            return (target, count) =>
-            {
-                var sb = StringBuilderPool.Get();
-                sb.Append(" Invocations: ");
-                sb.Append(count);
-                return StringBuilderPool.Release(sb);
-            };
         }
 
         #endregion
@@ -285,6 +409,19 @@ namespace Baracuda.Monitoring.Internal.Profiling
         }
         
 #endif
+        
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Misc ---
+        
+        private int CalculateElementIndent()
+        {
+            return TryGetMetaAttribute<MFormatOptionsAttribute>(out var formatAttribute)
+                ? formatAttribute.ElementIndent > -1 ? formatAttribute.ElementIndent : 2
+                : 2;
+        }
         
         #endregion
     }

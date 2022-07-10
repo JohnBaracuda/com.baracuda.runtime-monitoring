@@ -40,7 +40,10 @@ MonoBehaviour:
   zColor: {r: 0.5294118, g: 0.6, b: 0.9254902, a: 1}
   wColor: {r: 0.72646046, g: 0, b: 1, a: 1}
   classColor: {r: 0.81021065, g: 0.6084906, b: 1, a: 1}
-  eventColor: {r: 1, g: 0.9537098, b: 0.4009434, a: 1}
+  eventColor: {r: 0.9245283, g: 0.6826526, b: 0.41429335, a: 1}
+  sceneNameColor: {r: 1, g: 0.67, b: 0.85, a: 1}
+  targetObjectColor: {r: 0.39, g: 0.72, b: 1, a: 1}
+  methodColor: {r: 0.73500466, g: 0.8867924, b: 0.72365606, a: 1}
   bannedAssemblyPrefixes:
   - Assembly-Plugin
   - DOTween

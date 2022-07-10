@@ -64,6 +64,9 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _wColor;
         private SerializedProperty _classColor;
         private SerializedProperty _eventColor;
+        private SerializedProperty _sceneNameColor;
+        private SerializedProperty _targetObjectColor;
+        private SerializedProperty _methodColor;
         
         private SerializedProperty _bannedAssemblyPrefixes;
         private SerializedProperty _bannedAssemblyNames;
@@ -205,6 +208,9 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_wColor);
                 EditorGUILayout.PropertyField(_classColor);
                 EditorGUILayout.PropertyField(_eventColor);
+                EditorGUILayout.PropertyField(_sceneNameColor);
+                EditorGUILayout.PropertyField(_targetObjectColor);
+                EditorGUILayout.PropertyField(_methodColor);
                 EditorGUILayout.Space();
             }
             
