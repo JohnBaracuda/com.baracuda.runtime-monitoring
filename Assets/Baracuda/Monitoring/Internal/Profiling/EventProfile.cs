@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
-    public class EventProfile<TTarget, TDelegate> : MonitorProfile where TDelegate : Delegate where TTarget : class
+    public sealed class EventProfile<TTarget, TDelegate> : MonitorProfile where TDelegate : Delegate where TTarget : class
     {
         #region --- Fields & Properties ---
 

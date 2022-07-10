@@ -7,7 +7,6 @@ namespace Baracuda.Monitoring.Internal.Units
 {
     public sealed class PropertyUnit<TTarget, TValue> : ValueUnit<TTarget, TValue> where TTarget : class
     {
-        
         #region --- Properties ---
 
         public override IMonitorProfile Profile => _propertyProfile;
@@ -38,6 +37,5 @@ namespace Baracuda.Monitoring.Internal.Units
        
 
         #endregion
-      
     }
 }

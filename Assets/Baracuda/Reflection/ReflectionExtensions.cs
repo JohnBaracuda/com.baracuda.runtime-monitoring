@@ -530,6 +530,12 @@ namespace Baracuda.Reflection
 
             return false;
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static object GetDefault(this Type type)
+        {
+            return type.IsValueType ? Activator.CreateInstance(type) : null;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIDictionary(this Type type)
@@ -590,6 +596,32 @@ namespace Baracuda.Reflection
             }
 
             return true;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool HasReturnValue(this MethodInfo methodInfo)
+        {
+            return methodInfo.ReturnType != typeof(void);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool HasReturnValueOrOutParameter(this MethodInfo methodInfo)
+        {
+            var parameter = methodInfo.GetParameters();
+            for (var i = 0; i < parameter.Length; i++)
+            {
+                if (parameter[i].IsOut)
+                {
+                    return true;
+                }
+            }
+            return methodInfo.HasReturnValue();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Type NotVoid(this Type type)
+        {
+            return type == typeof(void) ? typeof(VoidRef) : type;
         }
 
         /*

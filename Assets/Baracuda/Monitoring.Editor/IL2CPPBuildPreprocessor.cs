@@ -203,7 +203,7 @@ namespace Baracuda.Monitoring.Editor
                     content.Append(ToGenericTypeStringFullName(uniqueType.GetGenericArguments()[1]));
                     content.Append(">();");
                 }
-                else if (uniqueType.IsGenericIEnumerable())
+                else if (uniqueType.IsGenericIEnumerable(true))
                 {
                     content.Append("\n        ");
                     content.Append(aotBridgeClass);
@@ -334,6 +334,8 @@ namespace Baracuda.Monitoring.Editor
                     return GetDefinitionFromPropertyInfo(propertyInfo);
                 case EventInfo eventInfo:
                     return GetDefinitionFromEventInfo(eventInfo);
+                case MethodInfo methodInfo:
+                    return GetDefinitionFromMethodInfo(methodInfo);
                 default:
                     return null;
             }
@@ -378,6 +380,20 @@ namespace Baracuda.Monitoring.Editor
             yield return CreateTypeDefinitionFor(typeof(FieldProfile<,>), targetType, valueType);
             yield return CreateTypeDefinitionFor(typeof(ValueProfile<,>), targetType, valueType);
             yield return CreateTypeDefinitionFor(typeof(FieldUnit<,>), targetType, valueType);
+            yield return CreateTypeDefinitionFor(typeof(ValueUnit<,>), targetType, valueType);
+        }
+        
+        private static IEnumerable<TypeDefinitionResult> GetDefinitionFromMethodInfo(MethodInfo methodInfo)
+        {
+            System.Diagnostics.Debug.Assert(methodInfo.DeclaringType != null, "methodInfo.DeclaringType != null");
+            System.Diagnostics.Debug.Assert(methodInfo.ReturnType != null, "methodInfo.ReturnType != null");
+
+            var targetType = methodInfo.DeclaringType;
+            var valueType = methodInfo.ReturnType.NotVoid();
+
+            yield return CreateTypeDefinitionFor(typeof(MethodProfile<,>), targetType, valueType);
+            yield return CreateTypeDefinitionFor(typeof(ValueProfile<,>), targetType, valueType);
+            yield return CreateTypeDefinitionFor(typeof(MethodUnit<,>), targetType, valueType);
             yield return CreateTypeDefinitionFor(typeof(ValueUnit<,>), targetType, valueType);
         }
 

@@ -39,7 +39,7 @@ namespace Baracuda.Monitoring.Internal.Units
             Func<TTarget, TValue> getValue,
             Action<TTarget, TValue> setValue,
             Func<TValue, string> valueProcessor,
-            ValueProfile<TTarget, TValue> valueProfile) : base(target, valueProfile)
+            ValueProfile<TTarget, TValue> profile) : base(target, profile)
         {
             _target = target;
             _getValue = getValue;
@@ -47,11 +47,11 @@ namespace Baracuda.Monitoring.Internal.Units
             
             CompiledValueProcessor = CompileValueProcessor(valueProcessor);
 
-            _checkIsDirty = valueProfile.IsDirtyFunc;
+            _checkIsDirty = profile.IsDirtyFunc;
             
-            if (valueProfile.CustomUpdateEventAvailable)
+            if (profile.CustomUpdateEventAvailable)
             {
-                if (!valueProfile.TrySubscribeToUpdateEvent(target, Refresh, SetValue))
+                if (!profile.TrySubscribeToUpdateEvent(target, Refresh, SetValue))
                 {
                     Debug.LogWarning($"Could not subscribe {Name} to update event!");
                 }

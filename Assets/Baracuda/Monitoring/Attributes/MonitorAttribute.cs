@@ -13,7 +13,7 @@ namespace Baracuda.Monitoring
     /// This process can be simplified by using monitored base types:
     /// <br/><see cref="MonitoredObject"/>, <see cref="MonitoredBehaviour"/> or <see cref="MonitoredSingleton{T}"/>
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method)]
     [Preserve]
     public class MonitorAttribute : Attribute
     {
