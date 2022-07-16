@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Profiling;
+using Baracuda.Reflection;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Units
@@ -154,6 +155,11 @@ namespace Baracuda.Monitoring.Internal.Units
         public virtual void Dispose()
         {
             RaiseDisposing();
+        }
+
+        public override string ToString()
+        {
+            return GetType().ToGenericTypeString();
         }
 
         #endregion

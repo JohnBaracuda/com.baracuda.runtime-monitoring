@@ -96,6 +96,16 @@ namespace Baracuda.Monitoring.Editor
         private static readonly List<string> errorBuffer = new List<string>();
 
         private static int id;
+
+        private static MonitoringStats stats;
+        
+        private class MonitoringStats
+        {
+            public int MonitoredProperties;
+            public int MonitoredFields;
+            public int MonitoredEvents;
+            public int MonitoredMethods;
+        }
         
         #endregion
         
@@ -103,12 +113,12 @@ namespace Baracuda.Monitoring.Editor
 
         private static void OnPreprocessBuildInternal()
         {
-            ClearCaches();
+            ResetQueuesAndCaches();
             
             var textFile = MonitoringSettings.GetInstance().ScriptFileIL2CPP;
             var filePath = AssetDatabase.GetAssetPath(textFile);
             
-            Debug.Log($"Starting IL2CPP AOT Type Definition Generation.\nFilePath: {filePath}");
+            Debug.Log($"Starting IL2CPP AOT type definition generation.\nFilePath: {filePath}");
 
             ProfileAssembliesAndCreateDefinitions();
             
@@ -125,10 +135,12 @@ namespace Baracuda.Monitoring.Editor
             
             AppendMethodDefinitions(stringBuilder);
             
+            AppendStats(stringBuilder);
+            
             AppendCloseClass(stringBuilder);
             AppendIfDefEnd(stringBuilder);
             
-            //---
+            Debug.Log($"Writing type definitions to file.\nFilePath: {filePath}");
             
             WriteContentToFile(filePath, stringBuilder);
 
@@ -141,9 +153,9 @@ namespace Baracuda.Monitoring.Editor
             }
             
             AssetDatabase.Refresh();
-            Debug.Log("Successfully Completed IL2CPP AOT Type Definition Generation");
+            Debug.Log("Successfully completed IL2CPP AOT type definition generation");
             
-            ClearCaches();
+            ResetQueuesAndCaches();
         }
 
         private static void WriteContentToFile(string filePath, StringBuilder stringBuilder)
@@ -258,11 +270,31 @@ namespace Baracuda.Monitoring.Editor
         
         #endregion
 
+        #region --- Append Stats ---
+
+        private static void AppendStats(StringBuilder stringBuilder)
+        {
+            AppendLineBreak(stringBuilder, 2);
+            AppendLine(stringBuilder);
+            AppendComment(stringBuilder, "Nerd Stats");
+            AppendLineBreak(stringBuilder);
+
+            AppendComment(stringBuilder, $"Monitored Fields:       {stats.MonitoredFields.ToString()}");
+            AppendComment(stringBuilder, $"Monitored Properties:   {stats.MonitoredProperties.ToString()}");
+            AppendComment(stringBuilder, $"Monitored Events:       {stats.MonitoredEvents.ToString()}");
+            AppendComment(stringBuilder, $"Monitored Methods:      {stats.MonitoredMethods.ToString()}");
+        }
+        
+        #endregion
+
         #region --- Append Misc ---
         
-        private static void AppendLineBreak(StringBuilder stringBuilder)
+        private static void AppendLineBreak(StringBuilder stringBuilder, int breaks = 1)
         {
-            stringBuilder.Append('\n');
+            for (var i = 0; i < breaks; i++)
+            {
+                stringBuilder.Append('\n');
+            }
         }
         
         private static void AppendComment(StringBuilder stringBuilder, string comment)
@@ -301,6 +333,7 @@ namespace Baracuda.Monitoring.Editor
                         if (fieldInfo.HasAttribute<MonitorAttribute>(true))
                         {
                             ProfileFieldInfo(fieldInfo);
+                            stats.MonitoredFields++;
                         }
                     }
                     // Instance Fields
@@ -309,6 +342,7 @@ namespace Baracuda.Monitoring.Editor
                         if (fieldInfo.HasAttribute<MonitorAttribute>(true))
                         {
                             ProfileFieldInfo(fieldInfo);
+                            stats.MonitoredFields++;
                         }
                     }
                     
@@ -318,6 +352,7 @@ namespace Baracuda.Monitoring.Editor
                         if (propertyInfo.HasAttribute<MonitorAttribute>(true))
                         {
                             ProfilePropertyInfo(propertyInfo);
+                            stats.MonitoredProperties++;
                         }
                     }
                     // Instance Properties
@@ -326,6 +361,7 @@ namespace Baracuda.Monitoring.Editor
                         if (propertyInfo.HasAttribute<MonitorAttribute>(true))
                         {
                             ProfilePropertyInfo(propertyInfo);
+                            stats.MonitoredProperties++;
                         }
                     }
                     
@@ -335,6 +371,7 @@ namespace Baracuda.Monitoring.Editor
                         if (eventInfo.HasAttribute<MonitorAttribute>(true))
                         {
                             ProfileEventInfo(eventInfo);
+                            stats.MonitoredEvents++;
                         }
                     }
                     // Instance Events
@@ -343,6 +380,7 @@ namespace Baracuda.Monitoring.Editor
                         if (eventInfo.HasAttribute<MonitorAttribute>(true))
                         {
                             ProfileEventInfo(eventInfo);
+                            stats.MonitoredEvents++;
                         }
                     }
                     
@@ -352,6 +390,7 @@ namespace Baracuda.Monitoring.Editor
                         if (methodInfo.HasAttribute<MonitorAttribute>(true))
                         {
                             ProfileMethodInfo(methodInfo);
+                            stats.MonitoredMethods++;
                         }
                     }
                     // Instance Methods
@@ -360,6 +399,7 @@ namespace Baracuda.Monitoring.Editor
                         if (methodInfo.HasAttribute<MonitorAttribute>(true))
                         {
                             ProfileMethodInfo(methodInfo);
+                            stats.MonitoredMethods++;
                         }
                     }
                 }
@@ -378,7 +418,6 @@ namespace Baracuda.Monitoring.Editor
                 var declaring = fieldInfo.DeclaringType;
                 var monitored = fieldInfo.FieldType;
                 CreateProfileTypeDefFor(template, declaring, monitored, fieldProfileDefinitions);
-                throw new Exception("Test");
             }
             catch (Exception exception)
             {
@@ -702,8 +741,11 @@ namespace Baracuda.Monitoring.Editor
         }
         
         
-        private static void ClearCaches()
+        private static void ResetQueuesAndCaches()
         {
+            stats = new MonitoringStats();
+            id = 0;
+            
             fieldProfileDefinitions.Clear();
             propertyProfileDefinitions.Clear();
             eventProfileDefinitions.Clear();

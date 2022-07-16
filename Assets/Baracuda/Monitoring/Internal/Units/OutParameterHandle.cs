@@ -29,6 +29,7 @@ namespace Baracuda.Monitoring.Internal.Units
         }
     }
 
+    //TODO: if def type 
     public class OutParameterHandleIL2CPP : OutParameterHandle
     {
         private readonly IFormatData _formatData;
@@ -36,11 +37,11 @@ namespace Baracuda.Monitoring.Internal.Units
         
         public override string GetValueAsString(object value)
         {
+            //TODO: Apply IFormatData
             _stringBuilder.Clear();
             _stringBuilder.Append(_formatData.Label);
             _stringBuilder.Append(' ');
             _stringBuilder.Append(value);
-            _stringBuilder.Append(" (IL2CPP)");
             return _stringBuilder.ToString();
         }
 
