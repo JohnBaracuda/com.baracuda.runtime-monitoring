@@ -52,7 +52,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
             
             if (profile.UnitTargetType.IsGenericType)
             {
-                group = profile.UnitTargetType.ToSyntaxString();
+                group = profile.UnitTargetType.ToGenericTypeString();
             }
             
             if (label == null)

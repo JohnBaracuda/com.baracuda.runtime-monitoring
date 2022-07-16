@@ -459,7 +459,8 @@ namespace Baracuda.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsReadonlyRefStruct(this Type type)
         {
-            return type.IsStruct() && type.IsByRef;
+            return type.IsValueType &&
+                   type.GetCustomAttributes(true).Any(obj => obj.GetType().Name == "IsByRefLikeAttribute");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -835,7 +836,7 @@ namespace Baracuda.Reflection
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ToSyntaxString(this Type type)
+        public static string ToGenericTypeString(this Type type)
         {
             if (typeCache.TryGetValue(type, out var value))
             {
@@ -851,7 +852,7 @@ namespace Baracuda.Reflection
 
                 foreach (var t in arguments)
                 {
-                    var arg = ToSyntaxString(t);
+                    var arg = ToGenericTypeString(t);
 
                     if (argBuilder.Length > 0)
                     {

@@ -38,7 +38,7 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         [Monitor]
         [MUpdateEvent(nameof(OnAmmoChanged))]
-        [MFormatOptions(UIPosition.LowerLeft, FontSize = 20)]
+        [MFormatOptions(UIPosition.LowerLeft, FontSize = 20, GroupElement = false)]
         [MValueProcessor(nameof(CurrentAmmunitionProcessor))]
         private int _currentAmmunition;
 

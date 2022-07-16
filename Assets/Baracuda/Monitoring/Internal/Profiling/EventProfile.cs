@@ -119,7 +119,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     sb.Append(i);
                     sb.Append(']');
                     sb.Append(' ');
-                    sb.Append(item.Method.DeclaringType?.ToSyntaxString().Colorize(settings.ClassColor) ?? "NULL".Colorize(Color.red));
+                    sb.Append(item.Method.DeclaringType?.ToGenericTypeString().Colorize(settings.ClassColor) ?? "NULL".Colorize(Color.red));
                     sb.Append(settings.AppendSymbol);
                     sb.Append(item.Method.Name.Colorize(settings.MethodColor));
                     

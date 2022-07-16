@@ -1,4 +1,6 @@
-﻿namespace Baracuda.Monitoring.Internal.Utilities
+﻿using System.Runtime.InteropServices;
+
+namespace Baracuda.Monitoring.Internal.Utilities
 {
     #region --- Enum Types ---
 

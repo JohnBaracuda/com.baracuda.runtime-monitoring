@@ -45,6 +45,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 return (Func<TValue, string>)(Delegate) CreateBooleanProcessor(formatData);
             }
+
+            if (type == typeof(bool[]))
+            {
+                return (Func<TValue, string>)(Delegate) BooleanArrayProcessor(formatData);
+            }
             
             // Dictionary<TKey, TValue>
             if (type.IsGenericIDictionary())
@@ -64,8 +69,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     Debug.LogException(engineException);
                 }
             }
-            
-            //TODO: Bool array??
             
             // IEnumerable<bool>
             if (type.HasInterface<IEnumerable<bool>>())
