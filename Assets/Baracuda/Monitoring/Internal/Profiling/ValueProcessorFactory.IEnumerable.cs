@@ -14,7 +14,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
     {
         #region --- IEnumerable ---
 
-        private static Func<IEnumerable, string> IEnumerableProcessor(FormatData formatData, Type unityValueType)
+        private static Func<IEnumerable, string> IEnumerableProcessor(IFormatData formatData, Type unityValueType)
         {
             var name = formatData.Label;
             var nullString = $"{name}: {NULL}";
@@ -124,7 +124,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             .Single(methodInfo =>
                 methodInfo.Name == nameof(GenericIEnumerableProcessor) && methodInfo.IsGenericMethodDefinition);
 
-        private static Func<IEnumerable<T>, string> GenericIEnumerableProcessor<T>(FormatData formatData)
+        private static Func<IEnumerable<T>, string> GenericIEnumerableProcessor<T>(IFormatData formatData)
         {
             var type = typeof(T);
             var name = formatData.Label;
@@ -232,12 +232,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
 
-        private static Func<IEnumerable<bool>, string> IEnumerableBooleanProcessor(FormatData formatData)
+        private static Func<IEnumerable<bool>, string> IEnumerableBooleanProcessor(IFormatData formatData)
         {
             var name = formatData.Label;
             var nullString = $"{name}: {NULL} (IEnumerable<bool>)";
-            var tureString = "TRUE".Colorize(formatData.Settings.TrueColor);
-            var falseString = "FALSE".Colorize(formatData.Settings.FalseColor);
+            var tureString = trueColored;
+            var falseString = falseColored;
             var stringBuilder = new StringBuilder();
             var indent = GetIndentStringForProfile(formatData);
 

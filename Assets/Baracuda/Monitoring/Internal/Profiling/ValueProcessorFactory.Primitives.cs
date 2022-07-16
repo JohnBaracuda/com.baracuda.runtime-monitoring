@@ -11,7 +11,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Integers   
          */
         
-        private static Func<int, string> Int32Processor(FormatData formatData)
+        private static Func<int, string> Int32Processor(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
             var label = formatData.Label;
@@ -40,7 +40,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
 
-        private static Func<long, string> Int64Processor(FormatData formatData)
+        private static Func<long, string> Int64Processor(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
             var label = formatData.Label;
@@ -58,7 +58,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Floating Points   
          */
 
-        private static Func<float, string> SingleProcessor(FormatData formatData)
+        private static Func<float, string> SingleProcessor(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
             var label = formatData.Label;
@@ -72,7 +72,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             };
         }
 
-        private static Func<double, string> DoubleProcessor(FormatData formatData)
+        private static Func<double, string> DoubleProcessor(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
             var label = formatData.Label;
@@ -90,7 +90,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Boolean   
          */
                 
-        private static Func<bool, string> CreateBooleanProcessor(FormatData formatData)
+        private static Func<bool, string> CreateBooleanProcessor(IFormatData formatData)
         {
             var trueString  =  $"{formatData.Label}: {trueColored}";
             var falseString =  $"{formatData.Label}: {falseColored}";

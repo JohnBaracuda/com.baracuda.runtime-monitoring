@@ -1,14 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
 using UnityEngine;
@@ -29,15 +22,15 @@ namespace Baracuda.Monitoring.Internal.Profiling
         /// </summary>
         /// <typeparam name="TValue">The type of the value that should be parsed/formatted</typeparam>
         /// <returns></returns>
-        internal static Func<TValue, string> CreateProcessorForType<TValue>(FormatData formatData)
+        internal static Func<TValue, string> CreateProcessorForType<TValue>(IFormatData formatData)
         {
             return CreateTypeSpecificProcessorInternal<TValue>(formatData);
         }
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Func<TValue, string> CreateTypeSpecificProcessorInternal<TValue>(FormatData formatData)
+        private static Func<TValue, string> CreateTypeSpecificProcessorInternal<TValue>(IFormatData formatData)
         {
             var type = typeof(TValue);
             
@@ -72,6 +65,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
             }
             
+            //TODO: Bool array??
+            
+            // IEnumerable<bool>
+            if (type.HasInterface<IEnumerable<bool>>())
+            {
+                return (Func<TValue, string>) (Delegate) IEnumerableBooleanProcessor(formatData);
+            }
+            
             // Array<T>
             if (type.IsArray)
             {
@@ -92,14 +93,8 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 {
                     Debug.LogException(engineException);
                 }
-            } 
-            
-            // IEnumerable<bool>
-            if (type.HasInterface<IEnumerable<bool>>())
-            {
-                return (Func<TValue, string>) (Delegate) IEnumerableBooleanProcessor(formatData);
             }
-            
+
             // IEnumerable<T>
             if (type.IsGenericIEnumerable(true))
             {

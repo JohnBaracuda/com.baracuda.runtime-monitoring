@@ -5,7 +5,7 @@ using Baracuda.Reflection;
 
 namespace Baracuda.Monitoring.Internal.Utilities
 {
-    public class FormatData 
+    public class FormatData : IFormatData
     {
         public string Format { get; }
         public bool ShowIndexer { get; }
@@ -17,13 +17,11 @@ namespace Baracuda.Monitoring.Internal.Utilities
         public bool AllowGrouping { get; }
         public string Group { get; }
         
-        public MonitoringSettings Settings { get; }
-
         /*
          * Ctor   
          */
                 
-        private FormatData(string format, bool showIndexer, string label, int fontSize, UIPosition position, bool allowGrouping, string group, int indent, MonitoringSettings settings)
+        internal FormatData(string format, bool showIndexer, string label, int fontSize, UIPosition position, bool allowGrouping, string group, int indent)
         {
             Format = format;
             ShowIndexer = showIndexer;
@@ -33,7 +31,6 @@ namespace Baracuda.Monitoring.Internal.Utilities
             AllowGrouping = allowGrouping;
             Group = group;
             ElementIndent = indent;
-            Settings = settings;
         }
 
         /*
@@ -68,7 +65,7 @@ namespace Baracuda.Monitoring.Internal.Utilities
                 }
             }
             
-            return new FormatData(format, showIndexer, label, fontSize, position, allowGrouping, group, indent, settings);
+            return new FormatData(format, showIndexer, label, fontSize, position, allowGrouping, group, indent);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * General   
          */
         
-        private static Func<TValue, string> DefaultProcessor<TValue>(FormatData formatData)
+        private static Func<TValue, string> DefaultProcessor<TValue>(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
             var label = formatData.Label;
@@ -30,7 +30,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Formatted   
          */
         
-        private static Func<TValue, string> FormattedProcessor<TValue>(FormatData formatData)
+        private static Func<TValue, string> FormattedProcessor<TValue>(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
             var label = formatData.Label;
@@ -49,7 +49,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Unity Objects   
          */
         
-        private static Func<UnityEngine.Object, string> UnityEngineObjectProcessor(FormatData formatData)
+        private static Func<UnityEngine.Object, string> UnityEngineObjectProcessor(IFormatData formatData)
         {
             var name = formatData.Label;
             var stringBuilder = new StringBuilder();
@@ -65,7 +65,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         }
         
                 
-        private static Func<Transform, string> TransformProcessor(FormatData formatData)
+        private static Func<Transform, string> TransformProcessor(IFormatData formatData)
         {
             var sb = new StringBuilder();
             var name = formatData.Label;

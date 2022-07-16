@@ -619,9 +619,9 @@ namespace Baracuda.Reflection
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Type NotVoid(this Type type)
+        public static Type NotVoid(this Type type, Type replacement)
         {
-            return type == typeof(void) ? typeof(VoidRef) : type;
+            return type == typeof(void) ? replacement : type;
         }
 
         /*

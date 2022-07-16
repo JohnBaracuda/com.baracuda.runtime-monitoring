@@ -389,7 +389,7 @@ namespace Baracuda.Monitoring.Editor
             System.Diagnostics.Debug.Assert(methodInfo.ReturnType != null, "methodInfo.ReturnType != null");
 
             var targetType = methodInfo.DeclaringType;
-            var valueType = methodInfo.ReturnType.NotVoid();
+            var valueType = methodInfo.ReturnType.NotVoid(typeof(VoidValue));
 
             yield return CreateTypeDefinitionFor(typeof(MethodProfile<,>), targetType, valueType);
             yield return CreateTypeDefinitionFor(typeof(ValueProfile<,>), targetType, valueType);

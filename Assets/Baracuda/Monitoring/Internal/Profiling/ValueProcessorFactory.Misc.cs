@@ -18,14 +18,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
          */
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static string GetIndentStringForProfile(FormatData formatData)
+        private static string GetIndentStringForProfile(IFormatData formatData)
         {
             var indent = CreateIndentValueForProfile(formatData);
             return GetIndentStringForValue(indent);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int CreateIndentValueForProfile(FormatData formatData)
+        private static int CreateIndentValueForProfile(IFormatData formatData)
         {
             return formatData.ElementIndent >= 0 ? formatData.ElementIndent : DEFAULT_INDENT_NUM;
         }

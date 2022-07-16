@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
 using Baracuda.Threading;
@@ -475,7 +476,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
 
                 // create a generic type definition.
-                var genericType = typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType, methodInfo.ReturnType.NotVoid());
+                var genericType = typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType, methodInfo.ReturnType.NotVoid(typeof(VoidValue)));
 
 
                 // additional MonitorProfile arguments
@@ -910,7 +911,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
 
                 var genericType =
-                    typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType, methodInfo.ReturnType.NotVoid());
+                    typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType, methodInfo.ReturnType.NotVoid(typeof(VoidValue)));
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(STATIC_FLAGS, settings);

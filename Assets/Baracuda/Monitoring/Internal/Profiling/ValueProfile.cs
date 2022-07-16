@@ -5,7 +5,6 @@ using System.Reflection;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
-using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {

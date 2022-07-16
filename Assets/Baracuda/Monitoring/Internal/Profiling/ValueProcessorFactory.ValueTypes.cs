@@ -13,7 +13,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * General   
          */
         
-        private static Func<TValue, string> ValueTypeProcessor<TValue>(FormatData formatData)
+        private static Func<TValue, string> ValueTypeProcessor<TValue>(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
             var label = formatData.Label;
@@ -32,7 +32,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Vector3 
          */
         
-        private static Func<Vector3, string> Vector3Processor(FormatData formatData)
+        private static Func<Vector3, string> Vector3Processor(IFormatData formatData)
         {
             var format = formatData.Format;
             var name = formatData.Label;
@@ -92,7 +92,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Vector2   
          */
 
-        private static Func<Vector2, string> Vector2Processor(FormatData formatData)
+        private static Func<Vector2, string> Vector2Processor(IFormatData formatData)
         {
             var format = formatData.Format;
             var label = formatData.Label;
@@ -140,7 +140,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Quaternion   
          */
 
-        private static Func<Quaternion, string> QuaternionProcessor(FormatData formatData)
+        private static Func<Quaternion, string> QuaternionProcessor(IFormatData formatData)
         {
             var format = formatData.Format;
             var name = formatData.Label;
@@ -206,7 +206,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Color   
          */
         
-        private static Func<Color, string> ColorProcessor(FormatData formatData)
+        private static Func<Color, string> ColorProcessor(IFormatData formatData)
         {
             var format = formatData.Format;
             var name = formatData.Label;
@@ -240,7 +240,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Color32   
          */
         
-        private static Func<Color32, string> Color32Processor(FormatData formatData)
+        private static Func<Color32, string> Color32Processor(IFormatData formatData)
         {
             var format = formatData.Format;
             var name = formatData.Label;

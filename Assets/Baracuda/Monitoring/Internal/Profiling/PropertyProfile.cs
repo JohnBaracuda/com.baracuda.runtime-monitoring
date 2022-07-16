@@ -23,7 +23,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         #region --- Factory ---
 
         /// <summary>
-        /// Create a new <see cref="PropertyUnit{TTarget, TValue}"/> based on this profile.
+        /// Create a new <see cref="PropertyUnit{TTarget,TValue}"/> based on this profile.
         /// </summary>
         /// <param name="target">Target object for the unit. Null if it is a static unit.</param>
         internal override MonitorUnit CreateUnit(object target)

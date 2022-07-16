@@ -68,8 +68,11 @@ namespace Baracuda.Monitoring.Internal.Units
 
         #region --- Obsolete ---
         
+        [Obsolete("Use GetState instead!")]
         public string GetStateFormatted => GetState();
-        public string GetStateRaw => (this as IValueUnit)?.GetValueAsObject().ToString();
+        
+        [Obsolete]
+        public string GetStateRaw => (this as IGettableValue)?.GetValueAsObject().ToString();
 
         #endregion
 
