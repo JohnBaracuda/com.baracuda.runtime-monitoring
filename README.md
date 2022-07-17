@@ -604,21 +604,15 @@ Any help is appreciated. Feel free to contact me if you have any feedback, sugge
 + Add to OpenUPM
 
 ### UI
-+ Tag / Tab based filtering system for TextMeshPro base uGUI.
-+ Tag / Tab based filtering system for UIToolkit.
 + Potential to create "virtual" units and have custom controll about what is displayed.
 + More control / options to customize color.
 
 ### Core System
 + Optional Monitoring Editor Window.
-+ Method monitoring (Properties can be used as a workaround)
-+ Class scoped monitoring
-+ Improved IL2CPP support / AOT generation.
 + Custom update / evaluation loops.
-+ Add custom types for monitored arrays and other collections.
-+ Better optimization contoll.
 + Global value processor. (like property drawer)
-+ Better separation of API and internal logic.
++ Drag & drop example modules. (FPSMonitor, ConsoleMonitor etc.)
++ Draw conditions. (only show value if true, not null etc.)
 
 ### Documentation
 + Guide how to create a custom UI Controller.
