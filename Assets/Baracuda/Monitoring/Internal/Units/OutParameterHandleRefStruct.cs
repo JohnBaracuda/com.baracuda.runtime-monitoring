@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2022 Jonathan Lang
+
+using System;
 using System.Text;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;

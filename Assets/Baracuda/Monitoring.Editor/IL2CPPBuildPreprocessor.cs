@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Copyright (c) 2022 Jonathan Lang
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,6 +26,11 @@ namespace Baracuda.Monitoring.Editor
 {
     public class IL2CPPBuildPreprocessor : IPreprocessBuildWithReport
     {
+        [Monitor]
+        public static void OutVoid(out int value)
+        {
+            value = 30;
+        }
         
         #region --- Public API ---
 

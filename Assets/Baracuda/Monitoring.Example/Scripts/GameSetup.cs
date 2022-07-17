@@ -1,13 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class GameSetup : MonoBehaviour
+namespace Baracuda.Monitoring.Example.Scripts
 {
-    [RuntimeInitializeOnLoadMethod]
-    private static void Init()
+    public class GameSetup : MonoBehaviour
     {
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 165;
+        //[RuntimeInitializeOnLoadMethod]
+        private static void Init()
+        {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = 165;
+        
+            Debug.Log("Setting vSync to 0!");
+            Debug.Log("Setting target frame rate to 165!");
+        }
+
+        private void Awake()
+        {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = 165;
+        
+            Debug.Log("Setting vSync to 0!", this);
+            Debug.Log("Setting target frame rate to 165!", this);
+        }
     }
 }

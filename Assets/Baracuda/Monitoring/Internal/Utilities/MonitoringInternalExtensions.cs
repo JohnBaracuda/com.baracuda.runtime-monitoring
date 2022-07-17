@@ -73,6 +73,34 @@ namespace Baracuda.Monitoring.Internal.Utilities
             pooled.Append("</color>");
             return ConcurrentStringBuilderPool.Release(pooled);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string FontSize(this string content, int size)
+        {
+            var pooled = ConcurrentStringBuilderPool.Get();
+            pooled.Append("<size=");
+            pooled.Append(size);
+            pooled.Append('>');
+            pooled.Append(content);
+            pooled.Append("</size>");
+            return ConcurrentStringBuilderPool.Release(pooled);
+        }
+
+        /*
+         * RichText   
+         */
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string MonoSpace(this string content, int space = 30)
+        {
+            var pooled = ConcurrentStringBuilderPool.Get();
+            pooled.Append("<mspace=");
+            pooled.Append(space);
+            pooled.Append('>');
+            pooled.Append(content);
+            pooled.Append("</mspace>");
+            return ConcurrentStringBuilderPool.Release(pooled);
+        }
 
         /*
          * Text Manipulation   

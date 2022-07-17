@@ -36,7 +36,7 @@ namespace Baracuda.Monitoring.Example.Scripts
          *  Private Fields   
          */
 
-        [Monitor]
+        //[Monitor]
         [MUpdateEvent(nameof(OnAmmoChanged))]
         [MFormatOptions(UIPosition.LowerLeft, FontSize = 20, GroupElement = false)]
         [MValueProcessor(nameof(CurrentAmmunitionProcessor))]

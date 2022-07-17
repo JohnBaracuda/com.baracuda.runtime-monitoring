@@ -107,6 +107,7 @@ namespace Baracuda.Monitoring.API
         [SerializeField] private Color sceneNameColor = new Color(1f, 0.67f, 0.85f);
         [SerializeField] private Color targetObjectColor = new Color(0.39f, 0.72f, 1f);
         [SerializeField] private Color methodColor = new Color(0.56f, 0.98f, 0.53f);
+        [SerializeField] private Color outParameterColor = new Color(1f, 0.27f, 0.53f);
 
         #endregion
 
@@ -215,6 +216,7 @@ namespace Baracuda.Monitoring.API
         public Color TargetObjectColor => targetObjectColor;
         public Color ClassColor => classColor;
         public Color EventColor => eventColor;
+        public Color OutParamColor => outParameterColor;
 
         /*
          * Assembly Settings   

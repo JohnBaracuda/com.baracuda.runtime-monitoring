@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableMonitoring: 1
   autoInstantiateUI: 1
-  asyncProfiling: 1
+  asyncProfiling: 0
   openDisplayOnLoad: 1
   monitoringUIController: {fileID: 843339411990045885, guid: a346941e8ff76a34f944fc2850d23a6e,
     type: 3}
@@ -44,6 +44,7 @@ MonoBehaviour:
   sceneNameColor: {r: 1, g: 0.67, b: 0.85, a: 1}
   targetObjectColor: {r: 0.39, g: 0.72, b: 1, a: 1}
   methodColor: {r: 0.73500466, g: 0.8867924, b: 0.72365606, a: 1}
+  outParameterColor: {r: 0.8784314, g: 0.44313726, b: 0.7358992, a: 1}
   bannedAssemblyPrefixes:
   - Assembly-Plugin
   - DOTween

@@ -1,13 +1,11 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Utilities;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -67,6 +65,7 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _sceneNameColor;
         private SerializedProperty _targetObjectColor;
         private SerializedProperty _methodColor;
+        private SerializedProperty _outParameterColor;
         
         private SerializedProperty _bannedAssemblyPrefixes;
         private SerializedProperty _bannedAssemblyNames;
@@ -212,6 +211,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_sceneNameColor);
                 EditorGUILayout.PropertyField(_targetObjectColor);
                 EditorGUILayout.PropertyField(_methodColor);
+                EditorGUILayout.PropertyField(_outParameterColor);
                 EditorGUILayout.Space();
             }
             

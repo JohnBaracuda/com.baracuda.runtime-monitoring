@@ -35,6 +35,10 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
         [Header("Other")]
         [SerializeField] private bool logStartMessage = true;
+
+        [Header("Font")]
+        [SerializeField] private Font defaultFont;
+        [SerializeField] private Font[] loadedFonts;
         
         #endregion
 
@@ -46,7 +50,6 @@ namespace Baracuda.Monitoring.UI.IMGUI
         private readonly List<GUIElement> _unitsLowerRight = new List<GUIElement>(100);
 
         private readonly GUIContent _content = new GUIContent();
-        private Texture2D _backgroundTexture;
         private Vector3 _scale = Vector3.one;
 
         private static float lastLowerLeftHeight;
@@ -66,20 +69,61 @@ namespace Baracuda.Monitoring.UI.IMGUI
         private class GUIElement
         {
             public bool Enabled { get; private set; }
+            public bool OverrideFont { get; } 
+            public Font Font { get; }
             public int ID { get; }
             public string Content { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; private set; }
             public FormatData FormatData { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
+
+            public readonly Texture2D BackgroundTexture;
             
             private readonly int _size;
-            
-            public GUIElement(IMonitorUnit unit)
+
+            private static readonly Dictionary<Color, Texture2D> backgroundTexturePool =
+                new Dictionary<Color, Texture2D>();
+
+            public GUIElement(IMonitorUnit unit, MonitoringGUIDrawer ctx)
             {
                 unit.ValueUpdated += Update;
                 unit.ActiveStateChanged += SetActive;
                 Enabled = unit.Enabled;
                 FormatData = unit.Profile.FormatData;
                 ID = unit.UniqueID;
-                _size = Mathf.Max(FormatData.FontSize, 14);
+
+                var backgroundColor = unit.Profile.TryGetMetaAttribute<MColor>(out var colorAttribute)
+                    ? colorAttribute.Color
+                    : ctx.backgroundColor;
+                
+                if (backgroundTexturePool.TryGetValue(backgroundColor, out var texture))
+                {
+                    BackgroundTexture = texture;
+                }
+                else
+                {
+                    texture = new Texture2D(1, 1);
+                    texture.SetPixel(0, 0, backgroundColor);
+                    texture.Apply();
+                    backgroundTexturePool.Add(backgroundColor, texture);
+                    BackgroundTexture = texture;
+                }
+
+                if (unit.Profile.TryGetMetaAttribute<MFontAttribute>(out var fontAttribute))
+                {
+                    var fontAsset = ctx.GetFont(fontAttribute.FontName);
+                    if (fontAsset != null)
+                    {
+                        OverrideFont = true;
+                        Font = fontAsset;
+                    }
+                }
+                
+                _size = FormatData.FontSize > 0 
+                    ? FormatData.FontSize 
+                    : OverrideFont 
+                        // ReSharper disable once PossibleNullReferenceException
+                        ? Font.fontSize 
+                        : ctx.defaultFont.fontSize;
+                
                 Update(unit.GetState());
             }
 
@@ -128,6 +172,19 @@ namespace Baracuda.Monitoring.UI.IMGUI
             "Using the GUI MonitoringUIController may cause performance overhead! " +
             "It is recommended to use the TextMeshPro or UIToolkit based Controller instead! " +
             "\nYou can disable this message from the settings window: <b>Tools > RuntimeMonitoring > Settings: UI Controller > Log Start Message</b>";
+
+        private Font GetFont(string fontName)
+        {
+            for (var i = 0; i < loadedFonts.Length; i++)
+            {
+                if (loadedFonts[i].name == fontName)
+                {
+                    return loadedFonts[i];
+                }
+            }
+
+            return null;
+        }
         
         #endregion
         
@@ -137,10 +194,6 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
         private void Start()
         {
-            _backgroundTexture = new Texture2D(1, 1);
-            _backgroundTexture.SetPixel(0, 0, backgroundColor);
-            _backgroundTexture.Apply();
-
             UpdateScale();
 
             if (logStartMessage)
@@ -174,6 +227,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
         
         private void OnGUI()
         {
+            GUI.skin.font = defaultFont;
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, _scale);
             var ctx = new Context(GUI.skin.label);
             var screenData = new ScreenData(Screen.width / _scale.x, Screen.height / _scale.y);
@@ -201,6 +255,9 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 {
                     continue;
                 }
+
+                GUI.skin.font = guiElement.OverrideFont ? guiElement.Font : defaultFont;
+                
                 var displayString = guiElement.Content;
                 _content.text = displayString;
                 
@@ -218,7 +275,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
                     maxWidth = 0f;
                     elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
                 }
-                GUI.DrawTexture(elementRect, _backgroundTexture, ScaleMode.StretchToFill);
+                GUI.DrawTexture(elementRect, guiElement.BackgroundTexture, ScaleMode.StretchToFill);
                 GUI.Label(textRect, displayString);
                 yPos += elementRect.height + elementSpacing;
             }
@@ -255,6 +312,9 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 {
                     continue;
                 }
+                
+                GUI.skin.font = guiElement.OverrideFont ? guiElement.Font : defaultFont;
+                
                 var displayString = guiElement.Content;
                 _content.text = displayString;
                 
@@ -279,7 +339,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
                     elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
                 }
                 
-                GUI.DrawTexture(elementRect, _backgroundTexture, ScaleMode.StretchToFill);
+                GUI.DrawTexture(elementRect, guiElement.BackgroundTexture, ScaleMode.StretchToFill);
                 GUI.Label(textRect, displayString);
                 
                 yPos -= elementRect.height + elementSpacing;
@@ -327,6 +387,9 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 {
                     continue;
                 }
+                
+                GUI.skin.font = guiElement.OverrideFont ? guiElement.Font : defaultFont;
+                
                 var displayString = guiElement.Content;
                 _content.text = displayString;
 
@@ -345,7 +408,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
                     elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
                 }
                 
-                GUI.DrawTexture(elementRect, _backgroundTexture, ScaleMode.StretchToFill);
+                GUI.DrawTexture(elementRect, guiElement.BackgroundTexture, ScaleMode.StretchToFill);
                 GUI.Label(textRect, displayString);
                 yPos += elementRect.height + elementSpacing;
             }
@@ -382,6 +445,9 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 {
                     continue;
                 }
+                
+                GUI.skin.font = guiElement.OverrideFont ? guiElement.Font : defaultFont;
+                
                 var displayString = guiElement.Content;
                 _content.text = displayString;
                 
@@ -406,7 +472,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
                     elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
                 }
                 
-                GUI.DrawTexture(elementRect, _backgroundTexture, ScaleMode.StretchToFill);
+                GUI.DrawTexture(elementRect, guiElement.BackgroundTexture, ScaleMode.StretchToFill);
                 GUI.Label(textRect, displayString);
                 
                 yPos -= elementRect.height + elementSpacing;
@@ -474,16 +540,16 @@ namespace Baracuda.Monitoring.UI.IMGUI
             switch (unit.Profile.FormatData.Position)
             {
                 case UIPosition.UpperLeft:
-                    _unitsUpperLeft.Add(new GUIElement(unit));
+                    _unitsUpperLeft.Add(new GUIElement(unit, this));
                     break;
                 case UIPosition.UpperRight:
-                    _unitsUpperRight.Add(new GUIElement(unit));
+                    _unitsUpperRight.Add(new GUIElement(unit, this));
                     break;
                 case UIPosition.LowerLeft:
-                    _unitsLowerLeft.Add(new GUIElement(unit));
+                    _unitsLowerLeft.Add(new GUIElement(unit, this));
                     break;
                 case UIPosition.LowerRight:
-                    _unitsLowerRight.Add(new GUIElement(unit));
+                    _unitsLowerRight.Add(new GUIElement(unit, this));
                     break;
             }
         }

@@ -4,28 +4,28 @@ using System;
 using System.Text;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Example.Scripts.Persistent
+namespace Baracuda.Monitoring.Modules
 {
-    public class FPSMonitor : MonitoredSingleton<FPSMonitor>
+    public class FPSMonitor : MonitorModuleBase
     {
 #pragma warning disable
         /*
          *  Fields   
          */
-        
-        public const float MEASURE_PERIOD = 0.25f;
+
+        private const float MEASURE_PERIOD = 0.25f;
         private const string COLOR_MIN_MARKUP = "<color=#07fc03>";
         private const string COLOR_MID_MARKUP = "<color=#fcba03>";
         private const string C_MAX = "<color=#07fc03>";
         private const int THRESHOLD_ONE = 30;
         private const int THRESHOLD_TWO = 60;
         
-        private static float timer = 0;
-        private static int lastFPS;
-        private static float lastMeasuredFps = 0;
-        private static int frameCount = 0;
+        private float _timer = 0;
+        private int _lastFPS;
+        private float _lastMeasuredFps = 0;
+        private int _frameCount = 0;
 
-        private static readonly StringBuilder stringBuilder = new StringBuilder();
+        private readonly StringBuilder _stringBuilder = new StringBuilder();
 
         /*
          *  FPS Monitor   
@@ -41,44 +41,44 @@ namespace Baracuda.Monitoring.Example.Scripts.Persistent
          *  Events   
          */
 
-        public static event Action<float> FPSUpdated;
+        public event Action<float> FPSUpdated;
         
         //--------------------------------------------------------------------------------------------------------------
         
-        public static string FPSProcessor(float value)
+        public string FPSProcessor(float value)
         {
-            stringBuilder.Clear();
-            stringBuilder.Append('[');
-            stringBuilder.Append(value >= THRESHOLD_TWO ? C_MAX : value >= THRESHOLD_ONE ? COLOR_MID_MARKUP : COLOR_MIN_MARKUP);
-            stringBuilder.Append(value.ToString("00.00"));
-            stringBuilder.Append("</color>]");
-            return stringBuilder.ToString();
+            _stringBuilder.Clear();
+            _stringBuilder.Append('[');
+            _stringBuilder.Append(value >= THRESHOLD_TWO ? C_MAX : value >= THRESHOLD_ONE ? COLOR_MID_MARKUP : COLOR_MIN_MARKUP);
+            _stringBuilder.Append(value.ToString("00.00"));
+            _stringBuilder.Append("</color>]");
+            return _stringBuilder.ToString();
         }
         
         private void Update()
         {
-            frameCount++;
-            timer += Time.deltaTime / Time.timeScale;
+            _frameCount++;
+            _timer += Time.deltaTime / Time.timeScale;
 
-            if (timer < MEASURE_PERIOD)
+            if (_timer < MEASURE_PERIOD)
             {
                 return;
             }
 
-            lastMeasuredFps = (frameCount / timer);
+            _lastMeasuredFps = (_frameCount / _timer);
 
-            if (Math.Abs(lastMeasuredFps - lastFPS) > .1f)
+            if (Math.Abs(_lastMeasuredFps - _lastFPS) > .1f)
             {
-                _fps = lastMeasuredFps;
+                _fps = _lastMeasuredFps;
                 FPSUpdated?.Invoke(_fps);
             }
                 
 
-            lastFPS = frameCount;
-            frameCount = 0;
+            _lastFPS = _frameCount;
+            _frameCount = 0;
 
-            var rest = MEASURE_PERIOD - timer;
-            timer = rest;
+            var rest = MEASURE_PERIOD - _timer;
+            _timer = rest;
         }
 
         #region --- Vsync ---

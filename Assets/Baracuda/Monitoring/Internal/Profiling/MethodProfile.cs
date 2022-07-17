@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
@@ -40,7 +41,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             var valueProcessor = ValueProcessorFactory.CreateProcessorForType<TValue>(FormatData);
             var parameter = CreateParameterArray(methodInfo, attribute);
-            _getValueDelegate = CreateGetDelegate(methodInfo, parameter, valueProcessor, FormatData);
+            _getValueDelegate = CreateGetDelegate(methodInfo, parameter, valueProcessor, FormatData, args.Settings);
         }
 
         internal override MonitorUnit CreateUnit(object target)
@@ -50,11 +51,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         //--------------------------------------------------------------------------------------------------------------
 
-        private static Func<TTarget, MethodResult<TValue>> CreateGetDelegate(MethodInfo methodInfo, object[] parameter, Func<TValue, string> valueProcessor, in IFormatData format)
+        private static Func<TTarget, MethodResult<TValue>> CreateGetDelegate(MethodInfo methodInfo, object[] parameter, Func<TValue, string> valueProcessor, IFormatData format, MonitoringSettings settings)
         {
             var sb = new StringBuilder();
             var parameterInfos = methodInfo.GetParameters();
-            var parameterHandles = CreateParameterHandles(parameterInfos, format);
+            var parameterHandles = CreateParameterHandles(parameterInfos, format, settings);
+            
             
             if (methodInfo.ReturnType == typeof(void))
             {
@@ -94,7 +96,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
 
-        private static Dictionary<int, OutParameterHandle> CreateParameterHandles(IReadOnlyList<ParameterInfo> parameterInfos, IFormatData format)
+        private static Dictionary<int, OutParameterHandle> CreateParameterHandles(IReadOnlyList<ParameterInfo> parameterInfos, IFormatData format, MonitoringSettings settings)
         {
             var handles = new Dictionary<int, OutParameterHandle>(parameterInfos.Count);
             for (var i = 0; i < parameterInfos.Count; i++)
@@ -102,7 +104,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var current = parameterInfos[i];
                 if (current.IsOut)
                 {
-                    var outArgName = $"  {"out".Colorize(new Color(1f, 0.27f, 0.53f))} {current.Name}";
+                    var outArgName = $"  {"out".Colorize(settings.OutParamColor)} {current.Name}";
                     var parameterFormat = new FormatData(
                         format.Format,
                         format.ShowIndexer,

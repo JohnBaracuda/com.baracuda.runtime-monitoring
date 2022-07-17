@@ -98,6 +98,19 @@ namespace Baracuda.Monitoring.API
         }
 
         /*
+         * Unit for target   
+         */
+
+        /// <summary>
+        /// Get a collection of <see cref="IMonitorUnit"/>s associated with the passed target. 
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IMonitorUnit[] GetMonitorUnitsForTarget(object target)
+        {
+            return GetMonitorUnitsForTargetInternal(target);
+        }
+
+        /*
          * Getter   
          */        
         
@@ -121,8 +134,6 @@ namespace Baracuda.Monitoring.API
         //--------------------------------------------------------------------------------------------------------------
         
         #region --- Private Fields ---
-        
-        
         
         private static Dictionary<Type, List<MonitorProfile>> instanceMonitorProfiles = new Dictionary<Type, List<MonitorProfile>>();
         
@@ -215,6 +226,30 @@ namespace Baracuda.Monitoring.API
 #endif
             DestroyInstanceUnits(target);
             registeredTargets.Remove(target);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static IMonitorUnit[] GetMonitorUnitsForTargetInternal(object target)
+        {
+            if (!IsInitialized)
+            {
+                Debug.LogWarning(
+                    $"Calling {nameof(GetMonitorUnitsForTarget)} before profiling has completed. " +
+                    $"If you need to access units during initialization consider disabling async profiling in the monitoring settings!");
+            }
+
+            var list = ListPool<IMonitorUnit>.Get();
+            for (var i = 0; i < instanceUnitCache.Count; i++)
+            {
+                var instanceUnit = instanceUnitCache[i];
+                if (instanceUnit.Target == target)
+                {
+                    list.Add(instanceUnit);
+                }
+            }
+            var returnValue = list.ToArray();
+            ListPool<IMonitorUnit>.Release(list);
+            return returnValue;
         }
 
         #endregion
