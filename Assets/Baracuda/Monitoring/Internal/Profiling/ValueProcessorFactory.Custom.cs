@@ -13,6 +13,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
 {
     internal static partial class ValueProcessorFactory
     {
+        #region --- API ---
+
+        
+        
+        #endregion
+        
         #region --- Find ValueProcessor ---
 
         /// <summary>
@@ -24,12 +30,13 @@ namespace Baracuda.Monitoring.Internal.Profiling
         /// Types assignable from <see cref="IEnumerable{T}"/>
         /// </summary>
         /// <param name="processor">name of the method declared as a value processor</param>
+        /// <param name="formatData"></param>
         /// <typeparam name="TTarget">the <see cref="Type"/> of the profiles Target instance</typeparam>
         /// <typeparam name="TValue">the <see cref="Type"/> of the profiles value instance</typeparam>
         /// <returns></returns>
         internal static Func<TValue, string> FindCustomStaticProcessor<TTarget, TValue>(
             string processor,
-            FormatData formatData) where TTarget : class
+            IFormatData formatData) where TTarget : class
         {
             try
             {
@@ -235,7 +242,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         /// <typeparam name="TValue">the <see cref="Type"/> of the profiles value instance</typeparam>
         /// <returns></returns>
         internal static Func<TTarget, TValue, string> FindCustomInstanceProcessor<TTarget, TValue>(
-            string processor, FormatData formatData) where TTarget : class
+            string processor, IFormatData formatData) where TTarget : class
         {
             try
             {

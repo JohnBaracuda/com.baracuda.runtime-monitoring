@@ -42,7 +42,6 @@ namespace Baracuda.Monitoring.Example.Scripts
         [MValueProcessor(nameof(CurrentAmmunitionProcessor))]
         private int _currentAmmunition;
 
-        [MonitorEvent]
         public event Action<int> OnAmmoChanged;
 
         

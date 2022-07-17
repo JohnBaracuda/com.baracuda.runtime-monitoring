@@ -756,6 +756,16 @@ namespace Baracuda.Reflection
             }
         }
 
+        public static bool IsStatic(this PropertyInfo propertyInfo)
+        {
+            return propertyInfo?.GetMethod?.IsStatic ?? propertyInfo?.SetMethod?.IsStatic ?? throw new InvalidProgramException();
+        }
+        
+        public static bool IsStatic(this EventInfo eventInfo)
+        {
+            return eventInfo.GetAddMethod().IsStatic;
+        }
+
         #endregion
 
         #region --- Event ---
@@ -833,6 +843,66 @@ namespace Baracuda.Reflection
             
 
             return stringBuilder.ToString();
+        }
+
+        private static readonly Dictionary<Type, string> typeCacheFullName = new Dictionary<Type, string>();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ToGenericTypeStringFullName(this Type type)
+        {
+            if (typeCacheFullName.TryGetValue(type, out var value))
+            {
+                return value;
+            }
+
+            if (type.IsStatic())
+            {
+                return typeof(object).FullName?.Replace('+', '.');
+            }
+
+            if (type.IsGenericType)
+            {
+                var builder = ConcurrentStringBuilderPool.Get();
+                var argBuilder = ConcurrentStringBuilderPool.Get();
+
+                var arguments = type.GetGenericArguments();
+
+                foreach (var t in arguments)
+                {
+                    // Let's make sure we get the argument list.
+                    var arg = ToGenericTypeStringFullName(t);
+
+                    if (argBuilder.Length > 0)
+                    {
+                        argBuilder.AppendFormat(", {0}", arg);
+                    }
+                    else
+                    {
+                        argBuilder.Append(arg);
+                    }
+                }
+
+                if (argBuilder.Length > 0)
+                {
+                    Debug.Assert(type.FullName != null, "type.FullName != null");
+                    builder.AppendFormat("{0}<{1}>", type.FullName.Split('`')[0],
+                        argBuilder);
+                }
+
+                var retType = builder.ToString();
+
+                typeCacheFullName.Add(type, retType.Replace('+', '.'));
+
+                ConcurrentStringBuilderPool.ReleaseStringBuilder(builder);
+                ConcurrentStringBuilderPool.ReleaseStringBuilder(argBuilder);
+                return retType.Replace('+', '.');
+            }
+
+            Debug.Assert(type.FullName != null, $"type.FullName != null | {type.Name}, {type.DeclaringType}");
+            
+            var returnValue = type.FullName.Replace('+', '.');
+            typeCacheFullName.Add(type, returnValue);
+            return returnValue;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

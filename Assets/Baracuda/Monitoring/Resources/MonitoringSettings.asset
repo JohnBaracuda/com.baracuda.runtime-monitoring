@@ -52,3 +52,4 @@ MonoBehaviour:
   useIPreprocessBuildWithReport: 1
   throwOnTypeGenerationError: 1
   preprocessBuildCallbackOrder: 0
+  logTypeGenerationStats: 0

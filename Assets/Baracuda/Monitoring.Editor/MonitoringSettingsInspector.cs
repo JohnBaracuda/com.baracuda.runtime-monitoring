@@ -75,6 +75,7 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _useIPreprocessBuildWithReport;
         private SerializedProperty _throwOnTypeGenerationError;
         private SerializedProperty _preprocessBuildCallbackOrder;
+        private SerializedProperty _logTypeGenerationStats;
 
         #endregion
 
@@ -245,6 +246,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_useIPreprocessBuildWithReport);
                 EditorGUILayout.PropertyField(_throwOnTypeGenerationError);
                 EditorGUILayout.PropertyField(_preprocessBuildCallbackOrder);
+                EditorGUILayout.PropertyField(_logTypeGenerationStats);
                 DrawGenerateAotTypesButton();
                 EditorGUILayout.Space();
             }

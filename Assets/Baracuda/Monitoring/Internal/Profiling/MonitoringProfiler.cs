@@ -349,7 +349,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     genericFieldBaseTypes.Add((fieldInfo, attribute, false));
                     return;
                 }
-
+                
                 // create a generic type definition.
                 var genericType = typeof(FieldProfile<,>).MakeGenericType(fieldInfo.DeclaringType, fieldInfo.FieldType);
 
@@ -390,7 +390,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     genericPropertyBaseTypes.Add((propertyInfo, attribute, false));
                     return;
                 }
-
+                
                 // create a generic type definition.
                 var genericType = typeof(PropertyProfile<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
 
@@ -475,6 +475,12 @@ namespace Baracuda.Monitoring.Internal.Profiling
                     return;
                 }
 
+                if (!methodInfo.HasReturnValueOrOutParameter())
+                {
+                    Debug.LogWarning($"Monitored Method {methodInfo.DeclaringType?.Name}.{methodInfo.Name} needs a return value or out parameter!");
+                    return;
+                }
+                
                 // create a generic type definition.
                 var genericType = typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType, methodInfo.ReturnType.NotVoid(typeof(VoidValue)));
 
@@ -486,6 +492,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 var profile = (MonitorProfile) CreateInstance(genericType, methodInfo, attribute, args);
 
                 // cache the profile
+                // ReSharper disable once AssignNullToNotNullAttribute
                 if (instanceProfiles.TryGetValue(methodInfo.DeclaringType, out var profiles))
                 {
                     profiles.Add(profile);
@@ -906,7 +913,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 
                 if (!methodInfo.HasReturnValueOrOutParameter())
                 {
-                    Debug.LogWarning($"Monitored Method {methodInfo.Name} needs a return value or out parameter!");
+                    Debug.LogWarning($"Monitored Method {methodInfo.DeclaringType?.Name}.{methodInfo.Name} needs a return value or out parameter!");
                     return;
                 }
 
