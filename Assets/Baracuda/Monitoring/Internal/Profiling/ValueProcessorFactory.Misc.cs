@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Baracuda.Monitoring.Internal.Utilities;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
@@ -17,18 +18,16 @@ namespace Baracuda.Monitoring.Internal.Profiling
          */
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static string GetIndentStringForProfile(MonitorProfile profile)
+        private static string GetIndentStringForProfile(IFormatData formatData)
         {
-            var indent = CreateIndentValueForProfile(profile);
+            var indent = CreateIndentValueForProfile(formatData);
             return GetIndentStringForValue(indent);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int CreateIndentValueForProfile(MonitorProfile profile)
+        private static int CreateIndentValueForProfile(IFormatData formatData)
         {
-            return profile.TryGetMetaAttribute<MFormatOptionsAttribute>(out var attribute)
-                ? attribute.ElementIndent >= 0 ? attribute.ElementIndent : DEFAULT_INDENT_NUM
-                : DEFAULT_INDENT_NUM;
+            return formatData.ElementIndent >= 0 ? formatData.ElementIndent : DEFAULT_INDENT_NUM;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

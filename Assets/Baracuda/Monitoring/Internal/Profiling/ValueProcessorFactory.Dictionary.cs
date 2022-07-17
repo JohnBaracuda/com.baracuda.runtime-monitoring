@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Baracuda.Monitoring.Internal.Utilities;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Profiling
@@ -15,18 +16,18 @@ namespace Baracuda.Monitoring.Internal.Profiling
             .Single(methodInfo =>
                 methodInfo.Name == nameof(DictionaryProcessor) && methodInfo.IsGenericMethodDefinition);
 
-        private static Func<IDictionary<TKey, TValue>, string> DictionaryProcessor<TKey, TValue>(MonitorProfile profile)
+        private static Func<IDictionary<TKey, TValue>, string> DictionaryProcessor<TKey, TValue>(FormatData formatData)
         {
-            var name = profile.FormatData.Label;
+            var name = formatData.Label;
             var stringBuilder = new StringBuilder();
             var nullString = $"{name}: {NULL}";
-            var indent = GetIndentStringForProfile(profile);
+            var indent = GetIndentStringForProfile(formatData);
 
             if (typeof(TKey).IsValueType)
             {
                 if (typeof(TValue).IsValueType)
                 {
-                    return profile.FormatData.ShowIndexer
+                    return formatData.ShowIndexer
                         ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
                             if (value == null)
@@ -84,7 +85,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
                 else
                 {
-                    return profile.FormatData.ShowIndexer
+                    return formatData.ShowIndexer
                         ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
                             if (value == null)
@@ -145,7 +146,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             {
                 if (typeof(TValue).IsValueType)
                 {
-                    return profile.FormatData.ShowIndexer
+                    return formatData.ShowIndexer
                         ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
                             if (value == null)
@@ -203,7 +204,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
                 else
                 {
-                    return profile.FormatData.ShowIndexer
+                    return formatData.ShowIndexer
                         ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
                             if (value == null)

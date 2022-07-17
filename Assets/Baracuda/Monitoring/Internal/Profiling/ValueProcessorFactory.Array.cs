@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
 using Object = UnityEngine.Object;
 
@@ -10,6 +11,67 @@ namespace Baracuda.Monitoring.Internal.Profiling
 {
     internal static partial class ValueProcessorFactory
     {
+        #region --- Bool Array ---
+
+        private static Func<bool[], string> BooleanArrayProcessor(IFormatData formatData)
+        {
+            var name = formatData.Label;
+            var nullString = $"{name}: {NULL} (bool[])";
+            var stringBuilder = new StringBuilder();
+            var indent = GetIndentStringForProfile(formatData);
+
+            return formatData.ShowIndexer
+                ? (Func<bool[], string>) ((value) =>
+                {
+                    if (value == null)
+                    {
+                        return nullString;
+                    }
+
+                    var index = 0;
+
+                    stringBuilder.Clear();
+                    stringBuilder.Append(name);
+
+                    for (var i = 0; i < value.Length; i++)
+                    {
+                        var element = value[i];
+                        stringBuilder.Append(Environment.NewLine);
+                        stringBuilder.Append(indent);
+                        stringBuilder.Append('[');
+                        stringBuilder.Append(index++);
+                        stringBuilder.Append("]: ");
+                        stringBuilder.Append(element ? trueColored : falseColored);
+                    }
+
+                    return stringBuilder.ToString();
+                })
+                : (value) =>
+                {
+                    if (value == null)
+                    {
+                        return nullString;
+                    }
+
+                    stringBuilder.Clear();
+                    stringBuilder.Append(name);
+
+                    for (var i = 0; i < value.Length; i++)
+                    {
+                        var element = value[i];
+                        stringBuilder.Append(Environment.NewLine);
+                        stringBuilder.Append(indent);
+                        stringBuilder.Append(element ? trueColored : falseColored);
+                    }
+
+                    return stringBuilder.ToString();
+                };
+        }
+        
+        #endregion
+        
+        //--------------------------------------------------------------------------------------------------------------
+        
         #region --- ReferenceType ---
 
         private static readonly MethodInfo createReferenceTypeArrayMethod = typeof(ValueProcessorFactory)
@@ -17,16 +79,16 @@ namespace Baracuda.Monitoring.Internal.Profiling
             .Single(methodInfo =>
                 methodInfo.Name == nameof(ReferenceTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
 
-        private static Func<T[], string> ReferenceTypeArrayProcessor<T>(MonitorProfile profile)
+        private static Func<T[], string> ReferenceTypeArrayProcessor<T>(IFormatData formatData)
         {
-            var name = profile.FormatData.Label;
+            var name = formatData.Label;
             var nullString = $"{name}: {NULL}";
             var stringBuilder = new StringBuilder();
-            var indent = GetIndentStringForProfile(profile);
+            var indent = GetIndentStringForProfile(formatData);
 
             if (typeof(T).IsSubclassOrAssignable(typeof(Object)))
             {
-                return profile.FormatData.ShowIndexer
+                return formatData.ShowIndexer
                     ? (Func<T[], string>) ((value) =>
                     {
                         if (value == null)
@@ -73,7 +135,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
             else
             {
-                if (profile.FormatData.ShowIndexer)
+                if (formatData.ShowIndexer)
                 {
                     return (value) =>
                     {
@@ -134,14 +196,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
             .Single(methodInfo =>
                 methodInfo.Name == nameof(ValueTypeArrayProcessor) && methodInfo.IsGenericMethodDefinition);
 
-        private static Func<T[], string> ValueTypeArrayProcessor<T>(MonitorProfile profile) where T : struct
+        private static Func<T[], string> ValueTypeArrayProcessor<T>(IFormatData formatData) where T : struct
         {
-            var name = profile.FormatData.Label;
+            var name = formatData.Label;
             var nullString = $"{name}: {NULL}";
             var stringBuilder = new StringBuilder();
-            var indent = GetIndentStringForProfile(profile);
+            var indent = GetIndentStringForProfile(formatData);
 
-            return profile.FormatData.ShowIndexer
+            return formatData.ShowIndexer
                 ? (Func<T[], string>) ((value) =>
                 {
                     if (value == null)

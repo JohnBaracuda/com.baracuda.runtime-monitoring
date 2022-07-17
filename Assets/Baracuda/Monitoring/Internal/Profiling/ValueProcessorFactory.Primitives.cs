@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 using System;
 using System.Text;
+using Baracuda.Monitoring.Internal.Utilities;
 
 namespace Baracuda.Monitoring.Internal.Profiling
 {
@@ -10,11 +11,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Integers   
          */
         
-        private static Func<int, string> Int32Processor(MonitorProfile profile)
+        private static Func<int, string> Int32Processor(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
-            var label = profile.FormatData.Label;
-            var format = profile.FormatData.Format;
+            var label = formatData.Label;
+            var format = formatData.Format;
             if (format != null)
             {
                 return (value) =>
@@ -39,10 +40,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
 
-        private static Func<long, string> Int64Processor(MonitorProfile profile)
+        private static Func<long, string> Int64Processor(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
-            var label = profile.FormatData.Label;
+            var label = formatData.Label;
             return (value) =>
             {
                 stringBuilder.Clear();
@@ -57,10 +58,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Floating Points   
          */
 
-        private static Func<float, string> SingleProcessor(MonitorProfile profile)
+        private static Func<float, string> SingleProcessor(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
-            var label = profile.FormatData.Label;
+            var label = formatData.Label;
             return (value) =>
             {
                 stringBuilder.Clear();
@@ -71,10 +72,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
             };
         }
 
-        private static Func<double, string> DoubleProcessor(MonitorProfile profile)
+        private static Func<double, string> DoubleProcessor(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
-            var label = profile.FormatData.Label;
+            var label = formatData.Label;
             return (value) =>
             {
                 stringBuilder.Clear();
@@ -89,10 +90,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Boolean   
          */
                 
-        private static Func<bool, string> CreateBooleanProcessor(MonitorProfile profile)
+        private static Func<bool, string> CreateBooleanProcessor(IFormatData formatData)
         {
-            var trueString  =  $"{profile.FormatData.Label}: {trueColored}";
-            var falseString =  $"{profile.FormatData.Label}: {falseColored}";
+            var trueString  =  $"{formatData.Label}: {trueColored}";
+            var falseString =  $"{formatData.Label}: {falseColored}";
             return (value) => value ? trueString : falseString;
         }
     }

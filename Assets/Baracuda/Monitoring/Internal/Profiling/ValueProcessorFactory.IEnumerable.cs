@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
 
 namespace Baracuda.Monitoring.Internal.Profiling
@@ -13,16 +14,16 @@ namespace Baracuda.Monitoring.Internal.Profiling
     {
         #region --- IEnumerable ---
 
-        private static Func<IEnumerable, string> IEnumerableProcessor(MonitorProfile profile)
+        private static Func<IEnumerable, string> IEnumerableProcessor(IFormatData formatData, Type unityValueType)
         {
-            var name = profile.FormatData.Label;
+            var name = formatData.Label;
             var nullString = $"{name}: {NULL}";
             var stringBuilder = new StringBuilder();
-            var indent = GetIndentStringForProfile(profile);
+            var indent = GetIndentStringForProfile(formatData);
 
-            if (profile.UnitValueType.IsSubclassOrAssignable(typeof(UnityEngine.Object)))
+            if (unityValueType.IsSubclassOrAssignable(typeof(UnityEngine.Object)))
             {
-                return profile.FormatData.ShowIndexer
+                return formatData.ShowIndexer
                     ? (Func<IEnumerable, string>) ((value) =>
                     {
                         if ((UnityEngine.Object) value == null)
@@ -68,7 +69,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
             else
             {
-                return profile.FormatData.ShowIndexer
+                return formatData.ShowIndexer
                     ? (Func<IEnumerable, string>) ((value) =>
                     {
                         if (value == null)
@@ -123,18 +124,19 @@ namespace Baracuda.Monitoring.Internal.Profiling
             .Single(methodInfo =>
                 methodInfo.Name == nameof(GenericIEnumerableProcessor) && methodInfo.IsGenericMethodDefinition);
 
-        private static Func<IEnumerable<T>, string> GenericIEnumerableProcessor<T>(MonitorProfile profile)
+        private static Func<IEnumerable<T>, string> GenericIEnumerableProcessor<T>(IFormatData formatData)
         {
-            var name = profile.FormatData.Label;
+            var type = typeof(T);
+            var name = formatData.Label;
             var nullString = $"{name}: {NULL}";
             var stringBuilder = new StringBuilder();
-            var indent = GetIndentStringForProfile(profile);
+            var indent = GetIndentStringForProfile(formatData);
 
             // Unity objects might not be properly initialized in builds leading to a false result when performing a null check.
 #if UNITY_EDITOR
-            if (profile.UnitValueType.IsSubclassOrAssignable(typeof(UnityEngine.Object)))
+            if (type.IsSubclassOrAssignable(typeof(UnityEngine.Object)))
             {
-                return profile.FormatData.ShowIndexer
+                return formatData.ShowIndexer
                     ? (Func<IEnumerable<T>, string>) ((value) =>
                     {
                         // ReSharper disable once SuspiciousTypeConversion.Global
@@ -183,7 +185,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
             else
 #endif //UNITY_EDITOR
             {
-                return profile.FormatData.ShowIndexer
+                return formatData.ShowIndexer
                     ? (Func<IEnumerable<T>, string>) ((value) =>
                     {
                         if (value == null)
@@ -230,16 +232,16 @@ namespace Baracuda.Monitoring.Internal.Profiling
             }
         }
 
-        private static Func<IEnumerable<bool>, string> IEnumerableBooleanProcessor(MonitorProfile profile)
+        private static Func<IEnumerable<bool>, string> IEnumerableBooleanProcessor(IFormatData formatData)
         {
-            var name = profile.FormatData.Label;
+            var name = formatData.Label;
             var nullString = $"{name}: {NULL} (IEnumerable<bool>)";
-            var tureString = $"<color=green>TRUE</color>";
-            var falseString = $"<color=red>FALSE</color>";
+            var tureString = trueColored;
+            var falseString = falseColored;
             var stringBuilder = new StringBuilder();
-            var indent = GetIndentStringForProfile(profile);
+            var indent = GetIndentStringForProfile(formatData);
 
-            return profile.FormatData.ShowIndexer
+            return formatData.ShowIndexer
                 ? (Func<IEnumerable<bool>, string>) ((value) =>
                 {
                     if (value == null)

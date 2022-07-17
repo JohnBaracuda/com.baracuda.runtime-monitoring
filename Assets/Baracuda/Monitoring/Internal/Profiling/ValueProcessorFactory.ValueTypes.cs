@@ -13,10 +13,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * General   
          */
         
-        private static Func<TValue, string> ValueTypeProcessor<TValue>(MonitorProfile profile)
+        private static Func<TValue, string> ValueTypeProcessor<TValue>(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
-            var label = profile.FormatData.Label;
+            var label = formatData.Label;
             return (value) =>
             {
                 stringBuilder.Clear();
@@ -32,10 +32,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Vector3 
          */
         
-        private static Func<Vector3, string> Vector3Processor(MonitorProfile profile)
+        private static Func<Vector3, string> Vector3Processor(IFormatData formatData)
         {
-            var format = profile.FormatData.Format;
-            var name = profile.FormatData.Label;
+            var format = formatData.Format;
+            var name = formatData.Label;
             var stringBuilder = new StringBuilder();
 
             if (format != null)
@@ -92,10 +92,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Vector2   
          */
 
-        private static Func<Vector2, string> Vector2Processor(MonitorProfile profile)
+        private static Func<Vector2, string> Vector2Processor(IFormatData formatData)
         {
-            var format = profile.FormatData.Format;
-            var label = profile.FormatData.Label;
+            var format = formatData.Format;
+            var label = formatData.Label;
             var stringBuilder = new StringBuilder();
 
             if (format != null)
@@ -140,10 +140,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Quaternion   
          */
 
-        private static Func<Quaternion, string> QuaternionProcessor(MonitorProfile profile)
+        private static Func<Quaternion, string> QuaternionProcessor(IFormatData formatData)
         {
-            var format = profile.FormatData.Format;
-            var name = profile.FormatData.Label;
+            var format = formatData.Format;
+            var name = formatData.Label;
             var stringBuilder = new StringBuilder();
 
 
@@ -206,10 +206,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Color   
          */
         
-        private static Func<Color, string> ColorProcessor(MonitorProfile profile)
+        private static Func<Color, string> ColorProcessor(IFormatData formatData)
         {
-            var format = profile.FormatData.Format;
-            var name = profile.FormatData.Label;
+            var format = formatData.Format;
+            var name = formatData.Label;
             var stringBuilder = new StringBuilder();
 
             if (format != null)
@@ -240,10 +240,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
          * Color32   
          */
         
-        private static Func<Color32, string> Color32Processor(MonitorProfile profile)
+        private static Func<Color32, string> Color32Processor(IFormatData formatData)
         {
-            var format = profile.FormatData.Format;
-            var name = profile.FormatData.Label;
+            var format = formatData.Format;
+            var name = formatData.Label;
             var stringBuilder = new StringBuilder();
 
             if (format != null)

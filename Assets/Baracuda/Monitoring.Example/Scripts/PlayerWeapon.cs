@@ -38,11 +38,10 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         [Monitor]
         [MUpdateEvent(nameof(OnAmmoChanged))]
-        [MFormatOptions(UIPosition.LowerLeft, FontSize = 20)]
+        [MFormatOptions(UIPosition.LowerLeft, FontSize = 20, GroupElement = false)]
         [MValueProcessor(nameof(CurrentAmmunitionProcessor))]
         private int _currentAmmunition;
 
-        [MonitorEvent]
         public event Action<int> OnAmmoChanged;
 
         
@@ -84,13 +83,8 @@ namespace Baracuda.Monitoring.Example.Scripts
             _camera = GetComponentInChildren<Camera>();
             _currentAmmunition = ammunition;
             OnAmmoChanged?.Invoke(_currentAmmunition);
-            OnAmmoChanged += OnOnAmmoChanged;
         }
 
-        private void OnOnAmmoChanged(int obj)
-        {
-            
-        }
 
         private void Update()
         {

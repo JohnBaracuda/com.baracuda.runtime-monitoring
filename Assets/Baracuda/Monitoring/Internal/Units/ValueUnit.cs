@@ -16,7 +16,7 @@ namespace Baracuda.Monitoring.Internal.Units
     /// </summary>
     /// <typeparam name="TTarget"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public abstract class ValueUnit<TTarget, TValue> : MonitorUnit, IValueUnit<TValue> where TTarget : class
+    public abstract class ValueUnit<TTarget, TValue> : MonitorUnit, ISettableValue<TValue>, IGettableValue<TValue> where TTarget : class
     {
         #region --- Fields ---
         
@@ -39,7 +39,7 @@ namespace Baracuda.Monitoring.Internal.Units
             Func<TTarget, TValue> getValue,
             Action<TTarget, TValue> setValue,
             Func<TValue, string> valueProcessor,
-            ValueProfile<TTarget, TValue> valueProfile) : base(target, valueProfile)
+            ValueProfile<TTarget, TValue> profile) : base(target, profile)
         {
             _target = target;
             _getValue = getValue;
@@ -47,11 +47,11 @@ namespace Baracuda.Monitoring.Internal.Units
             
             CompiledValueProcessor = CompileValueProcessor(valueProcessor);
 
-            _checkIsDirty = valueProfile.IsDirtyFunc;
+            _checkIsDirty = profile.IsDirtyFunc;
             
-            if (valueProfile.CustomUpdateEventAvailable)
+            if (profile.CustomUpdateEventAvailable)
             {
-                if (!valueProfile.TrySubscribeToUpdateEvent(target, Refresh, SetValue))
+                if (!profile.TrySubscribeToUpdateEvent(target, Refresh, SetValue))
                 {
                     Debug.LogWarning($"Could not subscribe {Name} to update event!");
                 }
@@ -107,7 +107,7 @@ namespace Baracuda.Monitoring.Internal.Units
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T GetValueConverted<T>()
+        public T GetValueAs<T>()
         {
             return _getValue(_target).ConvertFast<TValue, T>();
         }
@@ -137,10 +137,10 @@ namespace Baracuda.Monitoring.Internal.Units
             var state = GetState();
             RaiseValueChanged(state);
         }
-        
-        public void SetValue<T>(T value) where T : unmanaged
+
+        public void SetValueStruct<TStruct>(TStruct value) where TStruct : struct
         {
-            var converted = value.ConvertFast<T, TValue>();
+            var converted = value.ConvertFast<TStruct, TValue>();
             _setValue?.Invoke(_target, converted);
             _lastValue = converted;
             var state = GetState();

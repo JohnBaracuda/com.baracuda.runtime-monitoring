@@ -10,7 +10,7 @@ namespace Baracuda.Monitoring
     /// The method must return a string and accept the value of the monitored member.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
     public class MValueProcessorAttribute : MonitoringMetaAttribute
     {
         public string Processor { get; }

@@ -57,4 +57,4 @@ MonoBehaviour:
   overrideScale: 1
   scale: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8235294}
-  logStartMessage: 1
+  logStartMessage: 0

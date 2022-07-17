@@ -5,6 +5,7 @@ using Random = UnityEngine.Random;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
+    [DisableMonitoring]
     public class ShootingTarget : MonitoredBehaviour
     {
         #region --- Inspector ---

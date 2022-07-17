@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Baracuda.Pooling.Concretions;
 using Unity.Collections.LowLevel.Unsafe;
@@ -76,6 +77,11 @@ namespace Baracuda.Monitoring.Internal.Utilities
         /*
          * Text Manipulation   
          */
+
+        public static string NoSpace(this string str)
+        {
+            return str.Replace(" ", "");
+        }
         
         public static string Humanize(this string target, string[] prefixes = null)
         {
