@@ -168,6 +168,19 @@ namespace Baracuda.Monitoring.Internal.Profiling
         {
             ct.ThrowIfCancellationRequested();
             
+            // search for global value processors
+            for (var i = 0; i < types.Length; i++)
+            {
+                var methods = types[i].GetMethods(STATIC_FLAGS);
+                for (var j = 0; j < methods.Length; j++)
+                {
+                    if (methods[j].HasAttribute<GlobalValueProcessor>())
+                    {
+                        ValueProcessorFactory.AddGlobalValueProcessor(methods[j]);
+                    }
+                }
+            }
+            
             // inspect static member
             for (var i = 0; i < types.Length; i++)
             {

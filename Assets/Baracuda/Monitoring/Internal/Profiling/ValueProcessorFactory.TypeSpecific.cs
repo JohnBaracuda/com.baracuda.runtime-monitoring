@@ -13,26 +13,17 @@ namespace Baracuda.Monitoring.Internal.Profiling
     /// </summary>
     internal static partial class ValueProcessorFactory
     {
-        /*
-         * API   
-         */
-
-        /// <summary>
-        /// Creates a default type specific processor to format the <see cref="TValue"/> depending on its exact type.
-        /// </summary>
-        /// <typeparam name="TValue">The type of the value that should be parsed/formatted</typeparam>
-        /// <returns></returns>
-        internal static Func<TValue, string> CreateProcessorForType<TValue>(IFormatData formatData)
-        {
-            return CreateTypeSpecificProcessorInternal<TValue>(formatData);
-        }
-
-        //--------------------------------------------------------------------------------------------------------------
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Func<TValue, string> CreateTypeSpecificProcessorInternal<TValue>(IFormatData formatData)
         {
             var type = typeof(TValue);
+
+            // Global predefined value processor for type
+            if (globalValueProcessors.TryGetValue(type, out var globalProcessor) 
+                && globalProcessor is Func<IFormatData, TValue, string> typeSpecificGlobal)
+            {
+                return (value) => typeSpecificGlobal(formatData, value);
+            }
             
             // Transform
             if (type == typeof(Transform))

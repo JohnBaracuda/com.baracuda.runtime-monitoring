@@ -159,7 +159,7 @@ namespace Baracuda.Monitoring.Internal.Units
 
         public override string ToString()
         {
-            return GetType().ToGenericTypeString();
+            return GetType().ToReadableTypeString();
         }
 
         #endregion

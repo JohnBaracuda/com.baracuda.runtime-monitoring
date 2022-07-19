@@ -848,7 +848,7 @@ namespace Baracuda.Reflection
         private static readonly Dictionary<Type, string> typeCacheFullName = new Dictionary<Type, string>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ToGenericTypeStringFullName(this Type type)
+        public static string ToReadableTypeStringFullName(this Type type)
         {
             if (typeCacheFullName.TryGetValue(type, out var value))
             {
@@ -870,7 +870,7 @@ namespace Baracuda.Reflection
                 foreach (var t in arguments)
                 {
                     // Let's make sure we get the argument list.
-                    var arg = ToGenericTypeStringFullName(t);
+                    var arg = ToReadableTypeStringFullName(t);
 
                     if (argBuilder.Length > 0)
                     {
@@ -906,7 +906,7 @@ namespace Baracuda.Reflection
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ToGenericTypeString(this Type type)
+        public static string ToReadableTypeString(this Type type)
         {
             if (typeCache.TryGetValue(type, out var value))
             {
@@ -922,7 +922,7 @@ namespace Baracuda.Reflection
 
                 foreach (var t in arguments)
                 {
-                    var arg = ToGenericTypeString(t);
+                    var arg = ToReadableTypeString(t);
 
                     if (argBuilder.Length > 0)
                     {

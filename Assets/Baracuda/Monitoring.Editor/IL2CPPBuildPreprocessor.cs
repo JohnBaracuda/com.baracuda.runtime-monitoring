@@ -518,7 +518,7 @@ namespace Baracuda.Monitoring.Editor
                 try
                 {
                     Stats.IncrementStat("Monitored Out Parameter", "Out Parameter");
-                    Stats.IncrementStat($"Monitored Out Parameter {parameterInfo.ParameterType.ToGenericTypeString()}", "Out Parameter");
+                    Stats.IncrementStat($"Monitored Out Parameter {parameterInfo.ParameterType.ToReadableTypeString()}", "Out Parameter");
                     TryCreateOutParameterHandleDefinition(parameterInfo.ParameterType);
                 }
                 catch (Exception exception)
@@ -577,7 +577,7 @@ namespace Baracuda.Monitoring.Editor
             
             
             CreateMethodSig(monitored);
-            Stats.IncrementStat($"Monitored {monitored.ToGenericTypeString()}", "Monitored Types");
+            Stats.IncrementStat($"Monitored {monitored.ToReadableTypeString()}", "Monitored Types");
             
             var definition = template.MakeGenericType(declaring, monitored);
             
@@ -608,11 +608,11 @@ namespace Baracuda.Monitoring.Editor
         {
             var stringBuilder = StringBuilderPool.Get();
             stringBuilder.Append("\n    //");
-            stringBuilder.Append(type.ToGenericTypeString());
+            stringBuilder.Append(type.ToReadableTypeString());
             stringBuilder.Append("\n    ");
             stringBuilder.Append(preserveAttribute);
             stringBuilder.Append("\n    ");
-            stringBuilder.Append(type.ToGenericTypeStringFullName());
+            stringBuilder.Append(type.ToReadableTypeStringFullName());
             stringBuilder.Append(' ');
             stringBuilder.Append("AOT_GENERATED_TYPE_");
             stringBuilder.Append(id++);
@@ -663,7 +663,7 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTValueTypeArray");
                 stringBuilder.Append('<');
-                stringBuilder.Append(valueType.GetElementType().ToGenericTypeStringFullName());
+                stringBuilder.Append(valueType.GetElementType().ToReadableTypeStringFullName());
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
@@ -676,7 +676,7 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTReferenceTypeArray");
                 stringBuilder.Append('<');
-                stringBuilder.Append(arrayType.GetElementType().ToGenericTypeStringFullName());
+                stringBuilder.Append(arrayType.GetElementType().ToReadableTypeStringFullName());
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
@@ -689,9 +689,9 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTDictionary");
                 stringBuilder.Append('<');
-                stringBuilder.Append(dictionaryType.GetGenericArguments()[0].ToGenericTypeStringFullName());
+                stringBuilder.Append(dictionaryType.GetGenericArguments()[0].ToReadableTypeStringFullName());
                 stringBuilder.Append(',');
-                stringBuilder.Append(dictionaryType.GetGenericArguments()[1].ToGenericTypeStringFullName());
+                stringBuilder.Append(dictionaryType.GetGenericArguments()[1].ToReadableTypeStringFullName());
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
@@ -704,7 +704,7 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTEnumerable");
                 stringBuilder.Append('<');
-                stringBuilder.Append(enumerableType.GetGenericArguments()[0].ToGenericTypeStringFullName());
+                stringBuilder.Append(enumerableType.GetGenericArguments()[0].ToReadableTypeStringFullName());
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
@@ -762,9 +762,9 @@ namespace Baracuda.Monitoring.Editor
             }
 
             var error =
-                $"[MONITORING] Error: {type.ToGenericTypeString()} is not accessible! ({type.FullName?.Replace('+', '.')})" +
+                $"[MONITORING] Error: {type.ToReadableTypeString()} is not accessible! ({type.FullName?.Replace('+', '.')})" +
                 $"\nCannot generate AOT code for unmanaged internal/private types! " +
-                $"Please make sure that {type.ToGenericTypeString()} and all of its declaring types are either public or use a managed type instead of struct!";
+                $"Please make sure that {type.ToReadableTypeString()} and all of its declaring types are either public or use a managed type instead of struct!";
             
             errorBuffer.Add(error);
             

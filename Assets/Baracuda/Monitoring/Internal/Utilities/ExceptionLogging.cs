@@ -94,13 +94,13 @@ namespace Baracuda.Monitoring.Internal.Utilities
 
         internal static void LogValueProcessNotFound(string processor, Type type)
         {
-            var message = $"Processor: {processor} in {type.Name} was not found! Only static methods are valid value processors";
+            var message = $"[ValueProcessor] Processor: {processor} in {type.Name} was not found! Only static methods are valid value processors";
             LogInternal(message, instance._processorNotFoundLoggingLevel);
         }
         
         internal static void LogInvalidProcessorSignature(string processor, Type type)
         {
-            var message = $"Processor: {processor} in {type.Name} does not have a valid value processor signature!";
+            var message = $"[ValueProcessor] Processor: {processor} in {type.Name} does not have a valid value processor signature!";
             LogInternal(message, instance._invalidProcessorSignatureLoggingLevel);
         }
     }

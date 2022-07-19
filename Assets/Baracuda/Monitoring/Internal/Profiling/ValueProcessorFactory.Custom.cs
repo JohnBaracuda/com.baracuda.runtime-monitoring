@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
@@ -13,28 +14,10 @@ namespace Baracuda.Monitoring.Internal.Profiling
 {
     internal static partial class ValueProcessorFactory
     {
-        #region --- API ---
-
-        
-        
-        #endregion
-        
         #region --- Find ValueProcessor ---
-
-        /// <summary>
-        /// This method will scan the declaring <see cref="Type"/> of the passed
-        /// <see cref="ValueProfile{TTarget,TValue}"/> for a valid processor method with the passed name.<br/>
-        /// Certain types offer special functionality and require additional handling. Those types are:<br/>
-        /// Types assignable from <see cref="IList{T}"/> (inc. <see cref="Array"/>)<br/>
-        /// Types assignable from <see cref="IDictionary{TKey, TValue}"/><br/>
-        /// Types assignable from <see cref="IEnumerable{T}"/>
-        /// </summary>
-        /// <param name="processor">name of the method declared as a value processor</param>
-        /// <param name="formatData"></param>
-        /// <typeparam name="TTarget">the <see cref="Type"/> of the profiles Target instance</typeparam>
-        /// <typeparam name="TValue">the <see cref="Type"/> of the profiles value instance</typeparam>
-        /// <returns></returns>
-        internal static Func<TValue, string> FindCustomStaticProcessor<TTarget, TValue>(
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Func<TValue, string> FindCustomStaticProcessorInternal<TTarget, TValue>(
             string processor,
             IFormatData formatData) where TTarget : class
         {
@@ -222,26 +205,9 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return null;
             }
         }
-
-
-        /*
-         * Instance   
-         */
-
-        /// <summary>
-        /// This method will scan the declaring <see cref="Type"/> of the passed
-        /// <see cref="ValueProfile{TTarget,TValue}"/> for a valid processor method with the passed name.<br/>
-        /// Certain types offer special functionality and require additional handling. Those types are:<br/>
-        /// Types assignable from <see cref="IList{T}"/> (inc. <see cref="Array"/>)<br/>
-        /// Types assignable from <see cref="IDictionary{TKey, TValue}"/><br/>
-        /// Types assignable from <see cref="IEnumerable{T}"/>
-        /// </summary>
-        /// <param name="processor">name of the method declared as a value processor</param>
-        /// <param name="formatData"></param>
-        /// <typeparam name="TTarget">the <see cref="Type"/> of the profiles Target instance</typeparam>
-        /// <typeparam name="TValue">the <see cref="Type"/> of the profiles value instance</typeparam>
-        /// <returns></returns>
-        internal static Func<TTarget, TValue, string> FindCustomInstanceProcessor<TTarget, TValue>(
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Func<TTarget, TValue, string> FindCustomInstanceProcessorInternal<TTarget, TValue>(
             string processor, IFormatData formatData) where TTarget : class
         {
             try
