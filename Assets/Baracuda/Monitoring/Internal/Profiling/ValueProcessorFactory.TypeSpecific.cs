@@ -25,13 +25,11 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return (value) => typeSpecificGlobal(formatData, value);
             }
             
-            // Transform
             if (type == typeof(Transform))
             {
                 return (Func<TValue, string>)(Delegate) TransformProcessor(formatData);
             }
 
-            // Boolean
             if (type == typeof(bool))
             {
                 return (Func<TValue, string>)(Delegate) CreateBooleanProcessor(formatData);
@@ -67,7 +65,6 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 return (Func<TValue, string>) (Delegate) IEnumerableBooleanProcessor(formatData);
             }
             
-            // Array<T>
             if (type.IsArray)
             {
                 try
@@ -107,89 +104,73 @@ namespace Baracuda.Monitoring.Internal.Profiling
                 }
             }
             
-            // IEnumerable
             if (type.IsIEnumerable(true))
             {
                 return (Func<TValue, string>) (Delegate) IEnumerableProcessor(formatData, type);
             }
 
-            // Quaternion
             if (type == typeof(Quaternion))
             {
                 return (Func<TValue, string>) (Delegate) QuaternionProcessor(formatData);
             }
 
-            // Vector3
             if (type == typeof(Vector3))
             {
                 return (Func<TValue, string>) (Delegate) Vector3Processor(formatData);
             }
             
-            // Vector2
             if (type == typeof(Vector2))
             {
                 return (Func<TValue, string>) (Delegate) Vector2Processor(formatData);
             }
 
-            // Color
             if (type == typeof(Color))
             {
                 return (Func<TValue, string>) (Delegate) ColorProcessor(formatData);
             }
             
-            // Color32
             if (type == typeof(Color32))
             {
                 return (Func<TValue, string>) (Delegate) Color32Processor(formatData);
             }
 
-            // Format
             if (type.HasInterface<IFormattable>() && formatData.Format != null)
             {
                 return FormattedProcessor<TValue>(formatData);
             }
             
-            // UnityEngine.Object
             if (type.IsSubclassOf(typeof(UnityEngine.Object)))
             {
                 return (Func<TValue, string>) (Delegate) UnityEngineObjectProcessor(formatData);
             }
             
-            // Int32
             if (type.IsInt32())
             {
                 return (Func<TValue, string>) (Delegate) Int32Processor(formatData);
             }
             
-            // Int64
             if (type.IsInt64())
             {
                 return (Func<TValue, string>) (Delegate) Int64Processor(formatData);
             }
             
-            // Float
             if (type.IsSingle())
             {
                 return (Func<TValue, string>) (Delegate) SingleProcessor(formatData);
             }
             
-            // Double
             if (type.IsDouble())
             {
                 return (Func<TValue, string>) (Delegate) DoubleProcessor(formatData);
             }
 
-            // Value Type
             if (type.IsValueType)
             {
                 return ValueTypeProcessor<TValue>(formatData);
             }
             
-            // Reference Type
-            else
-            {
-                return DefaultProcessor<TValue>(formatData);
-            }
+            // Everything else that is a reference type.
+            return DefaultProcessor<TValue>(formatData);
         }
     }
 }

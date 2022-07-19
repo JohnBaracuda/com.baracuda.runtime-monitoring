@@ -14,7 +14,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
     public abstract class MonitorProfile : IMonitorProfile
     {
         #region --- Interface ---
-
+        
         public MonitorAttribute Attribute { get; }
         public MemberInfo MemberInfo { get; }
         public UnitType UnitType { get; }
@@ -106,6 +106,26 @@ namespace Baracuda.Monitoring.Internal.Profiling
         /// <param name="target">The target of the unit. Null if static</param>
         /// <returns></returns>
         internal abstract MonitorUnit CreateUnit(object target);
+
+        #endregion
+        
+        //--------------------------------------------------------------------------------------------------------------
+        
+        #region --- Reflection Fields ---
+
+        protected const BindingFlags STATIC_FLAGS
+            = BindingFlags.Default |
+              BindingFlags.Static |
+              BindingFlags.Public |
+              BindingFlags.NonPublic |
+              BindingFlags.DeclaredOnly;
+
+        protected const BindingFlags INSTANCE_FLAGS
+            = BindingFlags.Default |
+              BindingFlags.Public |
+              BindingFlags.NonPublic |
+              BindingFlags.DeclaredOnly |
+              BindingFlags.Instance;
 
         #endregion
     }

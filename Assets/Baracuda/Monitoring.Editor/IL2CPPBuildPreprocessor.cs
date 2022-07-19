@@ -26,12 +26,6 @@ namespace Baracuda.Monitoring.Editor
 {
     public class IL2CPPBuildPreprocessor : IPreprocessBuildWithReport
     {
-        [Monitor]
-        public static void OutVoid(out int value)
-        {
-            value = 30;
-        }
-        
         #region --- Public API ---
 
         /// <summary>

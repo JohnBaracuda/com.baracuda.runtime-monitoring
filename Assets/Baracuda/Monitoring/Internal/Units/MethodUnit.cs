@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Profiling;
 using Baracuda.Monitoring.Internal.Utilities;
+using UnityEngine;
 
 namespace Baracuda.Monitoring.Internal.Units
 {
@@ -38,6 +39,14 @@ namespace Baracuda.Monitoring.Internal.Units
             _target = target;
             _methodProfile = profile;
             _getValue = getValue;
+            
+            if (profile.CustomUpdateEventAvailable)
+            {
+                if (!profile.TrySubscribeToUpdateEvent(target, Refresh, null))
+                {
+                    Debug.LogWarning($"Could not subscribe {Name} to update event!");
+                }
+            }
 
             _compiledValueProcessor = () => _getValue(_target).ToString();
         }
@@ -45,7 +54,7 @@ namespace Baracuda.Monitoring.Internal.Units
 
         //--------------------------------------------------------------------------------------------------------------
         
-                #region --- Update ---
+        #region --- Update ---
 
         public override void Refresh()
         {

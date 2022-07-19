@@ -35,7 +35,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
 
         private static bool IsMethodValidGlobalValueProcessor(MethodInfo methodInfo, ParameterInfo[] parameterInfos)
         {
-            Color GetColor() => new Color(0.61f, 0.66f, 1f);
+            Color GetColor() => new Color(0.65f, 0.65f, 1f);
             string GetAttachment() =>
                 "Please ensure that a methods marked as a global value processor accept an IFormatData as their first argument, the type you want to process as a second argument and return a string!";
 

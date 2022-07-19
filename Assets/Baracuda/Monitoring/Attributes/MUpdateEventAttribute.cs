@@ -10,7 +10,7 @@ namespace Baracuda.Monitoring
     /// </summary>
     /// <footer>Note: use the nameof keyword to pass the name of the event.</footer>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
     public class MUpdateEventAttribute : MonitoringMetaAttribute
     {
         /// <summary>
