@@ -7,11 +7,11 @@ namespace Baracuda.Monitoring
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method)]
     public class MFontAttribute : MonitoringMetaAttribute
     {
-        public readonly string FontName;
+        public readonly int FontHash;
 
         public MFontAttribute(string fontName)
         {
-            FontName = fontName;
+            FontHash = fontName.GetHashCode();
         }
     }
 }

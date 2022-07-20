@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 using System.Collections;
+using System.Globalization;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -70,6 +71,8 @@ namespace Baracuda.Monitoring.Example.Scripts
             _isAlive = false;
             _animator.SetTrigger(knockdown);
             _cooldown = Random.Range(recoverCooldownMin, recoverCooldownMax);
+            
+            Debug.Log($"{name} destroyed! starting {_cooldown.ToString(CultureInfo.InvariantCulture)}s cooldown.");
             while (_cooldown > 0)
             {
                 _cooldown -= Time.deltaTime;

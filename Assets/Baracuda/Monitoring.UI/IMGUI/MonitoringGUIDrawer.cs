@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Pooling.Concretions;
@@ -38,7 +39,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
         [Header("Font")]
         [SerializeField] private Font defaultFont;
-        [SerializeField] private Font[] loadedFonts;
+        [SerializeField] private Font[] availableFonts;
         
         #endregion
 
@@ -56,6 +57,8 @@ namespace Baracuda.Monitoring.UI.IMGUI
         private static float lastLowerRightHeight;
         private static int topLeftRows;
         private static int topRightRows;
+        
+        private readonly Dictionary<int, Font> _loadedFonts = new Dictionary<int, Font>();
         
         [Serializable]
         public struct MarginOrPadding
@@ -90,8 +93,8 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 FormatData = unit.Profile.FormatData;
                 ID = unit.UniqueID;
 
-                var backgroundColor = unit.Profile.TryGetMetaAttribute<MColor>(out var colorAttribute)
-                    ? colorAttribute.Color
+                var backgroundColor = unit.Profile.TryGetMetaAttribute<MColorAttribute>(out var colorAttribute)
+                    ? colorAttribute.ColorValue
                     : ctx.backgroundColor;
                 
                 if (backgroundTexturePool.TryGetValue(backgroundColor, out var texture))
@@ -109,7 +112,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
                 if (unit.Profile.TryGetMetaAttribute<MFontAttribute>(out var fontAttribute))
                 {
-                    var fontAsset = ctx.GetFont(fontAttribute.FontName);
+                    var fontAsset = ctx.GetFont(fontAttribute.FontHash);
                     if (fontAsset != null)
                     {
                         OverrideFont = true;
@@ -173,24 +176,32 @@ namespace Baracuda.Monitoring.UI.IMGUI
             "It is recommended to use the TextMeshPro or UIToolkit based Controller instead! " +
             "\nYou can disable this message from the settings window: <b>Tools > RuntimeMonitoring > Settings: UI Controller > Log Start Message</b>";
 
-        private Font GetFont(string fontName)
+        private Font GetFont(int fontHash)
         {
-            for (var i = 0; i < loadedFonts.Length; i++)
-            {
-                if (loadedFonts[i].name == fontName)
-                {
-                    return loadedFonts[i];
-                }
-            }
-
-            return null;
+            return _loadedFonts.TryGetValue(fontHash, out var fontAsset) ? fontAsset : defaultFont;
         }
-        
+
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Setup ---
+
+        protected override void Awake()
+        {
+            base.Awake();
+            
+            for (var i = 0; i < availableFonts.Length; i++)
+            {
+                var fontAsset = availableFonts[i];
+                var hash = fontAsset.name.GetHashCode();
+                if (MonitoringManager.GetUsedFontHashSet.Contains(hash))
+                {
+                    _loadedFonts.Add(hash, fontAsset);
+                }
+            }
+            availableFonts = null;
+        }
 
         private void Start()
         {

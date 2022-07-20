@@ -2,27 +2,23 @@
 
 namespace Baracuda.Monitoring
 {
+    //TODO: Add this 
+    
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
-    public class MShowIf : MonitoringMetaAttribute
+    public class MConditional : MonitoringMetaAttribute
     {
         public Condition Condition { get; }
-        public BinaryCondition BinaryCondition { get; }
-        public string ValidationMethodName { get; }
+        public string Validator { get; }
 
-        public MShowIf(Condition condition)
+        public MConditional(Condition condition)
         {
             Condition = condition;
         }
 
-        public MShowIf(string validationMethodName)
+        public MConditional(string validator)
         {
-            ValidationMethodName = validationMethodName;
+            Validator = validator;
             Condition = Condition.ValidationMethod;
-        }
-
-        public MShowIf(BinaryCondition condition, object other)
-        {
-            
         }
     }
     
@@ -41,15 +37,5 @@ namespace Baracuda.Monitoring
         NotDefaultValue = 9,
         NotNullOrEmpty = 10,
         NotNullOrWhiteSpace = 11
-    }
-
-    public enum BinaryCondition
-    {
-        Equals,
-        EqualsNot,
-        GreaterThan,
-        LesserThan,
-        GreaterOrEqual,
-        LesserOrEqual,
     }
 }

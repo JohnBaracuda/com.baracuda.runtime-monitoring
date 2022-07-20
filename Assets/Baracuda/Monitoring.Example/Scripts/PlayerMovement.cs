@@ -133,7 +133,6 @@ namespace Baracuda.Monitoring.Example.Scripts
                 _transform.rotation = _spawnRotation;
                 _camera.transform.localRotation = Quaternion.identity;
                 _rotationX = 0;
-                Debug.Log("Resetting Player!");
             }
         }
 

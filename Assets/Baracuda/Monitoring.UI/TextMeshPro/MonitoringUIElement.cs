@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Interface;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Baracuda.Monitoring.UI.TextMeshPro
 {
@@ -12,9 +13,11 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         #region --- Fields ---
         
         private TMP_Text _tmpText;
+        private Image _backgroundImage; 
         private IMonitorUnit _monitorUnit;
         private Action<string> _updateValueAction;
         private Action<bool> _activeStateAction;
+        private TMPMonitoringUIController _controller;
 
         #endregion
 
@@ -25,6 +28,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         private void Awake()
         {
             _tmpText = GetComponent<TMP_Text>();
+            _backgroundImage = GetComponentInChildren<Image>();
             _updateValueAction = UpdateUI;
             _activeStateAction = UpdateActiveState;
         }
@@ -33,11 +37,29 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
 
         #region --- Unit Setup ---
 
-        public void Setup(IMonitorUnit monitorUnit)
+        internal void InjectController(TMPMonitoringUIController controller)
+        {
+            _controller = controller;
+        }
+
+        public void SetupForUnit(IMonitorUnit monitorUnit)
         {
             _monitorUnit = monitorUnit;
             var profile = monitorUnit.Profile;
             var format = profile.FormatData;
+            
+            if (profile.TryGetMetaAttribute<MBackgroundColorAttribute>(out var backgroundColor))
+            {
+                _backgroundImage.color = backgroundColor.ColorValue;
+            }
+            if (profile.TryGetMetaAttribute<MTextColorAttribute>(out var textColor))
+            {
+                _tmpText.color = textColor.ColorValue;
+            }
+
+            _tmpText.font = profile.TryGetMetaAttribute<MFontAttribute>(out var fontAttribute)
+                ? _controller.GetFontAsset(fontAttribute.FontHash)
+                : _controller.GetDefaultFontAsset();
 
             if (format.FontSize > 0)
             {

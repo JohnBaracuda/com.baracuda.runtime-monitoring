@@ -11,30 +11,73 @@ namespace Baracuda.Monitoring.Modules
 {
     public class ConsoleMonitor : MonitorModuleBase
     {
-        [MonitorProperty]
-        [MColor(0,0,0,.45f)]
-        [MUpdateEvent(nameof(LogReceived))]
-        [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, ElementIndent = 0, FontSize = 14)]
-        [MFont("JetBrainsMono-Regular")]
-        private Queue<string> Console => logs;
+        #region --- Static ---
 
-        [MonitorProperty]
-        [MColor(0,0,0,.45f)]
-        [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, Label = "Stacktrace", FontSize = 14)]
-        [MFont("JetBrainsMono-Regular")]
-        private string Message => message;
+        private static readonly Queue<string> messageLogCache = new Queue<string>(30);
+        private static string lastLogStacktrace;
 
-        private static readonly Queue<string> logs = new Queue<string>(30);
-        private static string message;
+        private static int messageCacheSize = 10;
         
         private static readonly char[] trimValues = {'\r', '\n'};
         private static readonly Color errorColor = new Color(1f, 0.5f, 0.52f);
         private static readonly Color logColor = new Color(0.8f, 0.75f, 1f);
         private static readonly Color warningColor = new Color(1f, 0.96f, 0.56f);
         private static readonly Color stackTraceColor = new Color(0.65f, 0.7f, 0.75f);
+        
+        private static event Action UpdateDisplayedLogs;
+        
+        #endregion
+        
+        #region --- Inspector ---
 
-        private static event Action LogReceived;
+        [SerializeField] [Min(1)] private int displayedMethodNum = 10;
+        //[SerializeField] private bool showStacktraceOfLastMessage = true;
+        
+        #endregion
 
+        #region --- Monitored Values ---
+        
+        [MonitorProperty]
+        [MBackgroundColor(ColorPreset.TransparentBlack)]
+        [MGroupColor(ColorPreset.Transparent)]
+        [MUpdateEvent(nameof(UpdateDisplayedLogs))]
+        [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, ElementIndent = 0, FontSize = 14)]
+        [MFont("JetBrainsMono-Regular")]
+        private Queue<string> Console => messageLogCache;
+
+        [MonitorProperty]
+        [MBackgroundColor(ColorPreset.TransparentBlack)]
+        [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, Label = "Stacktrace", FontSize = 14)]
+        [MFont("JetBrainsMono-Regular")]
+        //[MConditional(nameof(showStacktraceOfLastMessage))]
+        private string LastLogStacktrace => lastLogStacktrace;
+
+        #endregion
+
+        protected override void Awake()
+        {
+            base.Awake();
+            UpdateConfiguration();
+        }
+
+        private void OnValidate()
+        {
+            UpdateConfiguration();
+        }
+
+        private void UpdateConfiguration()
+        {
+            messageCacheSize = displayedMethodNum;
+            if (messageLogCache.Count > messageCacheSize)
+            {
+                messageLogCache.Dequeue();
+            }
+            
+            UpdateDisplayedLogs?.Invoke();
+        }
+
+        #region --- Message Log Caching ---
+ 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Setup()
         {
@@ -56,19 +99,22 @@ namespace Baracuda.Monitoring.Modules
             sb.Append(' ');
             sb.Append(condition.Colorize(GetColor(type)));
            
-            logs.Enqueue(sb.ToString());
-            if (logs.Count > 15)
+            messageLogCache.Enqueue(ConcurrentStringBuilderPool.Release(sb));
+            if (messageLogCache.Count > messageCacheSize)
             {
-                logs.Dequeue();
+                messageLogCache.Dequeue();
             }
-            
-            sb.Append('\n');
-            sb.Append("\n".FontSize(4));
-            sb.Append(stacktrace.TrimEnd(trimValues).Colorize(stackTraceColor).FontSize(12));
-            message = ConcurrentStringBuilderPool.Release(sb);
-            LogReceived.Dispatch();
+
+            lastLogStacktrace = stacktrace.TrimEnd(trimValues).Colorize(stackTraceColor).FontSize(12);
+            UpdateDisplayedLogs.Dispatch();
         }
         
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Misc ---
+
         private static Color GetColor(LogType logType)
         {
             switch (logType)
@@ -106,5 +152,7 @@ namespace Baracuda.Monitoring.Modules
                     throw new ArgumentOutOfRangeException(nameof(logType), logType, null);
             }
         }
+
+        #endregion
     }
 }

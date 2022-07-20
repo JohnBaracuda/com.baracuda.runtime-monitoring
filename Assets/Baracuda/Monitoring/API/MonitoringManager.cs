@@ -128,7 +128,13 @@ namespace Baracuda.Monitoring.API
         /// Get a list of all monitoring units.
         /// </summary>
         public static IReadOnlyList<IMonitorUnit> GetAllMonitoringUnits() => monitoringUnitCache;
-        
+
+        /*
+         * Optimization Misc   
+         */
+
+        public static IReadOnlyCollection<int> GetUsedFontHashSet => fontHashSet;
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -148,6 +154,8 @@ namespace Baracuda.Monitoring.API
 
         private static volatile bool isInitialized = false;
         private static ProfilingCompletedListener profilingCompleted;
+        
+        private static readonly HashSet<int> fontHashSet = new HashSet<int>();
         
                 
 #if DEBUG
@@ -393,6 +401,17 @@ namespace Baracuda.Monitoring.API
             monitoringUnitCache.Add(staticUnit);
         }
 
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Optimizations & Misc ---
+
+        internal static void AddFontHash(int fontHash)
+        {
+            fontHashSet.Add(fontHash);
+        }
+        
         #endregion
         
 #endif //DISABLE_MONITORING

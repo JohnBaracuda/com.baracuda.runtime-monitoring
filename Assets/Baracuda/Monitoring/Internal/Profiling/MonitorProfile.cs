@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Monitoring.Internal.Utilities;
@@ -44,7 +45,7 @@ namespace Baracuda.Monitoring.Internal.Profiling
         
         private readonly Dictionary<Type, MonitoringMetaAttribute> _metaAttributes =
             new Dictionary<Type, MonitoringMetaAttribute>();
-        
+
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
@@ -65,17 +66,21 @@ namespace Baracuda.Monitoring.Internal.Profiling
             UnitValueType = unitValueType;
             UnitType = unityType;
             UpdateOptions = attribute.Update;
-#if UNITY_2020_1_OR_NEWER
-            IsStatic = args.ReflectedMemberFlags.HasFlagUnsafe(BindingFlags.Static);
-#else
+
             var intFlag = (int) args.ReflectedMemberFlags;
             IsStatic = intFlag.HasFlag32((int) BindingFlags.Static);
-#endif
+
             var settings = args.Settings;
             
             foreach (var monitoringMetaAttribute in memberInfo.GetCustomAttributes<MonitoringMetaAttribute>())
             {
                 _metaAttributes.Add(monitoringMetaAttribute.GetType(), monitoringMetaAttribute);
+            }
+            
+            //Optimization
+            if (TryGetMetaAttribute<MFontAttribute>(out var fontAttribute))
+            {
+                MonitoringManager.AddFontHash(fontAttribute.FontHash);
             }
 
             FormatData = FormatData.Create(this, settings);
@@ -127,6 +132,14 @@ namespace Baracuda.Monitoring.Internal.Profiling
               BindingFlags.DeclaredOnly |
               BindingFlags.Instance;
 
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Validator ---
+
+        
+        
         #endregion
     }
 }
