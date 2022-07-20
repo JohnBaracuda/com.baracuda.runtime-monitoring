@@ -39,15 +39,14 @@ namespace Baracuda.Monitoring.Modules
         
         [MonitorProperty]
         [MBackgroundColor(ColorPreset.TransparentBlack)]
-        [MGroupColor(ColorPreset.Transparent)]
         [MUpdateEvent(nameof(UpdateDisplayedLogs))]
-        [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, ElementIndent = 0, FontSize = 14)]
+        [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, ElementIndent = 0, GroupElement = false)]
         [MFont("JetBrainsMono-Regular")]
         private Queue<string> Console => messageLogCache;
 
         [MonitorProperty]
         [MBackgroundColor(ColorPreset.TransparentBlack)]
-        [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, Label = "Stacktrace", FontSize = 14)]
+        [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, Label = "Stacktrace", GroupElement = false)]
         [MFont("JetBrainsMono-Regular")]
         //[MConditional(nameof(showStacktraceOfLastMessage))]
         private string LastLogStacktrace => lastLogStacktrace;

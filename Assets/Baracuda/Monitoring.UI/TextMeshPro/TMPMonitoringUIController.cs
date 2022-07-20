@@ -46,6 +46,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         private Transform _transform;
         private UIControllerComponents _components;
 
+        [Monitor]
         private readonly Dictionary<int, TMP_FontAsset> _loadedFonts = new Dictionary<int, TMP_FontAsset>();
 
         #endregion
@@ -85,7 +86,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             {
                 var fontAsset = availableFonts[i];
                 var hash = fontAsset.name.GetHashCode();
-                if (MonitoringManager.GetUsedFontHashSet.Contains(hash))
+                if (MonitoringManager.IsFontHasUsed(hash))
                 {
                     _loadedFonts.Add(hash, fontAsset);
                 }

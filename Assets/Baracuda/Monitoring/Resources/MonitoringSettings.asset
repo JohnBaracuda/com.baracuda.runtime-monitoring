@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableMonitoring: 1
   autoInstantiateUI: 1
-  asyncProfiling: 0
+  asyncProfiling: 1
   openDisplayOnLoad: 1
   monitoringUIController: {fileID: 5494832875220723481, guid: 66c099bdd3d5f694484563c43d722f4f,
     type: 3}

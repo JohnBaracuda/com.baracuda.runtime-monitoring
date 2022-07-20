@@ -11,6 +11,7 @@ using Baracuda.Monitoring.Internal.Units;
 using Baracuda.Pooling.Concretions;
 using Baracuda.Reflection;
 using Baracuda.Threading;
+using JetBrains.Annotations;
 using Debug = UnityEngine.Debug;
 
 namespace Baracuda.Monitoring.API
@@ -105,6 +106,7 @@ namespace Baracuda.Monitoring.API
         /// Get a collection of <see cref="IMonitorUnit"/>s associated with the passed target. 
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Pure]
         public static IMonitorUnit[] GetMonitorUnitsForTarget(object target)
         {
             return GetMonitorUnitsForTargetInternal(target);
@@ -117,23 +119,34 @@ namespace Baracuda.Monitoring.API
         /// <summary>
         /// Get a list of monitoring units for static targets.
         /// </summary>
+        [Pure] 
         public static IReadOnlyList<IMonitorUnit> GetStaticUnits() => staticUnitCache;
         
         /// <summary>
         /// Get a list of monitoring units for instance targets.
         /// </summary>
+        [Pure]
         public static IReadOnlyList<IMonitorUnit> GetInstanceUnits() => instanceUnitCache;
         
         /// <summary>
         /// Get a list of all monitoring units.
         /// </summary>
+        [Pure] 
         public static IReadOnlyList<IMonitorUnit> GetAllMonitoringUnits() => monitoringUnitCache;
 
         /*
          * Optimization Misc   
          */
 
-        public static IReadOnlyCollection<int> GetUsedFontHashSet => fontHashSet;
+        /// <summary>
+        /// Method returns true of the passed hash from the name of a font asset is used by a MFontAttribute and therefore
+        /// required by a monitoring unit. Used to dynamically load/unload required fonts.
+        /// </summary>
+        /// <param name="fontHash">The hash of the fonts name (string)</param>
+        public static bool IsFontHasUsed(int fontHash)
+        {
+            return fontHashSet.Contains(fontHash);
+        }
 
         #endregion
 
@@ -237,6 +250,7 @@ namespace Baracuda.Monitoring.API
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Pure]
         private static IMonitorUnit[] GetMonitorUnitsForTargetInternal(object target)
         {
             if (!IsInitialized)

@@ -68,9 +68,9 @@ Material:
     - _OutlineWidth: 0
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
-    - _ScaleRatioA: 1
-    - _ScaleRatioB: 1
-    - _ScaleRatioC: 1
+    - _ScaleRatioA: 0.8333333
+    - _ScaleRatioB: 0.6770833
+    - _ScaleRatioC: 0.6770833
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
@@ -156,9 +156,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
   m_Name: JetBrainsMono-Regular
   m_EditorClassIdentifier: 
-  hashCode: 0
+  hashCode: -483260598
   material: {fileID: -1596405703288240541}
-  materialHashCode: 0
+  materialHashCode: -1321642966
   m_Version: 1.1.0
   m_SourceFontFileGUID: a2578749a8289aa49b88151bb44f22dc
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: a2578749a8289aa49b88151bb44f22dc,

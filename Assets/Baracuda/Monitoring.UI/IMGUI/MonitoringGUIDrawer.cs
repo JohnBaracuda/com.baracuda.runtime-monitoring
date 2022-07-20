@@ -195,7 +195,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
             {
                 var fontAsset = availableFonts[i];
                 var hash = fontAsset.name.GetHashCode();
-                if (MonitoringManager.GetUsedFontHashSet.Contains(hash))
+                if (MonitoringManager.IsFontHasUsed(hash))
                 {
                     _loadedFonts.Add(hash, fontAsset);
                 }
