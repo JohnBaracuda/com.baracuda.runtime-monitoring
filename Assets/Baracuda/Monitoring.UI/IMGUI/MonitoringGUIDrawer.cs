@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
@@ -27,15 +26,10 @@ namespace Baracuda.Monitoring.UI.IMGUI
         [SerializeField] private MarginOrPadding elementPadding;
         
         [Header("Scaling")]
-        [SerializeField] private bool overrideScale;
-        //TODO: Add/implement an attribute that hides the field if the overrideScale is false
-        [SerializeField] private float scale;
+        [SerializeField] [Range(0,10)] private float scale = 1;
 
         [Header("Coloring")]
         [SerializeField] private Color backgroundColor = Color.black;
-
-        [Header("Other")]
-        [SerializeField] private bool logStartMessage = true;
 
         [Header("Font")]
         [SerializeField] private Font defaultFont;
@@ -51,7 +45,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
         private readonly List<GUIElement> _unitsLowerRight = new List<GUIElement>(100);
 
         private readonly GUIContent _content = new GUIContent();
-        private Vector3 _scale = Vector3.one;
+        private float _calculatedScale;
 
         private static float lastLowerLeftHeight;
         private static float lastLowerRightHeight;
@@ -76,7 +70,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
             public Font Font { get; }
             public int ID { get; }
             public string Content { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; private set; }
-            public FormatData FormatData { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
+            private IFormatData FormatData { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
 
             public readonly Texture2D BackgroundTexture;
             
@@ -171,11 +165,6 @@ namespace Baracuda.Monitoring.UI.IMGUI
             }
         }
         
-        private readonly string _warningMessage =
-            "Using the GUI MonitoringUIController may cause performance overhead! " +
-            "It is recommended to use the TextMeshPro or UIToolkit based Controller instead! " +
-            "\nYou can disable this message from the settings window: <b>Tools > RuntimeMonitoring > Settings: UI Controller > Log Start Message</b>";
-
         private Font GetFont(int fontHash)
         {
             return _loadedFonts.TryGetValue(fontHash, out var fontAsset) ? fontAsset : defaultFont;
@@ -201,16 +190,8 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 }
             }
             availableFonts = null;
-        }
-
-        private void Start()
-        {
+            
             UpdateScale();
-
-            if (logStartMessage)
-            {
-                Debug.LogWarning(_warningMessage);
-            }
         }
 
         private void OnValidate()
@@ -221,14 +202,9 @@ namespace Baracuda.Monitoring.UI.IMGUI
         private void UpdateScale()
         {
 #if UNITY_EDITOR
-            _scale = overrideScale ?
-                new Vector3(scale, scale, 1) :
-                new Vector3(UnityEditor.EditorGUIUtility.pixelsPerPoint, UnityEditor.EditorGUIUtility.pixelsPerPoint, 1);
+            _calculatedScale = Mathf.Max(scale * UnityEditor.EditorGUIUtility.pixelsPerPoint, .001f);
 #else
-            if (overrideScale)
-            {
-                _scale = new Vector3(scale, scale, 1);
-            }
+            _calculatedScale = Mathf.Max(scale, .001f);
 #endif
         }
 
@@ -239,9 +215,9 @@ namespace Baracuda.Monitoring.UI.IMGUI
         private void OnGUI()
         {
             GUI.skin.font = defaultFont;
-            GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, _scale);
+            GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(_calculatedScale, _calculatedScale, 1));
             var ctx = new Context(GUI.skin.label);
-            var screenData = new ScreenData(Screen.width / _scale.x, Screen.height / _scale.y);
+            var screenData = new ScreenData(Screen.width / _calculatedScale, Screen.height / _calculatedScale);
             DrawUpperLeft(ctx, screenData);
             DrawUpperRight(ctx, screenData);
             DrawLowerLeft(ctx, screenData);

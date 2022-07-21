@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
-using Baracuda.Monitoring.Internal.Units;
+using Baracuda.Monitoring.Core.Units;
 
 namespace Baracuda.Monitoring.Interface
 {

@@ -1,6 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
 using System.Reflection;
+using Baracuda.Monitoring.Core.Utilities;
 using Baracuda.Monitoring.Internal.Utilities;
 
 namespace Baracuda.Monitoring.Interface
@@ -50,7 +51,7 @@ namespace Baracuda.Monitoring.Interface
         /// <summary>
         /// Object contains information about label, fontsize and more ui / display related data. 
         /// </summary>
-        FormatData FormatData { get; }
+        IFormatData FormatData { get; }
         
         /// <summary>
         /// String array that contains additional meta data & filtering options for UI.

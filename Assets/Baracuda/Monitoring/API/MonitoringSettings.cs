@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Baracuda.Monitoring.Core.Utilities;
 using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Reflection;
 using UnityEditor;

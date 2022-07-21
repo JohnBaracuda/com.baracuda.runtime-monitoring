@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Baracuda.Monitoring.Core.Utilities;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Monitoring.Internal.Utilities;
 using UnityEngine;
