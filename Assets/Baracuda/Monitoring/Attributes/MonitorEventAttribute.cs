@@ -56,10 +56,17 @@ namespace Baracuda.Monitoring
         
         public MonitorEventAttribute(EventDisplay options)
         {
+#if UNITY_2020_1_OR_NEWER
             ShowSubscriberCount = options.HasFlagUnsafe(EventDisplay.SubCount);
             ShowInvokeCounter = options.HasFlagUnsafe(EventDisplay.InvokeCount);
             ShowTrueCount = options.HasFlagUnsafe(EventDisplay.TrueCount);
             ShowSubscriberInfo = options.HasFlagUnsafe(EventDisplay.SubInfo);
+#endif
+            var value = (int)options;
+            ShowSubscriberCount = value.HasFlag32((int)EventDisplay.SubCount);
+            ShowInvokeCounter = value.HasFlag32((int)EventDisplay.InvokeCount);
+            ShowTrueCount = value.HasFlag32((int)EventDisplay.TrueCount);
+            ShowSubscriberInfo = value.HasFlag32((int)EventDisplay.SubInfo);
         }
 
         //--------------------------------------------------------------------------------------------------------------

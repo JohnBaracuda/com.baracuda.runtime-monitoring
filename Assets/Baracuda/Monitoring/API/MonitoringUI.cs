@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Core.Utilities;
 using Baracuda.Monitoring.Interface;
-using Baracuda.Monitoring.Internal.Utilities;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -283,24 +282,18 @@ namespace Baracuda.Monitoring.API
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ResetFilterInternal()
         {
-            MonitoringManager.AutoValidation = true;
+            MonitoringManager.ValidationTickEnabled = true;
             foreach (var unit in MonitoringManager.GetAllMonitoringUnits())
             {
-                if (unit is IValidatable validatable && validatable.NeedsValidation)
-                {
-                    validatable.Validate();
-                }
-                else
-                {
-                    unit.Enabled = true;
-                }
+                unit.Enabled = true;
+                //TODO: Force validation
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void FilterInternal(string filter)
         {
-            MonitoringManager.AutoValidation = false;
+            MonitoringManager.ValidationTickEnabled = false;
             var list = MonitoringManager.GetAllMonitoringUnits();
             for (var i = 0; i < list.Count; i++)
             {

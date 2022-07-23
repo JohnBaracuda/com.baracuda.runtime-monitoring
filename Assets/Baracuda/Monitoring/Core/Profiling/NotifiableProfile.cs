@@ -45,13 +45,13 @@ namespace Baracuda.Monitoring.Core.Profiling
 
                 if (_addUpdateDelegate != null || _addNotifyDelegate != null)
                 {
-                    RequiresUpdate = false;
+                    ReceiveTick = false;
                 }
             }
 
             if (attribute is MonitorValueAttribute valueAttribute)
             {
-                if (!hasUpdateEventAttribute && RequiresUpdate &&
+                if (!hasUpdateEventAttribute && ReceiveTick &&
 #pragma warning disable CS0618
                     !string.IsNullOrWhiteSpace(valueAttribute.UpdateEvent))
                 {
@@ -62,7 +62,7 @@ namespace Baracuda.Monitoring.Core.Profiling
 
                     if (_addUpdateDelegate != null || _addNotifyDelegate != null)
                     {
-                        RequiresUpdate = false;
+                        ReceiveTick = false;
                     }
                 }
 #pragma warning restore CS0618

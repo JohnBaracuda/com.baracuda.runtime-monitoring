@@ -32,7 +32,8 @@ namespace Baracuda.Monitoring.Core.Profiling
             return null;
         }
 
-        internal static Action<Action<bool>> CreateEventValidator(MConditionalAttribute attribute, Type baseType)
+        
+        internal static ValidationEvent CreateEventValidator(MConditionalAttribute attribute, Type baseType)
         {
             return CreateEventValidatorInternal(attribute, baseType);
         }
@@ -243,7 +244,7 @@ namespace Baracuda.Monitoring.Core.Profiling
 
         #region --- Static Event Validator ---
 
-        private static Action<Action<bool>> CreateEventValidatorInternal(MConditionalAttribute attribute, Type baseType)
+        private static ValidationEvent CreateEventValidatorInternal(MConditionalAttribute attribute, Type baseType)
         {
             if (attribute.ValidationMethod != ValidationMethod.ByMember)
             {
@@ -261,8 +262,11 @@ namespace Baracuda.Monitoring.Core.Profiling
             {
                 return null;
             }
+            
+            var addMethod    = (Action<Action<bool>>)eventInfo.GetAddMethod(true).CreateDelegate(typeof(Action<Action<bool>>));
+            var removeMethod = (Action<Action<bool>>)eventInfo.GetRemoveMethod(true).CreateDelegate(typeof(Action<Action<bool>>));
 
-            return (Action<Action<bool>>)eventInfo.GetAddMethod(true).CreateDelegate(typeof(Action<Action<bool>>));
+            return new ValidationEvent(addMethod, removeMethod);
         }
         
         #endregion
@@ -291,21 +295,20 @@ namespace Baracuda.Monitoring.Core.Profiling
         /*
          * Special Conditions   
          */
-
+        
         private static Func<TValue, bool> CreateValidatorSpecialCondition<TValue>(Condition condition)
         {
             switch (condition)
             {
-                case Condition.None:
-                    return null;
-                
                 case Condition.True:
                     return (Func<TValue, bool>)(Delegate)True();
+                
                 case Condition.False:
                     return (Func<TValue, bool>)(Delegate)False();
                 
                 case Condition.Null:
                     return (value) => value == null;
+                
                 case Condition.NotNull:
                     return (value) => value != null;
                 
@@ -318,6 +321,7 @@ namespace Baracuda.Monitoring.Core.Profiling
                     return typeof(TValue).IsNumeric()
                         ? (Func<TValue, bool>) ((value) => Comparer<TValue>.Default.Compare(value, default) < 0)
                         : null;
+                
                 case Condition.Positive:
                     return typeof(TValue).IsNumeric()
                         ? (Func<TValue, bool>) ((value) => Comparer<TValue>.Default.Compare(value, default) > 0)
@@ -325,6 +329,7 @@ namespace Baracuda.Monitoring.Core.Profiling
                 
                 case Condition.NotNullOrEmpty:
                     return (Func<TValue, bool>)(Delegate)NotNullOrEmpty();
+                
                 case Condition.NotNullOrWhiteSpace:
                     return (Func<TValue, bool>)(Delegate)NotNullOrWhiteSpace();
                 default:
@@ -340,51 +345,31 @@ namespace Baracuda.Monitoring.Core.Profiling
         /*
          * Comparison
          */
+        
 
         private static Func<TValue, bool> CreateValidatorComparison<TValue>(Comparison comparison, object other)
         {
-            try
-            {
-                //TODO: TryConvert
-                var convertedOther = other.ConvertFast<object, TValue>();
-            
-                switch (comparison)
-                {
-                    case Comparison.Equals:
-                        return (value) => EqualityComparer<TValue>.Default.Equals(value, convertedOther);
-                    case Comparison.EqualsNot:
-                        return (value) => !EqualityComparer<TValue>.Default.Equals(value, convertedOther);
-                    case Comparison.Greater:
-                        return (value) =>
-                        {
-                            var comparable = (IComparable<TValue>)value;
-                            return comparable.CompareTo(convertedOther) > 0;
-                        };
-                    case Comparison.GreaterOrEqual:
-                        return (value) =>
-                        {
-                            var comparable = (IComparable<TValue>)value;
-                            return comparable.CompareTo(convertedOther) >= 0;
-                        };
-                    case Comparison.Lesser:
-                        return (value) =>
-                        {
-                            var comparable = (IComparable<TValue>)value;
-                            return comparable.CompareTo(convertedOther) < 0;
-                        };
-                    case Comparison.LesserOrEqual:
-                        return (value) =>
-                        {
-                            var comparable = (IComparable<TValue>)value;
-                            return comparable.CompareTo(convertedOther) <= 0;
-                        };
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(comparison), comparison, null);
-                }
-            }
-            catch (NullReferenceException)
+            if (!other.TryConvert<object, TValue>(out var convertedOther))
             {
                 return null;
+            }
+                
+            switch (comparison)
+            {
+                case Comparison.Equals:
+                    return (value) => EqualityComparer<TValue>.Default.Equals(value, convertedOther);
+                case Comparison.EqualsNot:
+                    return (value) => !EqualityComparer<TValue>.Default.Equals(value, convertedOther);
+                case Comparison.Greater:
+                    return (value) => Comparer<TValue>.Default.Compare(value, convertedOther) > 0;
+                case Comparison.GreaterOrEqual:
+                    return (value) => Comparer<TValue>.Default.Compare(value, convertedOther) >= 0;
+                case Comparison.Lesser:
+                    return (value) =>Comparer<TValue>.Default.Compare(value, convertedOther) < 0;
+                case Comparison.LesserOrEqual:
+                    return (value) => Comparer<TValue>.Default.Compare(value, convertedOther) <= 0;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(comparison), comparison, null);
             }
         }
 

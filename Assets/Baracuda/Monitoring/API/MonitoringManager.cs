@@ -148,7 +148,7 @@ namespace Baracuda.Monitoring.API
             return fontHashSet.Contains(fontHash);
         }
 
-        public static bool AutoValidation { get; set; } = true;
+        public static bool ValidationTickEnabled { get; set; } = true;
 
         #endregion
 

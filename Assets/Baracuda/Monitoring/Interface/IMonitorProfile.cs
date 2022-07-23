@@ -26,12 +26,10 @@ namespace Baracuda.Monitoring.Interface
         /// </summary>
         UnitType UnitType { get; }
         
-        /// <summary>
-        /// Enum determines how often and if a monitored member is evaluated.
-        /// </summary>
+        [Obsolete]
         UpdateOptions UpdateOptions { get; }
         
-        bool RequiresUpdate { get; }
+        bool ReceiveTick { get; }
         
         /// <summary>
         /// The target or declaring type of the monitored member.

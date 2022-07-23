@@ -21,23 +21,41 @@ namespace Baracuda.Monitoring.Core.Utilities
         /// Converts the target to be of the specified type.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T2 ConvertFast<T1, T2>(this T1 value)
+        public static TTo ConvertFast<TFrom, TTo>(this TFrom value)
         {
 #if UNITY_2020_1_OR_NEWER
             return UnsafeUtility.As<T1, T2>(ref value);
 #else
-            return (T2)(object)value;
+            return (TTo)Convert.ChangeType(value, typeof(TTo));
 #endif
+        }
+
+        /// <summary>
+        /// Try to convert the target to the specified type.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryConvert<TFrom, TTo>(this TFrom value, out TTo result)
+        {
+            try
+            {
+                result = value.ConvertFast<TFrom, TTo>();
+                return true;
+            }
+            catch (Exception)
+            {
+                result = default;
+                return false;
+            }
         }
 
         /*
          * Enum Flags   
          */
         
+#if UNITY_2020_1_OR_NEWER
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasFlagUnsafe<TEnum>(this TEnum lhs, TEnum rhs) where TEnum : unmanaged, Enum
         {
-#if UNITY_2020_1_OR_NEWER
             switch (UnsafeUtility.SizeOf<TEnum>())
             {
                 case 1:
@@ -51,14 +69,12 @@ namespace Baracuda.Monitoring.Core.Utilities
                 default:
                     throw new Exception($"Size of {typeof(TEnum).Name} does not match a known Enum backing type.");
             }
-#else
-            return lhs.HasFlag(rhs);
-#endif
         }
+#endif
 
         public static bool HasFlag32(this int lhs, int rhs)
         {
-            return ((uint)lhs & (uint)rhs) > 0; 
+            return unchecked ((uint)lhs & (uint)rhs) > 0; 
         }
 
         /*

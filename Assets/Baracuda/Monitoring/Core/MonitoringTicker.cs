@@ -1,63 +1,84 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using System;
-using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Interface;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Core
 {
-    internal class MonitoringTicker : MonoBehaviour
+    internal class MonitoringTicker : IMonitoringTicker
     {
-        /*
-         * Events   
-         */
-        
-        internal event Action OnLateUpdate;
-        internal event Action OnTick;
-        
-        /*
-         * Tick loop fields
-         */
-        
-        private float _tickTimer = 0;
-        private const float TICK_INTERVAL_IN_SECONDS = .0333f;
-        
-        /*
-         * Unity Event Methods    
-         */
-        
-        private void Awake()
+        [Monitor] private static event Action UpdateTick;
+        [Monitor] private static event Action ValidationTick;
+
+        internal MonitoringTicker()
         {
-            DontDestroyOnLoad(this);
-            var hideFlag = MonitoringSettings.GetInstance().ShowRuntimeMonitoringObject 
+            MonitoringManager.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
+        }
+
+        private void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
+        {
+            if (!Application.isPlaying)
+            {
+                throw new Exception("Application must be in playmode!");
+            }
+            
+            var sceneHook = new GameObject("Monitoring Scene Hook").AddComponent<SceneHook>();
+            
+            UnityEngine.Object.DontDestroyOnLoad(sceneHook);
+            
+            sceneHook.gameObject.hideFlags = MonitoringSettings.GetInstance().ShowRuntimeMonitoringObject 
                 ? HideFlags.None 
                 : HideFlags.HideInHierarchy;
             
-            gameObject.hideFlags = hideFlag;
+            sceneHook.LateUpdateEvent += Tick;
         }
+
+        private static float timer;
         
-        private void LateUpdate()
+        private void Tick(float deltaTime)
         {
-            OnLateUpdate?.Invoke();
-            Tick();
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Tick()
-        {
-            _tickTimer += Time.deltaTime;
-            if (_tickTimer >= TICK_INTERVAL_IN_SECONDS)
+            //TODO: event based
+            //TODO: refresh all units when visible again
+            // if (!MonitoringUI.IsVisible())
+            // {
+            //     return;
+            // }
+            
+            timer += deltaTime;
+            if (timer < .05f)
             {
-                OnTick?.Invoke();
-                _tickTimer = 0;
+                return;
+            }
+
+            timer = 0;
+            UpdateTick?.Invoke();
+            if (MonitoringManager.ValidationTickEnabled)
+            {
+                ValidationTick?.Invoke();
             }
         }
-        
-        private void OnDestroy()
+
+        public void AddUpdateTicker(Action tickAction)
         {
-            OnLateUpdate = null;
-            OnTick = null;
+            UpdateTick += tickAction;
+        }
+
+        public void RemoveUpdateTicker(Action tickAction)
+        {
+            UpdateTick -= tickAction;
+        }
+
+        public void AddValidationTicker(Action tickAction)
+        {
+            ValidationTick += tickAction;
+        }
+
+        public void RemoveValidationTicker(Action tickAction)
+        {
+            ValidationTick -= tickAction;
         }
     }
 }

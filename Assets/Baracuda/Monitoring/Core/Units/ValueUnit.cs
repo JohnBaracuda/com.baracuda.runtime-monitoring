@@ -2,9 +2,11 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Core.Profiling;
 using Baracuda.Monitoring.Core.Utilities;
 using Baracuda.Monitoring.Interface;
+using Baracuda.Threading;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Core.Units
@@ -16,7 +18,7 @@ namespace Baracuda.Monitoring.Core.Units
     /// </summary>
     /// <typeparam name="TTarget"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public abstract class ValueUnit<TTarget, TValue> : MonitorUnit, IValidatable, ISettableValue<TValue>, IGettableValue<TValue> where TTarget : class
+    public abstract class ValueUnit<TTarget, TValue> : MonitorUnit, ISettableValue<TValue>, IGettableValue<TValue> where TTarget : class
     {
         #region --- Fields ---
         
@@ -25,8 +27,10 @@ namespace Baracuda.Monitoring.Core.Units
         private readonly TTarget _target;
         private readonly Func<TTarget, TValue> _getValue;       
         private readonly Action<TTarget, TValue> _setValue;
-        
+
+        private readonly Action _validationTick;
         private readonly Func<bool> _validateFunc;
+        private readonly ValidationEvent _validationEvent;
 
         private readonly ValueProfile<TTarget,TValue>.IsDirtyDelegate _checkIsDirty;
 
@@ -42,7 +46,8 @@ namespace Baracuda.Monitoring.Core.Units
             Func<TTarget, TValue> getValue,
             Action<TTarget, TValue> setValue,
             Func<TValue, string> valueProcessor,
-            MulticastDelegate validator,
+            MulticastDelegate validationFunc,
+            ValidationEvent validationEvent,
             ValueProfile<TTarget, TValue> profile) : base(target, profile)
         {
             _target = target;
@@ -61,29 +66,32 @@ namespace Baracuda.Monitoring.Core.Units
                 }
             }
 
-            if (validator != null)
+            if (validationEvent != null)
             {
-                switch (validator)
+                _validationEvent = validationEvent;
+                _validationEvent.AddMethod(AutoValidation);
+            }
+            
+            // Prefer event based validation
+            else if (validationFunc != null)
+            {
+                switch (validationFunc)
                 {
                     case Func<TTarget, bool> instanceValidator:  
-                        NeedsValidation = true;
                         _validateFunc = () => instanceValidator(_target);
                         break;
                     
                     case Func<bool> simpleValidator:
-                        NeedsValidation = true;
                         _validateFunc = simpleValidator;
                         break;
                     
-                    case Func<TValue, bool> conditionalValidator:  
-                        NeedsValidation = true;
+                    case Func<TValue, bool> conditionalValidator: 
                         _validateFunc = () => conditionalValidator(GetValue());
                         break;
-                    
-                    case Action<Action<bool>> eventValidator:
-                        eventValidator(value => Enabled = value);
-                        break;
                 }
+                
+                _validationTick = () => Enabled = _validateFunc();
+                MonitoringSystems.Resolve<IMonitoringTicker>().AddValidationTicker(_validationTick);
             }
         }
 
@@ -102,14 +110,7 @@ namespace Baracuda.Monitoring.Core.Units
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Update & Validation ---
-
-        public bool NeedsValidation { get; }
-
-        public void Validate()
-        {
-            Enabled = _validateFunc();
-        }
+        #region --- Update ---
 
         public override void Refresh()
         {
@@ -124,6 +125,18 @@ namespace Baracuda.Monitoring.Core.Units
             _lastValue = current;
         }
 
+        #endregion
+
+        #region --- Validation ---
+
+        private void AutoValidation(bool enabled)
+        {
+            if (MonitoringManager.ValidationTickEnabled)
+            {
+                Enabled = enabled;
+            }
+        }
+        
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
@@ -192,7 +205,15 @@ namespace Baracuda.Monitoring.Core.Units
         public override void Dispose()
         {
             base.Dispose();
+            
             ((ValueProfile<TTarget, TValue>)Profile).TryUnsubscribeFromUpdateEvent(_target, Refresh, SetValue);
+            
+            _validationEvent?.RemoveMethod(AutoValidation);
+            
+            if (_validationTick != null)
+            {
+                MonitoringSystems.Resolve<IMonitoringTicker>().RemoveValidationTicker(_validationTick);
+            }
         }
 
         #endregion

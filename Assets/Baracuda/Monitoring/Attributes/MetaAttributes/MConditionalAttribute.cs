@@ -14,7 +14,7 @@ namespace Baracuda.Monitoring
         public readonly ValidationMethod ValidationMethod;
 
         /// <summary>
-        /// ...
+        /// TODO
         /// Please remember that adding conditions will add additional overhead.
         /// </summary>
         public MConditionalAttribute(Condition condition)
@@ -24,7 +24,7 @@ namespace Baracuda.Monitoring
         }
 
         /// <summary>
-        /// ...
+        /// TODO
         /// Please remember that adding conditions will add additional overhead.
         /// </summary>
         public MConditionalAttribute(string memberName)
@@ -34,7 +34,7 @@ namespace Baracuda.Monitoring
         }
         
         /// <summary>
-        /// ...
+        /// TODO
         /// Please remember that adding conditions will add additional overhead.
         /// </summary>
         public MConditionalAttribute(Comparison comparison, object other)
@@ -64,15 +64,14 @@ namespace Baracuda.Monitoring
     
     public enum Condition
     {
-        None = 0,
-        True = 1,
-        False = 2,
-        Null = 3,
-        NotNull = 4,
-        NotZero = 5,
-        Negative = 6,
-        Positive = 7,
-        NotNullOrEmpty = 10,
-        NotNullOrWhiteSpace = 11
+        True = 0,
+        False = 1,
+        Null = 2,
+        NotNull = 3,
+        NotZero = 4,
+        Negative = 5,
+        Positive = 6,
+        NotNullOrEmpty = 7,
+        NotNullOrWhiteSpace = 8
     }
 }

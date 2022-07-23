@@ -21,7 +21,7 @@ namespace Baracuda.Monitoring.Core.Profiling
         public MemberInfo MemberInfo { get; }
         public UnitType UnitType { get; }
         public UpdateOptions UpdateOptions { get; }
-        public bool RequiresUpdate { get; protected set; } = true;
+        public bool ReceiveTick { get; protected set; } = true;
         public Type UnitTargetType { get; }
         public Type UnitValueType { get; }
         public bool IsStatic { get; }

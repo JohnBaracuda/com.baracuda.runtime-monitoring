@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Core.Profiling;
 using Baracuda.Monitoring.Interface;
 using Baracuda.Reflection;
@@ -11,7 +12,7 @@ namespace Baracuda.Monitoring.Core.Units
     /// <summary>
     /// Object wrapping and handling the monitoring of a monitored member.
     /// </summary>
-    public abstract class MonitorUnit : IDisposable, IMonitorUnit
+    public abstract class MonitorUnit : IDisposable, IMonitorUnit, ITickReceiver
     {
         #region --- Delegates ---
 
@@ -143,6 +144,11 @@ namespace Baracuda.Monitoring.Core.Units
                 ? unityObject.name
                 : profile.UnitTargetType.Name;
             UniqueID = backingID++;
+
+            if (profile.ReceiveTick)
+            {
+                MonitoringSystems.Resolve<IMonitoringTicker>().AddUpdateTicker(Refresh);
+            }
         }
 
         #endregion
@@ -154,6 +160,10 @@ namespace Baracuda.Monitoring.Core.Units
         public virtual void Dispose()
         {
             RaiseDisposing();
+            if (Profile.ReceiveTick)
+            {
+                MonitoringSystems.Resolve<IMonitoringTicker>().RemoveUpdateTicker(Refresh);
+            }
         }
 
         public override string ToString()

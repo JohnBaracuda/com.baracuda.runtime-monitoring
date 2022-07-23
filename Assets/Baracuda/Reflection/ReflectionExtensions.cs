@@ -770,7 +770,7 @@ namespace Baracuda.Reflection
         
         public static bool IsStatic(this EventInfo eventInfo)
         {
-            return eventInfo.GetAddMethod().IsStatic;
+            return eventInfo.AddMethod?.IsStatic ?? eventInfo.RemoveMethod.IsStatic;
         }
 
         #endregion
