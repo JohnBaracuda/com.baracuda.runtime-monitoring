@@ -10,9 +10,12 @@ namespace Baracuda.Monitoring.Core
 {
     internal static class MonitoringUpdate
     {
-        private static readonly List<IMonitorUnit> updateUnits = new List<IMonitorUnit>();
-        private static readonly List<IMonitorUnit> tickUnits  = new List<IMonitorUnit>();
+        private static readonly List<IMonitorUnit> updateUnits = new List<IMonitorUnit>(64);
+        private static readonly List<IMonitorUnit> tickUnits  = new List<IMonitorUnit>(64);
         
+        [Monitor]
+        private static readonly List<IValidatable> validationUnits = new List<IValidatable>(32);
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Initialize()
         {
@@ -45,6 +48,11 @@ namespace Baracuda.Monitoring.Core
         
         private static void MonitoringEventsOnUnitCreated(IMonitorUnit unit)
         {
+            if (unit is IValidatable validatable && validatable.NeedsValidation)
+            {
+                validationUnits.Add(validatable);
+            }
+            
             if (unit.Profile.RequiresUpdate)
             {
                 switch (unit.Profile.UpdateOptions)
@@ -63,6 +71,11 @@ namespace Baracuda.Monitoring.Core
 
         private static void MonitoringEventsOnUnitDisposed(IMonitorUnit unit)
         {
+            if (unit is IValidatable validatable && validatable.NeedsValidation)
+            {
+                validationUnits.Remove(validatable);
+            }
+            
             if (unit.Profile.RequiresUpdate)
             {
                 switch (unit.Profile.UpdateOptions)
@@ -99,6 +112,14 @@ namespace Baracuda.Monitoring.Core
             for (var i = 0; i < tickUnits.Count; i++)
             {
                 tickUnits[i].Refresh();
+            }
+
+            if (MonitoringManager.AutoValidation)
+            {
+                for (var i = 0; i < validationUnits.Count; i++)
+                {
+                    validationUnits[i].Validate();
+                }
             }
         }
     }

@@ -251,7 +251,8 @@ namespace Baracuda.Monitoring.Core.Profiling
                 // Check if the types are a perfect match
                 if (parameterInfos.Length == 1 && parameterInfos[0].ParameterType.IsAssignableFrom(valueType))
                 {
-                    return (target, value) => processorFunc(target, value);
+                    //return (target, value) => processorFunc(target, value);
+                    return processorFunc;
                 }
 
                 //----------------------------

@@ -34,6 +34,7 @@ namespace Baracuda.Monitoring.Core.Profiling
                 _getValueDelegate,
                 _setValueDelegate,
                 ValueProcessor((TTarget)target),
+                Validator,
                 this);
         }
 

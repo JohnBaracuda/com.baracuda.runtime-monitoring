@@ -283,15 +283,24 @@ namespace Baracuda.Monitoring.API
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ResetFilterInternal()
         {
+            MonitoringManager.AutoValidation = true;
             foreach (var unit in MonitoringManager.GetAllMonitoringUnits())
             {
-                unit.Enabled = true;
+                if (unit is IValidatable validatable && validatable.NeedsValidation)
+                {
+                    validatable.Validate();
+                }
+                else
+                {
+                    unit.Enabled = true;
+                }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void FilterInternal(string filter)
         {
+            MonitoringManager.AutoValidation = false;
             var list = MonitoringManager.GetAllMonitoringUnits();
             for (var i = 0; i < list.Count; i++)
             {

@@ -31,12 +31,14 @@ namespace Baracuda.Monitoring.Core.Units
             Func<TTarget, TValue> getValue,
             Action<TTarget, TValue> setValue,
             Func<TValue, string> valueProcessor,
+            MulticastDelegate validator,
             FieldProfile<TTarget, TValue> fieldProfile) 
-            : base(target, getValue, setValue, valueProcessor, fieldProfile)
+            : base(target, getValue, setValue, valueProcessor, validator, fieldProfile)
         {
             _fieldProfile = fieldProfile;
         }
-       
+
+
         #endregion
 
     }

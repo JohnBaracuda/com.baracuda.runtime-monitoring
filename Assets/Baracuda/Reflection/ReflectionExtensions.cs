@@ -184,6 +184,12 @@ namespace Baracuda.Reflection
         {
             return (target, value) => field.SetValue(target, value);
         }
+        
+        
+        public static Func<TResult> CreateStaticGetter<TResult>(this FieldInfo field)
+        {
+            return () => (TResult)field.GetValue(null);
+        }
 #endif
         
 

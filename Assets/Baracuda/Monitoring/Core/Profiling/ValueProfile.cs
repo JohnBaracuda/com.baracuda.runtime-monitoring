@@ -30,6 +30,7 @@ namespace Baracuda.Monitoring.Core.Profiling
         private readonly Func<TTarget, TValue, string> _instanceValueProcessorDelegate;
         private readonly Func<TValue, string> _staticValueProcessorDelegate;
         private readonly Func<TValue, string> _fallbackValueProcessorDelegate;
+        protected MulticastDelegate Validator { get; }
         
         private static readonly EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
         
@@ -74,6 +75,16 @@ namespace Baracuda.Monitoring.Core.Profiling
             }
 
             IsDirtyFunc = CreateIsDirtyFunction(unitValueType);
+            
+            if (TryGetMetaAttribute<MConditionalAttribute>(out var conditionalAttribute))
+            {
+                Validator = (MulticastDelegate) ValidatorFactory.CreateStaticValidator(conditionalAttribute, unitTargetType)
+                            ?? (MulticastDelegate) ValidatorFactory.CreateStaticConditionalValidator<TValue>(conditionalAttribute, unitTargetType)
+                            ?? (MulticastDelegate) ValidatorFactory.CreateInstanceValidator<TTarget>(conditionalAttribute);
+                            
+                //TODO make event add/remove
+                //?? (MulticastDelegate) ValidatorFactory.CreateEventValidator(conditionalAttribute, unitTargetType);
+            }
         }
 
         private static IsDirtyDelegate CreateIsDirtyFunction(Type memberType)

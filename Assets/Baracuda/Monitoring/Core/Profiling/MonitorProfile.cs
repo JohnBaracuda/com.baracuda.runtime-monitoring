@@ -27,6 +27,7 @@ namespace Baracuda.Monitoring.Core.Profiling
         public bool IsStatic { get; }
         public string[] Tags { get; }
         public IFormatData FormatData { get; }
+        
 
         public bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute
         {

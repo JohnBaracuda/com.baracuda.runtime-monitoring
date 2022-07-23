@@ -16,7 +16,7 @@ namespace Baracuda.Monitoring.Core.Units
     /// </summary>
     /// <typeparam name="TTarget"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public abstract class ValueUnit<TTarget, TValue> : MonitorUnit, ISettableValue<TValue>, IGettableValue<TValue> where TTarget : class
+    public abstract class ValueUnit<TTarget, TValue> : MonitorUnit, IValidatable, ISettableValue<TValue>, IGettableValue<TValue> where TTarget : class
     {
         #region --- Fields ---
         
@@ -25,8 +25,11 @@ namespace Baracuda.Monitoring.Core.Units
         private readonly TTarget _target;
         private readonly Func<TTarget, TValue> _getValue;       
         private readonly Action<TTarget, TValue> _setValue;
-        private readonly ValueProfile<TTarget,TValue>.IsDirtyDelegate _checkIsDirty;
         
+        private readonly Func<bool> _validateFunc;
+
+        private readonly ValueProfile<TTarget,TValue>.IsDirtyDelegate _checkIsDirty;
+
         private TValue _lastValue = default;
 
         #endregion
@@ -39,6 +42,7 @@ namespace Baracuda.Monitoring.Core.Units
             Func<TTarget, TValue> getValue,
             Action<TTarget, TValue> setValue,
             Func<TValue, string> valueProcessor,
+            MulticastDelegate validator,
             ValueProfile<TTarget, TValue> profile) : base(target, profile)
         {
             _target = target;
@@ -54,6 +58,31 @@ namespace Baracuda.Monitoring.Core.Units
                 if (!profile.TrySubscribeToUpdateEvent(target, Refresh, SetValue))
                 {
                     Debug.LogWarning($"Could not subscribe {Name} to update event!");
+                }
+            }
+
+            if (validator != null)
+            {
+                switch (validator)
+                {
+                    case Func<TTarget, bool> instanceValidator:  
+                        NeedsValidation = true;
+                        _validateFunc = () => instanceValidator(_target);
+                        break;
+                    
+                    case Func<bool> simpleValidator:
+                        NeedsValidation = true;
+                        _validateFunc = simpleValidator;
+                        break;
+                    
+                    case Func<TValue, bool> conditionalValidator:  
+                        NeedsValidation = true;
+                        _validateFunc = () => conditionalValidator(GetValue());
+                        break;
+                    
+                    case Action<Action<bool>> eventValidator:
+                        eventValidator(value => Enabled = value);
+                        break;
                 }
             }
         }
@@ -73,7 +102,14 @@ namespace Baracuda.Monitoring.Core.Units
         
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Update ---
+        #region --- Update & Validation ---
+
+        public bool NeedsValidation { get; }
+
+        public void Validate()
+        {
+            Enabled = _validateFunc();
+        }
 
         public override void Refresh()
         {

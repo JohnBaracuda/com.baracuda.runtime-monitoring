@@ -30,8 +30,9 @@ namespace Baracuda.Monitoring.Core.Units
             Func<TTarget, TValue> getValue, 
             Action<TTarget, TValue> setValue, 
             Func<TValue, string> valueProcessor,
+            MulticastDelegate validator,
             PropertyProfile<TTarget, TValue> propertyProfile) 
-            : base (target, getValue, setValue, valueProcessor, propertyProfile)
+            : base (target, getValue, setValue, valueProcessor, validator, propertyProfile)
         {
             _propertyProfile = propertyProfile;
         }

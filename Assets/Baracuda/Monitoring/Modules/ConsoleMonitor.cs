@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Baracuda.Monitoring.Core.Utilities;
-using Baracuda.Monitoring.Internal.Utilities;
 using Baracuda.Pooling.Concretions;
 using Baracuda.Threading;
 using UnityEngine;
@@ -32,7 +31,8 @@ namespace Baracuda.Monitoring.Modules
         #region --- Inspector ---
 
         [SerializeField] [Min(1)] private int displayedMethodNum = 10;
-        //[SerializeField] private bool showStacktraceOfLastMessage = true;
+#pragma warning disable
+        [SerializeField] private bool active = true;
         
         #endregion
 
@@ -45,13 +45,33 @@ namespace Baracuda.Monitoring.Modules
         [MFont("JetBrainsMono-Regular")]
         private Queue<string> Console => messageLogCache;
 
-        [MonitorProperty]
+        [Monitor]
         [MBackgroundColor(ColorPreset.TransparentBlack)]
         [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, Label = "Stacktrace", GroupElement = false)]
         [MFont("JetBrainsMono-Regular")]
-        //[MConditional(nameof(showStacktraceOfLastMessage))]
+        [MConditional(Condition.NotNullOrWhiteSpace)]
         private string LastLogStacktrace => lastLogStacktrace;
 
+
+        [Monitor]
+        [MConditional(Comparison.GreaterOrEqual, 1000)]
+        [SerializeField] private int integer = 0;
+        
+        
+        [Monitor]
+        [MConditional(Condition.NotZero)]
+        [SerializeField] private double doubleValue = 0;
+        [Monitor]
+        [MConditional(Condition.Positive)]
+        [SerializeField] private float floatValue = 0;
+        [Monitor]
+        [MConditional(Condition.Negative)]
+        [SerializeField] private short shortValue = 0;
+        
+        [Monitor]
+        [MConditional(Condition.Positive)]
+        [SerializeField] private Vector3 vec = Vector3.zero;
+        
         #endregion
 
         protected override void Awake()

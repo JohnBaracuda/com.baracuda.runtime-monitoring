@@ -5,6 +5,10 @@ using System.Runtime.CompilerServices;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
+#if UNITY_2020_1_OR_NEWER
+using Unity.Collections.LowLevel.Unsafe;
+#endif
+
 namespace Baracuda.Monitoring.Core.Utilities
 {
     public static class MonitoringExtensions
