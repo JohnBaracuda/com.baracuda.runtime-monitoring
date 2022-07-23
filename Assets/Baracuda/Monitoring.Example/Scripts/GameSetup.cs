@@ -7,10 +7,10 @@ namespace Baracuda.Monitoring.Example.Scripts
         private void Awake()
         {
             QualitySettings.vSyncCount = 0;
-            Application.targetFrameRate = 165;
+            Application.targetFrameRate = 200;
         
-            Debug.Log("Setting vSync to 0!", this);
-            Debug.Log("Setting target frame rate to 165!", this);
+            Debug.Log($"Setting vSync to [{QualitySettings.vSyncCount}]!", this);
+            Debug.Log($"Setting target frame rate to [{Application.targetFrameRate}]!", this);
         }
     }
 }

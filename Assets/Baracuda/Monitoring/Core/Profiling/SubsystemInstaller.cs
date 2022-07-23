@@ -10,6 +10,8 @@ namespace Baracuda.Monitoring.Core.Profiling
         {
             //TODO: either port every other system to be interface based or make ticker also static
             MonitoringSystems.Register<IMonitoringTicker>(new MonitoringTicker());
+            //Monitoring Manager
+            //Monitoring UI
         }
     }
 }

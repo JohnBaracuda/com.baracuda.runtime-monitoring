@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Core.Utilities;
 using Baracuda.Reflection;
-using UnityEngine;
 
 namespace Baracuda.Monitoring.Core.Profiling
 {
@@ -12,6 +11,8 @@ namespace Baracuda.Monitoring.Core.Profiling
     {
         #region --- API ---
 
+        //TODO: Make partial
+        
         internal static Func<bool> CreateStaticValidator(MConditionalAttribute attribute, Type baseType)
         {
             return CreateStaticValidatorInternal(attribute, baseType);
@@ -29,7 +30,7 @@ namespace Baracuda.Monitoring.Core.Profiling
         
         internal static Func<TTarget, TValue, bool> CreateInstanceConditionalValidator<TTarget, TValue>(MConditionalAttribute attribute, Type baseType)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         

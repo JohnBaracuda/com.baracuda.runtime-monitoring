@@ -36,9 +36,10 @@ namespace Baracuda.Monitoring.Core
             sceneHook.LateUpdateEvent += Tick;
         }
 
-        private static float timer;
+        private static float updateTimer;
+        private static float validationTimer;
         
-        private void Tick(float deltaTime)
+        private static void Tick(float deltaTime)
         {
             //TODO: event based
             //TODO: refresh all units when visible again
@@ -47,17 +48,21 @@ namespace Baracuda.Monitoring.Core
             //     return;
             // }
             
-            timer += deltaTime;
-            if (timer < .05f)
+            updateTimer += deltaTime;
+            if (updateTimer > .05f)
             {
-                return;
+                updateTimer = 0;
+                UpdateTick?.Invoke();
             }
 
-            timer = 0;
-            UpdateTick?.Invoke();
-            if (MonitoringManager.ValidationTickEnabled)
+            validationTimer += deltaTime;
+            if (validationTimer > .1f)
             {
-                ValidationTick?.Invoke();
+                validationTimer = 0;
+                if (MonitoringManager.ValidationTickEnabled)
+                {
+                    ValidationTick?.Invoke();
+                }
             }
         }
 
