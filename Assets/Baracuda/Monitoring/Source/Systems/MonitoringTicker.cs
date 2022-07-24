@@ -19,8 +19,8 @@ namespace Baracuda.Monitoring.Source.Systems
 
         //--------------------------------------------------------------------------------------------------------------
         
-        [Monitor] private static event Action UpdateTick;
-        [Monitor] private static event Action ValidationTick;
+        private static event Action UpdateTick;
+        private static event Action ValidationTick;
 
         //--------------------------------------------------------------------------------------------------------------
         
