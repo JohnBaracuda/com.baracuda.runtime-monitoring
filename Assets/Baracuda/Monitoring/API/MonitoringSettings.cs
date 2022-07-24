@@ -242,10 +242,10 @@ namespace Baracuda.Monitoring.API
         
         #region --- Asset Logic ---
        
-        internal static MonitoringSettings FindOrCreateSettingsAsset() =>
+        public static MonitoringSettings FindOrCreateSettingsAsset() =>
             current ? current : current =
                 Resources.LoadAll<MonitoringSettings>(string.Empty).FirstOrDefault() ?? CreateAsset() ?? throw new Exception(
-                    $"{nameof(ScriptableObject)}: {nameof(MonitoringSettings)} was not found when calling: {nameof(GetInstance)} and cannot be created!"); 
+                    $"{nameof(ScriptableObject)}: {nameof(MonitoringSettings)} was not found and cannot be created!"); 
 
         private static MonitoringSettings current;
     

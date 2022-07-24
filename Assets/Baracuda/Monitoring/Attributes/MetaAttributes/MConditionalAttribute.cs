@@ -74,7 +74,8 @@ namespace Baracuda.Monitoring
         NotZero = 4,
         Negative = 5,
         Positive = 6,
-        NotNullOrEmpty = 7,
-        NotNullOrWhiteSpace = 8
+        NotNullOrEmptyString = 7,
+        NotNullOrWhiteSpace = 8,
+        NotEmpty = 9
     }
 }

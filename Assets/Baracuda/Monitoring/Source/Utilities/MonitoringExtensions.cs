@@ -23,7 +23,7 @@ namespace Baracuda.Monitoring.Source.Utilities
         public static TTo ConvertFast<TFrom, TTo>(this TFrom value)
         {
 #if UNITY_2020_1_OR_NEWER
-            return UnsafeUtility.As<T1, T2>(ref value);
+            return UnsafeUtility.As<TFrom, TTo>(ref value);
 #else
             return (TTo)Convert.ChangeType(value, typeof(TTo));
 #endif
@@ -37,7 +37,7 @@ namespace Baracuda.Monitoring.Source.Utilities
         {
             try
             {
-                result = value.ConvertFast<TFrom, TTo>();
+                result = (TTo)Convert.ChangeType(value, typeof(TTo));
                 return true;
             }
             catch (Exception)

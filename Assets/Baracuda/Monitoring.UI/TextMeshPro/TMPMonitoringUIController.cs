@@ -10,8 +10,6 @@ using UnityEngine.UI;
 
 namespace Baracuda.Monitoring.UI.TextMeshPro
 {
-    
-    
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(UIControllerComponents))]
     public class TMPMonitoringUIController : MonitoringUIController
@@ -45,7 +43,6 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         private Transform _transform;
         private UIControllerComponents _components;
 
-        [Monitor]
         private readonly Dictionary<int, TMP_FontAsset> _loadedFonts = new Dictionary<int, TMP_FontAsset>();
 
         #endregion

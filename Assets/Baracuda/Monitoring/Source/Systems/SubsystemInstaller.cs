@@ -17,10 +17,10 @@ namespace Baracuda.Monitoring.Source.Systems
             MonitoringSystems.Register<IMonitoringManager>(monitoringManager);
             MonitoringSystems.Register<IMonitoringManagerInternal>(monitoringManager);
             
+            MonitoringSystems.Register<IMonitoringPlugin>(new MonitoringPluginData());
             MonitoringSystems.Register<IMonitoringSettings>(MonitoringSettings.FindOrCreateSettingsAsset());
             MonitoringSystems.Register<IMonitoringTicker>(new MonitoringTicker());
             MonitoringSystems.Register<IMonitoringUI>(new MonitoringUISystem());
-            MonitoringSystems.Register<IMonitoringPlugin>(new MonitoringPluginData());
             MonitoringSystems.Register<IMonitoringLogger>(new MonitoringLogging());
             
             // Initialization systems will be flushed after profiling

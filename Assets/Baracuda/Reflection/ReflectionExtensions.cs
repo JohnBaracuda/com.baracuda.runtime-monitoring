@@ -137,6 +137,11 @@ namespace Baracuda.Reflection
 #if !ENABLE_IL2CPP && UNITY_2021_3_OR_NEWER
         public static Func<TTarget, TResult> CreateGetter<TTarget, TResult>(this FieldInfo field)
         {
+            if (field.IsLiteral)
+            {
+                return (target) => (TResult)field.GetValue(target);;
+            }
+            
             var methodName = $"{field!.ReflectedType!.FullName}.get_{field.Name}";
             var setterMethod = new DynamicMethod(methodName, typeof(TResult), new[] {typeof(TTarget)}, true);
             var gen = setterMethod.GetILGenerator();
@@ -184,13 +189,12 @@ namespace Baracuda.Reflection
         {
             return (target, value) => field.SetValue(target, value);
         }
-        
+#endif
         
         public static Func<TResult> CreateStaticGetter<TResult>(this FieldInfo field)
         {
             return () => (TResult)field.GetValue(null);
         }
-#endif
         
 
         #endregion
@@ -564,6 +568,7 @@ namespace Baracuda.Reflection
 
             return false;
         }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIList(this Type type)

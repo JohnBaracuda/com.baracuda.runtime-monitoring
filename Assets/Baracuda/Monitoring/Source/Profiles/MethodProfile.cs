@@ -89,16 +89,19 @@ namespace Baracuda.Monitoring.Source.Profiles
                 if (current.IsOut)
                 {
                     var outArgName = $"  {"out".Colorize(settings.OutParamColor)} {current.Name}";
-                    var parameterFormat = new FormatData(
-                        format.Format,
-                        format.ShowIndexer,
-                        outArgName,
-                        format.FontSize,
-                        format.Position,
-                        format.AllowGrouping,
-                        format.Group,
-                        Mathf.Max(format.ElementIndent * 2, 4)
-                    );
+                    var parameterFormat = new FormatData
+                    {
+                        Format = format.Format,
+                        ShowIndexer = format.ShowIndexer,
+                        Label = outArgName,
+                        FontSize = format.FontSize,
+                        Position = format.Position,
+                        AllowGrouping = format.AllowGrouping,
+                        Group = format.Group,
+                        ElementIndent = Mathf.Max(format.ElementIndent * 2, 4)
+                    };
+                    
+                    
                     var handle = OutParameterHandle.CreateForType(current.ParameterType, parameterFormat);
                     handles.Add(i, handle);
                 }

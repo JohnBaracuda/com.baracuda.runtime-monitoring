@@ -54,9 +54,9 @@ namespace Baracuda.Monitoring.Modules
 
         #endregion
 
-        #region --- Event Methods ---
+        #region --- Setup ---
 
-        private void OnValidate()
+         private void OnValidate()
         {
             UpdateDisplay();
         }
@@ -66,13 +66,11 @@ namespace Baracuda.Monitoring.Modules
             UpdateDisplay();
         }
 
-        #endregion
-
         private void UpdateDisplay()
         {
             var sb = StringBuilderPool.Get();
 
-            var entries = new List<(string, string)>(30);
+            var entries = new List<(string title, string value)>(30);
 
             if (showOperatingSystem)
             {
@@ -140,7 +138,7 @@ namespace Baracuda.Monitoring.Modules
                 entries.Add(("Battery Status", SystemInfo.batteryStatus.ToString()));
             }
 
-            var max = entries.Select(valueTuple => valueTuple.Item1.Length).Prepend(0).Max();
+            var max = entries.Select(valueTuple => valueTuple.title.Length).Prepend(0).Max();
 
             foreach (var (title, value) in entries)
             {
@@ -155,5 +153,7 @@ namespace Baracuda.Monitoring.Modules
 
             DisplayConfigUpdated?.Invoke();
         }
+        
+        #endregion
     }
 }

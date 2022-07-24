@@ -17,8 +17,8 @@ namespace Baracuda.Monitoring.Editor
 
         private void OnEnable()
         {
-            var settings = MonitoringSystems.Resolve<IMonitoringSettings>();
-            _inspector = (MonitoringSettingsInspector) UnityEditor.Editor.CreateEditor(settings as Object);
+            var settings = MonitoringSettings.FindOrCreateSettingsAsset();
+            _inspector = (MonitoringSettingsInspector) UnityEditor.Editor.CreateEditor(settings);
             _inspector.Refresh();
         }
 

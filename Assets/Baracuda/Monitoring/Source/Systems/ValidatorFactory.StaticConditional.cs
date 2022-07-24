@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Reflection;
+using UnityEngine;
 
 namespace Baracuda.Monitoring.Source.Systems
 {
@@ -61,11 +64,19 @@ namespace Baracuda.Monitoring.Source.Systems
                         ? (Func<TValue, bool>) ((value) => Comparer<TValue>.Default.Compare(value, default) > 0)
                         : null;
                 
-                case Condition.NotNullOrEmpty:
+                case Condition.NotNullOrEmptyString:
                     return (Func<TValue, bool>)(Delegate)NotNullOrEmpty();
                 
                 case Condition.NotNullOrWhiteSpace:
                     return (Func<TValue, bool>)(Delegate)NotNullOrWhiteSpace();
+                
+                case Condition.NotEmpty:
+                    if (typeof(TValue).HasInterface<ICollection>())
+                    {
+                        return (Func<TValue, bool>)(Delegate)NotEmptyCount();
+                    }
+                    return (Func<TValue, bool>)(Delegate)NotEmpty();
+                
                 default:
                     throw new ArgumentOutOfRangeException(nameof(condition), condition, null);
             }
@@ -74,6 +85,8 @@ namespace Baracuda.Monitoring.Source.Systems
             Func<bool, bool> False() => (value) => !value;
             Func<string, bool> NotNullOrEmpty() => (value) =>  !string.IsNullOrEmpty(value);
             Func<string, bool> NotNullOrWhiteSpace() => (value) =>  !string.IsNullOrWhiteSpace(value);
+            Func<IEnumerable, bool> NotEmpty() => (value) => value?.GetEnumerator().MoveNext() ?? false;
+            Func<ICollection, bool> NotEmptyCount() => (value) => value != null && value.Count > 0;
         }
 
         /*

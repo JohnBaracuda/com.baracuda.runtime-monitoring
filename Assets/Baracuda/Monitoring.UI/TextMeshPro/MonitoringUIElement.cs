@@ -61,6 +61,8 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
                 ? _controller.GetFontAsset(fontAttribute.FontHash)
                 : _controller.GetDefaultFontAsset();
 
+            _tmpText.alignment = ToTextAlignmentOptions(format.TextAlign);
+
             if (format.FontSize > 0)
             {
                 _tmpText.fontSize = format.FontSize;
@@ -69,6 +71,21 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             monitorUnit.ValueUpdated += _updateValueAction;
             monitorUnit.ActiveStateChanged += _activeStateAction;
             _updateValueAction(monitorUnit.GetState());
+        }
+
+
+        private static TextAlignmentOptions ToTextAlignmentOptions(HorizontalTextAlign align)
+        {
+            switch (align)
+            {
+                case HorizontalTextAlign.Left:
+                    return TextAlignmentOptions.Left;
+                case HorizontalTextAlign.Center:
+                    return TextAlignmentOptions.Center;
+                case HorizontalTextAlign.Right:
+                    return TextAlignmentOptions.Right;
+            }
+            return TextAlignmentOptions.Left;
         }
         
         #endregion

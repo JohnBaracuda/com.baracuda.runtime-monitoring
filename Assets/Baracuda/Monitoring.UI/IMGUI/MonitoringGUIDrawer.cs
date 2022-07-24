@@ -23,8 +23,9 @@ namespace Baracuda.Monitoring.UI.IMGUI
         [SerializeField] private float elementSpacing = 2f;
         [SerializeField] private MarginOrPadding windowMargin;
         [SerializeField] private MarginOrPadding elementPadding;
-        
-        [Header("Scaling")]
+
+        [Header("Scaling")] 
+        [SerializeField] private bool customScale = true;
         [SerializeField] [Range(0,10)] private float scale = 1;
 
         [Header("Coloring")]
@@ -44,6 +45,8 @@ namespace Baracuda.Monitoring.UI.IMGUI
         private readonly List<GUIElement> _unitsLowerRight = new List<GUIElement>(100);
 
         private readonly GUIContent _content = new GUIContent();
+        
+        [Monitor]
         private float _calculatedScale;
 
         private static float lastLowerLeftHeight;
@@ -180,6 +183,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
             base.Awake();
 
             var manager = MonitoringSystems.Resolve<IMonitoringManager>();
+            
             for (var i = 0; i < availableFonts.Length; i++)
             {
                 var fontAsset = availableFonts[i];
@@ -190,7 +194,11 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 }
             }
             availableFonts = null;
-            
+            UpdateScale();
+        }
+
+        private void Start()
+        {
             UpdateScale();
         }
 
@@ -202,7 +210,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
         private void UpdateScale()
         {
 #if UNITY_EDITOR
-            _calculatedScale = Mathf.Max(scale * UnityEditor.EditorGUIUtility.pixelsPerPoint, .001f);
+            _calculatedScale = customScale? Mathf.Max(scale, .001f) : UnityEditor.EditorGUIUtility.pixelsPerPoint;
 #else
             _calculatedScale = Mathf.Max(scale, .001f);
 #endif

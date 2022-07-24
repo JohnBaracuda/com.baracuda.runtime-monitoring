@@ -1,8 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Baracuda.Monitoring.Interface;
+using Baracuda.Monitoring.API;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -12,6 +10,10 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
     internal class UIToolkitMonitoringUIController : MonitoringUIController, IStyleProvider
     {
         #region --- Inspector ---
+        
+        [Header("Font")]
+        [SerializeField] private Font defaultFont;
+        [SerializeField] private Font[] availableFonts;
         
         [Header("Styles")]
         [SerializeField] private StyleSheet[] optionalStyleSheets;
@@ -27,18 +29,27 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
         #endregion
 
         #region --- Properties ---
+        
         public string[] InstanceUnitStyles => _instanceUnitStyles ??= instanceUnitStyles.Split(' ');
         public string[] InstanceGroupStyles => _instanceGroupStyles ??= instanceGroupStyles.Split(' ');
         public string[] InstanceLabelStyles => _instanceLabelStyles ??= instanceLabelStyles.Split(' ');
         public string[] StaticUnitStyles => _staticUnitStyles ??= staticUnitStyles.Split(' ');
         public string[] StaticGroupStyles => _staticGroupStyles ??= staticGroupStyles.Split(' ');
         public string[] StaticLabelStyles => _staticLabelStyles ??= staticLabelStyles.Split(' ');
+        public Font DefaultFont => defaultFont;
+        public Font GetFont(int fontHash)
+        {
+            return _loadedFonts.TryGetValue(fontHash, out var fontAsset) ? fontAsset : defaultFont;
+        }
 
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Fields ---
+        
+        
+        private readonly Dictionary<int, Font> _loadedFonts = new Dictionary<int, Font>();
 
         // ReSharper disable once CollectionNeverQueried.Local
         private readonly Dictionary<IMonitorUnit, IMonitoringUIElement> _monitorUnitDisplays = new Dictionary<IMonitorUnit, IMonitoringUIElement>();
@@ -64,6 +75,19 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
         protected override void Awake()
         {
             base.Awake();
+            
+            var manager = MonitoringSystems.Resolve<IMonitoringManager>();
+            for (var i = 0; i < availableFonts.Length; i++)
+            {
+                var fontAsset = availableFonts[i];
+                var hash = fontAsset.name.GetHashCode();
+                if (manager.IsFontHasUsed(hash))
+                {
+                    _loadedFonts.Add(hash, fontAsset);
+                }
+            }
+            availableFonts = null;
+            
             _monitorUnitDisplays.Clear();
 
             _uiDocument = GetComponent<UIDocument>();

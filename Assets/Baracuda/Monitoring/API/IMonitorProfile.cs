@@ -26,7 +26,7 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         UnitType UnitType { get; }
         
-        [Obsolete]
+        [Obsolete("Setting custom update intervals is no longer supported!")] 
         UpdateOptions UpdateOptions { get; }
         
         bool ReceiveTick { get; }

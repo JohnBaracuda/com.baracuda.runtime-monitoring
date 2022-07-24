@@ -44,7 +44,13 @@ namespace Baracuda.Monitoring
         /// The preferred position of an individual UIElement on the canvas. 
         /// </summary>
         public UIPosition Position { get; set; } = UIPosition.UpperLeft;
-        
+
+        /// <summary>
+        /// Horizontal Text Align
+        /// </summary>
+        public HorizontalTextAlign TextAlign { get; set; } = HorizontalTextAlign.Left;
+
+        //--------------------------------------------------------------------------------------------------------------
         
         public MFormatOptionsAttribute(string format)
         {
@@ -71,6 +77,13 @@ namespace Baracuda.Monitoring
         UpperRight = 1,
         LowerLeft = 2,
         LowerRight = 3,
+    }
+
+    public enum HorizontalTextAlign
+    {
+        Left = 0,
+        Center = 1,
+        Right = 2
     }
 
     public static class UIPositionExtension

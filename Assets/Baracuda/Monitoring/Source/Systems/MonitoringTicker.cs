@@ -89,7 +89,6 @@ namespace Baracuda.Monitoring.Source.Systems
         }
 
         
-
         public void AddUpdateTicker(Action tickAction)
         {
             UpdateTick += tickAction;

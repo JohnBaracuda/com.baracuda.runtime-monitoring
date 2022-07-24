@@ -8,37 +8,29 @@ namespace Baracuda.Monitoring.Source.Utilities
 {
     public class FormatData : IFormatData
     {
-        public string Format { get; }
-        public bool ShowIndexer { get; }
-        public string Label { get; }
-        public int FontSize { get; }
-        public UIPosition Position { get; }
-        public int ElementIndent { get; }
-        
-        public bool AllowGrouping { get; }
-        public string Group { get; }
+        public string Format { get; internal set; }
+        public bool ShowIndexer { get; internal set; }
+        public string Label { get; internal set; }
+        public int FontSize { get; internal set; }
+        public UIPosition Position { get; internal set; }
+        public HorizontalTextAlign TextAlign { get; internal set; }
+        public int ElementIndent { get; internal set; }
+        public bool AllowGrouping { get; internal set; }
+        public string Group { get; internal set; }
         
         /*
          * Ctor   
          */
-                
-        internal FormatData(string format, bool showIndexer, string label, int fontSize, UIPosition position, bool allowGrouping, string group, int indent)
+    
+        internal FormatData()
         {
-            Format = format;
-            ShowIndexer = showIndexer;
-            Label = label;
-            FontSize = fontSize;
-            Position = position;
-            AllowGrouping = allowGrouping;
-            Group = group;
-            ElementIndent = indent;
         }
 
         /*
          * Factory   
          */
         
-        internal static IFormatData CreateFormatData(MonitorProfile profile, IMonitoringSettings settings)
+        internal static IFormatData CreateFormatData(IMonitorProfile profile, IMonitoringSettings settings)
         {
             var formatAttribute = profile.GetMetaAttribute<MFormatOptionsAttribute>();
 
@@ -47,6 +39,7 @@ namespace Baracuda.Monitoring.Source.Utilities
             var label = formatAttribute?.Label;
             var fontSize = formatAttribute?.FontSize ?? -1;
             var position = formatAttribute?.Position ?? UIPosition.UpperLeft;
+            var align = formatAttribute?.TextAlign ?? HorizontalTextAlign.Left;
             var allowGrouping = formatAttribute?.GroupElement ?? true;
             var indent = formatAttribute?.ElementIndent ?? -1;
             var group = settings.HumanizeNames? profile.UnitTargetType.Name.Humanize() : profile.UnitTargetType.Name;
@@ -65,8 +58,19 @@ namespace Baracuda.Monitoring.Source.Utilities
                     label = $"{profile.UnitTargetType.Name.Colorize(settings.ClassColor)}{settings.AppendSymbol.ToString()}{label}";
                 }
             }
-            
-            return new FormatData(format, showIndexer, label, fontSize, position, allowGrouping, group, indent);
+
+            return new FormatData
+            {
+                Format = format,
+                ShowIndexer = showIndexer,
+                Label = label,
+                FontSize = fontSize,
+                Position = position,
+                TextAlign = align,
+                AllowGrouping = allowGrouping,
+                ElementIndent = indent,
+                Group = group
+            };
         }
     }
 }

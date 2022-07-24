@@ -7,6 +7,7 @@
         string Label { get; }
         int FontSize { get; }
         UIPosition Position { get; }
+        HorizontalTextAlign TextAlign { get; }
         int ElementIndent { get; }
         bool AllowGrouping { get; }
         string Group { get; }

@@ -20,7 +20,6 @@ namespace Baracuda.Monitoring.Source.Profiles
         public MonitorAttribute Attribute { get; }
         public MemberInfo MemberInfo { get; }
         public UnitType UnitType { get; }
-        public UpdateOptions UpdateOptions { get; }
         public bool ReceiveTick { get; protected set; } = true;
         public Type UnitTargetType { get; }
         public Type UnitValueType { get; }
@@ -66,8 +65,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             MemberInfo = memberInfo;
             UnitTargetType = unitTargetType;
             UnitValueType = unitValueType;
-            UnitType = unityType;
-            UpdateOptions = attribute.Update;
+            UnitType = unityType; 
 
             var intFlag = (int) args.ReflectedMemberFlags;
             IsStatic = intFlag.HasFlag32((int) BindingFlags.Static);
@@ -142,6 +140,14 @@ namespace Baracuda.Monitoring.Source.Profiles
 
         
         
+        #endregion
+
+        #region --- Obsolete ---
+
+#pragma warning disable CS0618
+        public UpdateOptions UpdateOptions { get; } = default;
+#pragma warning restore CS0618
+
         #endregion
     }
 }

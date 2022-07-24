@@ -31,8 +31,6 @@ namespace Baracuda.Monitoring.Modules
         #region --- Inspector ---
 
         [SerializeField] [Min(1)] private int displayedMethodNum = 10;
-#pragma warning disable
-        [SerializeField] private bool active = true;
         
         #endregion
 
@@ -43,8 +41,10 @@ namespace Baracuda.Monitoring.Modules
         [MUpdateEvent(nameof(UpdateDisplayedLogs))]
         [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, ElementIndent = 0, GroupElement = false)]
         [MFont("JetBrainsMono-Regular")]
+        [MConditional(Condition.NotEmpty)]
         private Queue<string> Console => messageLogCache;
-
+        
+        
         [Monitor]
         [MBackgroundColor(ColorPreset.TransparentBlack)]
         [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, Label = "Stacktrace", GroupElement = false)]
@@ -52,27 +52,9 @@ namespace Baracuda.Monitoring.Modules
         [MConditional(Condition.NotNullOrWhiteSpace)]
         private string LastLogStacktrace => lastLogStacktrace;
 
-
-        [Monitor]
-        [MConditional(Comparison.GreaterOrEqual, 1000)]
-        [SerializeField] private int integer = 0;
-        
-        
-        [Monitor]
-        [MConditional(Condition.NotZero)]
-        [SerializeField] private double doubleValue = 0;
-        [Monitor]
-        [MConditional(Condition.Positive)]
-        [SerializeField] private float floatValue = 0;
-        [Monitor]
-        [MConditional(Condition.Negative)]
-        [SerializeField] private short shortValue = 0;
-        
-        [Monitor]
-        [MConditional(Condition.Positive)]
-        [SerializeField] private Vector3 vec = Vector3.zero;
-        
         #endregion
+
+        #region --- Event Methods ---
 
         protected override void Awake()
         {
@@ -92,9 +74,11 @@ namespace Baracuda.Monitoring.Modules
             {
                 messageLogCache.Dequeue();
             }
-            
+
             UpdateDisplayedLogs?.Invoke();
         }
+
+        #endregion
 
         #region --- Message Log Caching ---
  
