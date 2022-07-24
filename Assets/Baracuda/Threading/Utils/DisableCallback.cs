@@ -1,8 +1,9 @@
 // Copyright (c) 2022 Jonathan Lang
+
 using System;
 using UnityEngine;
 
-namespace Baracuda.Threading.Internal
+namespace Baracuda.Threading.Utils
 {
     [DisallowMultipleComponent]
     public class DisableCallback : MonoBehaviour, IDisableCallback

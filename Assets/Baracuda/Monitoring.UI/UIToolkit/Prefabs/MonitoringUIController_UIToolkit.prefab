@@ -61,6 +61,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c930b01391a542548b4f7ceabe6c3e41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultFont: {fileID: 12800000, guid: c4ce778c0d74c3a4991da927843eef0a, type: 3}
+  availableFonts:
+  - {fileID: 12800000, guid: 705127288c683f54797ff36d995f0dc5, type: 3}
+  - {fileID: 12800000, guid: de5a653d9072403458f2f27013629c58, type: 3}
+  - {fileID: 12800000, guid: b6633edb6e2518a4e91ef3da367cca79, type: 3}
+  - {fileID: 12800000, guid: 433dec38ba1c8f644aaf3c4a8d7970dd, type: 3}
+  - {fileID: 12800000, guid: 849a061a51ea7aa49bb09a52e5cbe697, type: 3}
+  - {fileID: 12800000, guid: abc61786eecfff84da00b192c91c7b4e, type: 3}
+  - {fileID: 12800000, guid: 7ee1827df54f8f643a05a2cd6b5a52dc, type: 3}
+  - {fileID: 12800000, guid: 78468cc539150844b9a6a42e2ce81818, type: 3}
+  - {fileID: 12800000, guid: c50e51621dd92f54b938962ce019aad1, type: 3}
+  - {fileID: 12800000, guid: 4d73b65906e720a478d1dd9822d5e3ea, type: 3}
+  - {fileID: 12800000, guid: b2db681098a3c714abbeb426e537497d, type: 3}
+  - {fileID: 12800000, guid: aeab03d1dbbac9e499fa612dd50ae826, type: 3}
+  - {fileID: 12800000, guid: c4ce778c0d74c3a4991da927843eef0a, type: 3}
+  - {fileID: 12800000, guid: 82bf21c64c7650140a30ab1e46b600d3, type: 3}
+  - {fileID: 12800000, guid: a27613bf65ad33d40a5d09bb648bc304, type: 3}
+  - {fileID: 12800000, guid: e6d0dda3cd6a9154c9bbee15152772e8, type: 3}
+  - {fileID: 12800000, guid: d8de1748675031348bc6fb048ccf235b, type: 3}
+  - {fileID: 12800000, guid: 876a44bc4c30b1e42ab222b71de4b4c6, type: 3}
+  - {fileID: 12800000, guid: 2681e481590e45a4aa97faa76a99f335, type: 3}
+  - {fileID: 12800000, guid: c183671a3acb010439fbf3307d934949, type: 3}
+  - {fileID: 12800000, guid: 17adeadaf82efbd47811da7f25166e69, type: 3}
+  - {fileID: 12800000, guid: 28ff9c4780fe0814890b4b35a1af9e41, type: 3}
+  - {fileID: 12800000, guid: f5824630ddfda5c4bbf66362636525e7, type: 3}
+  - {fileID: 12800000, guid: 48fda484f715b554f988b3635e7c343b, type: 3}
+  - {fileID: 12800000, guid: a2e751e2373b8374bb1b93469b67a149, type: 3}
+  - {fileID: 12800000, guid: 909dd44266c0b154290cfa345d82e0f3, type: 3}
+  - {fileID: 12800000, guid: eea96d1b02416014b867b7f640c977b8, type: 3}
+  - {fileID: 12800000, guid: ffb9c89f4a9d70443b7e7a9d4179293e, type: 3}
+  - {fileID: 12800000, guid: 3fa48a5bbe6cd1b4fa2960438169852f, type: 3}
+  - {fileID: 12800000, guid: 0293f5eb19d9dc8478428808778a46f5, type: 3}
+  - {fileID: 12800000, guid: e5213fc98341f9e4b988e15fa780406d, type: 3}
+  - {fileID: 12800000, guid: e932dc5b1661a1c4dba3740210abdc50, type: 3}
+  - {fileID: 12800000, guid: 81ae62a63fd9b6a4cbeadce07bfdd7fc, type: 3}
   optionalStyleSheets: []
   instanceUnitStyles: unit
   instanceGroupStyles: group

@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Copyright (c) 2022 Jonathan Lang
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,9 +9,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.IL2CPP;
-using Baracuda.Monitoring.Internal.Profiling;
-using Baracuda.Monitoring.Internal.Units;
-using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Monitoring.Source.Profiles;
+using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Pooling.Concretions;
 using Baracuda.Reflection;
 using UnityEditor;
@@ -25,7 +25,6 @@ namespace Baracuda.Monitoring.Editor
 {
     public class IL2CPPBuildPreprocessor : IPreprocessBuildWithReport
     {
-        
         #region --- Public API ---
 
         /// <summary>
@@ -43,12 +42,12 @@ namespace Baracuda.Monitoring.Editor
 
         #region --- Interface ---
 
-        public int callbackOrder => MonitoringSettings.GetInstance().PreprocessBuildCallbackOrder;
+        public int callbackOrder => MonitoringSystems.Resolve<IMonitoringSettings>().PreprocessBuildCallbackOrder;
 
         public void OnPreprocessBuild(BuildReport report)
         {
 #if !DISABLE_MONITORING
-            if (!MonitoringSettings.GetInstance().UseIPreprocessBuildWithReport)
+            if (!MonitoringSystems.Resolve<IMonitoringSettings>().UseIPreprocessBuildWithReport)
             {
                 return;
             }
@@ -110,7 +109,7 @@ namespace Baracuda.Monitoring.Editor
             ResetQueuesAndCaches();
             unityAssemblies = CompilationPipeline.GetAssemblies();
             
-            var textFile = MonitoringSettings.GetInstance().ScriptFileIL2CPP;
+            var textFile = MonitoringSystems.Resolve<IMonitoringSettings>().ScriptFileIL2CPP;
             var filePath = AssetDatabase.GetAssetPath(textFile);
             
             Debug.Log($"Starting IL2CPP AOT type definition generation.\nFilePath: {filePath}");
@@ -150,7 +149,7 @@ namespace Baracuda.Monitoring.Editor
             AssetDatabase.Refresh();
             Debug.Log("Successfully completed IL2CPP AOT type definition generation");
 
-            if (MonitoringSettings.GetInstance().LogTypeGenerationStats)
+            if (MonitoringSystems.Resolve<IMonitoringSettings>().LogTypeGenerationStats)
             {
                 Debug.Log(Stats.ToString(false));
             }
@@ -424,7 +423,7 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (MonitoringSettings.GetInstance().ThrowOnTypeGenerationError)
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
                 {
                     throw;
                 }
@@ -447,7 +446,7 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (MonitoringSettings.GetInstance().ThrowOnTypeGenerationError)
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
                 {
                     throw;
                 }
@@ -470,7 +469,7 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (MonitoringSettings.GetInstance().ThrowOnTypeGenerationError)
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
                 {
                     throw;
                 }
@@ -500,7 +499,7 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (MonitoringSettings.GetInstance().ThrowOnTypeGenerationError)
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
                 {
                     throw;
                 }
@@ -512,12 +511,12 @@ namespace Baracuda.Monitoring.Editor
                 try
                 {
                     Stats.IncrementStat("Monitored Out Parameter", "Out Parameter");
-                    Stats.IncrementStat($"Monitored Out Parameter {parameterInfo.ParameterType.ToGenericTypeString()}", "Out Parameter");
+                    Stats.IncrementStat($"Monitored Out Parameter {parameterInfo.ParameterType.ToReadableTypeString()}", "Out Parameter");
                     TryCreateOutParameterHandleDefinition(parameterInfo.ParameterType);
                 }
                 catch (Exception exception)
                 {
-                    if (MonitoringSettings.GetInstance().ThrowOnTypeGenerationError)
+                    if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
                     {
                         throw;
                     }
@@ -571,7 +570,7 @@ namespace Baracuda.Monitoring.Editor
             
             
             CreateMethodSig(monitored);
-            Stats.IncrementStat($"Monitored {monitored.ToGenericTypeString()}", "Monitored Types");
+            Stats.IncrementStat($"Monitored {monitored.ToReadableTypeString()}", "Monitored Types");
             
             var definition = template.MakeGenericType(declaring, monitored);
             
@@ -602,11 +601,11 @@ namespace Baracuda.Monitoring.Editor
         {
             var stringBuilder = StringBuilderPool.Get();
             stringBuilder.Append("\n    //");
-            stringBuilder.Append(type.ToGenericTypeString());
+            stringBuilder.Append(type.ToReadableTypeString());
             stringBuilder.Append("\n    ");
             stringBuilder.Append(preserveAttribute);
             stringBuilder.Append("\n    ");
-            stringBuilder.Append(type.ToGenericTypeStringFullName());
+            stringBuilder.Append(type.ToReadableTypeStringFullName());
             stringBuilder.Append(' ');
             stringBuilder.Append("AOT_GENERATED_TYPE_");
             stringBuilder.Append(id++);
@@ -657,7 +656,7 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTValueTypeArray");
                 stringBuilder.Append('<');
-                stringBuilder.Append(valueType.GetElementType().ToGenericTypeStringFullName());
+                stringBuilder.Append(valueType.GetElementType().ToReadableTypeStringFullName());
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
@@ -670,7 +669,7 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTReferenceTypeArray");
                 stringBuilder.Append('<');
-                stringBuilder.Append(arrayType.GetElementType().ToGenericTypeStringFullName());
+                stringBuilder.Append(arrayType.GetElementType().ToReadableTypeStringFullName());
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
@@ -683,9 +682,9 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTDictionary");
                 stringBuilder.Append('<');
-                stringBuilder.Append(dictionaryType.GetGenericArguments()[0].ToGenericTypeStringFullName());
+                stringBuilder.Append(dictionaryType.GetGenericArguments()[0].ToReadableTypeStringFullName());
                 stringBuilder.Append(',');
-                stringBuilder.Append(dictionaryType.GetGenericArguments()[1].ToGenericTypeStringFullName());
+                stringBuilder.Append(dictionaryType.GetGenericArguments()[1].ToReadableTypeStringFullName());
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
@@ -698,7 +697,7 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTEnumerable");
                 stringBuilder.Append('<');
-                stringBuilder.Append(enumerableType.GetGenericArguments()[0].ToGenericTypeStringFullName());
+                stringBuilder.Append(enumerableType.GetGenericArguments()[0].ToReadableTypeStringFullName());
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
@@ -756,9 +755,9 @@ namespace Baracuda.Monitoring.Editor
             }
 
             var error =
-                $"[MONITORING] Error: {type.ToGenericTypeString()} is not accessible! ({type.FullName?.Replace('+', '.')})" +
+                $"[MONITORING] Error: {type.ToReadableTypeString()} is not accessible! ({type.FullName?.Replace('+', '.')})" +
                 $"\nCannot generate AOT code for unmanaged internal/private types! " +
-                $"Please make sure that {type.ToGenericTypeString()} and all of its declaring types are either public or use a managed type instead of struct!";
+                $"Please make sure that {type.ToReadableTypeString()} and all of its declaring types are either public or use a managed type instead of struct!";
             
             errorBuffer.Add(error);
             

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Baracuda.Monitoring
+namespace Baracuda.Monitoring.Obsolete
 {
     [Obsolete("use MTagAttribute instead!")]
     public class MonitoringTagAttribute : MTagAttribute

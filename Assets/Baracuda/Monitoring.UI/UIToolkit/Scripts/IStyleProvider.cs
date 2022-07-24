@@ -1,4 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
+
+using UnityEngine;
+
 namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 {
     internal interface IStyleProvider
@@ -9,5 +12,8 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
         string[] StaticUnitStyles { get; }
         string[] StaticGroupStyles { get; }
         string[] StaticLabelStyles { get; }
+
+        Font GetFont(int fontHash);
+        Font DefaultFont { get; }
     }
 }

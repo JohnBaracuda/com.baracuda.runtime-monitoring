@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Baracuda.Monitoring
+namespace Baracuda.Monitoring.Obsolete
 {
     [Obsolete("use MValueProcessorAttribute instead!")]
     public sealed class ValueProcessorAttribute : MValueProcessorAttribute

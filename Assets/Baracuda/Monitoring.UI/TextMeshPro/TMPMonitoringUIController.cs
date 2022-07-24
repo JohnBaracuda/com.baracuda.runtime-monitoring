@@ -1,17 +1,15 @@
 // Copyright (c) 2022 Jonathan Lang
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Interface;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Baracuda.Monitoring.UI.TextMeshPro
 {
-    
-    
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(UIControllerComponents))]
     public class TMPMonitoringUIController : MonitoringUIController
@@ -29,6 +27,10 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         [SerializeField] private int marginBottom;
         [SerializeField] private int marginRight;
         
+        [Header("Font")]
+        [SerializeField] private TMP_FontAsset defaultFont;
+        [SerializeField] private TMP_FontAsset[] availableFonts;
+        
         #endregion
 
         #region --- Fields ---
@@ -40,6 +42,19 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         private Dictionary<string, MonitoringUIGroup> _activeGroupsStr;
         private Transform _transform;
         private UIControllerComponents _components;
+
+        private readonly Dictionary<int, TMP_FontAsset> _loadedFonts = new Dictionary<int, TMP_FontAsset>();
+
+        #endregion
+
+        #region --- Properties ---
+
+        public TMP_FontAsset GetDefaultFontAsset() => defaultFont;
+
+        public TMP_FontAsset GetFontAsset(int fontHash)
+        {
+            return _loadedFonts.TryGetValue(fontHash, out var fontAsset) ? fontAsset : defaultFont;
+        }
         
         #endregion
 
@@ -62,6 +77,19 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             InitializeGroupPool();
             
             ApplyStyleSettings();
+
+            var manager = MonitoringSystems.Resolve<IMonitoringManager>();
+            
+            for (var i = 0; i < availableFonts.Length; i++)
+            {
+                var fontAsset = availableFonts[i];
+                var hash = fontAsset.name.GetHashCode();
+                if (manager.IsFontHasUsed(hash))
+                {
+                    _loadedFonts.Add(hash, fontAsset);
+                }
+            }
+            availableFonts = null;
         }
 
         #endregion
@@ -94,6 +122,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         private MonitoringUIElement CreateEmptyElement()
         {
             var emptyElement = Instantiate(_components.elementPrefab, transform);
+            emptyElement.InjectController(this);
             emptyElement.SetGameObjectInactive();
             return emptyElement;
         }
@@ -150,7 +179,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             var element = GetElementFromPool();
             var parent = SetupParentForUnit(unit);
             element.SetParent(parent);
-            element.Setup(unit);
+            element.SetupForUnit(unit);
             element.SetGameObjectActive();
             _activeMonitoringUIElements.Add(unit, element);
         }

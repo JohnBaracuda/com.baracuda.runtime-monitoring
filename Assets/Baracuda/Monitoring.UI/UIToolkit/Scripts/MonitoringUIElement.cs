@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Interface;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,10 +16,11 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
         private static readonly Dictionary<object, VisualElement> objectGroups = new Dictionary<object, VisualElement>();
         private static readonly Dictionary<Type, VisualElement> typeGroups = new Dictionary<Type, VisualElement>();
-        private static MonitoringSettings Settings =>
-            settings ? settings : settings = MonitoringSettings.GetInstance();
 
-        private static MonitoringSettings settings;
+        private static IMonitoringSettings Settings =>
+            settings != null ? settings : settings = MonitoringSystems.Resolve<IMonitoringSettings>();
+
+        private static IMonitoringSettings settings;
         private VisualElement _parent;
 
         #endregion
@@ -72,6 +72,21 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                 }
             }
             
+            if (profile.TryGetMetaAttribute<MBackgroundColorAttribute>(out var backgroundColorAttribute))
+            {
+                style.backgroundColor = new StyleColor(backgroundColorAttribute.ColorValue);
+            }
+            if (profile.TryGetMetaAttribute<MTextColorAttribute>(out var textColorAttribute))
+            {
+                style.color = new StyleColor(textColorAttribute.ColorValue);
+            }
+
+            var font = profile.TryGetMetaAttribute<MFontAttribute>(out var fontAttribute)
+                ? provider.GetFont(fontAttribute.FontHash)
+                : provider.DefaultFont;
+
+            style.unityFontDefinition = new StyleFontDefinition(font);
+            
             if (monitorUnit.Profile.IsStatic)
             {
                 SetupStaticUnit(rootVisualElement, profile, provider);
@@ -91,14 +106,15 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                 AddToClassList(provider.InstanceUnitStyles[i]);
             }
 
-            switch (profile.FormatData.Position)
+            switch (profile.FormatData.TextAlign)
             {
-                case UIPosition.UpperLeft:
-                case UIPosition.LowerLeft:
+                case HorizontalTextAlign.Left:
                     style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleLeft);
                     break;
-                case UIPosition.UpperRight:
-                case UIPosition.LowerRight:
+                case HorizontalTextAlign.Center:
+                    style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleCenter);
+                    break;
+                case HorizontalTextAlign.Right:
                     style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleRight);
                     break;
             }
@@ -137,6 +153,11 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
                 _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
                 _parent.Add(this);
+                
+                if (profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute))
+                {
+                    _parent.style.backgroundColor = new StyleColor(groupColorAttribute.ColorValue);
+                }
             }
             else
             {
@@ -151,17 +172,19 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                 AddToClassList(provider.StaticUnitStyles[i]);
             }
 
-            switch (profile.FormatData.Position)
+            switch (profile.FormatData.TextAlign)
             {
-                case UIPosition.UpperLeft:
-                case UIPosition.LowerLeft:
+                case HorizontalTextAlign.Left:
                     style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleLeft);
                     break;
-                case UIPosition.UpperRight:
-                case UIPosition.LowerRight:
+                case HorizontalTextAlign.Center:
+                    style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleCenter);
+                    break;
+                case HorizontalTextAlign.Right:
                     style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleRight);
                     break;
             }
+            
 
             if (profile.FormatData.AllowGrouping)
             {
@@ -195,6 +218,11 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
                 _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
                 _parent.Add(this);
+                
+                if (profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute))
+                {
+                    _parent.style.backgroundColor = new StyleColor(groupColorAttribute.ColorValue);
+                }
             }
             else
             {

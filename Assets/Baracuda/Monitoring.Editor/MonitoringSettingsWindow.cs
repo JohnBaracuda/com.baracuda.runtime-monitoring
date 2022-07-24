@@ -7,7 +7,6 @@ namespace Baracuda.Monitoring.Editor
 {
     public class MonitoringSettingsWindow : EditorWindow
     {
-        private MonitoringSettings _settings;
         private MonitoringSettingsInspector _inspector;
         private Vector2 _scrollPosition;
         
@@ -18,8 +17,8 @@ namespace Baracuda.Monitoring.Editor
 
         private void OnEnable()
         {
-            _settings = MonitoringSettings.GetInstance();
-            _inspector = (MonitoringSettingsInspector) UnityEditor.Editor.CreateEditor(_settings);
+            var settings = MonitoringSettings.FindOrCreateSettingsAsset();
+            _inspector = (MonitoringSettingsInspector) UnityEditor.Editor.CreateEditor(settings);
             _inspector.Refresh();
         }
 

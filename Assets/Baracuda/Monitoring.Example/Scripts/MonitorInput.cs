@@ -12,7 +12,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         {
             if (Input.GetKeyDown(toggleKey))
             {
-                MonitoringUI.ToggleDisplay();
+                MonitoringSystems.Resolve<IMonitoringUI>().ToggleDisplay();
             }
         }
     }

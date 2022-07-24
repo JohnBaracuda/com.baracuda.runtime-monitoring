@@ -1,10 +1,11 @@
 // Copyright (c) 2022 Jonathan Lang
+
 using System;
 using System.Collections;
 using System.Threading;
 using UnityEngine;
 
-namespace Baracuda.Threading.Internal
+namespace Baracuda.Threading.Utils
 {
     public static class ExceptionSensitiveCoroutineHandler
     {

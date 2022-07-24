@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using Baracuda.Monitoring.Interface;
+using Baracuda.Monitoring.API;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Baracuda.Monitoring.UI.TextMeshPro
 {
@@ -10,6 +11,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
     public class MonitoringUIGroup : MonoBehaviour
     {
         [SerializeField] private TMP_Text groupTitle;
+        [SerializeField] private Image backgroundImage; 
         
         private readonly List<IMonitorUnit> _children = new List<IMonitorUnit>(10);
         public int ChildCount => _children.Count;
@@ -17,6 +19,11 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
 
         public void AddChild(IMonitorUnit unit)
         {
+            if (unit.Profile.TryGetMetaAttribute<MGroupColorAttribute>(out var colorAttribute))
+            {
+                backgroundImage.color = colorAttribute.ColorValue;
+            }
+
             _children.Add(unit);
             unit.ActiveStateChanged += EvaluateActiveState;
         }

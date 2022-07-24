@@ -1,0 +1,21 @@
+﻿using System;
+using System.Threading;
+using Baracuda.Monitoring.API;
+
+namespace Baracuda.Monitoring.Source.Interfaces
+{
+    internal interface IMonitoringLogger : IMonitoringSystem<IMonitoringLogger>
+    {
+        void LogException(Exception exception);
+        
+        void LogBadImageFormatException(BadImageFormatException exception);
+
+        void LogThreadAbortedException(ThreadAbortException exception);
+
+        void LogOperationCancelledException(OperationCanceledException exception);
+
+        void LogValueProcessNotFound(string processor, Type type);
+        
+        void LogInvalidProcessorSignature(string processor, Type type);
+    }
+}

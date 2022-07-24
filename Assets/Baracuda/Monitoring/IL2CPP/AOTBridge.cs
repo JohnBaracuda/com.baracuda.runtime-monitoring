@@ -1,6 +1,6 @@
 ﻿#if ENABLE_IL2CPP || UNITY_EDITOR
 using System.Runtime.CompilerServices;
-using Baracuda.Monitoring.Internal.Profiling;
+using Baracuda.Monitoring.Source.Systems;
 using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.IL2CPP

@@ -1,4 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -136,6 +137,11 @@ namespace Baracuda.Reflection
 #if !ENABLE_IL2CPP && UNITY_2021_3_OR_NEWER
         public static Func<TTarget, TResult> CreateGetter<TTarget, TResult>(this FieldInfo field)
         {
+            if (field.IsLiteral)
+            {
+                return (target) => (TResult)field.GetValue(target);;
+            }
+            
             var methodName = $"{field!.ReflectedType!.FullName}.get_{field.Name}";
             var setterMethod = new DynamicMethod(methodName, typeof(TResult), new[] {typeof(TTarget)}, true);
             var gen = setterMethod.GetILGenerator();
@@ -184,6 +190,11 @@ namespace Baracuda.Reflection
             return (target, value) => field.SetValue(target, value);
         }
 #endif
+        
+        public static Func<TResult> CreateStaticGetter<TResult>(this FieldInfo field)
+        {
+            return () => (TResult)field.GetValue(null);
+        }
         
 
         #endregion
@@ -558,6 +569,7 @@ namespace Baracuda.Reflection
             return false;
         }
 
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIList(this Type type)
         {
@@ -763,7 +775,7 @@ namespace Baracuda.Reflection
         
         public static bool IsStatic(this EventInfo eventInfo)
         {
-            return eventInfo.GetAddMethod().IsStatic;
+            return eventInfo.AddMethod?.IsStatic ?? eventInfo.RemoveMethod.IsStatic;
         }
 
         #endregion
@@ -848,7 +860,7 @@ namespace Baracuda.Reflection
         private static readonly Dictionary<Type, string> typeCacheFullName = new Dictionary<Type, string>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ToGenericTypeStringFullName(this Type type)
+        public static string ToReadableTypeStringFullName(this Type type)
         {
             if (typeCacheFullName.TryGetValue(type, out var value))
             {
@@ -870,7 +882,7 @@ namespace Baracuda.Reflection
                 foreach (var t in arguments)
                 {
                     // Let's make sure we get the argument list.
-                    var arg = ToGenericTypeStringFullName(t);
+                    var arg = ToReadableTypeStringFullName(t);
 
                     if (argBuilder.Length > 0)
                     {
@@ -906,7 +918,7 @@ namespace Baracuda.Reflection
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ToGenericTypeString(this Type type)
+        public static string ToReadableTypeString(this Type type)
         {
             if (typeCache.TryGetValue(type, out var value))
             {
@@ -922,7 +934,7 @@ namespace Baracuda.Reflection
 
                 foreach (var t in arguments)
                 {
-                    var arg = ToGenericTypeString(t);
+                    var arg = ToReadableTypeString(t);
 
                     if (argBuilder.Length > 0)
                     {

@@ -1,0 +1,12 @@
+﻿namespace Baracuda.Monitoring.API
+{
+    public interface IMonitoringPlugin : IMonitoringSystem<IMonitoringPlugin>
+    {
+        string Copyright { get; }
+        string Version { get; }
+        
+        string Documentation { get; }
+        string Repository { get; }
+        string Website { get; }
+    }
+}
