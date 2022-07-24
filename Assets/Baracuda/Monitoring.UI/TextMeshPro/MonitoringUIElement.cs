@@ -31,6 +31,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             _backgroundImage = GetComponentInChildren<Image>();
             _updateValueAction = UpdateUI;
             _activeStateAction = UpdateActiveState;
+            _tmpText.richText = MonitoringSystems.Resolve<IMonitoringSettings>().RichText;
         }
         
         #endregion
@@ -67,6 +68,11 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             {
                 _tmpText.fontSize = format.FontSize;
             }
+
+            if (profile.TryGetMetaAttribute<MRichTextAttribute>(out var richTextAttribute))
+            {
+                _tmpText.richText = richTextAttribute.RichTextEnabled;
+            }
             
             monitorUnit.ValueUpdated += _updateValueAction;
             monitorUnit.ActiveStateChanged += _activeStateAction;
@@ -100,6 +106,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             _monitorUnit.ValueUpdated -= _updateValueAction;
             _monitorUnit.ActiveStateChanged -= _activeStateAction;
             _monitorUnit = null;
+            _tmpText.richText = MonitoringSystems.Resolve<IMonitoringSettings>().RichText;
         }
 
         private void UpdateUI(string text)

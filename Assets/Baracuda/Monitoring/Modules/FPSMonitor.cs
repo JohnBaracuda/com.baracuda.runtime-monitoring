@@ -8,28 +8,77 @@ namespace Baracuda.Monitoring.Modules
 {
     public class FPSMonitor : MonitorModuleBase
     {
-#pragma warning disable
+        #region --- Inspector Fields ---
+
+        [Header("Measurement")] [Range(0.1f, 2f)] [SerializeField]
+        private float measurePeriod = 0.25f;
+
+        [Header("Coloring")] [SerializeField] private Color minColor = Color.red;
+        [SerializeField] private Color midColor = Color.yellow;
+        [SerializeField] private Color maxColor = Color.green;
+
+        #endregion
+
+        #region --- Member Variables ---
+
         /*
          *  Fields   
          */
 
-        private const float MEASURE_PERIOD = 0.25f;
-        private const string COLOR_MIN_MARKUP = "<color=#07fc03>";
-        private const string COLOR_MID_MARKUP = "<color=#fcba03>";
-        private const string C_MAX = "<color=#07fc03>";
         private const int THRESHOLD_ONE = 30;
         private const int THRESHOLD_TWO = 60;
-        
+
         private float _timer = 0;
         private int _lastFPS;
         private float _lastMeasuredFps = 0;
         private int _frameCount = 0;
 
-        private readonly StringBuilder _stringBuilder = new StringBuilder();
+        private string _colorMinMarkup = "<color=#07fc03>";
+        private string _colorMidMarkup = "<color=#fcba03>";
+        private string _colorMaxMarkup = "<color=#07fc03>";
+
+        private readonly StringBuilder _fpsBuilder = new StringBuilder();
+        private readonly StringBuilder _vsyncBuilder = new StringBuilder();
+        private readonly StringBuilder _targetBuilder = new StringBuilder();
 
         /*
-         *  FPS Monitor   
+         *  Events   
          */
+
+        public event Action<float> FPSUpdated;
+
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+        
+        #region --- Setup ---
+
+        /*
+         * Create Color Markup   
+         */
+
+        private void Start()
+        {
+            GenerateColorMarkup();
+        }
+
+        private void OnValidate()
+        {
+            GenerateColorMarkup();
+        }
+
+        private void GenerateColorMarkup()
+        {
+            _colorMinMarkup = $"<color=#{ColorUtility.ToHtmlStringRGB(minColor)}>";
+            _colorMidMarkup = $"<color=#{ColorUtility.ToHtmlStringRGB(midColor)}>";
+            _colorMaxMarkup = $"<color=#{ColorUtility.ToHtmlStringRGB(maxColor)}>";
+        }
+
+        #endregion
+        
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- FPS ---
         
         [Monitor]
         [MValueProcessor(nameof(FPSProcessor))]
@@ -37,60 +86,59 @@ namespace Baracuda.Monitoring.Modules
         [MFormatOptions(FontSize = 32, Position = UIPosition.UpperRight, GroupElement = false)]
         private float _fps;
 
-        /*
-         *  Events   
-         */
-
-        public event Action<float> FPSUpdated;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        
         public string FPSProcessor(float value)
         {
-            _stringBuilder.Clear();
-            _stringBuilder.Append('[');
-            _stringBuilder.Append(value >= THRESHOLD_TWO ? C_MAX : value >= THRESHOLD_ONE ? COLOR_MID_MARKUP : COLOR_MIN_MARKUP);
-            _stringBuilder.Append(value.ToString("00.00"));
-            _stringBuilder.Append("</color>]");
-            return _stringBuilder.ToString();
+            _fpsBuilder.Clear();
+            _fpsBuilder.Append('[');
+            _fpsBuilder.Append(value >= THRESHOLD_TWO ? _colorMaxMarkup :
+                value >= THRESHOLD_ONE ? _colorMidMarkup : _colorMinMarkup);
+            _fpsBuilder.Append(value.ToString("00.00"));
+            _fpsBuilder.Append("</color>]");
+            return _fpsBuilder.ToString();
         }
-        
+
         private void Update()
         {
             _frameCount++;
             _timer += Time.deltaTime / Time.timeScale;
 
-            if (_timer < MEASURE_PERIOD)
+            if (_timer < measurePeriod)
             {
                 return;
             }
 
             _lastMeasuredFps = (_frameCount / _timer);
 
-            if (Math.Abs(_lastMeasuredFps - _lastFPS) > .1f)
+            if (Math.Abs(_lastMeasuredFps - _lastFPS) > .001f)
             {
                 _fps = _lastMeasuredFps;
                 FPSUpdated?.Invoke(_fps);
             }
-                
+
 
             _lastFPS = _frameCount;
             _frameCount = 0;
 
-            var rest = MEASURE_PERIOD - _timer;
+            var rest = measurePeriod - _timer;
             _timer = rest;
         }
 
-        #region --- Vsync ---
+        #endregion
 
+        #region --- Vsync ---
+        
         [Monitor] 
         [MFormatOptions(FontSize = 16, Position = UIPosition.UpperRight, GroupElement = false)]
         [MValueProcessor(nameof(ProcessorTargetFrameRate))]
         private int TargetFrameRate => Application.targetFrameRate;
 
-        private static string ProcessorTargetFrameRate(int value)
+        
+        private string ProcessorTargetFrameRate(int value)
         {
-            return $"Target Framerate: {(value > 0 ? value.ToString() : "Unlimited")}";
+            _targetBuilder.Clear();
+            _targetBuilder.Append("Target Framerate: ");
+            _targetBuilder.Append(value > 0 ? value.ToString() : "Unlimited");
+            return _targetBuilder.ToString();
         }
         
         [Monitor] 
@@ -98,12 +146,22 @@ namespace Baracuda.Monitoring.Modules
         [MValueProcessor(nameof(ProcessorVsync))]
         private int Vsync => QualitySettings.vSyncCount;
 
-        private static string ProcessorVsync(int value)
+        private string ProcessorVsync(int value)
         {
-            return $"Vsync: {(value > 0 ? $"Vsync Count: {value}" : "Disabled")}";
+            _vsyncBuilder.Clear();
+            _vsyncBuilder.Append("Vsync: ");
+            if (value > 0)
+            {
+                _vsyncBuilder.Append("Vsync Count: ");
+                _vsyncBuilder.Append(value.ToString());
+            }
+            else
+            {
+                _vsyncBuilder.Append("Disabled");
+            }
+            return _vsyncBuilder.ToString();
         }
         
-        #endregion        
-        
+        #endregion
     }
 }

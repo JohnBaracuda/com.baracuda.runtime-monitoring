@@ -33,6 +33,7 @@ MonoBehaviour:
   - m_
   - s_
   - _
+  enableRichText: 1
   trueColor: {r: 0, g: 1, b: 0, a: 1}
   falseColor: {r: 0.8679245, g: 0.23335704, b: 0.25258785, a: 1}
   xColor: {r: 1, g: 0.38039216, b: 0.34901962, a: 1}

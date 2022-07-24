@@ -30,7 +30,12 @@ namespace Baracuda.Monitoring.Modules
         
         #region --- Inspector ---
 
-        [SerializeField] [Min(1)] private int displayedMethodNum = 10;
+        [Header("Display Options")]
+        [Min(1)]
+        [SerializeField] private int displayedMethodAmount = 10;
+        [SerializeField] private bool truncateStacktrace = false;
+        [Range(100,1000)]
+        [SerializeField] private int maxStacktraceLenght = 400;
         
         #endregion
 
@@ -41,15 +46,17 @@ namespace Baracuda.Monitoring.Modules
         [MUpdateEvent(nameof(UpdateDisplayedLogs))]
         [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, ElementIndent = 0, GroupElement = false)]
         [MFont("JetBrainsMono-Regular")]
-        [MConditional(Condition.NotEmpty)]
+        [MConditional(Condition.CollectionNotEmpty)]
         private Queue<string> Console => messageLogCache;
         
         
         [Monitor]
         [MBackgroundColor(ColorPreset.TransparentBlack)]
-        [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, Label = "Stacktrace", GroupElement = false)]
+        [MFormatOptions(UIPosition.LowerLeft, GroupElement = false)]
         [MFont("JetBrainsMono-Regular")]
         [MConditional(Condition.NotNullOrWhiteSpace)]
+        [MRichText(true)]
+        [MValueProcessor(nameof(StacktraceProcessor))]
         private string LastLogStacktrace => lastLogStacktrace;
 
         #endregion
@@ -69,7 +76,7 @@ namespace Baracuda.Monitoring.Modules
 
         private void UpdateConfiguration()
         {
-            messageCacheSize = displayedMethodNum;
+            messageCacheSize = displayedMethodAmount;
             if (messageLogCache.Count > messageCacheSize)
             {
                 messageLogCache.Dequeue();
@@ -109,8 +116,30 @@ namespace Baracuda.Monitoring.Modules
                 messageLogCache.Dequeue();
             }
 
-            lastLogStacktrace = stacktrace.TrimEnd(trimValues).Colorize(stackTraceColor).FontSize(12);
+            lastLogStacktrace = stacktrace.TrimEnd(trimValues);
             UpdateDisplayedLogs.Dispatch();
+        }
+        
+        private string StacktraceProcessor(string stacktrace)
+        {
+            if (stacktrace == null)
+            {
+                return "null".Colorize(Color.red);
+            }
+
+            var sb = StringBuilderPool.Get();
+            sb.Append("Stacktrace:\n");
+            if (truncateStacktrace && stacktrace.Length > maxStacktraceLenght)
+            {
+                sb.Append(stacktrace.Substring(0, maxStacktraceLenght).Colorize(stackTraceColor));
+                sb.Append("...");
+            }
+            else
+            {
+                sb.Append(stacktrace.Colorize(stackTraceColor));
+            }
+
+            return StringBuilderPool.Release(sb);
         }
         
         #endregion

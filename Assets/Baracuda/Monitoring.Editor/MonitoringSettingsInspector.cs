@@ -48,6 +48,7 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _appendSymbol;
         private SerializedProperty _humanizeNames;
         private SerializedProperty _variablePrefixes;
+        private SerializedProperty _enableRichText;
 
         private SerializedProperty _floatFormat;
         private SerializedProperty _integerFormat;
@@ -193,6 +194,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_addClassName);
                 EditorGUILayout.PropertyField(_appendSymbol);
                 EditorGUILayout.PropertyField(_humanizeNames);
+                EditorGUILayout.PropertyField(_enableRichText);
                 EditorGUILayout.PropertyField(_variablePrefixes);
                 EditorGUILayout.Space();
             }

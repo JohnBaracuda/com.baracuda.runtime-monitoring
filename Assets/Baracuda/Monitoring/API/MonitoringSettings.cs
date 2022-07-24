@@ -83,6 +83,10 @@ namespace Baracuda.Monitoring.API
         [Tooltip("Collection of variable prefixes that should be removed when humanizing monitored member names")]
         [SerializeField]
         private string[] variablePrefixes = {"m_", "s_", "r_", "_"};
+
+        [Tooltip("Enable the use of RichText on a global level")]
+        [SerializeField] 
+        private bool enableRichText = true;
         
         #endregion
 
@@ -196,6 +200,7 @@ namespace Baracuda.Monitoring.API
         public char AppendSymbol => appendSymbol;
         public bool HumanizeNames => humanizeNames;
         public string[] VariablePrefixes => variablePrefixes;
+        public bool RichText => enableRichText;
 
         /*
          * Coloring   

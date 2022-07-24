@@ -44,4 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 0
-  displayedMethodNum: 10
+  displayedMethodAmount: 10
+  truncateStacktrace: 1
+  maxStacktraceLenght: 350

@@ -21,6 +21,7 @@ namespace Baracuda.Monitoring.API
         char AppendSymbol { get; }
         bool HumanizeNames { get; }
         string[] VariablePrefixes { get; }
+        bool RichText { get; }
         Color TrueColor { get; }
         Color FalseColor { get; }
         Color XColor { get; }

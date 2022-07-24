@@ -11,7 +11,7 @@ namespace Baracuda.Monitoring.Modules
     {
         #region --- Inspector ---
 
-        [Header("OS")] 
+        [Header("Operating System")] 
         [SerializeField] private bool showOperatingSystem = true;
         [SerializeField] private bool showOperatingSystemFamily = false;
 

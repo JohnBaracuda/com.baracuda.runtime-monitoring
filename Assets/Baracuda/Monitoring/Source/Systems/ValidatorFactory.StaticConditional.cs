@@ -21,9 +21,9 @@ namespace Baracuda.Monitoring.Source.Systems
                 case ValidationMethod.ByMember:
                     return CreateValidatorMethodOneArgument<TValue>(attribute.MemberName, baseType);
                 case ValidationMethod.Comparison:
-                    return CreateValidatorComparison<TValue>(attribute.Comparison, attribute.Other);
+                    return CreateValidatorComparison<TValue>(attribute.Comparison, attribute.Other, baseType);
                 case ValidationMethod.Condition:
-                    return CreateValidatorSpecialCondition<TValue>(attribute.Condition);
+                    return CreateValidatorSpecialCondition<TValue>(attribute.Condition, baseType);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -32,9 +32,13 @@ namespace Baracuda.Monitoring.Source.Systems
         /*
          * Special Conditions   
          */
-        
-        private Func<TValue, bool> CreateValidatorSpecialCondition<TValue>(Condition condition)
+
+        private Func<TValue, bool> CreateValidatorSpecialCondition<TValue>(Condition condition, Type baseType)
         {
+#if DEBUG
+            CheckConditionViability<TValue>(condition, baseType);
+#endif
+            
             switch (condition)
             {
                 case Condition.True:
@@ -70,7 +74,7 @@ namespace Baracuda.Monitoring.Source.Systems
                 case Condition.NotNullOrWhiteSpace:
                     return (Func<TValue, bool>)(Delegate)NotNullOrWhiteSpace();
                 
-                case Condition.NotEmpty:
+                case Condition.CollectionNotEmpty:
                     if (typeof(TValue).HasInterface<ICollection>())
                     {
                         return (Func<TValue, bool>)(Delegate)NotEmptyCount();
@@ -94,13 +98,16 @@ namespace Baracuda.Monitoring.Source.Systems
          */
         
 
-        private Func<TValue, bool> CreateValidatorComparison<TValue>(Comparison comparison, object other)
+        private Func<TValue, bool> CreateValidatorComparison<TValue>(Comparison comparison, object other, Type baseType)
         {
+#if DEBUG
+            CheckComparisonViability<TValue>(comparison, other, baseType);
+#endif
             if (!other.TryConvert<object, TValue>(out var convertedOther))
             {
                 return null;
             }
-                
+            
             switch (comparison)
             {
                 case Comparison.Equals:
