@@ -1,7 +1,7 @@
 Runtime Monitoring
 ===
 
-Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property or event and get its value or state displayed automatically in a customizable and extendable UI.
+Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property, event or method and get its value or state displayed automatically in a customizable and extendable UI.
 
 &nbsp;
 
@@ -50,13 +50,16 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 ## Getting Started
 
 ```c#
-// Place the MonitorAttribute on any field, property or event
+// Place the MonitorAttribute on any field, property, event or method
 // to have it automatically displayed during runtime in you UI.
 [Monitor]
 private int healthPoints;
 
 [Monitor]
 public int HealthPoints { get; private set; }
+
+[Monitor]
+public int GetHealthPoints() => healthPoints;
 
 [Monitor]
 public event Action OnHealthChanged;
@@ -69,6 +72,13 @@ protected static bool IsPlayerAlive { get; set; }
 
 [Monitor]
 internal static event Action<int> OnScoreChanged;
+
+//set the value for the playerId param.
+[MonitorMethod(1)]
+public bool TryGetPlayer(int playerId, out var player)
+{
+    return _playerDicitonary.TryGetValue(playerId, out Player player);
+}
 
 // Determine if and in what quantity the state will be evaluated.
 [MonitorField(Update = UpdateOptions.FrameUpdate)]
@@ -241,15 +251,26 @@ MonitorValueAttribute       |`[MonitorValue]`    | MonitorAttribute      | Monit
 MonitorPropertyAttribute    |`[MonitorProperty]` | MonitorValueAttribute | Monitor a property      |
 MonitorFieldAttribute       |`[MonitorField]`    | MonitorValueAttribute | Monitor a field      |
 MonitorEventAttribute       |`[MonitorEvent]`    | MonitorAttribute      | Monitor an event      |
+MonitorMethodAttribute      |`[MonitorMethod]`   | MonitorAttribute      | Monitor a method      |
 
 ### Meta Attributes
-Attribute                                    | Code               | Base Type               | Description|     
+Attribute                                    | Code               | Base Type               | Description |     
 :-                                           |:-                  |:-                       |:-     |      
 MFormatOptionsAttribute                      |`[MFormatOptions]`  | MonitoringMetaAttribute | Provide optional formatting (e.g fontsize)|
 MTagAttribute                                |`[MTag]`            | MonitoringMetaAttribute | Provide optional tags used for filtering |
 [MUpdateEventAttribute](#update-event)       |`[MUpdateEvent]`    | MonitoringMetaAttribute | Provide an event that will trigger an refresh/update |
 [MValueProcessorAttribute](#value-processor) |`[MValueProcessor]` | MonitoringMetaAttribute | Provide a method that will process the value before it is displayed as a string |
 MStyleAttribute                              |`[MStyle]`          | MonitoringMetaAttribute | UIToolkit only. Provide optional style names |
+MBackgroundColorAttribute                    |`[MBackgroundColor]`| MonitoringMetaAttribute | Provide custom background color |
+MTextColorAttribute                          |`[MTextColor]`      | MonitoringMetaAttribute | Provide custom text color |
+MGroupColorAttribute                         |`[MGroupColor]`     | MonitoringMetaAttribute | Provide custom background color for the targets group |
+MGroupColorAttribute                         |`[MGroupColor]`     | MonitoringMetaAttribute | Provide custom background color for the targets group |
+MConditionalAttribute                        |`[MConditional]`    | MonitoringMetaAttribute | Provide custom validation logic |
+
+### Other Attributes
+Attribute                       | Code                    | Base Type    | Description |     
+:-                              |:-                       |:-            |:-     |      
+GlobalValueProcessorAttribute   |`[GlobalValueProcessor]` | Attribute    | Declare a method as a global value processor for a specific type |
 
 
 
