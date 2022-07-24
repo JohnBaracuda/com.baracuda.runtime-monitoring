@@ -17,6 +17,7 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 - [Setup](#setup)
 - [Getting started](#getting-started)
 - [Technical Information](#technical-information)
+- [Feature List](#features)
 - [Import](#import)
 - [Monitoring Instance Member](#monitoring-instance-member)
 - [Monitoring Static Membmer](#monitoring-static-member)
@@ -131,6 +132,29 @@ public class Player : MonoBehaviour
 + Scripting Backend: <b>Mono & IL2CPP</b>
 + API Compatibility: <b>.NET Standard 2.0 or .NET 4.xP</b>
 + Asset Version: <b>1.0.7</b>
+
+
+&nbsp;
+## Features
++ Monitor the value of a Field.
++ Monitor the retrun value of a Property.
++ Monitor the state of an Event.
++ Monitor the retrun value & out parameter of a Method.
++ Monitor static and instance member.
++ Display Collections in a readable way. (Not just ToString)
++ Chose one of three available UI solution presets.
++ IMGUI support (default).
++ TextMeshPro based uGUI support.
++ UIToolkit support.
++ Detached UI Interface for custom UI solutions.
++ Custom control of how monitored members are displayed.
++ Works both asynchronous and synchronous (WebGL supported).
++ Mono & IL2CPP support.
++ Clean open source code faithful to C# conventions & best practices.
++ Global value processor. (like property drawer)
++ Drag & drop example modules. (FPSMonitor, ConsoleMonitor etc.)
++ Draw conditions. (only show value if true, not null etc.)
++ Many more features. 
 
 
 &nbsp;
@@ -624,20 +648,15 @@ Any help is appreciated. Feel free to contact me if you have any feedback, sugge
 ### General
 + Add to OpenUPM
 
-### UI
-+ Potential to create "virtual" units and have custom controll about what is displayed.
-+ More control / options to customize color.
-
 ### Core System
-+ Optional Monitoring Editor Window.
-+ Custom update / evaluation loops.
-+ Global value processor. (like property drawer)
-+ Drag & drop example modules. (FPSMonitor, ConsoleMonitor etc.)
-+ Draw conditions. (only show value if true, not null etc.)
++ Monitoring Editor Window for edit time monitoring.
++ Monitored collection type with "dirty" flag. (Optimization)
++ Option to create "virtual" units during runtime.
 
 ### Documentation
++ Tutorial how to use.
 + Guide how to create a custom UI Controller.
-+ Guide how to customize UI (background color etc.)
++ Guide how to customize UI.
 
 
 &nbsp;
