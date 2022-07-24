@@ -1,7 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Core.Utilities;
-using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Monitoring.Source.Utilities;
 using UnityEngine;
 
 namespace Baracuda.Monitoring
@@ -11,13 +10,13 @@ namespace Baracuda.Monitoring
         protected override void Awake()
         {
             base.Awake();
-            MonitoringManager.RegisterTarget(this);
+            MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(this);
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            MonitoringManager.UnregisterTarget(this);
+            MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(this);
         }
     }
 }

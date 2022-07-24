@@ -2,15 +2,14 @@
 using System;
 using System.IO;
 using System.Linq;
-using Baracuda.Monitoring.Core.Utilities;
-using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Reflection;
 using UnityEditor;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.API
 {
-    public class MonitoringSettings : ScriptableObject
+    public class MonitoringSettings : ScriptableObject, IMonitoringSettings
     {
         #region --- General ---
 
@@ -19,17 +18,14 @@ namespace Baracuda.Monitoring.API
 
         [Tooltip("When enabled, monitoring UI is instantiated as soon as profiling has completed. " +
                  "Otherwise MonitoringUI.CreateMonitoringUI() must be called manually.")]
-        [SerializeField]
-        private bool autoInstantiateUI = false;
+        [SerializeField] private bool autoInstantiateUI = false;
 
-        [Tooltip(
-            "When enabled, initial profiling will be processed asynchronous on a background thread. (Disabled for WebGL)")]
+        [Tooltip("When enabled, initial profiling will be processed asynchronous on a background thread. (Disabled for WebGL)")]
         [SerializeField]
         private bool asyncProfiling = true;
 
         [Tooltip("When enabled, the monitoring display will be opened as soon as profiling has completed.")]
-        [SerializeField]
-        private bool openDisplayOnLoad = true;
+        [SerializeField] private bool openDisplayOnLoad = true;
 
         [Tooltip("Reference to the used MonitoringDisplay object.")] [SerializeReference, SerializeField]
         private MonitoringUIController monitoringUIController;
@@ -239,24 +235,17 @@ namespace Baracuda.Monitoring.API
         public bool ThrowOnTypeGenerationError => throwOnTypeGenerationError;
         public int PreprocessBuildCallbackOrder => preprocessBuildCallbackOrder;
         public bool LogTypeGenerationStats => logTypeGenerationStats;
-
-        /*
-         * Const   
-         */
-
-        public const string COPYRIGHT = "© 2022 Jonathan Lang";
         
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
         
-        #region --- Singleton ---
-        
-        public static MonitoringSettings GetInstance() =>
+        #region --- Asset Logic ---
+       
+        internal static MonitoringSettings FindOrCreateSettingsAsset() =>
             current ? current : current =
                 Resources.LoadAll<MonitoringSettings>(string.Empty).FirstOrDefault() ?? CreateAsset() ?? throw new Exception(
-                    $"{nameof(ScriptableObject)}: {nameof(MonitoringSettings)} was not found when calling: {nameof(GetInstance)} and cannot be created!");
-        
+                    $"{nameof(ScriptableObject)}: {nameof(MonitoringSettings)} was not found when calling: {nameof(GetInstance)} and cannot be created!"); 
 
         private static MonitoringSettings current;
     
@@ -275,7 +264,16 @@ namespace Baracuda.Monitoring.API
 #endif
             return asset;
         }
+
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
         
+        #region --- Obsolete ---
+
+        
+        [Obsolete("Use IMonitoringSettings instead. Resolve registered instance using MonitoringSystems.Resolve<IMonitoringSettings>()")]
+        public static IMonitoringSettings GetInstance() => MonitoringSystems.Resolve<IMonitoringSettings>();
         
         #endregion
     }

@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Core.Utilities;
-using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Monitoring.Source.Utilities;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -286,7 +285,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 if (Application.isPlaying)
                 {
-                    var targetObject = MonitoringUI.GetActiveUIController();
+                    var targetObject = MonitoringSystems.Resolve<IMonitoringUI>().GetActiveUIController();
                     DrawInlinedUIControllerPrefab(targetObject);
                 }
                 else

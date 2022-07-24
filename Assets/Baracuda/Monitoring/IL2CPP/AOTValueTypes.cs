@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace Baracuda.Monitoring.Internal.Utilities
+﻿namespace Baracuda.Monitoring.IL2CPP
 {
     #region --- Enum Types ---
 

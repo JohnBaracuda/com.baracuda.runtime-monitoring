@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Interface;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
@@ -179,12 +178,13 @@ namespace Baracuda.Monitoring.UI.IMGUI
         protected override void Awake()
         {
             base.Awake();
-            
+
+            var manager = MonitoringSystems.Resolve<IMonitoringManager>();
             for (var i = 0; i < availableFonts.Length; i++)
             {
                 var fontAsset = availableFonts[i];
                 var hash = fontAsset.name.GetHashCode();
-                if (MonitoringManager.IsFontHasUsed(hash))
+                if (manager.IsFontHasUsed(hash))
                 {
                     _loadedFonts.Add(hash, fontAsset);
                 }

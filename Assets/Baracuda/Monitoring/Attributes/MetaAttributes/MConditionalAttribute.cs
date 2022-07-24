@@ -14,8 +14,7 @@ namespace Baracuda.Monitoring
         public readonly ValidationMethod ValidationMethod;
 
         /// <summary>
-        /// TODO
-        /// Please remember that adding conditions will add additional overhead.
+        /// The monitored member will only be displayed if the given condition is true.
         /// </summary>
         public MConditionalAttribute(Condition condition)
         {
@@ -24,7 +23,11 @@ namespace Baracuda.Monitoring
         }
 
         /// <summary>
-        /// TODO
+        /// The monitored member will only be displayed if the given value of the passed member returns true.<br/>
+        /// Methods can accept the members current value as a parameter and use custom logic based on the members current
+        /// state to determine if the member should be displayed or not.<br/>
+        /// Passed events must be of type <see cref="Action{T}"/> (boolean) and will trigger the member to be displayed based
+        /// on the passed bool value. 
         /// Please remember that adding conditions will add additional overhead.
         /// </summary>
         public MConditionalAttribute(string memberName)
@@ -34,7 +37,7 @@ namespace Baracuda.Monitoring
         }
         
         /// <summary>
-        /// TODO
+        /// The monitored member will only be displayed if the given comparison to the passed object is true.
         /// Please remember that adding conditions will add additional overhead.
         /// </summary>
         public MConditionalAttribute(Comparison comparison, object other)

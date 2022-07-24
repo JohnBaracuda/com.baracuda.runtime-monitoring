@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
-using Baracuda.Monitoring.Interface;
+using Baracuda.Monitoring.API;
 using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring

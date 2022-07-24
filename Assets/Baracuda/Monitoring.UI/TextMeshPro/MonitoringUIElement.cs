@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
 using System;
 using System.Runtime.CompilerServices;
-using Baracuda.Monitoring.Interface;
+using Baracuda.Monitoring.API;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

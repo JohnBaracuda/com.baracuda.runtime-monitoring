@@ -1,35 +1,37 @@
 ﻿using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Example.Scripts;
 using UnityEngine;
 
-public class FilterController : MonoBehaviour
+namespace Baracuda.Monitoring.Example.Scripts
 {
-    [Header("Input")]
-    [SerializeField] private LegacyPlayerInput _playerInput;
+    public class FilterController : MonoBehaviour
+    {
+        [Header("Input")]
+        [SerializeField] private LegacyPlayerInput _playerInput;
 
-    [Header("UI")] 
-    [SerializeField] private GameObject uiParent;
+        [Header("UI")] 
+        [SerializeField] private GameObject uiParent;
     
     
-    private void Awake()
-    {
-        _playerInput.InputModeChanged += OnToggleFilter;
-    }
-
-    private void OnToggleFilter(InputMode inputMode)
-    {
-        uiParent.SetActive(inputMode == InputMode.UserInterface);
-    }
-    
-    public void OnInputChanged(string input)
-    {
-        if (string.IsNullOrWhiteSpace(input))
+        private void Awake()
         {
-            MonitoringUI.ResetFilter();
+            _playerInput.InputModeChanged += OnToggleFilter;
         }
-        else
+
+        private void OnToggleFilter(InputMode inputMode)
         {
-            MonitoringUI.Filter(input);
+            uiParent.SetActive(inputMode == InputMode.UserInterface);
+        }
+    
+        public void OnInputChanged(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                MonitoringSystems.Resolve<IMonitoringUI>().ResetFilter();
+            }
+            else
+            {
+                MonitoringSystems.Resolve<IMonitoringUI>().Filter(input);
+            }
         }
     }
 }

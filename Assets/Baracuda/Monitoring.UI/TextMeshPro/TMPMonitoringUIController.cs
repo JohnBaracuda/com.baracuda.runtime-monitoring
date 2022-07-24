@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Interface;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -81,12 +80,14 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             InitializeGroupPool();
             
             ApplyStyleSettings();
+
+            var manager = MonitoringSystems.Resolve<IMonitoringManager>();
             
             for (var i = 0; i < availableFonts.Length; i++)
             {
                 var fontAsset = availableFonts[i];
                 var hash = fontAsset.name.GetHashCode();
-                if (MonitoringManager.IsFontHasUsed(hash))
+                if (manager.IsFontHasUsed(hash))
                 {
                     _loadedFonts.Add(hash, fontAsset);
                 }

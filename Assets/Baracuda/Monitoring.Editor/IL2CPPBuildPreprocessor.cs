@@ -8,11 +8,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Core.Profiling;
-using Baracuda.Monitoring.Core.Units;
-using Baracuda.Monitoring.Core.Utilities;
 using Baracuda.Monitoring.IL2CPP;
-using Baracuda.Monitoring.Internal.Utilities;
+using Baracuda.Monitoring.Source.Profiles;
+using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Pooling.Concretions;
 using Baracuda.Reflection;
 using UnityEditor;
@@ -44,12 +42,12 @@ namespace Baracuda.Monitoring.Editor
 
         #region --- Interface ---
 
-        public int callbackOrder => MonitoringSettings.GetInstance().PreprocessBuildCallbackOrder;
+        public int callbackOrder => MonitoringSystems.Resolve<IMonitoringSettings>().PreprocessBuildCallbackOrder;
 
         public void OnPreprocessBuild(BuildReport report)
         {
 #if !DISABLE_MONITORING
-            if (!MonitoringSettings.GetInstance().UseIPreprocessBuildWithReport)
+            if (!MonitoringSystems.Resolve<IMonitoringSettings>().UseIPreprocessBuildWithReport)
             {
                 return;
             }
@@ -111,7 +109,7 @@ namespace Baracuda.Monitoring.Editor
             ResetQueuesAndCaches();
             unityAssemblies = CompilationPipeline.GetAssemblies();
             
-            var textFile = MonitoringSettings.GetInstance().ScriptFileIL2CPP;
+            var textFile = MonitoringSystems.Resolve<IMonitoringSettings>().ScriptFileIL2CPP;
             var filePath = AssetDatabase.GetAssetPath(textFile);
             
             Debug.Log($"Starting IL2CPP AOT type definition generation.\nFilePath: {filePath}");
@@ -151,7 +149,7 @@ namespace Baracuda.Monitoring.Editor
             AssetDatabase.Refresh();
             Debug.Log("Successfully completed IL2CPP AOT type definition generation");
 
-            if (MonitoringSettings.GetInstance().LogTypeGenerationStats)
+            if (MonitoringSystems.Resolve<IMonitoringSettings>().LogTypeGenerationStats)
             {
                 Debug.Log(Stats.ToString(false));
             }
@@ -425,7 +423,7 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (MonitoringSettings.GetInstance().ThrowOnTypeGenerationError)
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
                 {
                     throw;
                 }
@@ -448,7 +446,7 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (MonitoringSettings.GetInstance().ThrowOnTypeGenerationError)
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
                 {
                     throw;
                 }
@@ -471,7 +469,7 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (MonitoringSettings.GetInstance().ThrowOnTypeGenerationError)
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
                 {
                     throw;
                 }
@@ -501,7 +499,7 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (MonitoringSettings.GetInstance().ThrowOnTypeGenerationError)
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
                 {
                     throw;
                 }
@@ -518,7 +516,7 @@ namespace Baracuda.Monitoring.Editor
                 }
                 catch (Exception exception)
                 {
-                    if (MonitoringSettings.GetInstance().ThrowOnTypeGenerationError)
+                    if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
                     {
                         throw;
                     }

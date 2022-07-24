@@ -1,7 +1,8 @@
 // Copyright (c) 2022 Jonathan Lang
+
 using System;
 
-namespace Baracuda.Threading.Internal
+namespace Baracuda.Threading.Utils
 {
     /// <summary>
     /// You can implement this interface in a MonoBehaviour that is passed as a target when dispatching and awaiting a

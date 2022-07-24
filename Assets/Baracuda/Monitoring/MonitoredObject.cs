@@ -8,12 +8,12 @@ namespace Baracuda.Monitoring
     {
         protected MonitoredObject()
         {
-            MonitoringManager.RegisterTarget(this);
+            MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(this);
         }
 
         public virtual void Dispose()
         {
-            MonitoringManager.UnregisterTarget(this);
+            MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(this);
         }
     }
 }

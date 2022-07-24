@@ -1,7 +1,8 @@
 // Copyright (c) 2022 Jonathan Lang
+
 using System;
 
-namespace Baracuda.Threading.Internal
+namespace Baracuda.Threading.Utils
 {
     /// <summary>
     /// Exception is thrown inside a <see cref="UnityEngine.Coroutine"/> that is handled by the

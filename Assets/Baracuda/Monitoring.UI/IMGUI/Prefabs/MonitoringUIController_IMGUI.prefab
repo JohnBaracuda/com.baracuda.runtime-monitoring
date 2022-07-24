@@ -54,10 +54,8 @@ MonoBehaviour:
     bot: 0
     left: 5
     right: 5
-  overrideScale: 1
   scale: 1
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.8235294}
-  logStartMessage: 0
   defaultFont: {fileID: 12800000, guid: a2578749a8289aa49b88151bb44f22dc, type: 3}
   availableFonts:
   - {fileID: 12800000, guid: cd279934efece26498f18152108f4c89, type: 3}

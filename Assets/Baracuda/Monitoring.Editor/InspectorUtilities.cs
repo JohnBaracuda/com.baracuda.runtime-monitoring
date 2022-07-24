@@ -8,10 +8,6 @@ namespace Baracuda.Monitoring.Editor
 {
     public static class InspectorUtilities
     {
-        private const string LINK_DOCUMENTATION = "https://johnbaracuda.com/monitoring.html";
-        private const string LINK_REPOSITORY = "https://github.com/johnbaracuda/Runtime-Monitoring";
-        private const string LINK_WEBSITE = "https://johnbaracuda.com/";
-        
         private static Color TextColor => EditorGUIUtility.isProSkin? new Color(0.84f, 0.84f, 0.84f) : Color.black;
 
         internal static GUIStyle TextStyle()
@@ -85,52 +81,56 @@ namespace Baracuda.Monitoring.Editor
         
         public static void DrawWeblinksWithLabel()
         {
+            var plugin = MonitoringSystems.Resolve<IMonitoringPlugin>();
+            
             // Documentation
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Documentation", GUILayout.Width(EditorGUIUtility.labelWidth));
-            if (GUILayout.Button(LINK_DOCUMENTATION))
+            if (GUILayout.Button(plugin.Documentation))
             {
-                Application.OpenURL(LINK_DOCUMENTATION);
+                Application.OpenURL(plugin.Documentation);
             }
             GUILayout.EndHorizontal();
             
             // Repository
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Repository", GUILayout.Width(EditorGUIUtility.labelWidth));
-            if (GUILayout.Button(LINK_REPOSITORY))
+            if (GUILayout.Button(plugin.Repository))
             {
-                Application.OpenURL(LINK_REPOSITORY);
+                Application.OpenURL(plugin.Repository);
             }
             GUILayout.EndHorizontal();
             
             // Website
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Website", GUILayout.Width(EditorGUIUtility.labelWidth));
-            if (GUILayout.Button(LINK_WEBSITE))
+            if (GUILayout.Button(plugin.Website))
             {
-                Application.OpenURL(LINK_WEBSITE);
+                Application.OpenURL(plugin.Website);
             }
             GUILayout.EndHorizontal();
         }
         
         public static void DrawWeblinks()
         {
+            var plugin = MonitoringSystems.Resolve<IMonitoringPlugin>();
+            
             // Documentation
-            if (GUILayout.Button(new GUIContent("Documentation", LINK_DOCUMENTATION)))
+            if (GUILayout.Button(new GUIContent("Documentation", plugin.Documentation)))
             {
-                Application.OpenURL(LINK_DOCUMENTATION);
+                Application.OpenURL(plugin.Documentation);
             }
             
             // Repository
-            if (GUILayout.Button(new GUIContent("GitHub Repository", LINK_REPOSITORY)))
+            if (GUILayout.Button(new GUIContent("GitHub Repository", plugin.Repository)))
             {
-                Application.OpenURL(LINK_REPOSITORY);
+                Application.OpenURL(plugin.Repository);
             }
             
             // Website
-            if (GUILayout.Button(new GUIContent("Website", LINK_WEBSITE)))
+            if (GUILayout.Button(new GUIContent("Website", plugin.Website)))
             {
-                Application.OpenURL(LINK_WEBSITE);
+                Application.OpenURL(plugin.Website);
             }
         }
 
@@ -141,7 +141,8 @@ namespace Baracuda.Monitoring.Editor
 
         public static void DrawCopyrightNotice()
         {
-            EditorGUILayout.LabelField(MonitoringSettings.COPYRIGHT, new GUIStyle(GUI.skin.label) {alignment = TextAnchor.MiddleCenter}, GUILayout.ExpandWidth(true));
+            var copyright = MonitoringSystems.Resolve<IMonitoringPlugin>().Copyright;
+            EditorGUILayout.LabelField(copyright, new GUIStyle(GUI.skin.label) {alignment = TextAnchor.MiddleCenter}, GUILayout.ExpandWidth(true));
         }
     }
 }

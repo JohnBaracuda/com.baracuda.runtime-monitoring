@@ -8,12 +8,12 @@ namespace Baracuda.Monitoring
     {
         protected virtual void OnEnable()
         {
-            MonitoringManager.RegisterTarget(this);
+            MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(this);
         }
 
         protected virtual void OnDisable()
         {
-            MonitoringManager.UnregisterTarget(this);
+            MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(this);
         }
     }
 }
