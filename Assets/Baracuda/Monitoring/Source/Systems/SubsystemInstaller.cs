@@ -1,5 +1,6 @@
 ﻿using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
+using Baracuda.Threading;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Source.Systems
@@ -22,8 +23,6 @@ namespace Baracuda.Monitoring.Source.Systems
             MonitoringSystems.Register<IMonitoringTicker>(new MonitoringTicker());
             MonitoringSystems.Register<IMonitoringUI>(new MonitoringUISystem());
             MonitoringSystems.Register<IMonitoringLogger>(new MonitoringLogging());
-            
-            // Initialization systems will be flushed after profiling
             MonitoringSystems.Register<IValueProcessorFactory>(new ValueProcessorFactory());
             MonitoringSystems.Register<IValidatorFactory>(new ValidatorFactory());
         }
@@ -31,7 +30,7 @@ namespace Baracuda.Monitoring.Source.Systems
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         private static void InstallReflectionSubsystems()
         {
-            MonitoringSystems.Register<IMonitoringProfiler>(new MonitoringProfiler());
+            MonitoringSystems.Register<IMonitoringProfiler>(new MonitoringProfiler()).BeginProfiling(Dispatcher.RuntimeToken);
         }
 
 #if UNITY_EDITOR

@@ -18,6 +18,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
     public class MonitoringGUIDrawer : MonitoringUIController
     {
         #region --- Inspector ---
+#pragma warning disable
         
         [Header("Element & Window Spacing")]
         [SerializeField] private float elementSpacing = 2f;
@@ -35,6 +36,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
         [SerializeField] private Font defaultFont;
         [SerializeField] private Font[] availableFonts;
         
+#pragma warning restore
         #endregion
 
         #region --- Fields, Properties & Nested Types ---

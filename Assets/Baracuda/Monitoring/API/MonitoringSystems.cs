@@ -14,17 +14,11 @@ namespace Baracuda.Monitoring.API
         [Pure]
         public static T Resolve<T>() where T : class, IMonitoringSystem<T>
         {
-#if CSHARP_8_OR_LATER
-            return IMonitoringSystem<T>.Current ?? throw new SystemNotRegisteredException(typeof(T).Name);
-#endif
             return systems.TryGetValue(typeof(T), out var system) ? (T) system : throw new SystemNotRegisteredException(typeof(T).Name);
         }
 
-        public static void Register<T>(T system) where T : class, IMonitoringSystem<T>
+        public static T Register<T>(T system) where T : class, IMonitoringSystem<T>
         {
-#if CSHARP_8_OR_LATER
-            IMonitoringSystem<T>.Current = system;
-#endif
             var key = typeof(T);
             if (systems.ContainsKey(key))
             {
@@ -34,6 +28,8 @@ namespace Baracuda.Monitoring.API
             {
                 systems.Add(key, system);
             }
+
+            return system;
         }
         
         private class SystemNotRegisteredException : Exception
