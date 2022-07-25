@@ -14,8 +14,8 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 &nbsp;
 ## Table of Contents
 
-- [Setup](#setup)
 - [Getting started](#getting-started)
+- [Setup](#setup)
 - [Technical Information](#technical-information)
 - [Feature List](#features)
 - [Import](#import)
@@ -39,21 +39,15 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 - [Licence](#licence)
 
 
-&nbsp;
-## Setup
-+ Download and import Runtime Monitoring.
-+ Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
-+ Depending on the Unity version and your preferences, import and optional UIController package.
-+ Use the `Monitoring UI Controller` field in the UI Controller foldout or use the `Set Active UIController` button on a listed element to set the active UI Controller.
-+ The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
-![basic example](https://johnbaracuda.com/media/img/monitoring/Example_06.png)
+
 
 &nbsp;
 ## Getting Started
 
 ```c#
-// Place the MonitorAttribute on any field, property, event or method
-// to have it automatically displayed during runtime in you UI.
+
+// Monitor any field, property, event or method during runtime!
+
 [Monitor]
 private int healthPoints;
 
@@ -66,6 +60,9 @@ public int GetHealthPoints() => healthPoints;
 [Monitor]
 public event Action OnHealthChanged;
 
+
+// Monitor static member as well as instance member
+
 [Monitor]
 public static string playerName;
 
@@ -75,39 +72,44 @@ protected static bool IsPlayerAlive { get; set; }
 [Monitor]
 internal static event Action<int> OnScoreChanged;
 
-// Monitor out parameter value
-[MonitorMethod]
-public bool TryGetPlayer(int playerId, out var player)
-{
-    // ...
-}
 
-// Determine if and in what quantity the state will be evaluated.
-[MonitorField(Update = UpdateOptions.FrameUpdate)]
-private float speed; 
+// Use conditions to determine if a member is displayed or not.
+
+[Monitor]
+[MConditional(Condition.CollectionNotEmpty)]
+private Stack<string> errorMessages { get; }
+
 
 // Reduce update overhead by providing an update event.
+
 [Monitor]
 [MUpdateEvent(nameof(OnPlayerSpawn))]
-public bool LastSpawnPosition { get; set; }
+public Vector3 LastSpawnPosition { get; set; }
 
-[MonitorEvent]
 public static event Action<Vector3> OnPlayerSpawn;
 
-// Monitored events display their signature, subscriber count and invokation count.
-// These options can be toggled using the MonitorEventAttribute. 
-[MonitorEvent(ShowSignature = false, ShowSubscriber = true)]
-public event OnGameStart;
 
 // Use processor methods to customize how the value is displayed.
+
 [Monitor]
 [MValueProcessor(nameof(IsAliveProcessor))]
 public bool IsAlive { get; private set; }
 
 private string IsAliveProcessor(bool value) => value? "Alive" : "Dead";
 
+
+// Monitor out parameter value.
+
+[MonitorMethod]
+public bool TryGetPlayer(int playerId, out var player)
+{
+    // ...
+}
+
+
 // Register & unregister objects with members you want to monitor.
 // This process can be simplified / automated (Take a look at Monitoring Objects)
+
 public class Player : MonoBehaviour
 {
     [Monitor]
@@ -125,6 +127,20 @@ public class Player : MonoBehaviour
 }
 ```
 ![basic example](https://johnbaracuda.com/media/img/monitoring/Example_03.png)
+
+
+
+
+&nbsp;
+## Setup
++ Download and import Runtime Monitoring.
++ Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
++ Depending on the Unity version and your preferences, import and optional UIController package.
++ Use the `Monitoring UI Controller` field in the UI Controller foldout or use the `Set Active UIController` button on a listed element to set the active UI Controller.
++ The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
+![basic example](https://johnbaracuda.com/media/img/monitoring/Example_06.png)
+
+
 
 
 &nbsp;
