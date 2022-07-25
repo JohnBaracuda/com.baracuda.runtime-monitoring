@@ -243,7 +243,6 @@ namespace Baracuda.Monitoring.Editor
             if (Foldout["IL2CPP Settings"])
             {
                 EditorGUILayout.Space();
-                EditorGUILayout.HelpBox("Make sure to delete old files when changing paths!", MessageType.None);
                 DrawRequired(_scriptFileIL2CPP);
                 EditorGUILayout.PropertyField(_useIPreprocessBuildWithReport);
                 EditorGUILayout.PropertyField(_throwOnTypeGenerationError);

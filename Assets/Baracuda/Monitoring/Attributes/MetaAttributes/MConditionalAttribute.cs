@@ -13,6 +13,9 @@ namespace Baracuda.Monitoring
         public readonly object Other;
 
         internal readonly ValidationMethod ValidationMethod;
+        internal readonly ValidationPeriod ValidationPeriod;
+        
+        //TODO: 
 
         /// <summary>
         /// The monitored member will only be displayed if the given condition is true.
@@ -21,6 +24,7 @@ namespace Baracuda.Monitoring
         {
             Condition = condition;
             ValidationMethod = ValidationMethod.Condition;
+            ValidationPeriod = ValidationPeriod.Runtime;
         }
 
         /// <summary>
@@ -35,6 +39,7 @@ namespace Baracuda.Monitoring
         {
             MemberName = memberName;
             ValidationMethod = ValidationMethod.ByMember;
+            ValidationPeriod = ValidationPeriod.Runtime;
         }
         
         /// <summary>
@@ -46,6 +51,7 @@ namespace Baracuda.Monitoring
             Comparison = comparison;
             Other = other;
             ValidationMethod = ValidationMethod.Comparison;
+            ValidationPeriod = ValidationPeriod.Runtime;
         }
     }
 
@@ -85,14 +91,14 @@ namespace Baracuda.Monitoring
     public enum Condition
     {
         /// <summary>
-        /// Show if the value is true.
-        /// </summary>
-        True = 0,
-        
-        /// <summary>
         /// Show if the value is false.
         /// </summary>
-        False = 1,
+        False = 0,
+        
+        /// <summary>
+        /// Show if the value is true.
+        /// </summary>
+        True = 1,
         
         /// <summary>
         /// Show if the value is null.
