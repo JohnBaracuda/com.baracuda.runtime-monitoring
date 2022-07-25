@@ -571,7 +571,7 @@ The true purpose of this tool is to provide an easy way to debug and monitor bui
 ### IL2CPP
 RTM is making extensive use of dynamic type & method creation during its profiling process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the nessesarry information to generate everything it needs during runtime. You can manually create this list forom the settings window 
 
-![example](https://johnbaracuda.com/media/img/monitoring/Example_07.png)
+![example](https://johnbaracuda.com/media/img/monitoring/Example_08.png)
 
 
 
@@ -727,8 +727,6 @@ Monitored Transforms are another type that have the potential to create a lot of
 
 &nbsp;
 ## Assemblies and Modules
-
-Runtime Monitoring is separated into multiple assemblies / modules. Some of those modules are essential while others are not.
 
  Assembly                                    | Path                                 | Core             | Note  
 :-                                           |:-                                    |:----------------:|:- 
