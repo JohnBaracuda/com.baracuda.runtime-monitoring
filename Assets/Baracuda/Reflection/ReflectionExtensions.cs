@@ -1048,8 +1048,15 @@ namespace Baracuda.Reflection
                     return typeKeyword;
             }
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ToHumanizedString(this MemberInfo member)
+        {
+            return $"{member.Name} in {member.DeclaringType?.Name}";
+        }
 
         #endregion
+        
 
         #region --- Base Type Reflection ---
                 

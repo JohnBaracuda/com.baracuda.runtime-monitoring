@@ -9,26 +9,26 @@ namespace Baracuda.Monitoring.Source.Systems
     internal partial class ValidatorFactory
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Func<bool> CreateStaticValidatorInternal(MConditionalAttribute attribute, Type baseType)
+        private Func<bool> CreateStaticValidatorInternal(MConditionalAttribute attribute, MemberInfo memberInfo)
         {
-            return attribute.ValidationMethod == ValidationMethod.ByMember ? CreateValidatorMethod(attribute.MemberName, baseType) : null;
+            return attribute.ValidationMethod == ValidationMethod.ByMember ? CreateValidatorMethod(attribute.MemberName, memberInfo.DeclaringType) : null;
         }
 
-        private Func<bool> CreateValidatorMethod(string name, Type baseType)
+        private Func<bool> CreateValidatorMethod(string name, Type declaringType)
         {
-            var method = baseType.GetMethod(name, STATIC_FLAGS);
+            var method = declaringType.GetMethod(name, STATIC_FLAGS);
             if (method != null)
             {
                 return CreateValidatorFromStaticMethod(method);
             }
 
-            var property = baseType.GetProperty(name, STATIC_FLAGS);
+            var property = declaringType.GetProperty(name, STATIC_FLAGS);
             if (property != null)
             {
                 return CreateValidatorFromStaticProperty(property);
             }
 
-            var field = baseType.GetField(name, STATIC_FLAGS);
+            var field = declaringType.GetField(name, STATIC_FLAGS);
             if (field != null)
             {
                 return CreateValidatorFromStaticField(field);

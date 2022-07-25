@@ -83,11 +83,11 @@ namespace Baracuda.Monitoring.Source.Profiles
             
             if (TryGetMetaAttribute<MConditionalAttribute>(out var conditionalAttribute))
             {
-                ValidationFunc = (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateStaticValidator(conditionalAttribute, unitTargetType)
-                            ?? (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateStaticConditionalValidator<TValue>(conditionalAttribute, unitTargetType)
-                            ?? (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateInstanceValidator<TTarget>(conditionalAttribute);
+                ValidationFunc = (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateStaticValidator(conditionalAttribute, memberInfo)
+                            ?? (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateStaticConditionalValidator<TValue>(conditionalAttribute, memberInfo)
+                            ?? (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateInstanceValidator<TTarget>(conditionalAttribute, memberInfo);
 
-                ValidationEvent = MonitoringSystems.Resolve<IValidatorFactory>().CreateEventValidator(conditionalAttribute, unitTargetType);
+                ValidationEvent = MonitoringSystems.Resolve<IValidatorFactory>().CreateEventValidator(conditionalAttribute, memberInfo);
             }
         }
 

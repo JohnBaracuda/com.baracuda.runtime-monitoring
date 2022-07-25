@@ -9,24 +9,24 @@ namespace Baracuda.Monitoring.Source.Systems
     {
         #region --- API ---
         
-        public Func<bool> CreateStaticValidator(MConditionalAttribute attribute, Type baseType)
+        public Func<bool> CreateStaticValidator(MConditionalAttribute attribute, MemberInfo memberInfo)
         {
-            return CreateStaticValidatorInternal(attribute, baseType);
+            return CreateStaticValidatorInternal(attribute, memberInfo);
         }
 
-        public Func<TTarget, bool> CreateInstanceValidator<TTarget>(MConditionalAttribute attribute)
+        public Func<TTarget, bool> CreateInstanceValidator<TTarget>(MConditionalAttribute attribute, MemberInfo memberInfo)
         {
             return CreateInstanceValidatorInternal<TTarget>(attribute);
         }
         
-        public Func<TValue, bool> CreateStaticConditionalValidator<TValue>(MConditionalAttribute attribute, Type baseType)
+        public Func<TValue, bool> CreateStaticConditionalValidator<TValue>(MConditionalAttribute attribute, MemberInfo memberInfo)
         {
-            return CreateStaticValidatorCondition<TValue>(attribute, baseType);
+            return CreateStaticValidatorCondition<TValue>(attribute, memberInfo);
         }
 
-        public ValidationEvent CreateEventValidator(MConditionalAttribute attribute, Type baseType)
+        public ValidationEvent CreateEventValidator(MConditionalAttribute attribute, MemberInfo memberInfo)
         {
-            return CreateEventValidatorInternal(attribute, baseType);
+            return CreateEventValidatorInternal(attribute, memberInfo);
         }
 
         #endregion

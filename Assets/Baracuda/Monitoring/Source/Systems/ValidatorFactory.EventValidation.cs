@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Reflection;
 using Baracuda.Monitoring.Source.Utilities;
 
 namespace Baracuda.Monitoring.Source.Systems
 {
     internal partial class ValidatorFactory
     {
-        private ValidationEvent CreateEventValidatorInternal(MConditionalAttribute attribute, Type baseType)
+        private ValidationEvent CreateEventValidatorInternal(MConditionalAttribute attribute, MemberInfo memberInfo)
         {
             if (attribute.ValidationMethod != ValidationMethod.ByMember)
             {
                 return null;
             }
 
-            var eventInfo = baseType.GetEvent(attribute.MemberName, STATIC_FLAGS);
+            var eventInfo = memberInfo.DeclaringType?.GetEvent(attribute.MemberName, STATIC_FLAGS);
 
             if (eventInfo == null)
             {

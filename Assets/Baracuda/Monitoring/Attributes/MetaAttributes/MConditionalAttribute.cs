@@ -3,9 +3,7 @@ using Baracuda.Monitoring.Source.Utilities;
 
 namespace Baracuda.Monitoring
 {
-    //TODO: Test with events & methods
-    
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Event)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class MConditionalAttribute : MonitoringMetaAttribute
     {
         public readonly Condition Condition;

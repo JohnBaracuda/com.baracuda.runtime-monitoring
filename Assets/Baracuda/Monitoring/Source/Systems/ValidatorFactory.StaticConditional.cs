@@ -13,17 +13,16 @@ namespace Baracuda.Monitoring.Source.Systems
     internal partial class ValidatorFactory
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Func<TValue, bool> CreateStaticValidatorCondition<TValue>(MConditionalAttribute attribute,
-            Type baseType)
+        private Func<TValue, bool> CreateStaticValidatorCondition<TValue>(MConditionalAttribute attribute, MemberInfo memberInfo)
         {
             switch (attribute.ValidationMethod)
             {
                 case ValidationMethod.ByMember:
-                    return CreateValidatorMethodOneArgument<TValue>(attribute.MemberName, baseType);
+                    return CreateValidatorMethodOneArgument<TValue>(attribute.MemberName, memberInfo.DeclaringType);
                 case ValidationMethod.Comparison:
-                    return CreateValidatorComparison<TValue>(attribute.Comparison, attribute.Other, baseType);
+                    return CreateValidatorComparison<TValue>(attribute.Comparison, attribute.Other,  memberInfo.DeclaringType);
                 case ValidationMethod.Condition:
-                    return CreateValidatorSpecialCondition<TValue>(attribute.Condition, baseType);
+                    return CreateValidatorSpecialCondition<TValue>(attribute.Condition, memberInfo);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -33,10 +32,10 @@ namespace Baracuda.Monitoring.Source.Systems
          * Special Conditions   
          */
 
-        private Func<TValue, bool> CreateValidatorSpecialCondition<TValue>(Condition condition, Type baseType)
+        private Func<TValue, bool> CreateValidatorSpecialCondition<TValue>(Condition condition, MemberInfo memberInfo)
         {
 #if DEBUG
-            CheckConditionViability<TValue>(condition, baseType);
+            CheckConditionViability<TValue>(condition, memberInfo);
 #endif
             
             switch (condition)
