@@ -412,21 +412,82 @@ private static string GlobalValueProcessorVersion(IFormatData ctx, Version versi
 
 You can use the MConditionalAttribute to define conditions that controll if a monitored value is displayed or not. Note that the value will stil be monitored but not drawn, meaning that fields, properties, events & methods will still be accessed. There are three different ways to validate if the targeted member is displayed or not.
 
-### Validated by Comparison
+### Validated by Condition
+
+Set a condition for the monitored value that when met will display the monitored value. This is useful to display important debugging information only when it is necessary.
 
 ```C#
+
+// Queue will only be displayed if there are errors. (Queue is not empty)
+[Monitor]
+[MConditional(Condition.CollectionNotEmpty)]
+private Queue<string> errorCache;
+
+// Property will only be displayed if Network is not available. (false)
+[Monitor]
+[MConditional(Condition.False)]
+private bool NetworkAvailable { get; }
+
+// Property will only be displayed if MainCamera is not available or set. (null)
+[Monitor]
+[MConditional(Condition.Null)]
+private Camera MainCamera { get; }
 
 ```
 
-### Validated by Condition
+### Validated by Comparison
 
-```C#
+Very similar to [Validated by Condition](#validated-by-condition) but more dynamic. Pass in another object value and determine a comparisson type that is then used on the current value of the monitored member and the value passed as an argument. If the comparrison evaluates to be true, the member will be displayed.
+
+```c#
+
+// Will only be displayed if the errorCode is 404
+[Monitor]
+[MConditional(Comparison.Equals, 404)]
+private int errorCode;
+
+// Will only be displayed more than one player is active.
+[Monitor]
+[MConditional(Comparison.Greater, 1)]
+private int ActivePlayerCount { get; }
 
 ```
 
 ### Validated by Member
 
-```C#
+Very dynamic way of determining if a member is displayed or not. Pass in the name of a field, property, method or event.
+
++ Passed fields, properties and methods must return a boolean that determines if the member is displayed or not.
++ Passed methods can also accept the current value of the moitored member and use its for a more dynamic evaluation.
++ Passed events must be Action<bool> and can be used to toggle the display of the member
+
+```c#
+
+// Will only be displayed if the field 'monitor' is true.
+[Monitor]
+[MConditional(monitor)]
+private bool IsAlive {get;}
+
+[SerializeField] private bool monitor = true;
+
+
+// Will only be displayed if the property 'IsDebug' is true.
+[Monitor]
+[MConditional(monitor)]
+private bool IsAlive {get;}
+
+pubic static bool IsDebug { get; }
+
+
+// Will only be displayed if the method 'Validate' returns true.
+[Monitor]
+[MConditional(Validate)]
+private Entity ActiveTarget {get;}
+
+private bool Validate(Entity target)
+{
+    return target != null && this.IsActive;
+}
 
 ```
 
