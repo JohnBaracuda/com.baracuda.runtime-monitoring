@@ -23,7 +23,8 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 - [Monitoring Static Membmer](#monitoring-static-member)
 - [Attributes](#attributes)
 - [Value Processor](#value-processor)
-- [Update Loop](#update-loop)
+- [Value Processor (Global)](#global-value-processor)
+- [Conditional Display](#conditional-display)
 - [Update Event](#update-event)
 - [Monitoring Events](#monitoring-events)
 - [Runtime](#runtime)
@@ -42,8 +43,8 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 ## Setup
 + Download and import Runtime Monitoring.
 + Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
-+ Depending on the Unity version and your preferences, import and optional UIController package (recommended).
-+ Use the `Monitoring UI Controller` field in the UI Controller foldout or use the `Set Active UIController` button on a listed Element to set the active UI Controller.
++ Depending on the Unity version and your preferences, import and optional UIController package.
++ Use the `Monitoring UI Controller` field in the UI Controller foldout or use the `Set Active UIController` button on a listed element to set the active UI Controller.
 + The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
 ![basic example](https://johnbaracuda.com/media/img/monitoring/Example_06.png)
 
@@ -74,11 +75,11 @@ protected static bool IsPlayerAlive { get; set; }
 [Monitor]
 internal static event Action<int> OnScoreChanged;
 
-//set the value for the playerId param.
-[MonitorMethod(1)]
+// Monitor out parameter value
+[MonitorMethod]
 public bool TryGetPlayer(int playerId, out var player)
 {
-    return _playerDicitonary.TryGetValue(playerId, out Player player);
+    // ...
 }
 
 // Determine if and in what quantity the state will be evaluated.
@@ -157,36 +158,24 @@ public class Player : MonoBehaviour
 + Many more features. 
 
 
+
+
 &nbsp;
 ## Import
 
-Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. 
+Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. You can also dowload this asset from the [Asset Store!](https://u3d.as/2QxJ). Take a look at [Setup](#setup) insturctions for more information how to import optional packages. (spoiler: via the settings window)
 
-Depending on your needs you may select or deselect individual modules when importing. ```Monitoring Example``` contains an optional example scene and [Monitoring UI](#ui-controller) contains UI / Display preset based on different UI Systems. Some packages can be imported retroactively using the setup window or by just importing their included packages located at Baracuda/Monitoring.UI
 
- Assembly                                | Path                               | Editor           | Core  
-:-                                       |:-                                  |:----------------:|:----------------:         
-Assembly-Baracuda-Monitoring             | Baracuda/Monitoring                |                  |:heavy_check_mark:
-Assembly-Baracuda-Editor                 | Baracuda/Monitoring.Editor         |:heavy_check_mark:|:heavy_check_mark:
-Assembly-Baracuda-Example                | Baracuda/Monitoring.Example        |                  |
-Assembly-Baracuda-Monitoring.GUI         | Baracuda/Monitoring.UI/UnityGUI    |                  |:heavy_check_mark:
-Assembly-Baracuda-Monitoring.UITookit    | Baracuda/Monitoring.UI/UIToolkit   |                  |
-Assembly-Baracuda-Monitoring.TextMeshPro | Baracuda/Monitoring.UI/TextMeshPro |                  |
-Assembly-Baracuda-Pooling                | Baracuda/Pooling                   |                  |:heavy_check_mark:
-Assembly-Baracuda-Threading              | Baracuda/Threading                 |                  |:heavy_check_mark:
-Assembly-Baracuda-Reflection             | Baracuda/Reflection                |                  |:heavy_check_mark:
 
 
 &nbsp;
 ## Monitoring Instance Member
 
-When monitoring non static member of a class, instances of those classes must be registered when they are created and unregistered when they are destoryed. This process can be automated or simplified, by inheriting from one of the following base types. 
+When monitoring non static member of a class, instances of those classes must be registered when they are created and unregistered when they are destoryed. This process can be automated or simplified, either by creating a custom Factory system, that will create/instatntiate objects and register them automatically, or by inheriting from one of the following base types. 
 + ```MonitoredBehaviour```: an automatically monitored ```MonoBehaviour```. Ensure to call ```base.Awake()``` and ```base.OnDestroy()```. 
 + ```MonitoredSingleton<T>```: an automatically monitored ```MonoBehaviour``` singleton. Ensure to call ```base.Awake()``` and ```base.OnDestroy()```. 
 + ```MonitoredScriptableObject```: an automatically monitored ```ScriptableObject```. nsure to call ```base.OnEnable()``` and ```base.OnDisable()```. 
-+ ```MonitoredObject```: an automatically monitored ```System.Object```. that implements the ```IDisposable``` interface. Please make sure to call ```Disposable``` on those objects when you no longer need them. 
-
-
++ ```MonitoredObject```: an automatically monitored ```System.Object```. that implements the ```IDisposable``` interface.
 
 ```c#
 public class Player : MonoBehaviour
@@ -237,6 +226,7 @@ public class Player : MonitoredBehaviour
 ```
 
 
+
 &nbsp;
 ## Monitoring Static Member
 
@@ -262,10 +252,11 @@ public class Enemy : MonoBehaviour
 
 
 
+
 &nbsp;
 ## Attributes
 
-C# attributes are a fundamental aspect of this tool. Runtime Monitoring uses attributes not only to determine which C# member to monitor, but also to customize the way in which that process happens. For this reason, the attributes used by RTM are divided into two broad categories, first the "Monitoring Attributes" to determine which C# member to monitor, and second the "Meta Attributes" to customize how a member is monitored.
+Use Attributes to customize the monitoring process & display of your member. The attributes provided are divided into three broad categories, first the "Monitoring Attributes" to determine which C# member to monitor, second the "Meta Attributes" to customize how a member is monitored and third other attributes used for various purposes.
 
 ### Monitoring Attributes
 Attribute                   | Code               | Base Type             | Description|     
@@ -290,20 +281,21 @@ MTextColorAttribute                          |`[MTextColor]`      | MonitoringMe
 MGroupColorAttribute                         |`[MGroupColor]`     | MonitoringMetaAttribute | Provide custom background color for the targets group |
 MGroupColorAttribute                         |`[MGroupColor]`     | MonitoringMetaAttribute | Provide custom background color for the targets group |
 MConditionalAttribute                        |`[MConditional]`    | MonitoringMetaAttribute | Provide custom validation logic |
+MRichTextAttribute                           |`[MRichText]`       | MonitoringMetaAttribute | Enable/disable RichText for the instance (to debug) |
 
 ### Other Attributes
 Attribute                       | Code                    | Base Type    | Description |     
 :-                              |:-                       |:-            |:-     |      
 GlobalValueProcessorAttribute   |`[GlobalValueProcessor]` | Attribute    | Declare a method as a global value processor for a specific type |
+DisableMonitoringAttribute      |`[DisableMonitoring]`    | Attribute    | Disable monitoring for the target class or assembly |
+
 
 
 
 &nbsp;
 ## Value Processor
 
-You can add the MValueProcessorAttribute to a monitored field or porperty to gain more controll of its string representation. Use the attibute to pass the name of a method that will be used to parse the current value to a string.
-
-The value processor method must accept a value of the monitored members type, can be both static and non static (when monitoring a non non static member) and must return a string.
+You can add the MValueProcessorAttribute to a monitored field or porperty to gain more controll of its string representation. Use the attibute to pass the name of a method that will be used to parse the current value to a string. The value processor method must accept a value of the monitored members type, can be both static and non static (when monitoring a non non static member) and must return a string.
 
 ```c#
 [MValueProcessor(nameof(IsAliveProcessor))]
@@ -342,7 +334,6 @@ private static string IListProcessor(string element)
 {
     return $"The name is {element}";
 }
-
 
 [MValueProcessor(nameof(IListProcessorWithIndex))] 
 [Monitor] private IList<string> Names => names;
@@ -383,29 +374,63 @@ private static string IEnumerableValueProcessor(int number)
 
 ![value processor example](https://johnbaracuda.com/media/img/monitoring/Example_01.png)
 
+
+
+
 &nbsp;
-## Update Loop
+## Global Value Processor
 
-Monitord member are evaluated in an update loop. You can provide an event that will tell monitoring that a value has changed to remove it from the update loop. 
-
+You can declare a static method as a global value processor that is then used to process the value for every monitored member of the given type (instanced value processors will still be prefered). The value processor mehtod must have a valid signature, meaning that is has to accept the monitored type as a fist or second argument, can optionally accept an IFormatData object as a first argument and must return a string. 
 
 ```c#
-public enum UpdateOptions
+
+// Custom type
+public struct Version
 {
-    Auto = 0,
-    DontUpdate = 1,
-    FrameUpdate = 2,
-    TickUpdate = 4,
+    public readonly short Major;
+    public readonly short Minor;
 }
+
+[GlobalValueProcessor]
+private static string GlobalValueProcessorVersion(Version version)
+{
+    return $"Version: {version.Major}.{version.Minor}";
+}
+
+[GlobalValueProcessor]
+private static string GlobalValueProcessorVersion(IFormatData ctx, Version version)
+{
+    return $"{ctx.Label}: {version.Major}.{version.Minor}";
+}
+
 ```
 
-+ ```UpdateOtions.Auto```: If an update event is set, the state of the members  will only be evaluated when the event is invoked. Otherwise Tick is the preferred update interval. 
 
-+ ```UpdateOtions.DontUpdate```: The members will not be evaluated except once on load. Use this option for constant values.
 
-+ ```UpdateOtions.FrameUpdate```: The member will be evaluated on every LateUpdate.
+&nbsp;
+## Conditional Display
 
-+ ```UpdateOtions.TickUpdate```: The member will be evaluated on every Tick. Tick is a custom update cycle that is roughly called 30 times per second.
+You can use the MConditionalAttribute to define conditions that controll if a monitored value is displayed or not. Note that the value will stil be monitored but not drawn, meaning that fields, properties, events & methods will still be accessed. There are three different ways to validate if the targeted member is displayed or not.
+
+### Validated by Comparison
+
+```C#
+
+```
+
+### Validated by Condition
+
+```C#
+
+```
+
+### Validated by Member
+
+```C#
+
+```
+
+
 
 
 &nbsp;
@@ -466,10 +491,13 @@ You can not only monitor the value of a field or property, but also the state of
 
 
 
+
 &nbsp;
 ## Runtime
 
 + Use the #define ```DISABLE_MONITORING``` to disable the internal logic of the tool. Public API will still compile so you don't have to wrap your API calls in a custom #if !DISABLE_MONITORING block.
+
+
 
 
 &nbsp;
@@ -480,7 +508,10 @@ You can not only monitor the value of a field or property, but also the state of
 The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono & IL2CPP runtimes are supported. Mono runtime works without any limitations.
 
 ### IL2CPP
-RTM is making extensive use of dynamic type & method creation during its profiling process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation) In order to use IL2CPP, some features are disabled and some types must be generated during a build process. These types are required to satisfy IL2CPP AOT type generation.
+RTM is making extensive use of dynamic type & method creation during its profiling process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the nessesarry information to generate everything it needs during runtime. You can manually create this list forom the settings window 
+
+![example](https://johnbaracuda.com/media/img/monitoring/Example_07.png)
+
 
 
 
@@ -502,6 +533,9 @@ XBox One              |NA                |                         |
 XSX                   |NA                |                         |
 PlayStation 4         |NA                |                         |
 PlayStation 5         |NA                |                         |
+
+
+
 
 &nbsp;
 ## UI Formatting
@@ -537,6 +571,8 @@ private int _fps;
 ```
 
 
+
+
 &nbsp;
 ## UI Controller
 
@@ -562,6 +598,8 @@ MonitoringUI.IsVisible();
 ```
 
 
+
+
 &nbsp;
 ## Custom UI Controller
 
@@ -573,6 +611,7 @@ You can create a custom UI controller by follwing the steps below. You can take 
 + Make sure to delete the GameObject from your scene.
 + Open the settings by navigating to (menu: Tools > Monitoring > Settings).
 + Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
+
 
 
 
@@ -608,8 +647,10 @@ public void RemoveName(string name)
 }
 ```
 
+
 ### Transform
 Monitored Transforms are another type that have the potential to create a lot of garbage. A simple thing you could do to reduce overhead is to control the Transform.hasChanged flag on the Transform itself. The monitoring unit/handler will check the flag and only raise an update event if the flag is set to true. (which it is unless changed manually) Unity is not controlling Transform.hasChanged.
+
 
 
 
@@ -619,6 +660,7 @@ Monitored Transforms are another type that have the potential to create a lot of
 + Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
 + Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
 + If ```Enable Monitoring``` in the UI Controller foldout is set to ```false```, Make sure to call ```MonitoringUI.CreateMonitoringUI()``` from anywhere in you code. 
+
 
 
 
@@ -640,6 +682,8 @@ Assembly-Baracuda-Threading                  | Baracuda/Threading               
 Assembly-Baracuda-Reflection                 | Baracuda/Reflection                  |:heavy_check_mark:| 
 
 
+
+
 &nbsp;
 ## Planned Features
 
@@ -659,6 +703,8 @@ Any help is appreciated. Feel free to contact me if you have any feedback, sugge
 + Guide how to customize UI.
 
 
+
+
 &nbsp;
 ## Support Me
 
@@ -668,6 +714,8 @@ I spend a lot of time working on this and other free assets to make sure as many
 + [Linktree](https://linktr.ee/JohnBaracuda)
 + [Twitter](https://twitter.com/JohnBaracuda)
 + [Itch](https://johnbaracuda.itch.io/)
+
+
 
 
 &nbsp;
