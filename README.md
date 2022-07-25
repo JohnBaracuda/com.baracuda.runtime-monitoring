@@ -148,7 +148,7 @@ public class Player : MonoBehaviour
 + Unity Version: <b>2019.4</b> (for UIToolkit <b>2020.1</b>) <br/> 
 + Scripting Backend: <b>Mono & IL2CPP</b>
 + API Compatibility: <b>.NET Standard 2.0 or .NET 4.xP</b>
-+ Asset Version: <b>1.0.7</b>
++ Asset Version: <b>2.0.0</b>
 
 
 &nbsp;
@@ -653,25 +653,43 @@ private int _fps;
 &nbsp;
 ## UI Controller
 
-Use the ```MonitoringUI``` API to toggle the visiblity or active state of the current monitoring UI overlay. ```MonitoringUI``` is an accesspoint and the bridge between custom code and the active ```MonitoringUIController```. This is to offer a layer of abstraction that enables you to switch between multiple either prefabricated or custom UI implimentations / UI Controller.
+Use the ```IMonitoringUI``` API to toggle the visiblity or active state of the current monitoring UI overlay. ```IMonitoringUI``` is an accesspoint and the bridge between custom code and the active ```MonitoringUIController```. This is to offer a layer of abstraction that enables you to switch between multiple either prefabricated or custom UI implimentations / UI Controller.
 
 Note! Not every existing UI controllers (UIToolkit, TextMeshPro and GUI) includes every feature. I would recommend unsing the UIToolkit UI solution if possible.
 
 ```c#
 using Baracuda.Monitoring.API;
-
+    
 // Show the monitoring UI overlay.
-MonitoringUI.Show();
+MonitoringSystems.Resolve<IMonitoringUI>().Show();
 
 // Hide the monitoring UI overlay.
-MonitoringUI.Hide();
+MonitoringSystems.Resolve<IMonitoringUI>().Hide();
 
 // Toggle the visibility of the active monitoring display.
 // This method returns a bool indicating the new visibility state.
-MonitoringUI.ToggleDisplay();
+MonitoringSystems.Resolve<IMonitoringUI>().ToggleDisplay();
 
-// Returns true if the there is an active monitoring display that is also visible.
-MonitoringUI.IsVisible();
+// Get the currently active MonitoringUIController
+MonitoringSystems.Resolve<IMonitoringUI>().GetActiveUIController();
+    
+// Get the currently active MonitoringUIController casted to a concrete implimentation.
+MonitoringSystems.Resolve<IMonitoringUI>().GetActiveUIController<T>();
+    
+// Create a MonitoringUIController instance if there is none already. Disable 'Auto Instantiate UI' in the
+// Monitoring Settings and use this method for more control over the timing in which the MonitoringUIController
+// is instantiated.
+MonitoringSystems.Resolve<IMonitoringUI>().CreateMonitoringUI();
+    
+// Filter displayed units by their name, tags etc. 
+MonitoringSystems.Resolve<IMonitoringUI>().Filter();
+    
+// Reset active filter.
+MonitoringSystems.Resolve<IMonitoringUI>().ResetFilter();
+    
+// Get an Action<bool> event that is invoked when the monitoring UI became visible/invisible.
+MonitoringSystems.Resolve<IMonitoringUI>().VisibleStateChanged;
+  
 ```
 
 
