@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+// Copyright (c) 2022 Jonathan Lang
+ 
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.UI.TextMeshPro

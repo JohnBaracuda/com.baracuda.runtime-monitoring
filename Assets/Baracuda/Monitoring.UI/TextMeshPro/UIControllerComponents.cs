@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+// Copyright (c) 2022 Jonathan Lang
+ 
+using UnityEngine;
 
 namespace Baracuda.Monitoring.UI.TextMeshPro
 {

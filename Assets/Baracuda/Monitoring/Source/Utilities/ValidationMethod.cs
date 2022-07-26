@@ -1,4 +1,6 @@
-﻿namespace Baracuda.Monitoring.Source.Utilities
+// Copyright (c) 2022 Jonathan Lang
+ 
+namespace Baracuda.Monitoring.Source.Utilities
 {
     internal enum ValidationMethod
     {

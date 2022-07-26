@@ -1,4 +1,6 @@
-﻿using Baracuda.Monitoring.Source.Utilities;
+// Copyright (c) 2022 Jonathan Lang
+ 
+using Baracuda.Monitoring.Source.Utilities;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.API

@@ -1,4 +1,6 @@
-﻿namespace Baracuda.Monitoring.API
+// Copyright (c) 2022 Jonathan Lang
+ 
+namespace Baracuda.Monitoring.API
 {
     public interface IFormatData
     {
