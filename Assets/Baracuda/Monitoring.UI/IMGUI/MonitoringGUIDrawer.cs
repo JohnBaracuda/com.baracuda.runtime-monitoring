@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
@@ -78,6 +79,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
             public readonly Texture2D BackgroundTexture;
             
+            private readonly string _textColor;
             private readonly int _size;
 
             private static readonly Dictionary<Color, Texture2D> backgroundTexturePool =
@@ -85,16 +87,25 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
             public GUIElement(IMonitorUnit unit, MonitoringGUIDrawer ctx)
             {
-                unit.ValueUpdated += Update;
                 unit.ActiveStateChanged += SetActive;
                 Enabled = unit.Enabled;
                 FormatData = unit.Profile.FormatData;
                 ID = unit.UniqueID;
 
-                var backgroundColor = unit.Profile.TryGetMetaAttribute<MColorAttribute>(out var colorAttribute)
+                var backgroundColor = unit.Profile.TryGetMetaAttribute<MBackgroundColorAttribute>(out var colorAttribute)
                     ? colorAttribute.ColorValue
                     : ctx.backgroundColor;
                 
+                if (unit.Profile.TryGetMetaAttribute<MTextColorAttribute>(out var textColorAttribute))
+                {
+                    unit.ValueUpdated += UpdateColorized;
+                    _textColor = ColorUtility.ToHtmlStringRGBA(textColorAttribute.ColorValue);
+                }
+                else
+                {
+                    unit.ValueUpdated += Update;
+                }
+
                 if (backgroundTexturePool.TryGetValue(backgroundColor, out var texture))
                 {
                     BackgroundTexture = texture;
@@ -135,6 +146,21 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 sb.Append(_size);
                 sb.Append('>');
                 sb.Append(text);
+                sb.Append("</size>");
+                Content = StringBuilderPool.Release(sb);
+            }
+            
+            private void UpdateColorized(string text)
+            {
+                var sb = StringBuilderPool.Get();
+                sb.Append("<size=");
+                sb.Append(_size);
+                sb.Append('>');
+                sb.Append("<color=#");
+                sb.Append(_textColor);
+                sb.Append('>');
+                sb.Append(text);
+                sb.Append("</color>");
                 sb.Append("</size>");
                 Content = StringBuilderPool.Release(sb);
             }

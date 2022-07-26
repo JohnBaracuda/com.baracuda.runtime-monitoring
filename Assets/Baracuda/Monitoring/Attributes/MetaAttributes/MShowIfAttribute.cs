@@ -6,7 +6,7 @@ using Baracuda.Monitoring.Source.Utilities;
 namespace Baracuda.Monitoring
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class MConditionalAttribute : MonitoringMetaAttribute
+    public class MShowIfAttribute : MonitoringMetaAttribute
     {
         public readonly Condition Condition;
         public readonly string MemberName;
@@ -15,18 +15,16 @@ namespace Baracuda.Monitoring
         public readonly object Other;
 
         internal readonly ValidationMethod ValidationMethod;
-        internal readonly ValidationPeriod ValidationPeriod;
         
         //TODO: 
 
         /// <summary>
         /// The monitored member will only be displayed if the given condition is true.
         /// </summary>
-        public MConditionalAttribute(Condition condition)
+        public MShowIfAttribute(Condition condition)
         {
             Condition = condition;
             ValidationMethod = ValidationMethod.Condition;
-            ValidationPeriod = ValidationPeriod.Runtime;
         }
 
         /// <summary>
@@ -37,23 +35,21 @@ namespace Baracuda.Monitoring
         /// on the passed bool value. 
         /// Please remember that adding conditions will add additional overhead.
         /// </summary>
-        public MConditionalAttribute(string memberName)
+        public MShowIfAttribute(string memberName)
         {
             MemberName = memberName;
             ValidationMethod = ValidationMethod.ByMember;
-            ValidationPeriod = ValidationPeriod.Runtime;
         }
         
         /// <summary>
         /// The monitored member will only be displayed if the given comparison to the passed object is true.
         /// Please remember that adding conditions will add additional overhead.
         /// </summary>
-        public MConditionalAttribute(Comparison comparison, object other)
+        public MShowIfAttribute(Comparison comparison, object other)
         {
             Comparison = comparison;
             Other = other;
             ValidationMethod = ValidationMethod.Comparison;
-            ValidationPeriod = ValidationPeriod.Runtime;
         }
     }
 

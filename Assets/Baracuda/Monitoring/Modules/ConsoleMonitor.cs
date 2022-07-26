@@ -46,7 +46,7 @@ namespace Baracuda.Monitoring.Modules
         [MUpdateEvent(nameof(UpdateDisplayedLogs))]
         [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, ElementIndent = 0, GroupElement = false)]
         [MFont("JetBrainsMono-Regular")]
-        [MConditional(Condition.CollectionNotEmpty)]
+        [MShowIf(Condition.CollectionNotEmpty)]
         private Queue<string> Console => messageLogCache;
         
         
@@ -54,7 +54,7 @@ namespace Baracuda.Monitoring.Modules
         [MBackgroundColor(ColorPreset.TransparentBlack)]
         [MFormatOptions(UIPosition.LowerLeft, GroupElement = false)]
         [MFont("JetBrainsMono-Regular")]
-        [MConditional(Condition.NotNullOrWhiteSpace)]
+        [MShowIf(Condition.NotNullOrWhiteSpace)]
         [MRichText(true)]
         [MValueProcessor(nameof(StacktraceProcessor))]
         private string LastLogStacktrace => lastLogStacktrace;

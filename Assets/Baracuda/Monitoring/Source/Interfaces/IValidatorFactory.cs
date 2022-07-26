@@ -9,9 +9,9 @@ namespace Baracuda.Monitoring.Source.Interfaces
 {
     public interface IValidatorFactory : IMonitoringSystem<IValidatorFactory>
     {
-        Func<bool> CreateStaticValidator(MConditionalAttribute attribute, MemberInfo memberInfo);
-        Func<TTarget, bool> CreateInstanceValidator<TTarget>(MConditionalAttribute attribute, MemberInfo memberInfo);
-        Func<TValue, bool> CreateStaticConditionalValidator<TValue>(MConditionalAttribute attribute, MemberInfo memberInfo);
-        ValidationEvent CreateEventValidator(MConditionalAttribute attribute, MemberInfo memberInfo);
+        Func<bool> CreateStaticValidator(MShowIfAttribute attribute, MemberInfo memberInfo);
+        Func<TTarget, bool> CreateInstanceValidator<TTarget>(MShowIfAttribute attribute, MemberInfo memberInfo);
+        Func<TValue, bool> CreateStaticConditionalValidator<TValue>(MShowIfAttribute attribute, MemberInfo memberInfo);
+        ValidationEvent CreateEventValidator(MShowIfAttribute attribute, MemberInfo memberInfo);
     }
 }

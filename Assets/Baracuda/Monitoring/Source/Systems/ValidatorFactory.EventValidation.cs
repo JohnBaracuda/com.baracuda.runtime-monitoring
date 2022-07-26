@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang
+﻿// Copyright (c) 2022 Jonathan Lang
  
 using System;
 using System.Reflection;
@@ -8,7 +8,7 @@ namespace Baracuda.Monitoring.Source.Systems
 {
     internal partial class ValidatorFactory
     {
-        private ValidationEvent CreateEventValidatorInternal(MConditionalAttribute attribute, MemberInfo memberInfo)
+        private ValidationEvent CreateEventValidatorInternal(MShowIfAttribute attribute, MemberInfo memberInfo)
         {
             if (attribute.ValidationMethod != ValidationMethod.ByMember)
             {

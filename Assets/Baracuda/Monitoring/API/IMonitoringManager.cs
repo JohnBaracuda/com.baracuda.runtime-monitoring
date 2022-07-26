@@ -40,12 +40,12 @@ namespace Baracuda.Monitoring.API
         /// <summary>
         /// Register an object that is monitored during runtime.
         /// </summary>
-        void RegisterTarget(object target);
+        void RegisterTarget<T>(T target) where T : class;
         
         /// <summary>
         /// Unregister an object that is monitored during runtime.
         /// </summary>
-        void UnregisterTarget(object target);
+        void UnregisterTarget<T>(T target) where T : class;
 
         /*
          * Unit for target   

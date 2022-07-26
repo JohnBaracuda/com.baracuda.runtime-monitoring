@@ -81,7 +81,7 @@ namespace Baracuda.Monitoring.Source.Profiles
 
             IsDirtyFunc = CreateIsDirtyFunction(unitValueType);
             
-            if (TryGetMetaAttribute<MConditionalAttribute>(out var conditionalAttribute))
+            if (TryGetMetaAttribute<MShowIfAttribute>(out var conditionalAttribute))
             {
                 ValidationFunc = (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateStaticValidator(conditionalAttribute, memberInfo)
                             ?? (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateStaticConditionalValidator<TValue>(conditionalAttribute, memberInfo)

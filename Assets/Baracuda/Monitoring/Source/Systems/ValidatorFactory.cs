@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang
+﻿// Copyright (c) 2022 Jonathan Lang
  
 using System;
 using System.Reflection;
@@ -11,22 +11,22 @@ namespace Baracuda.Monitoring.Source.Systems
     {
         #region --- API ---
         
-        public Func<bool> CreateStaticValidator(MConditionalAttribute attribute, MemberInfo memberInfo)
+        public Func<bool> CreateStaticValidator(MShowIfAttribute attribute, MemberInfo memberInfo)
         {
             return CreateStaticValidatorInternal(attribute, memberInfo);
         }
 
-        public Func<TTarget, bool> CreateInstanceValidator<TTarget>(MConditionalAttribute attribute, MemberInfo memberInfo)
+        public Func<TTarget, bool> CreateInstanceValidator<TTarget>(MShowIfAttribute attribute, MemberInfo memberInfo)
         {
             return CreateInstanceValidatorInternal<TTarget>(attribute);
         }
         
-        public Func<TValue, bool> CreateStaticConditionalValidator<TValue>(MConditionalAttribute attribute, MemberInfo memberInfo)
+        public Func<TValue, bool> CreateStaticConditionalValidator<TValue>(MShowIfAttribute attribute, MemberInfo memberInfo)
         {
             return CreateStaticValidatorCondition<TValue>(attribute, memberInfo);
         }
 
-        public ValidationEvent CreateEventValidator(MConditionalAttribute attribute, MemberInfo memberInfo)
+        public ValidationEvent CreateEventValidator(MShowIfAttribute attribute, MemberInfo memberInfo)
         {
             return CreateEventValidatorInternal(attribute, memberInfo);
         }

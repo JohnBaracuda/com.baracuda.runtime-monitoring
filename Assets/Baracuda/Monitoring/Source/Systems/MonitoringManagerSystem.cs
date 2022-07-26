@@ -62,7 +62,7 @@ namespace Baracuda.Monitoring.Source.Systems
          */
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RegisterTarget(object target)
+        public void RegisterTarget<T>(T target) where T : class
         {
 #if !DISABLE_MONITORING
             RegisterTargetInternal(target);
@@ -70,7 +70,7 @@ namespace Baracuda.Monitoring.Source.Systems
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void UnregisterTarget(object target)
+        public void UnregisterTarget<T>(T target) where T : class
         {
 #if !DISABLE_MONITORING
             UnregisterTargetInternal(target);
@@ -176,7 +176,7 @@ namespace Baracuda.Monitoring.Source.Systems
         #region --- Target Registration ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void RegisterTargetInternal(object target)
+        private void RegisterTargetInternal<T>(T target) where T : class
         {
 #if DEBUG
             if (_registeredObjects.Contains(target))
@@ -198,7 +198,7 @@ namespace Baracuda.Monitoring.Source.Systems
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void UnregisterTargetInternal(object target)
+        private void UnregisterTargetInternal<T>(T target) where T : class
         {
 #if DEBUG
             if (!_registeredObjects.Contains(target))

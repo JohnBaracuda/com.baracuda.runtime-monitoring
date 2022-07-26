@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang
+﻿// Copyright (c) 2022 Jonathan Lang
  
 using System;
 using System.Collections;
@@ -15,7 +15,7 @@ namespace Baracuda.Monitoring.Source.Systems
     internal partial class ValidatorFactory
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Func<TValue, bool> CreateStaticValidatorCondition<TValue>(MConditionalAttribute attribute, MemberInfo memberInfo)
+        private Func<TValue, bool> CreateStaticValidatorCondition<TValue>(MShowIfAttribute attribute, MemberInfo memberInfo)
         {
             switch (attribute.ValidationMethod)
             {

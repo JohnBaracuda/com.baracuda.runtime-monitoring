@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang
+﻿// Copyright (c) 2022 Jonathan Lang
  
 using System;
 using System.Reflection;
@@ -11,7 +11,7 @@ namespace Baracuda.Monitoring.Source.Systems
     internal partial class ValidatorFactory
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Func<TTarget, bool> CreateInstanceValidatorInternal<TTarget>(MConditionalAttribute attribute)
+        private Func<TTarget, bool> CreateInstanceValidatorInternal<TTarget>(MShowIfAttribute attribute)
         {
             return attribute.ValidationMethod == ValidationMethod.ByMember ? CreateInstanceValidatorMethod<TTarget>(attribute.MemberName) : null;
         }
