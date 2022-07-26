@@ -1,4 +1,6 @@
-﻿using System;
+// Copyright (c) 2022 Jonathan Lang
+ 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Reflection;

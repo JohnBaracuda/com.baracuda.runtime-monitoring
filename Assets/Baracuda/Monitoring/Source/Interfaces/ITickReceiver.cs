@@ -1,4 +1,6 @@
-﻿namespace Baracuda.Monitoring.Source.Interfaces
+// Copyright (c) 2022 Jonathan Lang
+ 
+namespace Baracuda.Monitoring.Source.Interfaces
 {
     public interface ITickReceiver
     {

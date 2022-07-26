@@ -1,5 +1,5 @@
-﻿using System;
-using Baracuda.Monitoring.API;
+// Copyright (c) 2022 Jonathan Lang
+
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Modules
