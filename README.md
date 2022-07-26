@@ -27,6 +27,8 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 - [Conditional Display](#conditional-display)
 - [Update Event](#update-event)
 - [Monitoring Events](#monitoring-events)
+- [Monitoring Methods](#monitoring-methods)
+- [Monitoring API](#public-api)
 - [Runtime](#runtime)
 - [Runtime Compatibility](#runtime-compatibility)
 - [UI Formatting](#ui-formatting)
@@ -76,7 +78,7 @@ internal static event Action<int> OnScoreChanged;
 // Use conditions to determine if a member is displayed or not.
 
 [Monitor]
-[MConditional(Condition.CollectionNotEmpty)]
+[MShowIf(Condition.CollectionNotEmpty)]
 private Stack<string> errorMessages { get; }
 
 
@@ -117,12 +119,12 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        MonitoringManager.RegisterTarget(this);
+        MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(this);
     }
 
     private void OnDestroy()
     {
-        MonitoringManager.UnregisterTarget(this);
+        MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(this);
     }
 }
 ```
@@ -201,14 +203,14 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        MonitoringManager.RegisterTarget(this);
+        MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(target);
         // Or use the extension method:
         this.RegisterMonitor();
     }
 
     private void OnDestroy()
     {
-        MonitoringManager.UnregisterTarget(this);
+        MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(target);
         // Or use the extension method:
         this.UnregisterMonitor();
     }
@@ -275,35 +277,38 @@ public class Enemy : MonoBehaviour
 Use Attributes to customize the monitoring process & display of your member. The attributes provided are divided into three broad categories, first the "Monitoring Attributes" to determine which C# member to monitor, second the "Meta Attributes" to customize how a member is monitored and third other attributes used for various purposes.
 
 ### Monitoring Attributes
-Attribute                   | Code               | Base Type             | Description|     
-:-                          |:-                  |:-                     |:-     |      
-MonitorAttribute            |`[Monitor]`         | Attribute             | Monitor a field, property, event or method|
-MonitorValueAttribute       |`[MonitorValue]`    | MonitorAttribute      | Monitor a field or property|
-MonitorPropertyAttribute    |`[MonitorProperty]` | MonitorValueAttribute | Monitor a property      |
-MonitorFieldAttribute       |`[MonitorField]`    | MonitorValueAttribute | Monitor a field      |
-MonitorEventAttribute       |`[MonitorEvent]`    | MonitorAttribute      | Monitor an event      |
-MonitorMethodAttribute      |`[MonitorMethod]`   | MonitorAttribute      | Monitor a method      |
+ Attribute          | Base Type             | Description|     
+:-                  |:-                     |:-     |      
+`[Monitor]`         | Attribute             | Monitor a field, property, event or method|
+`[MonitorValue]`    | MonitorAttribute      | Monitor a field or property|
+`[MonitorProperty]` | MonitorValueAttribute | Monitor a property      |
+`[MonitorField]`    | MonitorValueAttribute | Monitor a field      |
+`[MonitorEvent]`    | MonitorAttribute      | Monitor an event      |
+`[MonitorMethod]`   | MonitorAttribute      | Monitor a method      |
+
+
 
 ### Meta Attributes
-Attribute                                    | Code               | Base Type               | Description |     
-:-                                           |:-                  |:-                       |:-     |      
-MFormatOptionsAttribute                      |`[MFormatOptions]`  | MonitoringMetaAttribute | Provide optional formatting (e.g fontsize)|
-MTagAttribute                                |`[MTag]`            | MonitoringMetaAttribute | Provide optional tags used for filtering |
-[MUpdateEventAttribute](#update-event)       |`[MUpdateEvent]`    | MonitoringMetaAttribute | Provide an event that will trigger an refresh/update |
-[MValueProcessorAttribute](#value-processor) |`[MValueProcessor]` | MonitoringMetaAttribute | Provide a method that will process the value before it is displayed as a string |
-MStyleAttribute                              |`[MStyle]`          | MonitoringMetaAttribute | UIToolkit only. Provide optional style names |
-MBackgroundColorAttribute                    |`[MBackgroundColor]`| MonitoringMetaAttribute | Provide custom background color |
-MTextColorAttribute                          |`[MTextColor]`      | MonitoringMetaAttribute | Provide custom text color |
-MGroupColorAttribute                         |`[MGroupColor]`     | MonitoringMetaAttribute | Provide custom background color for the targets group |
-MGroupColorAttribute                         |`[MGroupColor]`     | MonitoringMetaAttribute | Provide custom background color for the targets group |
-MConditionalAttribute                        |`[MConditional]`    | MonitoringMetaAttribute | Provide custom validation logic |
-MRichTextAttribute                           |`[MRichText]`       | MonitoringMetaAttribute | Enable/disable RichText for the instance (to debug) |
+ Attribute          | Description |     
+:-                  |:-     |      
+`[MFormatOptions]`  | Set optional formatting options (e.g fontsize)|
+`[MTag]`            | Set optional tags used for filtering |
+`[MUpdateEvent]`    | Set an event that will trigger an refresh/update |
+`[MValueProcessor]` | Set a method that will process the value before it is displayed as a string |
+`[MStyle]`          | UIToolkit only. Provide optional style names |
+`[MTextColor]`      | Set the text color for the target |
+`[MBackgroundColor]`| Set the background color for the target |
+`[MGroupColor]`     | Set the background color for the targets group |
+`[MShowIf]`         | Set custom validation logic |
+`[MFont]`           | Set a custom font style/asset |
+`[MRichText]`       | Enable/disable RichText for the instance (to debug) |
+`[MOrder]`          | Set the relative UI order of the target |
 
 ### Other Attributes
-Attribute                       | Code                    | Base Type    | Description |     
-:-                              |:-                       |:-            |:-     |      
-GlobalValueProcessorAttribute   |`[GlobalValueProcessor]` | Attribute    | Declare a method as a global value processor for a specific type |
-DisableMonitoringAttribute      |`[DisableMonitoring]`    | Attribute    | Disable monitoring for the target class or assembly |
+ Attribute               | Description |     
+:-                       |:-           |      
+`[GlobalValueProcessor]` | Declare a method as a global value processor for a specific type |
+`[DisableMonitoring]`    | Disable monitoring for the target class or assembly |
 
 
 
@@ -426,7 +431,7 @@ private static string GlobalValueProcessorVersion(IFormatData ctx, Version versi
 &nbsp;
 ## Conditional Display
 
-You can use the MConditionalAttribute to define conditions that controll if a monitored value is displayed or not. Note that the value will stil be monitored but not drawn, meaning that fields, properties, events & methods will still be accessed. There are three different ways to validate if the targeted member is displayed or not.
+You can use the MShowIfAttribute to define conditions that controll if a monitored value is displayed or not. Note that the value will stil be monitored but not drawn, meaning that fields, properties, events & methods will still be accessed. There are three different ways to validate if the targeted member is displayed or not.
 
 ### Validated by Condition
 
@@ -436,17 +441,17 @@ Set a condition for the monitored value that when met will display the monitored
 
 // Queue will only be displayed if there are errors. (Queue is not empty)
 [Monitor]
-[MConditional(Condition.CollectionNotEmpty)]
+[MShowIf(Condition.CollectionNotEmpty)]
 private Queue<string> errorCache;
 
 // Property will only be displayed if Network is not available. (false)
 [Monitor]
-[MConditional(Condition.False)]
+[MShowIf(Condition.False)]
 private bool NetworkAvailable { get; }
 
 // Property will only be displayed if MainCamera is not available or set. (null)
 [Monitor]
-[MConditional(Condition.Null)]
+[MShowIf(Condition.Null)]
 private Camera MainCamera { get; }
 
 ```
@@ -459,12 +464,12 @@ Very similar to [Validated by Condition](#validated-by-condition) but more dynam
 
 // Will only be displayed if the errorCode is 404
 [Monitor]
-[MConditional(Comparison.Equals, 404)]
+[MShowIf(Comparison.Equals, 404)]
 private int errorCode;
 
 // Will only be displayed more than one player is active.
 [Monitor]
-[MConditional(Comparison.Greater, 1)]
+[MShowIf(Comparison.Greater, 1)]
 private int ActivePlayerCount { get; }
 
 ```
@@ -481,7 +486,7 @@ Very dynamic way of determining if a member is displayed or not. Pass in the nam
 
 // Will only be displayed if the field 'monitor' is true.
 [Monitor]
-[MConditional(monitor)]
+[MShowIf(monitor)]
 private bool IsAlive {get;}
 
 [SerializeField] private bool monitor = true;
@@ -489,7 +494,7 @@ private bool IsAlive {get;}
 
 // Will only be displayed if the property 'IsDebug' is true.
 [Monitor]
-[MConditional(monitor)]
+[MShowIf(monitor)]
 private bool IsAlive {get;}
 
 pubic static bool IsDebug { get; }
@@ -497,7 +502,7 @@ pubic static bool IsDebug { get; }
 
 // Will only be displayed if the method 'Validate' returns true.
 [Monitor]
-[MConditional(Validate)]
+[MShowIf(Validate)]
 private Entity ActiveTarget {get;}
 
 private bool Validate(Entity target)
@@ -562,9 +567,17 @@ public void ContinueGame()
 &nbsp;
 ## Monitoring Events
 
-You can not only monitor the value of a field or property, but also the state of an event. Use the MonitorEvent Attribute to customize how the state of the monitored event is displayed. Both concrete delegates and `Action` / `Action<T>` are valid event Handler types.
+You can not only monitor the value of a field, property or method, but also the state of an event. Use the MonitorEvent Attribute to customize how the state of the monitored event is displayed. Both concrete delegates and `Action` / `Action<T>` are valid event Handler types. Monitoring events is relativley expensive because a state change cannot be validated. This means that the UI is drawn every other frame.
 
 ![event example](https://johnbaracuda.com/media/img/monitoring/Example_02.png)
+
+
+
+
+&nbsp;
+## Public API
+
+You can get interfaces for public API by calling MonitoringSystems.Resolve<TInterface>().
 
 
 
@@ -754,7 +767,7 @@ Monitored Transforms are another type that have the potential to create a lot of
 
 + Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
 + Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
-+ If ```Enable Monitoring``` in the UI Controller foldout is set to ```false```, Make sure to call ```MonitoringUI.CreateMonitoringUI()``` from anywhere in you code. 
++ If ```Enable Monitoring``` in the UI Controller foldout is set to ```false```, Make sure to call ```MonitoringSystems.Resolve<IMonitoringUI>().CreateMonitoringUI()``` from anywhere in you code. 
 
 
 
