@@ -1,6 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang
- 
-using Baracuda.Monitoring.API;
+﻿using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
 using Baracuda.Threading;
 using UnityEngine;

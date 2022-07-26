@@ -1,6 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang
- 
-using System;
+﻿using System;
 using Baracuda.Monitoring.Source.Utilities;
 
 namespace Baracuda.Monitoring

@@ -1,6 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang
- 
-namespace Baracuda.Monitoring.IL2CPP
+﻿namespace Baracuda.Monitoring.IL2CPP
 {
     #region --- Enum Types ---
 

@@ -1,6 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang
- 
-namespace Baracuda.Monitoring.Source.Utilities
+﻿namespace Baracuda.Monitoring.Source.Utilities
 {
     public struct VoidValue
     {

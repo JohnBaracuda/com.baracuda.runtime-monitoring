@@ -1,6 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang
- 
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 

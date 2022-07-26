@@ -1,6 +1,4 @@
-// Copyright (c) 2022 Jonathan Lang
- 
-#if ENABLE_IL2CPP || UNITY_EDITOR
+﻿#if ENABLE_IL2CPP || UNITY_EDITOR
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Source.Systems;
 using UnityEngine.Scripting;
