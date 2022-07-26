@@ -1,4 +1,5 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
+
 using System;
 using UnityEngine.Scripting;
 

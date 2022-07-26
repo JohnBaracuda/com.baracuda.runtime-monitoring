@@ -1,5 +1,5 @@
-// Copyright (c) 2022 Jonathan Lang
- 
+﻿// Copyright (c) 2022 Jonathan Lang
+
 namespace Baracuda.Monitoring.API
 {
     public interface IMonitoringPlugin : IMonitoringSystem<IMonitoringPlugin>

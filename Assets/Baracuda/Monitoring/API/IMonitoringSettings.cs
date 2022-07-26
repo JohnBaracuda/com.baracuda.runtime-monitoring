@@ -1,5 +1,5 @@
-// Copyright (c) 2022 Jonathan Lang
- 
+﻿// Copyright (c) 2022 Jonathan Lang
+
 using Baracuda.Monitoring.Source.Utilities;
 using UnityEngine;
 

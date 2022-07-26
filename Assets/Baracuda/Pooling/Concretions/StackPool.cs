@@ -1,4 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
+
 using System.Collections.Generic;
 using Baracuda.Pooling.Abstractions;
 using Baracuda.Pooling.Utils;

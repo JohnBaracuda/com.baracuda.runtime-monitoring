@@ -1,4 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
+
 namespace Baracuda.Monitoring.API
 {
     public interface IGettableValue<out TValue> : IGettableValue
