@@ -97,7 +97,6 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         
         #endregion
 
-
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Update & ResetElement ---

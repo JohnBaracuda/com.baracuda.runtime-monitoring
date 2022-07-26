@@ -15,7 +15,8 @@ namespace Baracuda.Monitoring.Example.Scripts
          *  Inspector Fields   
          */
 
-        [Header("Primary")] [SerializeField] private float damage = 100f;
+        [Header("Primary")] 
+        [SerializeField] private float damage = 100f;
         [SerializeField] private bool fullAutomatic = true;
         [SerializeField] private float shotsPerSecond = 7.5f;
         [SerializeField] private int bulletsPerShot = 3;
@@ -36,10 +37,11 @@ namespace Baracuda.Monitoring.Example.Scripts
          *  Private Fields   
          */
 
-        //[Monitor]
+        [Monitor]
         [MUpdateEvent(nameof(OnAmmoChanged))]
-        [MFormatOptions(UIPosition.LowerLeft, FontSize = 20, GroupElement = false)]
+        [MFormatOptions(UIPosition.LowerLeft, FontSize = 16, GroupElement = false)]
         [MValueProcessor(nameof(CurrentAmmunitionProcessor))]
+        [MFont("JetBrainsMono-Regular")]
         private int _currentAmmunition;
 
         public event Action<int> OnAmmoChanged;
@@ -64,10 +66,15 @@ namespace Baracuda.Monitoring.Example.Scripts
         private string CurrentAmmunitionProcessor(int current)
         {
             var sb = StringBuilderPool.Get();
-            sb.Append("Ammunition: ");
-            sb.Append(current);
-            sb.Append(" / ");
-            sb.Append(ammunition);
+            sb.Append("Ammo: ");
+            sb.Append(current.ToString("00"));
+            sb.Append("/");
+            sb.Append(ammunition.ToString("00"));
+            sb.Append(' ');
+            for (var i = 0; i < current; i++)
+            {
+                sb.Append('▐');
+            }
             return StringBuilderPool.Release(sb);
         }
 

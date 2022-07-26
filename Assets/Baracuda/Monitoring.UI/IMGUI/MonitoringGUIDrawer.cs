@@ -70,6 +70,10 @@ namespace Baracuda.Monitoring.UI.IMGUI
         
         private class GUIElement
         {
+            public static Comparison<GUIElement> Comparison =
+                (lhs, rhs) => lhs.Order > rhs.Order ? -1 : lhs.Order < rhs.Order ? 1 : 0;
+            
+            public int Order { get; }
             public bool Enabled { get; private set; }
             public bool OverrideFont { get; } 
             public Font Font { get; }
@@ -91,6 +95,10 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 Enabled = unit.Enabled;
                 FormatData = unit.Profile.FormatData;
                 ID = unit.UniqueID;
+                
+                Order = unit.Profile.TryGetMetaAttribute<MOrderAttribute>(out var orderAttribute)
+                    ? orderAttribute.Order
+                    : 0;
 
                 var backgroundColor = unit.Profile.TryGetMetaAttribute<MBackgroundColorAttribute>(out var colorAttribute)
                     ? colorAttribute.ColorValue
@@ -564,15 +572,19 @@ namespace Baracuda.Monitoring.UI.IMGUI
             {
                 case UIPosition.UpperLeft:
                     _unitsUpperLeft.Add(new GUIElement(unit, this));
+                    _unitsUpperLeft.Sort(GUIElement.Comparison);
                     break;
                 case UIPosition.UpperRight:
                     _unitsUpperRight.Add(new GUIElement(unit, this));
+                    _unitsUpperRight.Sort(GUIElement.Comparison);
                     break;
                 case UIPosition.LowerLeft:
                     _unitsLowerLeft.Add(new GUIElement(unit, this));
+                    _unitsLowerLeft.Sort(GUIElement.Comparison);
                     break;
                 case UIPosition.LowerRight:
                     _unitsLowerRight.Add(new GUIElement(unit, this));
+                    _unitsLowerRight.Sort(GUIElement.Comparison);
                     break;
             }
         }

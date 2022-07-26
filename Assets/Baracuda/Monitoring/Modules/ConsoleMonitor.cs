@@ -38,25 +38,27 @@ namespace Baracuda.Monitoring.Modules
         [SerializeField] private int maxStacktraceLenght = 400;
         
         #endregion
-
+        
         #region --- Monitored Values ---
         
         [MonitorProperty]
         [MBackgroundColor(ColorPreset.TransparentBlack)]
         [MUpdateEvent(nameof(UpdateDisplayedLogs))]
-        [MFormatOptions(UIPosition.LowerLeft, ShowIndexer = false, ElementIndent = 0, GroupElement = false)]
+        [MFormatOptions(UIPosition.LowerRight, ShowIndexer = false, ElementIndent = 0, GroupElement = false)]
         [MFont("JetBrainsMono-Regular")]
         [MShowIf(Condition.CollectionNotEmpty)]
+        [MOrder(-1000)]
         private Queue<string> Console => messageLogCache;
         
         
         [Monitor]
         [MBackgroundColor(ColorPreset.TransparentBlack)]
-        [MFormatOptions(UIPosition.LowerLeft, GroupElement = false)]
+        [MFormatOptions(UIPosition.LowerRight, GroupElement = false)]
         [MFont("JetBrainsMono-Regular")]
         [MShowIf(Condition.NotNullOrWhiteSpace)]
         [MRichText(true)]
         [MValueProcessor(nameof(StacktraceProcessor))]
+        [MOrder(-1001)]
         private string LastLogStacktrace => lastLogStacktrace;
 
         #endregion
