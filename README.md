@@ -16,10 +16,11 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 
 - [Getting started](#getting-started)
 	- [Setup](#setup)
+	- [License](#license)
 	- [Technical Information](#technical-information)
 	- [Feature List](#features)
 	- [Import](#import)
-- [Monitoring Member](#instanced-and-static-member)
+- [Monitoring Member](#monitoring-member)
 	- [Instanced & Static Member](#instanced-and-static-member)
 	- [Monitoring Fields](#monitoring-fields)
 	- [Monitoring Properties](#monitoring-properties)
@@ -30,23 +31,24 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 	- [Value Processor (Global)](#global-value-processor)
 	- [Conditional Display](#conditional-display)
 	- [Update Event](#update-event)
-- [Monitoring API](#public-api)
+	- [UI Formatting](#ui-formatting)
+- [Systems and API](#systems-and-api)
+	- [Monitoring Manager](#monitoring-manager)
+	- [UI Controller](#ui-controller)
+	- [Custom UI Controller](#custom-ui-controller)
 - [Runtime](#runtime)
 - [Runtime Compatibility](#runtime-compatibility)
-- [UI Formatting](#ui-formatting)
-- [UI Controller](#ui-controller)
-- [Custom UI Controller](#custom-ui-controller)
-- [Troubleshooting](#troubleshooting)
-- [Assemblies / Modules](#assemblies-and-modules)
-- [Planned Features](#planned-features)
+- [Optimizations](#optimizations)
+- [FAQ & Misc](#frequently-asked-questions)
+	- [Troubleshooting](#troubleshooting)
+	- [Planned Features](#planned-features)
 - [Support Me ❤️](#support-me)
-- [License](#licence)
 
 
 
 
 &nbsp;
-## Getting Started
+# Getting Started
 
 ```c#
 
@@ -147,12 +149,21 @@ public class Player : MonoBehaviour
 
 
 
+
+&nbsp;
+## License
+
+[MIT](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) You can use this tool for anything you want, including commercial products, as long as you're not just selling my work or using it for some other morally questionable or condemnable act.
+
+
+
+
 &nbsp;
 ## Technical Information
 + Unity Version: <b>2019.4</b> (for UIToolkit <b>2020.1</b>) <br/> 
 + Scripting Backend: <b>Mono & IL2CPP</b>
 + API Compatibility: <b>.NET Standard 2.0 or .NET 4.xP</b>
-+ Asset Version: <b>2.0.0</b>
++ Asset Version: <b>2.0.1</b>
 
 
 
@@ -187,6 +198,13 @@ public class Player : MonoBehaviour
 
 Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. You can also download this asset from the [Asset Store!](https://u3d.as/2QxJ). Take a look at [Setup](#setup) instructions for more information how to import optional packages. (spoiler: via the settings window)
 
+
+
+
+&nbsp;
+# Monitoring Member
+
+The TLDR answer is to just place the [Monitor] attribute on a field, property, event or method. 
 
 
 
@@ -236,8 +254,8 @@ public class Player : MonitoredBehaviour
 {
     [Monitor] private int health;
 	
-	// Just Remember to call base.Awake and base.OnDestroy if you override these methods.
-	protected override void Awake()
+    // Just Remember to call base.Awake and base.OnDestroy if you override these methods.
+    protected override void Awake()
     {
         base.Awake();
     }
@@ -270,7 +288,7 @@ public event Action<T> OnValueChanged;
 
 [Monitor]
 public event GameStateDelegate OnGameStateChanged;
-public delegate void GameStateDelegate(GameState gameState)
+public delegate void GameStateDelegate(GameState gameState);
 
 
 // If you want to monitor how ofter an event is invoked without displaying every subscriber.
@@ -291,15 +309,15 @@ The return value of a method can be monitored like a field or property but with 
 [MonitorMethod(3)]
 public Player GetPlayerByIndex(int playerIndex)
 {
-	// Method will be called with an playerIndex of 3.
-	//...
+    // Method will be called with an playerIndex of 3.
+    //...
 }
 
 [MonitorMethod]
 public bool TryGetPlayer(int playerIndex, out Player player)
 {
-	// Method will be called and both the return value and the out parameter player are monitored.
-	//...
+    // Method will be called and both the return value and the out parameter player are monitored.
+    //...
 }
 ```
 
@@ -307,7 +325,7 @@ public bool TryGetPlayer(int playerIndex, out Player player)
 
 
 &nbsp;
-## Attributes
+# Attributes
 
 Use Attributes to customize the monitoring process & display of your member. The attributes provided are divided into three broad categories, first the "Monitoring Attributes" to determine which C# member to monitor, second the "Meta Attributes" to customize how a member is monitored and third other attributes used for various purposes.
 
@@ -599,59 +617,6 @@ public void ContinueGame()
 
 
 &nbsp;
-## Public API
-
-You can get interfaces for public API by calling ```c#MonitoringSystems.Resolve<TInterface>()```.
-
-
-
-
-&nbsp;
-## Runtime
-
-+ Use the #define ```DISABLE_MONITORING``` to disable the internal logic of the tool. Public API will still compile so you don't have to wrap your API calls in a custom #if !DISABLE_MONITORING block.
-
-
-
-
-&nbsp;
-## Runtime Compatibility
-
-### Scripting Backend Compatibility
-
-The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono and IL2CPP runtimes are supported. Mono runtime works without any limitations.
-
-### IL2CPP
-RTM is making extensive use of dynamic type and method creation during its profiling process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the necessary information to generate everything it needs during runtime. You can manually create this list form the settings window 
-
-![example](https://johnbaracuda.com/media/img/monitoring/Example_08.png)
-
-
-
-
-&nbsp;
-### Platform Compatibility
-
-I can't test all of these platforms for compatibility. Let me know if you have tested any platform that is NA or not listed here.
-
-Platform              | Compatible       | Note                    |        
-:-                    |:-                |:-                       |             
-Windows Standalone    |:heavy_check_mark:|                         |
-Linux Standalone      |NA                |                         |
-Mac Standalone        |NA                |                         |
-IOS                   |NA                |                         |
-Android               |NA                |                         |
-WebGL                 |:heavy_check_mark:|Async profiling disabled |
-Stadia                |NA                |                         |
-XBox One              |NA                |                         |
-XSX                   |NA                |                         |
-PlayStation 4         |NA                |                         |
-PlayStation 5         |NA                |                         |
-
-
-
-
-&nbsp;
 ## UI Formatting
 
 Use the MFormatOptionsAttribute to pass additional formatting options. 
@@ -660,29 +625,43 @@ Use the MFormatOptionsAttribute to pass additional formatting options.
 // Will be displayed as "Value: 3.141"
 [Monitor]
 [MFormatOptions(Format = "0.000")]
-private float _pi = 3.14159265359;
+private float pi = 3.14159265359;
 
 // Will be displayed as "Health Points: 100"
 [Monitor]
 [MFormatOptions(Label = "Health Points")]
-private int _hp = 100;
+private int hp = 100;
 
 // Will be displayed at the lower right corner of the screen.
 [Monitor]
 [MFormatOptions(IPosition = UIPosition.LowerRight)]
-private string _version = "2.0.1";
+private string version = "2.0.1";
 
 // Will be displayed with a font size of 32.
 [Monitor]
 [MFormatOptions(FontSize = 32)]
-private string _message = "Hello";
-
+private string message = "Hello";
 
 // Will not be displayed as part of a group.
 [Monitor]
 [MFormatOptions(GroupElement = false)]
-private int _fps;
+private int fps;
 ```
+
+
+
+
+&nbsp;
+# Systems and API
+
+
+
+
+&nbsp;
+## Monitoring Manager
+
+You can get interfaces for public API by calling ```c#MonitoringSystems.Resolve<TInterface>()```.
+
 
 
 
@@ -747,17 +726,64 @@ You can create a custom UI controller by follwing the steps below. You can take 
 
 
 
+
+&nbsp;
+## Runtime
+
++ Use the #define ```DISABLE_MONITORING``` to disable the internal logic of the tool. Public API will still compile so you don't have to wrap your API calls in a custom #if !DISABLE_MONITORING block.
+
+
+
+
+&nbsp;
+## Runtime Compatibility
+
+### Scripting Backend Compatibility
+
+The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono and IL2CPP runtimes are supported. Mono runtime works without any limitations.
+
+### IL2CPP
+RTM is making extensive use of dynamic type and method creation during its profiling process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the necessary information to generate everything it needs during runtime. You can manually create this list form the settings window 
+
+![example](https://johnbaracuda.com/media/img/monitoring/Example_08.png)
+
+
+
+
+&nbsp;
+### Platform Compatibility
+
+I can't test all of these platforms for compatibility. Let me know if you have tested any platform that is NA or not listed here.
+
+Platform              | Compatible       | Note                    |        
+:-                    |:-                |:-                       |             
+Windows Standalone    |:heavy_check_mark:|                         |
+Linux Standalone      |NA                |                         |
+Mac Standalone        |NA                |                         |
+IOS                   |NA                |                         |
+Android               |NA                |                         |
+WebGL                 |:heavy_check_mark:|Async profiling disabled |
+Stadia                |NA                |                         |
+XBox One              |NA                |                         |
+XSX                   |NA                |                         |
+PlayStation 4         |NA                |                         |
+PlayStation 5         |NA                |                         |
+
+
+
+
+
 &nbsp;
 ## Optimizations
 
-In general RTM tries to be as optimizerd as possible by reducing allocations where ever possible and by doing a lot of the heavy work during the initial profiling. However due to the nature of some types and the creation of strings, allocations cannot be prevented. If performance is a sensitive aspect of your project, here are some tips and tricks to keep in mind.
+In general RTM tries to be as optimized as possible by reducing allocations where ever possible and by doing a lot of the heavy work during the initial profiling. However due to the nature of some types and the creation of strings, allocations cannot be prevented. If performance is a sensitive aspect of your project, here are some tips and tricks to keep in mind.
 
 ### Reference Types & Value Types
-Since there is no easy way to check whether the actual value of a reference type has changed when it is evaluated, a monitored ReferenceType is processed with ToString() each time it is evaluated. This, by default happens either every Update or Tick cycle and may generate a lot of garbage in a very short time, without much scope for automatic optimization. For this reason, it is recommended to pass an UpdateEvent for the monitored value whenever possible to reduce memory allocations. Of course, this shouldn't matter much if you're only debugging one value, but could be detrimental if you want to keep monitoring your member in a release or shipped build. The same is not true for monitored ValueTypes, as these are compared to a cached value to ensure that an update event and a string creation is only triggered when the value has actually changed.
+Since there is no easy way to check whether the actual value of a reference type has changed when it is evaluated, a monitored Reference Type is processed with ToString() each time it is evaluated. This, by default happens either every Update or Tick cycle and may generate a lot of garbage in a very short time, without much scope for automatic optimization. For this reason, it is recommended to pass an UpdateEvent for the monitored value whenever possible to reduce memory allocations. Of course, this shouldn't matter much if you're only debugging one value, but could be detrimental if you want to keep monitoring your member in a release or shipped build. The same is not true for monitored Value Types, as these are compared to a cached value to ensure that an update event and a string creation is only triggered when the value has actually changed.
 
 
 ### Collections
-Because collections are ReferenceTypes the same applies here but on an even greater scale. Pass an update event when ever possible if you intend to monitor a collection over a longer period. Now because the example below requires a lot of boiler plate code I would not recommend this if you just want to quickly debug the values of a collection. I also want to mention that a better solution is planned and WIP.  
+Because collections are Reference Types the same applies here but on an even greater scale. Pass an update event when ever possible if you intend to monitor a collection over a longer period. Now because the example below requires a lot of boiler plate code I would not recommend this if you just want to quickly debug the values of a collection. I also want to mention that a better solution is planned and WIP.  
 
 ```C#
 [Monitor]
@@ -786,33 +812,6 @@ Monitored Transforms are another type that have the potential to create a lot of
 
 
 
-&nbsp;
-## Troubleshooting
-
-+ Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
-+ Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
-+ If ```Enable Monitoring``` in the UI Controller foldout is set to ```false```, Make sure to call ```MonitoringSystems.Resolve<IMonitoringUI>().CreateMonitoringUI()``` from anywhere in you code. 
-
-
-
-
-&nbsp;
-## Assemblies and Modules
-
- Assembly                                    | Path                                 | Core             | Note  
-:-                                           |:-                                    |:----------------:|:- 
-Assembly-Baracuda-Monitoring                 | Baracuda/Monitoring                  |:heavy_check_mark:|
-Assembly-Baracuda-Editor                     | Baracuda/Monitoring.Editor           |:heavy_check_mark:| Editor
-Assembly-Baracuda-Example                    | Baracuda/Monitoring.Example          |                  | 
-Assembly-Baracuda-Monitoring.GUI             | Baracuda/Monitoring.UI/UnityGUI      |:heavy_check_mark:| Default UI
-Assembly-Baracuda-Monitoring.UITookit        | Baracuda/Monitoring.UI/UIToolkit     |                  | Unity 2020.1 or newer
-Assembly-Baracuda-Monitoring.TextMeshPro     | Baracuda/Monitoring.UI/TextMeshPro   |                  | TMP Required
-Assembly-Baracuda-Pooling                    | Baracuda/Pooling                     |:heavy_check_mark:| 
-Assembly-Baracuda-Threading                  | Baracuda/Threading                   |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
-Assembly-Baracuda-Reflection                 | Baracuda/Reflection                  |:heavy_check_mark:| 
-
-
-
 
 &nbsp;
 ## Planned Features
@@ -836,6 +835,34 @@ Any help is appreciated. Feel free to contact me if you have any feedback, sugge
 
 
 &nbsp;
+# Frequently Asked Questions
+&nbsp;
+
+### Troubleshooting
+
++ Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
++ Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
++ If ```Enable Monitoring``` in the UI Controller foldout is set to ```false```, Make sure to call ```MonitoringSystems.Resolve<IMonitoringUI>().CreateMonitoringUI()``` from anywhere in you code. 
+
+### Assemblies and Modules
+
+ Assembly                                    | Path                                 | Core             | Note  
+:-                                           |:-                                    |:----------------:|:- 
+Assembly-Baracuda-Monitoring                 | Baracuda/Monitoring                  |:heavy_check_mark:|
+Assembly-Baracuda-Editor                     | Baracuda/Monitoring.Editor           |:heavy_check_mark:| Editor
+Assembly-Baracuda-Example                    | Baracuda/Monitoring.Example          |                  | 
+Assembly-Baracuda-Monitoring.GUI             | Baracuda/Monitoring.UI/UnityGUI      |:heavy_check_mark:| Default UI
+Assembly-Baracuda-Monitoring.UITookit        | Baracuda/Monitoring.UI/UIToolkit     |                  | Unity 2020.1 or newer
+Assembly-Baracuda-Monitoring.TextMeshPro     | Baracuda/Monitoring.UI/TextMeshPro   |                  | TMP Required
+Assembly-Baracuda-Pooling                    | Baracuda/Pooling                     |:heavy_check_mark:| 
+Assembly-Baracuda-Threading                  | Baracuda/Threading                   |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
+Assembly-Baracuda-Reflection                 | Baracuda/Reflection                  |:heavy_check_mark:| 
+
+
+
+
+
+&nbsp;
 ## Support Me
 
 I spend a lot of time working on this and other free assets to make sure as many people as possible can use my tools regardless of their financial status. Any kind of support I get helps me keep doing this, so consider leaving a star ⭐ making a donation or follow me on my socials to support me ❤️
@@ -844,11 +871,3 @@ I spend a lot of time working on this and other free assets to make sure as many
 + [Linktree](https://linktr.ee/JohnBaracuda)
 + [Twitter](https://twitter.com/JohnBaracuda)
 + [Itch](https://johnbaracuda.itch.io/)
-
-
-
-
-&nbsp;
-## Licence
-
-[MIT](https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE) You can use this tool for anything you want, including commercial products, as long as you're not just selling my work or using it for some other morally questionable or condemnable act.
