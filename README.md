@@ -9,25 +9,27 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 
 &nbsp;
 
-[![Youtube Preview](https://johnBaracuda.com/media/img/monitoring/Thumbnail.png)](https://www.youtube.com/watch?v=Ir4KPjykYUM)
+[![YouTube Preview](https://johnBaracuda.com/media/img/monitoring/Thumbnail.png)](https://www.youtube.com/watch?v=Ir4KPjykYUM)
 
 &nbsp;
 ## Table of Contents
 
 - [Getting started](#getting-started)
-- [Setup](#setup)
-- [Technical Information](#technical-information)
-- [Feature List](#features)
-- [Import](#import)
-- [Monitoring Instance Member](#monitoring-instance-member)
-- [Monitoring Static Membmer](#monitoring-static-member)
+	- [Setup](#setup)
+	- [Technical Information](#technical-information)
+	- [Feature List](#features)
+	- [Import](#import)
+- [Monitoring Member](#instanced-and-static-member)
+	- [Instanced & Static Member](#instanced-and-static-member)
+	- [Monitoring Fields](#monitoring-fields)
+	- [Monitoring Properties](#monitoring-properties)
+	- [Monitoring Events](#monitoring-events)
+	- [Monitoring Methods](#monitoring-methods)
 - [Attributes](#attributes)
-- [Value Processor](#value-processor)
-- [Value Processor (Global)](#global-value-processor)
-- [Conditional Display](#conditional-display)
-- [Update Event](#update-event)
-- [Monitoring Events](#monitoring-events)
-- [Monitoring Methods](#monitoring-methods)
+	- [Value Processor](#value-processor)
+	- [Value Processor (Global)](#global-value-processor)
+	- [Conditional Display](#conditional-display)
+	- [Update Event](#update-event)
 - [Monitoring API](#public-api)
 - [Runtime](#runtime)
 - [Runtime Compatibility](#runtime-compatibility)
@@ -38,7 +40,7 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 - [Assemblies / Modules](#assemblies-and-modules)
 - [Planned Features](#planned-features)
 - [Support Me ❤️](#support-me)
-- [Licence](#licence)
+- [License](#licence)
 
 
 
@@ -153,12 +155,14 @@ public class Player : MonoBehaviour
 + Asset Version: <b>2.0.0</b>
 
 
+
+
 &nbsp;
 ## Features
 + Monitor the value of a Field.
-+ Monitor the retrun value of a Property.
++ Monitor the return value of a Property.
 + Monitor the state of an Event.
-+ Monitor the retrun value & out parameter of a Method.
++ Monitor the return value & out parameter of a Method.
 + Monitor static and instance member.
 + Display Collections in a readable way. (Not just ToString)
 + Chose one of three available UI solution presets.
@@ -181,91 +185,122 @@ public class Player : MonoBehaviour
 &nbsp;
 ## Import
 
-Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. You can also dowload this asset from the [Asset Store!](https://u3d.as/2QxJ). Take a look at [Setup](#setup) insturctions for more information how to import optional packages. (spoiler: via the settings window)
+Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. You can also download this asset from the [Asset Store!](https://u3d.as/2QxJ). Take a look at [Setup](#setup) instructions for more information how to import optional packages. (spoiler: via the settings window)
 
 
 
 
 &nbsp;
-## Monitoring Instance Member
+## Instanced and Static Member
 
-When monitoring non static member of a class, instances of those classes must be registered when they are created and unregistered when they are destoryed. This process can be automated or simplified, either by creating a custom Factory system, that will create/instatntiate objects and register them automatically, or by inheriting from one of the following base types. 
-+ ```MonitoredBehaviour```: an automatically monitored ```MonoBehaviour```. Ensure to call ```base.Awake()``` and ```base.OnDestroy()```. 
-+ ```MonitoredSingleton<T>```: an automatically monitored ```MonoBehaviour``` singleton. Ensure to call ```base.Awake()``` and ```base.OnDestroy()```. 
-+ ```MonitoredScriptableObject```: an automatically monitored ```ScriptableObject```. nsure to call ```base.OnEnable()``` and ```base.OnDisable()```. 
-+ ```MonitoredObject```: an automatically monitored ```System.Object```. that implements the ```IDisposable``` interface.
+When monitoring non static member of a class, instances of these classes must be registered when they are created and unregistered when they are destroyed. This process can be automated or simplified, either by creating a custom Factory system that will create/instantiate objects and register them automatically, or by inheriting from a base type that will automatically register and unregister instances. You can use the following predefined base types for this purpose.
++ ```MonitoredBehaviour : MonoBehaviour```
++ ```MonitoredSingleton<T> : MonoBehaviour where T : MonoBehaviour```
++ ```MonitoredScriptableObject : ScriptableObject```
++ ```MonitoredObject : object, IDisposable```
 
 ```c#
+public class GameManager
+{
+	// Static member are always monitored!
+	[Monitor]
+	public static GameState GameState { get; }
+}
+```
+
+```c#
+// Monitored instance must be registered / unregistered.
 public class Player : MonoBehaviour
 {
-    [Monitor]
-    private int healthPoints;
+    [Monitor] private int health;
 
     private void Awake()
     {
         MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(target);
-        // Or use the extension method:
+        // Or use this extension method:
         this.RegisterMonitor();
     }
 
     private void OnDestroy()
     {
         MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(target);
-        // Or use the extension method:
+        // Or use this extension method:
         this.UnregisterMonitor();
     }
 }
+```
 
+```c#
 // Simplified by inheriting from MonitoredBehaviour.
 public class Player : MonitoredBehaviour
 {
-    [Monitor]
-    private int healthPoints;
-}
-
-// Just Remember to call base.Awake and base.OnDestroy if you override these methods.
-public class Player : MonitoredBehaviour
-{
-    [Monitor]
-    private int healthPoints;
-    
-    protected override void Awake()
+    [Monitor] private int health;
+	
+	// Just Remember to call base.Awake and base.OnDestroy if you override these methods.
+	protected override void Awake()
     {
         base.Awake();
-        // Your Awake code.
     }
     
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        // Your OnDestroy code.
     }
 }
 ```
 
 
-
 &nbsp;
-## Monitoring Static Member
+## Monitoring Events
 
-When monitoring static member you just need to add the Monitor Attribute. 
+You can not only monitor the value of a field, property or method, but also the state of an event. Use the MonitorEvent Attribute to customize how the state of the monitored event is displayed. 
+
+ Property                            | Description |     
+:-                                        |:-                    |      
+`ShowSubscriberCount` | When enabled, the subscriber count of the event handler delegate is displayed. |
+`ShowInvokeCounter`     | When enabled, the amount the monitored event has been invoked will be displayed.  |
+`ShowSubscriberInfo`   | When enabled, every subscribed delegate will be displayed.       |
 
 ```c#
+[Monitor]
+public event Action OnGameStarted;
 
-public static class SystemSettings
+[Monitor]
+public event Action<T> OnValueChanged;
+
+[Monitor]
+public event GameStateDelegate OnGameStateChanged;
+public delegate void GameStateDelegate(GameState gameState)
+
+
+// If you want to monitor how ofter an event is invoked without displaying every subscriber.
+[MonitorEvent(ShowInvokeCounter = true, ShowSubscriberInfo = false)]
+public event Action<Player> OnPlayerSpawn;
+```
+
+![example](https://johnbaracuda.com/media/img/monitoring/Example_09.png)
+
+
+
+
+&nbsp;
+## Monitoring Methods
+
+The return value of a method can be monitored like a field or property but with the additional feature that out parameters are monitored and displayed too. You can also set default parameter values by passing them to the constructor of the MonitorMethod attribute.
+```c#
+[MonitorMethod(3)]
+public Player GetPlayerByIndex(int playerIndex)
 {
-    // Static field in a static class.
-    [Monitor] 
-    private static bool enableVSync;
+	// Method will be called with an playerIndex of 3.
+	//...
 }
 
-public class Enemy : MonoBehaviour
+[MonitorMethod]
+public bool TryGetPlayer(int playerIndex, out Player player)
 {
-    // Static property in non static class
-    [Monitor]
-    private static int ActiveEnemyCount { get; private set; }
+	// Method will be called and both the return value and the out parameter player are monitored.
+	//...
 }
-
 ```
 
 
@@ -286,20 +321,18 @@ Use Attributes to customize the monitoring process & display of your member. The
 `[MonitorEvent]`    | MonitorAttribute      | Monitor an event      |
 `[MonitorMethod]`   | MonitorAttribute      | Monitor a method      |
 
-
-
 ### Meta Attributes
  Attribute          | Description |     
 :-                  |:-     |      
-`[MFormatOptions]`  | Set optional formatting options (e.g fontsize)|
+`[MFormatOptions]`  | Set optional formatting options (e.g. font size)|
 `[MTag]`            | Set optional tags used for filtering |
-`[MUpdateEvent]`    | Set an event that will trigger an refresh/update |
-`[MValueProcessor]` | Set a method that will process the value before it is displayed as a string |
+`[MUpdateEvent]`    | Set an event that will trigger an refresh/update ([more](#update-event)) |
+`[MValueProcessor]` | Set a method that will process the value before it is displayed as a string ([more](#value-processor)) |
 `[MStyle]`          | UIToolkit only. Provide optional style names |
 `[MTextColor]`      | Set the text color for the target |
 `[MBackgroundColor]`| Set the background color for the target |
 `[MGroupColor]`     | Set the background color for the targets group |
-`[MShowIf]`         | Set custom validation logic |
+`[MShowIf]`         | Set custom validation logic  ([more](#conditional-display))  |
 `[MFont]`           | Set a custom font style/asset |
 `[MRichText]`       | Enable/disable RichText for the instance (to debug) |
 `[MOrder]`          | Set the relative UI order of the target |
@@ -307,7 +340,7 @@ Use Attributes to customize the monitoring process & display of your member. The
 ### Other Attributes
  Attribute               | Description |     
 :-                       |:-           |      
-`[GlobalValueProcessor]` | Declare a method as a global value processor for a specific type |
+`[GlobalValueProcessor]` | Declare a method as a global value processor for a specific type ([more](#value-processor)) |
 `[DisableMonitoring]`    | Disable monitoring for the target class or assembly |
 
 
@@ -480,7 +513,7 @@ Very dynamic way of determining if a member is displayed or not. Pass in the nam
 
 + Passed fields, properties and methods must return a boolean that determines if the member is displayed or not.
 + Passed methods can also accept the current value of the moitored member and use its for a more dynamic evaluation.
-+ Passed events must be Action<bool> and can be used to toggle the display of the member
++ Passed events must be Action```<bool>``` and can be used to toggle the display of the member
 
 ```c#
 
@@ -564,20 +597,11 @@ public void ContinueGame()
 
 
 
-&nbsp;
-## Monitoring Events
-
-You can not only monitor the value of a field, property or method, but also the state of an event. Use the MonitorEvent Attribute to customize how the state of the monitored event is displayed. Both concrete delegates and `Action` / `Action<T>` are valid event Handler types. Monitoring events is relativley expensive because a state change cannot be validated. This means that the UI is drawn every other frame.
-
-![event example](https://johnbaracuda.com/media/img/monitoring/Example_02.png)
-
-
-
 
 &nbsp;
 ## Public API
 
-You can get interfaces for public API by calling MonitoringSystems.Resolve<TInterface>().
+You can get interfaces for public API by calling ```c#MonitoringSystems.Resolve<TInterface>()```.
 
 
 
@@ -595,10 +619,10 @@ You can get interfaces for public API by calling MonitoringSystems.Resolve<TInte
 
 ### Scripting Backend Compatibility
 
-The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono & IL2CPP runtimes are supported. Mono runtime works without any limitations.
+The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono and IL2CPP runtimes are supported. Mono runtime works without any limitations.
 
 ### IL2CPP
-RTM is making extensive use of dynamic type & method creation during its profiling process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the nessesarry information to generate everything it needs during runtime. You can manually create this list forom the settings window 
+RTM is making extensive use of dynamic type and method creation during its profiling process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the necessary information to generate everything it needs during runtime. You can manually create this list form the settings window 
 
 ![example](https://johnbaracuda.com/media/img/monitoring/Example_08.png)
 
@@ -630,7 +654,7 @@ PlayStation 5         |NA                |                         |
 &nbsp;
 ## UI Formatting
 
-Use the ```MFormatOptionsAttribute``` to pass additional formatting options. 
+Use the MFormatOptionsAttribute to pass additional formatting options. 
 
 ```c#
 // Will be displayed as "Value: 3.141"
