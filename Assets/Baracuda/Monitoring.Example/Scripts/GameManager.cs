@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
-    public class ExampleSceneSetup : MonoBehaviour
+    public class GameManager : MonoBehaviour
     {
         [SerializeField] [Min(30)] private int maxFrameRate = 165;
         [SerializeField] [Range(0,4)] private int vsyncCount = 0;

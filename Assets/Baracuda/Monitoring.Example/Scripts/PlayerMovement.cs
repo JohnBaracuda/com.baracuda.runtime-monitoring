@@ -84,6 +84,19 @@ namespace Baracuda.Monitoring.Example.Scripts
         #endregion
         
         //--------------------------------------------------------------------------------------------------------------
+        
+        #region --- Events ---
+        
+        
+
+        [Monitor]
+        public static event Action OnReset;
+        
+        
+
+        #endregion
+        
+        //--------------------------------------------------------------------------------------------------------------
 
         #region --- Setup ---
 
@@ -127,15 +140,16 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         private void LateUpdate()
         {
-            if (_transform.position.y <= killHeight)
+            if (_transform.position.y < killHeight)
             {
                 _transform.position = _spawnPosition;
                 _transform.rotation = _spawnRotation;
                 _camera.transform.localRotation = Quaternion.identity;
                 _rotationX = 0;
+                OnReset?.Invoke();
             }
         }
-
+        
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------

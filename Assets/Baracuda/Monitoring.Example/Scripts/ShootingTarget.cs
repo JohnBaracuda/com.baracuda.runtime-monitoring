@@ -45,6 +45,16 @@ namespace Baracuda.Monitoring.Example.Scripts
         {
             _animator = GetComponent<Animator>();
             _currentHealth = health;
+            PlayerMovement.OnReset += ResetState;
+        }
+
+        private void ResetState()
+        {
+            StopAllCoroutines();
+            _cooldown = 0;
+            _animator.SetTrigger(recover);
+            _currentHealth = health;
+            _isAlive = true;
         }
         
         #endregion
@@ -78,12 +88,11 @@ namespace Baracuda.Monitoring.Example.Scripts
                 _cooldown -= Time.deltaTime;
                 yield return null;
             }
-            _cooldown = 0;
-            _animator.SetTrigger(recover);
-            _currentHealth = health;
-            _isAlive = true;
+
+            ResetState();
         }
         
         #endregion
+        
     }
 }

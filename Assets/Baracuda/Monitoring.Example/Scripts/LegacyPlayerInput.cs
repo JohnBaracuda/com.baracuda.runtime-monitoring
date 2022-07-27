@@ -40,7 +40,6 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         public bool DashPressed { get; private set; }
         
-        [MonitorEvent]
         public event Action<InputMode> InputModeChanged;
 
         #endregion

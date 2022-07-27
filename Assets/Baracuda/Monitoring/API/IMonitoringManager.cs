@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.Source.Units;
 using JetBrains.Annotations;
 
@@ -54,7 +53,6 @@ namespace Baracuda.Monitoring.API
         /// <summary>
         /// Get a collection of <see cref="IMonitorUnit"/>s associated with the passed target. 
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure] IMonitorUnit[] GetMonitorUnitsForTarget(object target);
 
         /*
