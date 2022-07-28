@@ -735,6 +735,17 @@ Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#
 `void ResetFilter()`|Reset active filter.|
 `event Action<bool> VisibleStateChanged()`|Event invoked when the monitoring UI became visible or invisible.|
 
+```c#
+// Example how to toggle the monitoring UI when pressing F3 on a Keyboard.
+public void Update()
+{
+    if(Input.GetKeyDown(KeyCode.F3))
+    {
+    	MonitoringSystems.Resolve<IMonitoringUI>().Toggle();
+    }
+}
+```
+
 
 
 
