@@ -34,14 +34,15 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 	- [UI Formatting](#ui-formatting)
 - [Systems and API](#systems-and-api)
 	- [Monitoring Manager](#monitoring-manager)
-	- [UI Controller](#ui-controller)
-	- [Custom UI Controller](#custom-ui-controller)
-- [Runtime](#runtime)
-- [Runtime Compatibility](#runtime-compatibility)
+	- [Monitoring UI](#monitoring-ui)
+	- [Monitoring Settings](#monitoring-settings)
+	- [Monitoring Utility](#monitoring-utility)
+- [Compatibility](#compatibility)
+	- [Runtime](#runtime-compatibility)
+	- [Platform](#platform-compatibility)
+- [Custom UI Controller](#custom-ui-controller)
 - [Optimizations](#optimizations)
-- [FAQ & Misc](#frequently-asked-questions)
-	- [Troubleshooting](#troubleshooting)
-	- [Planned Features](#planned-features)
+- [FAQ: Frequently Asked Questions](#frequently-asked-questions)
 - [Support Me ❤️](#support-me)
 
 
@@ -204,7 +205,8 @@ Import this asset into your project as a .unitypackage available at [Runtime-Mon
 &nbsp;
 # Monitoring Member
 
-The TLDR answer is to just place the [Monitor] attribute on a field, property, event or method. 
+If you skipped to this part here is a quick TLDR: Just place the `[Monitor]` attribute an a field, property, event or method and get its value or state monitored in a customizable UI during runtime. When monitoring non static (instances), you have to register the monitored target, as shown in the next point. Other than that there is not much to it. Just try it out yourself. 
+
 
 
 
@@ -216,15 +218,6 @@ When monitoring non static member of a class, instances of these classes must be
 + ```MonitoredSingleton<T> : MonoBehaviour where T : MonoBehaviour```
 + ```MonitoredScriptableObject : ScriptableObject```
 + ```MonitoredObject : object, IDisposable```
-
-```c#
-public class GameManager
-{
-	// Static member are always monitored!
-	[Monitor]
-	public static GameState GameState { get; }
-}
-```
 
 ```c#
 // Monitored instance must be registered / unregistered.
@@ -267,6 +260,18 @@ public class Player : MonitoredBehaviour
 }
 ```
 
+```c#
+public class GameManager
+{
+    // Static member are always monitored!
+    [Monitor]
+    public static GameState GameState { get; }
+}
+```
+
+
+
+
 
 &nbsp;
 ## Monitoring Events
@@ -301,6 +306,7 @@ public event Action<Player> OnPlayerSpawn;
 
 
 
+
 &nbsp;
 ## Monitoring Methods
 
@@ -320,6 +326,7 @@ public bool TryGetPlayer(int playerIndex, out Player player)
     //...
 }
 ```
+
 
 
 
@@ -360,6 +367,7 @@ Use Attributes to customize the monitoring process & display of your member. The
 :-                       |:-           |      
 `[GlobalValueProcessor]` | Declare a method as a global value processor for a specific type ([more](#value-processor)) |
 `[DisableMonitoring]`    | Disable monitoring for the target class or assembly |
+
 
 
 
@@ -449,6 +457,7 @@ private static string IEnumerableValueProcessor(int number)
 
 
 
+
 &nbsp;
 ## Global Value Processor
 
@@ -476,6 +485,8 @@ private static string GlobalValueProcessorVersion(IFormatData ctx, Version versi
 }
 
 ```
+
+
 
 
 
@@ -509,7 +520,7 @@ private Camera MainCamera { get; }
 
 ### Validated by Comparison
 
-Very similar to [Validated by Condition](#validated-by-condition) but more dynamic. Pass in another object value and determine a comparisson type that is then used on the current value of the monitored member and the value passed as an argument. If the comparrison evaluates to be true, the member will be displayed.
+Very similar to [Validated by Condition](#validated-by-condition) but more dynamic. Pass in another object value and determine a comparison type that is then used on the current value of the monitored member and the value passed as an argument. If the comparison evaluates to be true, the member will be displayed.
 
 ```c#
 
@@ -529,8 +540,8 @@ private int ActivePlayerCount { get; }
 
 Very dynamic way of determining if a member is displayed or not. Pass in the name of a field, property, method or event.
 
-+ Passed fields, properties and methods must return a boolean that determines if the member is displayed or not.
-+ Passed methods can also accept the current value of the moitored member and use its for a more dynamic evaluation.
++ Passed fields, properties and methods must return a Boolean that determines if the member is displayed or not.
++ Passed methods can also accept the current value of the monitored member and use its for a more dynamic evaluation.
 + Passed events must be Action```<bool>``` and can be used to toggle the display of the member
 
 ```c#
@@ -562,6 +573,7 @@ private bool Validate(Entity target)
 }
 
 ```
+
 
 
 
@@ -616,6 +628,7 @@ public void ContinueGame()
 
 
 
+
 &nbsp;
 ## UI Formatting
 
@@ -651,8 +664,25 @@ private int fps;
 
 
 
+
 &nbsp;
 # Systems and API
+
+You can get an interface for a monitoring system by calling ```MonitoringSystems.Resolve<TInterface>()```. Interface implementations will not change during runtime meaning it is safe to cache them when necessary. 
+
+System Interface    | Description |        
+:--                 |:-                                              
+`IMonitoringManager`   | Core access point for the system. Contains initialization and unit registry. [more](#monitoring-manager)|
+`IMonitoringUI`       | Access the active monitoring UI. [more](#monitoring-ui) |
+`IMonitoringSettigns`  | Access current configuration of the plugin. |
+`IMonitoringPlugin`    | Access static information about the plugin. |
+`IMonitoringUtility`   | Interface providing various uncategorized utility access points. [more](#monitoring-utility) |
+
+```c#
+//Example how to get / resolve a monitoring system interface.
+IMonitoringUI monitoringUI = MonitoringSystems.Resolve<IMonitoringUI>();
+```
+
 
 
 
@@ -660,90 +690,79 @@ private int fps;
 &nbsp;
 ## Monitoring Manager
 
-You can get interfaces for public API by calling ```c#MonitoringSystems.Resolve<TInterface>()```.
+The `IMonitoringManager` interface provides a core access points & functionality.
+
+Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
+:---         |:-                                        
+`bool IsInitialized()`|Value indicated whether or not monitoring profiling has completed and monitoring is fully initialized.|
+`event ProfilingCompletedListener ProfilingCompleted`|Event is invoked when profiling process for the current system has been completed. Subscribing to this event will instantly invoke a callback if profiling has already completed.|
+`event Action<IMonitorUnit> UnitCreated`|Event is called when a new MonitorUnit was created. |
+`event Action<IMonitorUnit> UnitDisposed`|Event is called when a MonitorUnit was disposed.|
+`void RegisterTarget<T>(T target) where T : class`|Register an object that is monitored during runtime.|
+`void UnregisterTarget<T>(T target) where T : class`|Unregister an object that is monitored during runtime.|
+`ReadOnlyList<IMonitorUnit> GetStaticUnits();`|Get a list of MonitorUnits for static targets.|
+`ReadOnlyList<IMonitorUnit> GetInstanceUnits();`|Get a list of MonitorUnits for instance targets.|
+`ReadOnlyList<IMonitorUnit> GetAllMonitoringUnits();`|Get a list of all MonitorUnits.|
 
 
 
 
 
 &nbsp;
-## UI Controller
+## Monitoring Settings
 
-Use the ```IMonitoringUI``` API to toggle the visiblity or active state of the current monitoring UI overlay. ```IMonitoringUI``` is an accesspoint and the bridge between custom code and the active ```MonitoringUIController```. This is to offer a layer of abstraction that enables you to switch between multiple either prefabricated or custom UI implimentations / UI Controller.
-
-Note! Not every existing UI controllers (UIToolkit, TextMeshPro and GUI) includes every feature. I would recommend unsing the UIToolkit UI solution if possible.
-
-```c#
-using Baracuda.Monitoring.API;
-    
-// Show the monitoring UI overlay.
-MonitoringSystems.Resolve<IMonitoringUI>().Show();
-
-// Hide the monitoring UI overlay.
-MonitoringSystems.Resolve<IMonitoringUI>().Hide();
-
-// Toggle the visibility of the active monitoring display.
-// This method returns a bool indicating the new visibility state.
-MonitoringSystems.Resolve<IMonitoringUI>().ToggleDisplay();
-
-// Get the currently active MonitoringUIController
-MonitoringSystems.Resolve<IMonitoringUI>().GetActiveUIController();
-    
-// Get the currently active MonitoringUIController casted to a concrete implimentation.
-MonitoringSystems.Resolve<IMonitoringUI>().GetActiveUIController<T>();
-    
-// Create a MonitoringUIController instance if there is none already. Disable 'Auto Instantiate UI' in the
-// Monitoring Settings and use this method for more control over the timing in which the MonitoringUIController
-// is instantiated.
-MonitoringSystems.Resolve<IMonitoringUI>().CreateMonitoringUI();
-    
-// Filter displayed units by their name, tags etc. 
-MonitoringSystems.Resolve<IMonitoringUI>().Filter();
-    
-// Reset active filter.
-MonitoringSystems.Resolve<IMonitoringUI>().ResetFilter();
-    
-// Get an Action<bool> event that is invoked when the monitoring UI became visible/invisible.
-MonitoringSystems.Resolve<IMonitoringUI>().VisibleStateChanged;
-  
-```
-
-
-
-
-&nbsp;
-## Custom UI Controller
-
-You can create a custom UI controller by follwing the steps below. You can take a look at the existing UI Controller implimentations to get some reference. 
-
-+ Create a new class and inherit from ```MonitoringDisplayController```.
-+ Impliment the abstract mehtods and create custom UI logic. 
-+ Add the script to a new GameObject and create a prefab of it.
-+ Make sure to delete the GameObject from your scene.
-+ Open the settings by navigating to (menu: Tools > Monitoring > Settings).
-+ Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
+Use the `IMonitoringSettigns` API can be used to access the current configuration set in the monitoring settings window. This API is readonly and mostly used by internal processes. So far it is available for transparency reasons only.
 
 
 
 
 
 &nbsp;
-## Runtime
+## Monitoring UI
 
-+ Use the #define ```DISABLE_MONITORING``` to disable the internal logic of the tool. Public API will still compile so you don't have to wrap your API calls in a custom #if !DISABLE_MONITORING block.
 
+Use the `IMonitoringUI` API to access the active MonitoringUIController and set properties like visibility, filtering etc.
+
+Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
+:---         |:-                                        
+`void Show()`|Show the monitoring UI overlay.|
+`void Hide()`|Hide the monitoring UI overlay.|
+`void ToggleDisplay()`|Toggle the visibility of the active monitoring display.|
+`bool IsVisible()`|True if monitoring UI is visible.|
+`T GetActiveUIController<T>()`|Get the currently active MonitoringUIController casted to a concrete implementation.|
+`void CreateMonitoringUI()`|Create a MonitoringUIController instance if there is none already. Disable 'Auto Instantiate UI' in the Monitoring Settings and use this method for more control over the timing in which the MonitoringUIController is instantiated. |
+`void ApplyFilter(string filter)`|Filter displayed units by their name, tags etc. |
+`void ResetFilter()`|Reset active filter.|
+`event Action<bool> VisibleStateChanged()`|Event invoked when the monitoring UI became visible or invisible.|
+
+
+
+
+
+&nbsp;
+## Monitoring Utility
+
+The `IMonitoringUtility` interface provides a variety of otherwise not or hard to categorize utility functions. 
+
+Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
+:---         |:-                                        
+`bool IsFontHashUsed(int fontHash)`|Returns true if the passed hash from the name of a font asset is used by a MFontAttribute and therefore required by a monitoring unit. Used to dynamically load/unload required fonts.|
+`IMonitorUnit[] GetMonitorUnitsForTarget(object target)`|Get a list of IMonitorUnits registered to the passed target object.|
+
+
+
+
+
+&nbsp;
+# Compatibility
+If you encounter any compatibility issues please create an Issue on GitHub. Runtime Monitoring aims to provide compatibility for every platform, scripting backend & Unity version.
 
 
 
 &nbsp;
 ## Runtime Compatibility
 
-### Scripting Backend Compatibility
-
-The true purpose of this tool is to provide an easy way to debug and monitor build games. Both Mono and IL2CPP runtimes are supported. Mono runtime works without any limitations.
-
-### IL2CPP
-RTM is making extensive use of dynamic type and method creation during its profiling process. This means that the IL2CPP runtime has a hard time because it requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the necessary information to generate everything it needs during runtime. You can manually create this list form the settings window 
+Both Mono and IL2CPP runtimes are supported. RTM is making extensive use of dynamic type and method creation during its profiling process. In order to create these types, IL2CPP requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the necessary information to generate everything it needs during runtime. You can manually create this list form the settings window.
 
 ![example](https://johnbaracuda.com/media/img/monitoring/Example_08.png)
 
@@ -751,7 +770,7 @@ RTM is making extensive use of dynamic type and method creation during its profi
 
 
 &nbsp;
-### Platform Compatibility
+## Platform Compatibility
 
 I can't test all of these platforms for compatibility. Let me know if you have tested any platform that is NA or not listed here.
 
@@ -768,6 +787,22 @@ XBox One              |NA                |                         |
 XSX                   |NA                |                         |
 PlayStation 4         |NA                |                         |
 PlayStation 5         |NA                |                         |
+
+
+
+
+
+&nbsp; 
+## Custom UI Controller
+
+You can create a custom UI controller by following the steps below. You can take a look at the existing UI Controller implementations to get some reference. 
+
++ Create a new class and inherit from ```MonitoringDisplayController```.
++ Implement the abstract methods and create custom UI logic. 
++ Add the script to a new GameObject and create a prefab of it.
++ Make sure to delete the GameObject from your scene.
++ Open the settings by navigating to (menu: Tools > Monitoring > Settings).
++ Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
 
 
 
@@ -812,39 +847,43 @@ Monitored Transforms are another type that have the potential to create a lot of
 
 
 
+&nbsp;
+# Frequently Asked Questions
+
+
 
 &nbsp;
-## Planned Features
+### How can I disable the usage of this tool in a release?
 
-Any help is appreciated. Feel free to contact me if you have any feedback, suggestions or questions.
+Use the ```#define DISABLE_MONITORING``` to disable the internal logic of the tool. 
+Public API will still compile so you don't have to wrap your API calls in a custom ```#if !DISABLE_MONITORING``` block.
 
-### General
+
+
+
+&nbsp;
+### How can I uninstall the tool?
+
+You can just remove the plugin by deleting the folder Assets/Baracuda. 
+
+
+
+
+&nbsp;
+### Are there any planned features?
+
 + Add to OpenUPM
-
-### Core System
 + Monitoring Editor Window for edit time monitoring.
 + Monitored collection type with "dirty" flag. (Optimization)
 + Option to create "virtual" units during runtime.
-
-### Documentation
 + Tutorial how to use.
 + Guide how to create a custom UI Controller.
 + Guide how to customize UI.
 
 
 
-
 &nbsp;
-# Frequently Asked Questions
-&nbsp;
-
-### Troubleshooting
-
-+ Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
-+ Ensure that both ```Enable Monitoring``` and ```Open Display On Load``` are set to ```true```.
-+ If ```Enable Monitoring``` in the UI Controller foldout is set to ```false```, Make sure to call ```MonitoringSystems.Resolve<IMonitoringUI>().CreateMonitoringUI()``` from anywhere in you code. 
-
-### Assemblies and Modules
+### Assemblies and Modules?
 
  Assembly                                    | Path                                 | Core             | Note  
 :-                                           |:-                                    |:----------------:|:- 
@@ -858,6 +897,13 @@ Assembly-Baracuda-Pooling                    | Baracuda/Pooling                 
 Assembly-Baracuda-Threading                  | Baracuda/Threading                   |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
 Assembly-Baracuda-Reflection                 | Baracuda/Reflection                  |:heavy_check_mark:| 
 
+
+
+
+&nbsp;
+### What is Thread Dispatcher?
+
+Thread Dispatcher is another free & open source tool I developed to to pass the execution of a Delegate, Coroutine or Task from a background thread to the main thread, and await its completion or result on the calling thread as needed. Runtime Monitoring optionally uses a background thread for initial assembly profiling & setup processes. You can find more information about it on its [GitHub Repository](https://github.com/JohnBaracuda/Thread-Dispatcher),  its [Documentation](https://johnbaracuda.com/dispatcher.html) and its page on the [Asset Store](https://assetstore.unity.com/packages/slug/202421). I would also appreciate if you would leave a ❤️ or a ⭐on its page because it is also something I spent a lot of time working on.
 
 
 
