@@ -32,7 +32,7 @@ namespace Baracuda.Monitoring.Example.Scripts
             }
             else
             {
-                MonitoringSystems.Resolve<IMonitoringUI>().Filter(input);
+                MonitoringSystems.Resolve<IMonitoringUI>().ApplyFilter(input);
             }
         }
     }

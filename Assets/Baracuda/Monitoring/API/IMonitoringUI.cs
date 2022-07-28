@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 
 namespace Baracuda.Monitoring.API
 {
-    public interface IMonitoringUI : IMonitoringSystem<IMonitoringUI>
+    public interface IMonitoringUI : IMonitoringSubsystem<IMonitoringUI>
     {
         /// <summary>
         /// Set the active monitoring display visible.
@@ -51,13 +51,22 @@ namespace Baracuda.Monitoring.API
         void CreateMonitoringUI();
 
         /// <summary>
-        /// Filter displayed units by their name, tags etc. 
+        /// ApplyFilter displayed units by their name, tags etc. 
         /// </summary>
-        void Filter(string filter);
+        void ApplyFilter(string filter);
 
         /// <summary>
         /// Reset active filter.
         /// </summary>
         void ResetFilter();
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Oboslete ---
+
+        [Obsolete("Use ApplyFilter(string filter) instead!")]
+        void Filter(string filter);
+        
+        #endregion
     }
 }

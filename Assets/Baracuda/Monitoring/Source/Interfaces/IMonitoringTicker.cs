@@ -5,7 +5,7 @@ using Baracuda.Monitoring.API;
 
 namespace Baracuda.Monitoring.Source.Interfaces
 {
-    internal interface IMonitoringTicker : IMonitoringSystem<IMonitoringTicker>
+    internal interface IMonitoringTicker : IMonitoringSubsystem<IMonitoringTicker>
     {
         /// <summary>
         /// Toggle validation tick.

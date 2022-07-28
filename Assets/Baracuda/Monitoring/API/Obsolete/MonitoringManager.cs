@@ -66,10 +66,10 @@ namespace Baracuda.Monitoring.API
         /// Get a collection of <see cref="IMonitorUnit"/>s associated with the passed target. 
         /// </summary>
         [Pure]
-        [Obsolete("Use IMonitoringManager instead. Resolve registered instance using MonitoringSystems.Resolve<IMonitoringManager>()")]
+        [Obsolete("Use IMonitoringUtility instead. Resolve registered instance using MonitoringSystems.Resolve<IMonitoringUtility>()")]
         public static IMonitorUnit[] GetMonitorUnitsForTarget(object target)
         {
-            return MonitoringSystems.Resolve<IMonitoringManager>().GetMonitorUnitsForTarget(target);
+            return MonitoringSystems.Resolve<IMonitoringUtility>().GetMonitorUnitsForTarget(target);
         }
 
         /*
@@ -104,7 +104,7 @@ namespace Baracuda.Monitoring.API
         [Obsolete("Use IMonitoringManager instead. Resolve registered instance using MonitoringSystems.Resolve<IMonitoringManager>()")]
         public static bool IsFontHasUsed(int fontHash)
         {
-            return MonitoringSystems.Resolve<IMonitoringManager>().IsFontHasUsed(fontHash);
+            return MonitoringSystems.Resolve<IMonitoringUtility>().IsFontHashUsed(fontHash);
         }
 
         [Obsolete("Use IMonitoringManager instead. Resolve registered instance using MonitoringSystems.Resolve<IMonitoringManager>()")]

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace Baracuda.Monitoring.API
 {
@@ -14,12 +15,13 @@ namespace Baracuda.Monitoring.API
         private static readonly Dictionary<Type, object> systems = new Dictionary<Type, object>(8);
 
         [Pure]
-        public static T Resolve<T>() where T : class, IMonitoringSystem<T>
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public static T Resolve<T>() where T : class, IMonitoringSubsystem<T>
         {
             return systems.TryGetValue(typeof(T), out var system) ? (T) system : throw new SystemNotRegisteredException(typeof(T).Name);
         }
 
-        public static T Register<T>(T system) where T : class, IMonitoringSystem<T>
+        public static T Register<T>(T system) where T : class, IMonitoringSubsystem<T>
         {
             var key = typeof(T);
             if (systems.ContainsKey(key))

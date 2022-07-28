@@ -6,7 +6,7 @@ using Baracuda.Monitoring.API;
 
 namespace Baracuda.Monitoring.Source.Interfaces
 {
-    internal interface IMonitoringLogger : IMonitoringSystem<IMonitoringLogger>
+    internal interface IMonitoringLogger : IMonitoringSubsystem<IMonitoringLogger>
     {
         void LogException(Exception exception);
         

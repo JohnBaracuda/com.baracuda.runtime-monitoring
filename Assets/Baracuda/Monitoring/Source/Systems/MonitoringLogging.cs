@@ -19,9 +19,8 @@ namespace Baracuda.Monitoring.Source.Systems
         private readonly LoggingLevel _badImageFormatLevel;
         private readonly LoggingLevel _defaultLevel;
         
-        internal MonitoringLogging()
+        internal MonitoringLogging(IMonitoringSettings settings)
         {
-            var settings = MonitoringSystems.Resolve<IMonitoringSettings>();
             _processorNotFoundLoggingLevel = settings.LogProcessorNotFoundException;
             _invalidProcessorSignatureLoggingLevel = settings.LogInvalidProcessorSignatureException;
             _threadAbortedLevel = settings.LogThreadAbortException;

@@ -24,9 +24,9 @@ namespace Baracuda.Monitoring.Source.Systems
 
         //--------------------------------------------------------------------------------------------------------------
         
-        internal MonitoringTicker()
+        internal MonitoringTicker(IMonitoringManager monitoringManager)
         {
-            MonitoringSystems.Resolve<IMonitoringManager>().ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
+            monitoringManager.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
         }
 
         private void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)

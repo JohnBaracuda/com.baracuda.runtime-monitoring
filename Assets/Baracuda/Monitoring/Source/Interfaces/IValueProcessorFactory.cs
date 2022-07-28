@@ -8,7 +8,7 @@ using Baracuda.Monitoring.Source.Profiles;
 
 namespace Baracuda.Monitoring.Source.Interfaces
 {
-    internal interface IValueProcessorFactory : IMonitoringSystem<IValueProcessorFactory>
+    internal interface IValueProcessorFactory : IMonitoringSubsystem<IValueProcessorFactory>
     {
         /// <summary>
         /// Creates a default type specific processor to format the <see cref="TValue"/> depending on its exact type.

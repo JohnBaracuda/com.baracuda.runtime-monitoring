@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.API
 {
-    public interface IMonitoringSettings : IMonitoringSystem<IMonitoringSettings>
+    public interface IMonitoringSettings : IMonitoringSubsystem<IMonitoringSettings>
     {
         bool EnableMonitoring { get; }
         bool AutoInstantiateUI { get; }

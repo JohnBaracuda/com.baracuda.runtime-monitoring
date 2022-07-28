@@ -2,7 +2,7 @@
 
 namespace Baracuda.Monitoring.API
 {
-    public interface IMonitoringPlugin : IMonitoringSystem<IMonitoringPlugin>
+    public interface IMonitoringPlugin : IMonitoringSubsystem<IMonitoringPlugin>
     {
         string Copyright { get; }
         string Version { get; }

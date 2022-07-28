@@ -7,7 +7,10 @@ using JetBrains.Annotations;
 
 namespace Baracuda.Monitoring.API
 {
-    public interface IMonitoringManager : IMonitoringSystem<IMonitoringManager>
+    /// <summary>
+    /// Core interface for accessing Runtime Monitoring functionality.
+    /// </summary>
+    public interface IMonitoringManager : IMonitoringSubsystem<IMonitoringManager>
     {
         /// <summary>
         /// Value indicated whether or not monitoring profiling has completed and monitoring is fully initialized.
@@ -17,8 +20,7 @@ namespace Baracuda.Monitoring.API
 
         /// <summary>
         /// Event is invoked when profiling process for the current system has been completed.
-        /// This might even be before an Awake call which is why subscribing to this event will instantly invoke
-        /// a callback when subscribing after profiling was already completed.
+        /// Subscribing to this event will instantly invoke a callback if profiling has already completed.
         /// </summary>
         event ProfilingCompletedListener ProfilingCompleted;
         
@@ -47,15 +49,6 @@ namespace Baracuda.Monitoring.API
         void UnregisterTarget<T>(T target) where T : class;
 
         /*
-         * Unit for target   
-         */
-
-        /// <summary>
-        /// Get a collection of <see cref="IMonitorUnit"/>s associated with the passed target. 
-        /// </summary>
-        [Pure] IMonitorUnit[] GetMonitorUnitsForTarget(object target);
-
-        /*
          * Getter   
          */        
         
@@ -73,12 +66,5 @@ namespace Baracuda.Monitoring.API
         /// Get a list of all monitoring units.
         /// </summary>
         [Pure] IReadOnlyList<IMonitorUnit> GetAllMonitoringUnits();
-        
-        /// <summary>
-        /// Method returns true of the passed hash from the name of a font asset is used by a MFontAttribute and therefore
-        /// required by a monitoring unit. Used to dynamically load/unload required fonts.
-        /// </summary>
-        /// <param name="fontHash">The hash of the fonts name (string)</param>
-        [Pure] bool IsFontHasUsed(int fontHash);
     }
 }

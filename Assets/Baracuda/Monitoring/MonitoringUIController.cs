@@ -51,7 +51,7 @@ namespace Baracuda.Monitoring
             throw new InvalidOperationException();
         }
 
-        [Obsolete("use MonitoringUI.Filter() instead")]
+        [Obsolete("use MonitoringUI.ApplyFilter() instead")]
         protected virtual void Filter(string filter)
         {
             throw new InvalidOperationException();

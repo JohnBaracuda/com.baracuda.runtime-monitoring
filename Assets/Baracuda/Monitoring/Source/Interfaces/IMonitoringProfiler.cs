@@ -5,7 +5,7 @@ using Baracuda.Monitoring.API;
 
 namespace Baracuda.Monitoring.Source.Interfaces
 {
-    internal interface IMonitoringProfiler : IMonitoringSystem<IMonitoringProfiler>
+    internal interface IMonitoringProfiler : IMonitoringSubsystem<IMonitoringProfiler>
     {
         void BeginProfiling(CancellationToken ct);
     }

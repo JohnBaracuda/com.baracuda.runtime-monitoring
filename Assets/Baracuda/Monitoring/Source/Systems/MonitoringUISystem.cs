@@ -15,6 +15,11 @@ namespace Baracuda.Monitoring.Source.Systems
     {
         private MonitoringUIController _controllerInstance;
         private bool _bufferUICreation = false;
+        
+        // Dependencies
+        private readonly IMonitoringSettings _settings;
+        private readonly IMonitoringManager _manager;
+        private readonly IMonitoringTicker _ticker;
 
         /*
          * Visibility API   
@@ -80,11 +85,15 @@ namespace Baracuda.Monitoring.Source.Systems
          * Ctor
          */
 
-        internal MonitoringUISystem()
+        internal MonitoringUISystem(IMonitoringManager manager, IMonitoringSettings settings, IMonitoringTicker ticker)
         {
-            if (MonitoringSystems.Resolve<IMonitoringSettings>().EnableMonitoring)
+            _manager = manager;
+            _settings = settings;
+            _ticker = ticker;
+            
+            if (_settings.EnableMonitoring)
             {
-                MonitoringSystems.Resolve<IMonitoringManager>().ProfilingCompleted  += (staticUnits, instanceUnits) =>
+                _manager.ProfilingCompleted  += (staticUnits, instanceUnits) =>
                 {
 #if UNITY_EDITOR
                     if (!Application.isPlaying)
@@ -92,12 +101,10 @@ namespace Baracuda.Monitoring.Source.Systems
                         return;
                     }
 #endif
-                    var settings = MonitoringSystems.Resolve<IMonitoringSettings>();
 
-                    if (settings.AutoInstantiateUI || _bufferUICreation)
+                    if (_settings.AutoInstantiateUI || _bufferUICreation)
                     {
-                        var manager = MonitoringSystems.Resolve<IMonitoringManager>();
-                        InstantiateMonitoringUI(manager, settings, staticUnits, instanceUnits);
+                        InstantiateMonitoringUI(_manager, _settings, staticUnits, instanceUnits);
                     }
                 };
             }
@@ -110,9 +117,8 @@ namespace Baracuda.Monitoring.Source.Systems
         public void CreateMonitoringUI()
         {
             _bufferUICreation = true;
-            var manager = MonitoringSystems.Resolve<IMonitoringManager>();
 
-            if (!manager.IsInitialized)
+            if (!_manager.IsInitialized)
             {
                 return;
             }
@@ -130,10 +136,9 @@ namespace Baracuda.Monitoring.Source.Systems
                 return;
             }
 
-            var settings = MonitoringSystems.Resolve<IMonitoringSettings>();
-            var instanceUnits = manager.GetInstanceUnits();
-            var staticUnits = manager.GetStaticUnits();
-            InstantiateMonitoringUI(manager, settings, instanceUnits, staticUnits);
+            var instanceUnits = _manager.GetInstanceUnits();
+            var staticUnits = _manager.GetStaticUnits();
+            InstantiateMonitoringUI(_manager, _settings, instanceUnits, staticUnits);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -183,10 +188,10 @@ namespace Baracuda.Monitoring.Source.Systems
          * Filtering   
          */
         
-        public void Filter(string filter)
+        public void ApplyFilter(string filter)
         {
-            MonitoringSystems.Resolve<IMonitoringTicker>().ValidationTickEnabled = false;
-            var list = MonitoringSystems.Resolve<IMonitoringManager>().GetAllMonitoringUnits();
+            _ticker.ValidationTickEnabled = false;
+            var list = _manager.GetAllMonitoringUnits();
             for (var i = 0; i < list.Count; i++)
             {
                 var unit = list[i];
@@ -211,11 +216,16 @@ namespace Baracuda.Monitoring.Source.Systems
 
         public void ResetFilter()
         {
-            MonitoringSystems.Resolve<IMonitoringTicker>().ValidationTickEnabled = true;
-            foreach (var unit in MonitoringSystems.Resolve<IMonitoringManager>().GetAllMonitoringUnits())
+            _ticker.ValidationTickEnabled = true;
+            foreach (var unit in _manager.GetAllMonitoringUnits())
             {
                 unit.Enabled = true;
             }
+        }
+
+        public void Filter(string filter)
+        {
+            ApplyFilter(filter);
         }
     }
 }

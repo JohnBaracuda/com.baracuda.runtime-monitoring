@@ -77,7 +77,7 @@ namespace Baracuda.Monitoring.API
         public static void Filter(string filter)
         {
 #if !DISABLE_MONITORING
-            MonitoringSystems.Resolve<IMonitoringUI>().Filter(filter);
+            MonitoringSystems.Resolve<IMonitoringUI>().ApplyFilter(filter);
 #endif
         }
 

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Interfaces;
 using Baracuda.Monitoring.Source.Units;
 using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Pooling.Concretions;
@@ -80,7 +79,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             //Optimization
             if (TryGetMetaAttribute<MFontAttribute>(out var fontAttribute))
             {
-                MonitoringSystems.Resolve<IMonitoringManagerInternal>().AddFontHash(fontAttribute.FontHash);
+                MonitoringSystems.Resolve<IMonitoringUtilityInternal>().AddFontHash(fontAttribute.FontHash);
             }
             
             FormatData = CreateFormatData(this, settings);

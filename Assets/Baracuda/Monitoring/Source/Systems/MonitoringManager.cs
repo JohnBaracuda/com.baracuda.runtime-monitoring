@@ -18,7 +18,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Source.Systems
 {
-    internal class MonitoringManagerSystem : IMonitoringManager, IMonitoringManagerInternal
+    internal class MonitoringManager : IMonitoringManager, IMonitoringManagerInternal
     {
         #region --- API ---
 
@@ -78,17 +78,6 @@ namespace Baracuda.Monitoring.Source.Systems
         }
 
         /*
-         * Unit for target   
-         */
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Pure]
-        public IMonitorUnit[] GetMonitorUnitsForTarget(object target)
-        {
-            return GetMonitorUnitsForTargetInternal(target);
-        }
-
-        /*
          * Getter   
          */        
         
@@ -100,16 +89,7 @@ namespace Baracuda.Monitoring.Source.Systems
         
         [Pure] 
         public IReadOnlyList<IMonitorUnit> GetAllMonitoringUnits() => _monitoringUnitCache;
-
-        /*
-         * Optimization Misc   
-         */
-
-        public bool IsFontHasUsed(int fontHash)
-        {
-            return _fontHashSet.Contains(fontHash);
-        }
-
+        
         public bool ValidationTickEnabled { get; set; } = true;
 
         #endregion
@@ -131,8 +111,6 @@ namespace Baracuda.Monitoring.Source.Systems
 
         private volatile bool _isInitialized = false;
         private ProfilingCompletedListener _profilingCompleted;
-        
-        private readonly HashSet<int> _fontHashSet = new HashSet<int>();
         
                 
 #if DEBUG
@@ -210,31 +188,6 @@ namespace Baracuda.Monitoring.Source.Systems
 #endif
             DestroyInstanceUnits(target);
             _registeredTargets.Remove(target);
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Pure]
-        private IMonitorUnit[] GetMonitorUnitsForTargetInternal(object target)
-        {
-            if (!IsInitialized)
-            {
-                Debug.LogWarning(
-                    $"Calling {nameof(GetMonitorUnitsForTarget)} before profiling has completed. " +
-                    $"If you need to access units during initialization consider disabling async profiling in the monitoring settings!");
-            }
-
-            var list = ListPool<IMonitorUnit>.Get();
-            for (var i = 0; i < _instanceUnitCache.Count; i++)
-            {
-                var instanceUnit = _instanceUnitCache[i];
-                if (instanceUnit.Target == target)
-                {
-                    list.Add(instanceUnit);
-                }
-            }
-            var returnValue = list.ToArray();
-            ListPool<IMonitorUnit>.Release(list);
-            return returnValue;
         }
 
         #endregion
@@ -380,17 +333,6 @@ namespace Baracuda.Monitoring.Source.Systems
 
         #endregion
 
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Optimizations & Misc ---
-
-        public void AddFontHash(int fontHash)
-        {
-            _fontHashSet.Add(fontHash);
-        }
-        
-        #endregion
-        
 #endif //DISABLE_MONITORING
     }
 }

@@ -16,16 +16,22 @@ namespace Baracuda.Monitoring.Source.Systems
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void InstallSubsystems()
         {
-            var monitoringManager = new MonitoringManagerSystem();
-            MonitoringSystems.Register<IMonitoringManager>(monitoringManager);
-            MonitoringSystems.Register<IMonitoringManagerInternal>(monitoringManager);
+            var manager = new MonitoringManager();
+            MonitoringSystems.Register<IMonitoringManager>(manager);
+            MonitoringSystems.Register<IMonitoringManagerInternal>(manager);
             
+            var utility = new MonitoringUtility(manager);
+            MonitoringSystems.Register<IMonitoringUtility>(utility);
+            MonitoringSystems.Register<IMonitoringUtilityInternal>(utility);
+
+            var settings = MonitoringSettings.FindOrCreateSettingsAsset();
+            var ticker = new MonitoringTicker(manager);
+            MonitoringSystems.Register<IMonitoringSettings>(settings);
+            MonitoringSystems.Register<IMonitoringTicker>(ticker);
+            MonitoringSystems.Register<IMonitoringUI>(new MonitoringUISystem(manager, settings, ticker));
             MonitoringSystems.Register<IMonitoringPlugin>(new MonitoringPluginData());
-            MonitoringSystems.Register<IMonitoringSettings>(MonitoringSettings.FindOrCreateSettingsAsset());
-            MonitoringSystems.Register<IMonitoringTicker>(new MonitoringTicker());
-            MonitoringSystems.Register<IMonitoringUI>(new MonitoringUISystem());
-            MonitoringSystems.Register<IMonitoringLogger>(new MonitoringLogging());
-            MonitoringSystems.Register<IValueProcessorFactory>(new ValueProcessorFactory());
+            MonitoringSystems.Register<IMonitoringLogger>(new MonitoringLogging(settings));
+            MonitoringSystems.Register<IValueProcessorFactory>(new ValueProcessorFactory(settings));
             MonitoringSystems.Register<IValidatorFactory>(new ValidatorFactory());
         }
         
@@ -39,9 +45,10 @@ namespace Baracuda.Monitoring.Source.Systems
         [UnityEditor.InitializeOnLoadMethod]
         private static void InstallEditorSubsystems()
         {
+            var settings = MonitoringSettings.FindOrCreateSettingsAsset();
             MonitoringSystems.Register<IMonitoringPlugin>(new MonitoringPluginData());
-            MonitoringSystems.Register<IMonitoringSettings>(MonitoringSettings.FindOrCreateSettingsAsset());
-            MonitoringSystems.Register<IMonitoringLogger>(new MonitoringLogging());
+            MonitoringSystems.Register<IMonitoringSettings>(settings);
+            MonitoringSystems.Register<IMonitoringLogger>(new MonitoringLogging(settings));
         }
 #endif
     }
