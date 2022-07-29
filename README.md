@@ -22,8 +22,7 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 	- [Import](#import)
 - [Monitoring Member](#monitoring-member)
 	- [Instanced & Static Member](#instanced-and-static-member)
-	- [Monitoring Fields](#monitoring-fields)
-	- [Monitoring Properties](#monitoring-properties)
+	- [Monitoring Fields & Properties](#monitoring-fields-and-properties)
 	- [Monitoring Events](#monitoring-events)
 	- [Monitoring Methods](#monitoring-methods)
 - [Attributes](#attributes)
@@ -140,7 +139,7 @@ public class Player : MonoBehaviour
 
 &nbsp;
 ## Setup
-+ Download and import Runtime Monitoring.
+Download and import Runtime Monitoring. Optionally you can follow there steps to setup a different UI Controller (IMGUI, TMP or UIToolkit)
 + Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
 + Depending on the Unity version and your preferences, import and optional UIController package.
 + Use the `Monitoring UI Controller` field in the UI Controller foldout or use the `Set Active UIController` button on a listed element to set the active UI Controller.
@@ -274,9 +273,26 @@ public class GameManager
 
 
 &nbsp;
+## Monitoring Fields and Properties
+
+Monitoring fields and properties is almost identical, differing only in their technical implementations. You place the Monitor, MonitorField or MonitorProperty on either a field or a property and get its value displayed [automatically](#instanced-and-static-member) .  Multiple types like Booleans, Collections, Vectors etc. are also displayed in a readable way. To customize how a monitored value is displayed you can use a [Value Processor](#value-processor) and utilize a variety of additional  [formatting](#ui-formatting) attributes. 
+
+```c#
+[MonitorField] 
+private int value;
+
+[MonitorProperty] 
+private int Value { get; }
+```
+
+
+
+
+
+&nbsp;
 ## Monitoring Events
 
-You can not only monitor the value of a field, property or method, but also the state of an event. Use the MonitorEvent Attribute to customize how the state of the monitored event is displayed. 
+You can also monitor the state of an event. Use the MonitorEvent Attribute to customize how the state of the monitored event is displayed. 
 
  Property                            | Description |     
 :-                                        |:-                    |      
@@ -310,19 +326,26 @@ public event Action<Player> OnPlayerSpawn;
 &nbsp;
 ## Monitoring Methods
 
-The return value of a method can be monitored like a field or property but with the additional feature that out parameters are monitored and displayed too. You can also set default parameter values by passing them to the constructor of the MonitorMethod attribute.
+A method can be monitored like a field or property by displaying its return value. Method also have the the additional feature that out parameters are monitored too. You can also set default parameter values by passing them to the constructor of the `[MonitorMethod]` attribute. Even methods that return void can be monitored if they have at least one out parameter. Default and [Global Value Processor](#global-value-processor) are applied to monitored out parameters, meaning that collections, vectors etc. assigned via out parameter are displayed in a readable way and not just formatted with ToString().
 ```c#
-[MonitorMethod(3)]
-public Player GetPlayerByIndex(int playerIndex)
+[MonitorMethod(3, 5)]
+public float Multiply(int lhs, int rhs)
 {
-    // Method will be called with an playerIndex of 3.
-    //...
+    // Displayed value will be 15;
+    return lhs * rhs;
 }
 
 [MonitorMethod]
 public bool TryGetPlayer(int playerIndex, out Player player)
 {
     // Method will be called and both the return value and the out parameter player are monitored.
+    //...
+}
+
+[MonitorMethod]
+public void Populate(out Vector3[] verts)
+{
+    // verts will be displayed in a readable way.
     //...
 }
 ```
@@ -734,17 +757,6 @@ Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#
 `void ApplyFilter(string filter)`|Filter displayed units by their name, tags etc. |
 `void ResetFilter()`|Reset active filter.|
 `event Action<bool> VisibleStateChanged()`|Event invoked when the monitoring UI became visible or invisible.|
-
-```c#
-// Example how to toggle the monitoring UI when pressing F3 on a Keyboard.
-public void Update()
-{
-    if(Input.GetKeyDown(KeyCode.F3))
-    {
-    	MonitoringSystems.Resolve<IMonitoringUI>().Toggle();
-    }
-}
-```
 
 
 
