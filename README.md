@@ -5,7 +5,7 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 
 &nbsp;
 
-### Also available on the [Asset Store!](https://u3d.as/2QxJ)
+# Also available on the [Asset Store!](https://u3d.as/2QxJ)
 
 &nbsp;
 
@@ -30,17 +30,21 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 	- [Value Processor (Global)](#global-value-processor)
 	- [Conditional Display](#conditional-display)
 	- [Update Event](#update-event)
+- [Monitoring UI](#monitoring-ui)
 	- [UI Formatting](#ui-formatting)
+	- [UI Filtering](#ui-filtering)
+	- [Custom UI Controller](#custom-ui-controller)
 - [Systems and API](#systems-and-api)
 	- [Monitoring Manager](#monitoring-manager)
 	- [Monitoring UI](#monitoring-ui)
-	- [Monitoring UI Filtering](#ui-filtering)
 	- [Monitoring Settings](#monitoring-settings)
 	- [Monitoring Utility](#monitoring-utility)
+	- [Monitor Unit](#monitor-unit)
+	- [Monitor Profile](#monitor-profile)
+	- [Other Interfaces](#other-interfaces)
 - [Compatibility](#compatibility)
 	- [Runtime](#runtime-compatibility)
 	- [Platform](#platform-compatibility)
-- [Custom UI Controller](#custom-ui-controller)
 - [Optimizations](#optimizations)
 - [FAQ: Frequently Asked Questions](#frequently-asked-questions)
 - [Support Me ❤️](#support-me)
@@ -579,7 +583,7 @@ Very dynamic way of determining if a member is displayed or not. Pass in the nam
 
 + Passed fields, properties and methods must return a Boolean that determines if the member is displayed or not.
 + Passed methods can also accept the current value of the monitored member and use its for a more dynamic evaluation.
-+ Passed events must be Action```<bool>``` and can be used to toggle the display of the member
++ Passed events must be `Action<bool>` and can be used to toggle the display of the member
 
 ```c#
 
@@ -666,6 +670,28 @@ public void ContinueGame()
 
 
 
+
+&nbsp;
+# Monitoring UI
+
+Use the `IMonitoringUI` API to access the active MonitoringUIController and set properties like visibility, filtering etc.
+
+Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
+:---         |:-                                        
+`void Show()`|Show the monitoring UI overlay.|
+`void Hide()`|Hide the monitoring UI overlay.|
+`void ToggleDisplay()`|Toggle the visibility of the active monitoring display.|
+`bool IsVisible()`|True if monitoring UI is visible.|
+`T GetActiveUIController<T>()`|Get the currently active MonitoringUIController casted to a concrete implementation.|
+`void CreateMonitoringUI()`|Create a MonitoringUIController instance if there is none already. Disable 'Auto Instantiate UI' in the Monitoring Settings and use this method for more control over the timing in which the MonitoringUIController is instantiated. |
+`void ApplyFilter(string filter)`|Filter displayed units by their name, tags etc. [more](#ui-filtering)|
+`void ResetFilter()`|Reset active filter. [more](#ui-filtering)|
+`event Action<bool> VisibleStateChanged()`|Event invoked when the monitoring UI became visible or invisible.|
+
+
+
+
+
 &nbsp;
 ## UI Formatting
 
@@ -706,18 +732,18 @@ private float pi = 3.14159265359;
 private float pi = 3.14159265359;
 ```
 
-Creating a custom attribute and inheriting from `MOptionsAttribute` will let you use the constructor of the custom attribute to set multiple formatting options. The attribute can then be used on multiple monitored to apply its settings.
+You creating a custom attribute and inheriting from `MOptionsAttribute` will let you use the constructor of the custom attribute to set multiple values. The attribute can then be used on multiple monitored to apply its settings.
 
 ```c#
 public class MCustomFormatting : MOptionsAttribute
 {
-    public MCustomFormatting()
-    {
-        Format = "0.00";
-        FontSize = 16;
-        Position = UIPosition.UpperRight;
-        GroupElement = false;
-    }
+	public MCustomFormatting()
+	{
+		Format = "0.00";
+		FontSize = 16;
+		Position = UIPosition.UpperRight;
+		GroupElement = false;
+	}
 }
 
 [Monitor]
@@ -759,10 +785,45 @@ pubic int value3;
 
 
 
+
+
+
+&nbsp;
+## UI Filtering
+You can filter the currently displayed elements using `IMonitoringUI.ApplyFilter(string filter)`. Reset applied filter by calling `IMonitoringUI.ResetFilter()`. You can not only filter by name, but also by the following categories.
++ Member type (Field, Property, Event, Method)
++ The type of the monitored value (e.g. int, Vector3, string etc.)
++ Static and instance member.
++ The monitored members declaring type (e.g. 'GameController' to only display member from the class `GameController`)
++ Tags or categories applied by the  `[MTag]` attribute.
+
+
+
+
+
+
+&nbsp; 
+## Custom UI Controller
+
+You can create a custom UI controller by following the steps below. You can take a look at the existing UI Controller implementations to get some reference. 
+
++ Create a new class and inherit from ```MonitoringDisplayController```.
++ Implement the abstract methods and create custom UI logic. 
++ Add the script to a new GameObject and create a prefab of it.
++ Make sure to delete the GameObject from your scene.
++ Open the settings by navigating to (menu: Tools > Monitoring > Settings).
++ Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
+
+
+
+
+
+
+
 &nbsp;
 # Systems and API
 
-You can get an interface for a monitoring system by calling ```MonitoringSystems.Resolve<TInterface>()```. Interface implementations will not change during runtime meaning it is safe to cache them when necessary. 
+Get the interface for a monitoring system by calling ```MonitoringSystems.Resolve<TInterface>()```. Interface implementations will not change during runtime meaning it is safe to cache them when necessary. 
 
 System Interface    | Description |        
 :--                 |:-                                              
@@ -777,18 +838,26 @@ System Interface    | Description |
 IMonitoringUI monitoringUI = MonitoringSystems.Resolve<IMonitoringUI>();
 ```
 
+### Type Interfaces
 
+Important internally used types implement interfaces that should make it more easy to work with and extend this tool. These interfaces are especially used when creating a custom UI controller.
+
+Type Interface    | Description |        
+:--                 |:-                                              
+`IMonitorUnit` | [more](#monitoring-manager)|
+`IMonitorProfile` |  [more](#monitoring-ui) |
+`IFormatData` |  [more](#other-interfaces) |
 
 
 
 &nbsp;
 ## Monitoring Manager
 
-The `IMonitoringManager` interface provides a core access points & functionality.
+The `IMonitoringManager` interface provides core access points.
 
 Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
 :---         |:-                                        
-`bool IsInitialized()`|Value indicated whether or not monitoring profiling has completed and monitoring is fully initialized.|
+`bool IsInitialized { get; }`|Value indicated whether or not monitoring profiling has completed and monitoring is fully initialized.|
 `event ProfilingCompletedListener ProfilingCompleted`|Event is invoked when profiling process for the current system has been completed. Subscribing to this event will instantly invoke a callback if profiling has already completed.|
 `event Action<IMonitorUnit> UnitCreated`|Event is called when a new MonitorUnit was created. |
 `event Action<IMonitorUnit> UnitDisposed`|Event is called when a MonitorUnit was disposed.|
@@ -800,8 +869,6 @@ Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#
 
 
 
-
-
 &nbsp;
 ## Monitoring Settings
 
@@ -809,12 +876,10 @@ Use the `IMonitoringSettigns` API can be used to access the current configuratio
 
 
 
-
-
 &nbsp;
-## Monitoring UI
+## Monitoring UI API
 
-Use the `IMonitoringUI` API to access the active MonitoringUIController and set properties like visibility, filtering etc.
+Use the `IMonitoringUI` API to access the active MonitoringUIController and set properties like visibility, filtering etc.   [more](#monitoring-ui)
 
 Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
 :---         |:-                                        
@@ -830,32 +895,62 @@ Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#
 
 
 
-
-
-&nbsp;
-## UI Filtering
-You can filter the currently displayed elements using `IMonitoringUI.ApplyFilter(string filter)`. Reset applied filter simply call `IMonitoringUI.ResetFilter()`. You can not only filter by name, but also by the following categories.
-+ Member type (Field, Property, Event, Method)
-+ The type of the monitored value (e.g. int, Vector3, string etc.)
-+ Static and instance member.
-+ The monitored members declaring type (e.g. 'GameController' to only display member from the class `GameController`)
-+ Tags or categories applied by the  `[MTag]` attribute.
-
-
-
-
-
-
 &nbsp;
 ## Monitoring Utility
 
-The `IMonitoringUtility` interface provides a variety of otherwise not or hard to categorize utility functions. 
+The `IMonitoringUtility` interface provides a variety of uncategorized utility functions. 
 
 Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
 :---         |:-                                        
 `bool IsFontHashUsed(int fontHash)`|Returns true if the passed hash from the name of a font asset is used by a MFontAttribute and therefore required by a monitoring unit. Used to dynamically load/unload required fonts.|
 `IMonitorUnit[] GetMonitorUnitsForTarget(object target)`|Get a list of IMonitorUnits registered to the passed target object.|
 `IReadOnlyCollection<string> GetAllTags()`| Get a list of all custom tags, applied by `[MTag]` attributes that can be used for filtering.|
+
+
+
+&nbsp;
+## Monitor Unit
+
+The  `IMonitorUnit` interface offers access points to the internally used handle for instances of a monitored member. 
+
+Interface&#160;Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
+:---         |:-                                        
+`string Name { get; }`|Readable display name.|
+`object Target { get; }`|The target object of the monitored member. Null if static.|
+`IMonitorProfile Profile { get; }`|Profile describing the monitored member. [more](#monitor-profile) |
+`bool Enabled { get; set; }`|The active state of the unit. Only enabled units are updated and displayed.|
+`int UniqueID { get; }`|Unique Id|
+`event Action<bool> ActiveStateChanged`|Event is invoked when the units active state has changed.|
+`event Action<string> ValueUpdated`|Event is invoked when the value of the monitored member has changed.|
+`event Action Disposing`|Event is invoked when the unit is being disposed.|
+`void Refresh()`|Force the monitored member to update its state.|
+`string GetState()`|Get the current value or state of the monitored member as a formatted string.|
+
+
+
+&nbsp;
+## Monitor Profile
+
+The  `IMonitorProfile` interface offers access points to the internally used profile describing a monitored member. It contains cached reflection and formatting data.  
+
+Interface&#160;Membe&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
+:---         |:-                                        
+`MonitorAttribute Attribute { get; }`|Instance of the attribute that is used to flag the target member to be monitored.|
+`MemberInfo MemberInfo { get; }`|Member info of the monitored member.|
+`UnitType UnitType { get; }`|The type of the member (either field, property, event or method)|
+`bool ReceiveTick { get; }`|True if the unit receives a custom tick event.|
+`Type UnitTargetType { get; }`|The declaring type of the monitored member.|
+`Type UnitValueType { get; }`|The type of the monitored member.|
+`bool IsStatic { get; }`|Indicates if monitored member is static or non static.|
+`IFormatData FormatData { get; }`|Contains information about label, font and more formatting data.|
+`string[] Tags { get; }`|Additional meta data for filtering.|
+` T GetMetaAttribute<T>()`|The monitoring profiler caches every additional attribute that inherits from MonitoringMetaAttribute on the profile. You can access these custom attributes during runtime using this method without using reflection.|
+`bool TryGetMetaAttribute<T>(out T attribute)`|Try to get a MonitoringMetaAttribute.|
+
+
+&nbsp;
+## Other Interfaces
+
 
 
 
@@ -896,21 +991,6 @@ XSX                   |NA                |                         |
 PlayStation 4         |NA                |                         |
 PlayStation 5         |NA                |                         |
 
-
-
-
-
-&nbsp; 
-## Custom UI Controller
-
-You can create a custom UI controller by following the steps below. You can take a look at the existing UI Controller implementations to get some reference. 
-
-+ Create a new class and inherit from ```MonitoringDisplayController```.
-+ Implement the abstract methods and create custom UI logic. 
-+ Add the script to a new GameObject and create a prefab of it.
-+ Make sure to delete the GameObject from your scene.
-+ Open the settings by navigating to (menu: Tools > Monitoring > Settings).
-+ Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
 
 
 
@@ -961,7 +1041,7 @@ Monitored Transforms are another type that have the potential to create a lot of
 
 
 &nbsp;
-### How can I disable the usage of this tool in a release?
+### How can I disable the tool in a release?
 
 Use the ```#define DISABLE_MONITORING``` to disable the internal logic of the tool. 
 Public API will still compile so you don't have to wrap your API calls in a custom ```#if !DISABLE_MONITORING``` block.
