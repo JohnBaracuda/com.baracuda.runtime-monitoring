@@ -49,7 +49,6 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
         private readonly GUIContent _content = new GUIContent();
         
-        [Monitor]
         private float _calculatedScale;
 
         private static float lastLowerLeftHeight;
@@ -102,8 +101,8 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 
                 if (Format.TextColor.HasValue)
                 {
-                    unit.ValueUpdated += UpdateColorized;
                     _textColor = ColorUtility.ToHtmlStringRGB(Format.TextColor.Value);
+                    unit.ValueUpdated += UpdateColorized;
                 }
                 else
                 {
@@ -139,8 +138,15 @@ namespace Baracuda.Monitoring.UI.IMGUI
                         // ReSharper disable once PossibleNullReferenceException
                         ? Font.fontSize 
                         : ctx.defaultFont.fontSize;
-                
-                Update(unit.GetState());
+
+                if (Format.TextColor.HasValue)
+                {
+                    UpdateColorized(unit.GetState());
+                }
+                else
+                {
+                    Update(unit.GetState());
+                }
             }
 
             private void Update(string text)
@@ -250,18 +256,23 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
         #endregion
 
+        private bool _draw = true;
+
         #region --- GUI ---
         
         private void OnGUI()
         {
-            GUI.skin.font = defaultFont;
-            GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(_calculatedScale, _calculatedScale, 1));
-            var ctx = new Context(GUI.skin.label);
-            var screenData = new ScreenData(Screen.width / _calculatedScale, Screen.height / _calculatedScale);
-            DrawUpperLeft(ctx, screenData);
-            DrawUpperRight(ctx, screenData);
-            DrawLowerLeft(ctx, screenData);
-            DrawLowerRight(ctx, screenData);
+            if (_draw)
+            {
+                GUI.skin.font = defaultFont;
+                GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(_calculatedScale, _calculatedScale, 1));
+                var ctx = new Context(GUI.skin.label);
+                var screenData = new ScreenData(Screen.width / _calculatedScale, Screen.height / _calculatedScale);
+                DrawUpperLeft(ctx, screenData);
+                DrawUpperRight(ctx, screenData);
+                DrawLowerLeft(ctx, screenData);
+                DrawLowerRight(ctx, screenData);
+            }
         }
 
         /*
@@ -533,17 +544,17 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
         public override bool IsVisible()
         {
-            return enabled;
+            return _draw;
         }
 
         protected override void ShowMonitoringUI()
         {
-            enabled = true;
+            _draw = true;
         }
 
         protected override void HideMonitoringUI()
         {
-            enabled = false;
+            _draw = false;
         }
 
         protected override void OnUnitDisposed(IMonitorUnit unit)

@@ -114,44 +114,56 @@ namespace Baracuda.Monitoring.Source.Profiles
             var indentString = new string(' ', elementIndent);
             return target =>
             {
-                sb.Clear();
-                var delegates = func(target).GetInvocationList();
-                for (var i = 0; i < delegates.Length; i++)
+                try
                 {
-                    var item = delegates[i];
-                    var delegateTarget = item.Target;
-                    sb.Append('\n');
-                    sb.Append(indentString);
-                    sb.Append('[');
-                    sb.Append(i);
-                    sb.Append(']');
-                    sb.Append(' ');
-                    sb.Append(item.Method.DeclaringType?.ToReadableTypeString().Colorize(settings.ClassColor) ?? "NULL".Colorize(Color.red));
-                    sb.Append(settings.AppendSymbol);
-                    sb.Append(item.Method.Name.Colorize(settings.MethodColor));
+                    var delegates = func(target)?.GetInvocationList();
+                    if (delegates == null)
+                    {
+                        return string.Empty;
+                    }
+                    sb.Clear();
+                    for (var i = 0; i < delegates.Length; i++)
+                    {
+                        var item = delegates[i];
+                        var delegateTarget = item.Target;
+                        sb.Append('\n');
+                        sb.Append(indentString);
+                        sb.Append('[');
+                        sb.Append(i);
+                        sb.Append(']');
+                        sb.Append(' ');
+                        sb.Append(item.Method.DeclaringType?.ToReadableTypeString().Colorize(settings.ClassColor) ?? "NULL".Colorize(Color.red));
+                        sb.Append(settings.AppendSymbol);
+                        sb.Append(item.Method.Name.Colorize(settings.MethodColor));
                     
-                    if (!(delegateTarget is Component component))
-                    {
-                        continue;
+                        if (!(delegateTarget is Component component))
+                        {
+                            continue;
+                        }
+
+                        if (component != null)
+                        {
+                            sb.Append(' ');
+                            sb.Append('(');
+                            sb.Append(component.gameObject.scene.name.Colorize(settings.SceneNameColor));
+                            sb.Append(' ');
+                            sb.Append(component.name.Colorize(settings.TargetObjectColor));
+                            sb.Append(')');
+                        }
+                        else
+                        {
+                            sb.Append(' ');
+                            sb.Append("NULL! Target was destroyed!".Colorize(Color.red));
+                        }
                     }
 
-                    if (component != null)
-                    {
-                        sb.Append(' ');
-                        sb.Append('(');
-                        sb.Append(component.gameObject.scene.name.Colorize(settings.SceneNameColor));
-                        sb.Append(' ');
-                        sb.Append(component.name.Colorize(settings.TargetObjectColor));
-                        sb.Append(')');
-                    }
-                    else
-                    {
-                        sb.Append(' ');
-                        sb.Append("NULL! Target was destroyed!".Colorize(Color.red));
-                    }
+                    return sb.ToString();
                 }
-
-                return sb.ToString();
+                catch (Exception exception)
+                {
+                    Debug.LogError(exception);
+                    return exception.Message;
+                }
             };
         }
 

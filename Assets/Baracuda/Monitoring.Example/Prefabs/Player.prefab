@@ -11,8 +11,7 @@ GameObject:
   - component: {fileID: 7613957460829259884}
   - component: {fileID: 5445448196072762233}
   - component: {fileID: 4686158427040763559}
-  - component: {fileID: 1138542294978311692}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Weapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -80,20 +79,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!136 &1138542294978311692
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4817248682780404154}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &8485219937227319317
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,7 +90,7 @@ GameObject:
   - component: {fileID: 8485219937227319312}
   - component: {fileID: 8485219937227319319}
   - component: {fileID: 8485219937227319318}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -188,7 +173,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8485219937489066418}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: ProjectileSpawnPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -203,7 +188,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8485219937489066417}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.577, y: -0.3575, z: 1.568}
+  m_LocalPosition: {x: 0.577, y: -0.3575, z: 1.95}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8485219937227319312}
@@ -220,7 +205,7 @@ GameObject:
   - component: {fileID: 8485219937922076370}
   - component: {fileID: 8485219937922076380}
   - component: {fileID: 8485219937922076371}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -297,7 +282,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8485219938166759709}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -333,7 +318,7 @@ GameObject:
   - component: {fileID: 1536225972}
   - component: {fileID: 8485219938503472849}
   - component: {fileID: 8485219938503472850}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -368,13 +353,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6e17301b25e45b9a1ce4e3a2ba24659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 75
+  damage: 70
   fullAutomatic: 1
-  shotsPerSecond: 7
+  shotsPerSecond: 8
   bulletsPerShot: 1
-  bulletSpread: 25
-  bulletForce: 3600
-  ammunition: 15
+  bulletSpread: 50
+  bulletForce: 2000
+  ammunition: 20
   layerMask:
     serializedVersion: 2
     m_Bits: 119
@@ -507,7 +492,7 @@ GameObject:
   - component: {fileID: 8485219938968443564}
   - component: {fileID: 8485219938968443555}
   - component: {fileID: 8485219938968443554}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -598,7 +583,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8485219938980481561}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}

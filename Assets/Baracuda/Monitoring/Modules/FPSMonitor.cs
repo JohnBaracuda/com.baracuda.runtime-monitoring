@@ -80,15 +80,19 @@ namespace Baracuda.Monitoring.Modules
 
         #region --- FPS ---
         
+        
+        
+        
+        
         [Monitor]
-        [MOrder(1002)]
+        [MOrder(1000)]
         [MFontSize(32)]
         [MGroupElement(false)]
         [MPosition(UIPosition.UpperRight)]
         [MUpdateEvent(nameof(FPSUpdated))]
         [MValueProcessor(nameof(FPSProcessor))]
         private float _fps;
-
+        
         public string FPSProcessor(float value)
         {
             _fpsBuilder.Clear();
@@ -100,6 +104,8 @@ namespace Baracuda.Monitoring.Modules
             return _fpsBuilder.ToString();
         }
 
+        
+        
         private void Update()
         {
             _frameCount++;
@@ -131,13 +137,12 @@ namespace Baracuda.Monitoring.Modules
         #region --- Vsync ---
         
         [Monitor] 
-        [MOrder(1001)]
+        [MOrder(1000)]
         [MFontSize(16)]
         [MPosition(UIPosition.UpperRight)]
         [MGroupElement(false)]
         [MValueProcessor(nameof(ProcessorTargetFrameRate))]
         private int TargetFrameRate => Application.targetFrameRate;
-
         
         private string ProcessorTargetFrameRate(int value)
         {

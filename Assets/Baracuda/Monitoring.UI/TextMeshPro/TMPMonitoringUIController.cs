@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Baracuda.Monitoring.API;
 using TMPro;
 using UnityEngine;
@@ -42,6 +43,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         private Dictionary<string, MonitoringUIGroup> _activeGroupsStr;
         private Transform _transform;
         private UIControllerComponents _components;
+        private Canvas _canvas;
 
         private readonly Dictionary<int, TMP_FontAsset> _loadedFonts = new Dictionary<int, TMP_FontAsset>();
 
@@ -71,7 +73,8 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             _uiGroupPool = new Stack<MonitoringUIGroup>(initialGroupPoolSize);
             _activeMonitoringUIElements = new Dictionary<IMonitorUnit, MonitoringUIElement>();
             _activeGroups = new Dictionary<object, MonitoringUIGroup>(initialGroupPoolSize);
-            _activeGroupsStr = new Dictionary<string, MonitoringUIGroup>(initialGroupPoolSize); 
+            _activeGroupsStr = new Dictionary<string, MonitoringUIGroup>(initialGroupPoolSize);
+            _canvas = GetComponent<Canvas>();
             
             InitializeElementPool();
             InitializeGroupPool();
@@ -159,7 +162,11 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         protected override void ShowMonitoringUI()
         {
             gameObject.SetActive(true);
+            // This is a fix to force canvas sorting order to update.
+            // Calling Canvas.ForceUpdateCanvas does not do this.
+            _canvas.sortingOrder = _canvas.sortingOrder;
         }
+        
 
         protected override void HideMonitoringUI()
         {

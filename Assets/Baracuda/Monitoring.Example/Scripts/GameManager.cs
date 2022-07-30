@@ -6,18 +6,12 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
-    public enum GameState
-    {
-        Playing,
-        Respawning
-    }
-    
     public class GameManager : MonitoredSingleton<GameManager>
     {
         [Monitor]
         [MOrder(100)]
         public event Action<GameState> GameStateChanged;
-
+        
         [Monitor]
         [MOrder(100)]
         public GameState GameState
@@ -29,12 +23,12 @@ namespace Baracuda.Monitoring.Example.Scripts
                 GameStateChanged?.Invoke(value);
             }
         }
-
+      
         [Monitor]
         [MFontSize(24)]
         [MShowIf(Condition.Positive)]
         private int _deathTimer = 0;
-
+        
         private GameState _gameState = GameState.Playing;
         [SerializeField] [Min(30)] private int maxFrameRate = 165;
         [SerializeField] [Range(0,4)] private int vsyncCount = 0;

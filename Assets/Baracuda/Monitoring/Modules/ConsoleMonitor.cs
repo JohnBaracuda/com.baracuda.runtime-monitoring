@@ -69,7 +69,7 @@ namespace Baracuda.Monitoring.Modules
         {
             messageLogCache.Clear();
             lastLogStacktrace = null;
-            //UpdateDisplayedLogs?.Invoke();
+            UpdateDisplayedLogs?.Invoke();
         }
         
         #endregion

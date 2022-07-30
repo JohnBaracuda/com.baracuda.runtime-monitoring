@@ -41,7 +41,6 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 	- [Monitoring Utility](#monitoring-utility)
 	- [Monitor Unit](#monitor-unit)
 	- [Monitor Profile](#monitor-profile)
-	- [Other Interfaces](#other-interfaces)
 - [Compatibility](#compatibility)
 	- [Runtime](#runtime-compatibility)
 	- [Platform](#platform-compatibility)
@@ -144,7 +143,7 @@ public class Player : MonoBehaviour
 
 &nbsp;
 ## Setup
-Download and import Runtime Monitoring. Optionally you can follow there steps to setup a different UI Controller (IMGUI, TMP or UIToolkit)
+Download and import Runtime Monitoring. To setup a different UI Controller (IMGUI, TMP or UIToolkit) follow these optional steps:
 + Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
 + Depending on the Unity version and your preferences, import and optional UIController package.
 + Use the `Monitoring UI Controller` field in the UI Controller foldout or use the `Set Active UIController` button on a listed element to set the active UI Controller.
@@ -167,7 +166,7 @@ Download and import Runtime Monitoring. Optionally you can follow there steps to
 ## Technical Information
 + Unity Version: <b>2019.4</b> (for UIToolkit <b>2020.1</b>) <br/> 
 + Scripting Backend: <b>Mono & IL2CPP</b>
-+ API Compatibility: <b>.NET Standard 2.0 or .NET 4.xP</b>
++ API Compatibility: <b>.NET Standard 2.0 or .NET 4.x</b>
 + Asset Version: <b>2.0.1</b>
 
 
@@ -280,7 +279,7 @@ public class GameManager
 &nbsp;
 ## Monitoring Fields and Properties
 
-Monitoring fields and properties is almost identical, differing only in their technical implementations. You place the Monitor, MonitorField or MonitorProperty on either a field or a property and get its value displayed [automatically](#instanced-and-static-member) .  Multiple types like Booleans, Collections, Vectors etc. are also displayed in a readable way. To customize how a monitored value is displayed you can use a [Value Processor](#value-processor) and utilize a variety of additional  [formatting](#ui-formatting) attributes. 
+Monitoring fields and properties is almost identical, differing only in their technical implementations. Just place the Monitor, MonitorField or MonitorProperty on either a field or a property and get its value displayed [automatically](#instanced-and-static-member) .  Multiple types like Booleans, Collections, Vectors etc. are also displayed in a readable way. To customize how a monitored value is displayed you can use a [Value Processor](#value-processor) and utilize a variety of additional  [formatting](#ui-formatting) attributes. 
 
 ```c#
 [MonitorField] 
@@ -297,13 +296,15 @@ private int Value { get; }
 &nbsp;
 ## Monitoring Events
 
-You can also monitor the state of an event. Use the MonitorEvent Attribute to customize how the state of the monitored event is displayed. 
+Use the `[Monitor]` or `[MonitorEvent]` attributes to monitor the state of an event. The `[MonitorEvent]` attribute accepts additional arguments to customize how the event is displayed.
 
  Property                            | Description |     
 :-                                        |:-                    |      
-`ShowSubscriberCount` | When enabled, the subscriber count of the event handler delegate is displayed. |
-`ShowInvokeCounter`     | When enabled, the amount the monitored event has been invoked will be displayed.  |
-`ShowSubscriberInfo`   | When enabled, every subscribed delegate will be displayed.       |
+`ShowSubscriberCount` | When enabled, the subscriber count of the event is displayed. |
+`ShowInvokeCounter`     | When enabled, the invoke count of the event is displayed. (Can be incorrect when async profiling is enabled!) |
+`ShowSubscriberInfo`   | When enabled, every subscribed delegate is displayed.  |
+`ShowEventSignature`   | When enabled, display the signature of the event.  |
+`ShowEventHistory`       | When enabled, the arguments of the last x amount of invocations is displayed. (Planned feature) |
 
 ```c#
 [Monitor]
@@ -322,7 +323,7 @@ public delegate void GameStateDelegate(GameState gameState);
 public event Action<Player> OnPlayerSpawn;
 ```
 
-![example](https://johnbaracuda.com/media/img/monitoring/Example_09.png)
+![example](https://johnbaracuda.com/media/img/monitoring/Example_event_02.png)
 
 
 
@@ -814,6 +815,17 @@ You can create a custom UI controller by following the steps below. You can take
 + Open the settings by navigating to (menu: Tools > Monitoring > Settings).
 + Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
 
+The following abstract member have to be implemented when inheriting from `MoniotoringUIController`.
+
+Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
+:---         |:-                                        
+`bool IsVisible()`|Return true if the UI is active and false if it is not active.|
+`void ShowMonitoringUI()`|Activate / show the UI.|
+`void HideMonitoringUI()`|Deactivate / hide the UI.|
+`void OnUnitCreated(IMonitorUnit unit)`|Use to add UI elements for the passed unit.|
+`void OnUnitDisposed(IMonitorUnit unit)`|Use to remove UI elements for the passed unit.|
+
+
 
 
 
@@ -844,9 +856,8 @@ Important internally used types implement interfaces that should make it more ea
 
 Type Interface    | Description |        
 :--                 |:-                                              
-`IMonitorUnit` | [more](#monitoring-manager)|
-`IMonitorProfile` |  [more](#monitoring-ui) |
-`IFormatData` |  [more](#other-interfaces) |
+`IMonitorUnit` |Internally used handle for instances of a monitored member. [more](#monitoring-manager)|
+`IMonitorProfile` |Internally used profile describing a monitored member. [more](#monitoring-ui) |
 
 
 
@@ -946,10 +957,6 @@ Interface&#160;Membe&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
 `string[] Tags { get; }`|Additional meta data for filtering.|
 ` T GetMetaAttribute<T>()`|The monitoring profiler caches every additional attribute that inherits from MonitoringMetaAttribute on the profile. You can access these custom attributes during runtime using this method without using reflection.|
 `bool TryGetMetaAttribute<T>(out T attribute)`|Try to get a MonitoringMetaAttribute.|
-
-
-&nbsp;
-## Other Interfaces
 
 
 

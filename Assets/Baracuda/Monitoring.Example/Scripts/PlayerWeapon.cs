@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
@@ -62,19 +63,22 @@ namespace Baracuda.Monitoring.Example.Scripts
         /*
          * Value Processor   
          */
-
+        
         private string CurrentAmmunitionProcessor(int current)
         {
             var sb = StringBuilderPool.Get();
             sb.Append("Ammo: ");
             sb.Append(current.ToString("00"));
-            sb.Append("/");
+            sb.Append('/');
             sb.Append(ammunition.ToString("00"));
             sb.Append(' ');
-            for (var i = 0; i < current; i++)
-            {
-                sb.Append('▐');
-            }
+
+            sb.Append('▐', current);
+            var gray = new Color(.25f, .25f, .3f);
+            sb.Append(gray.ToRichText());
+            sb.Append('▐', ammunition - current);
+            sb.Append("</color>");
+
             return StringBuilderPool.Release(sb);
         }
 

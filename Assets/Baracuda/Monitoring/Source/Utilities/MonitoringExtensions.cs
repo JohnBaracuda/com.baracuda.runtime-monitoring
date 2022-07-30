@@ -81,27 +81,37 @@ namespace Baracuda.Monitoring.Source.Utilities
          */
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ToRichText(this Color color)
+        {
+            var sb = ConcurrentStringBuilderPool.Get();
+            sb.Append("<color=#");
+            sb.Append(ColorUtility.ToHtmlStringRGB(color));
+            sb.Append('>');
+            return ConcurrentStringBuilderPool.Release(sb);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Colorize(this string content, Color color)
         {
-            var pooled = ConcurrentStringBuilderPool.Get();
-            pooled.Append("<color=#");
-            pooled.Append(ColorUtility.ToHtmlStringRGB(color));
-            pooled.Append('>');
-            pooled.Append(content);
-            pooled.Append("</color>");
-            return ConcurrentStringBuilderPool.Release(pooled);
+            var sb = ConcurrentStringBuilderPool.Get();
+            sb.Append("<color=#");
+            sb.Append(ColorUtility.ToHtmlStringRGB(color));
+            sb.Append('>');
+            sb.Append(content);
+            sb.Append("</color>");
+            return ConcurrentStringBuilderPool.Release(sb);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string FontSize(this string content, int size)
         {
-            var pooled = ConcurrentStringBuilderPool.Get();
-            pooled.Append("<size=");
-            pooled.Append(size);
-            pooled.Append('>');
-            pooled.Append(content);
-            pooled.Append("</size>");
-            return ConcurrentStringBuilderPool.Release(pooled);
+            var sb = ConcurrentStringBuilderPool.Get();
+            sb.Append("<size=");
+            sb.Append(size);
+            sb.Append('>');
+            sb.Append(content);
+            sb.Append("</size>");
+            return ConcurrentStringBuilderPool.Release(sb);
         }
 
         /*
@@ -111,13 +121,13 @@ namespace Baracuda.Monitoring.Source.Utilities
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string MonoSpace(this string content, int space = 30)
         {
-            var pooled = ConcurrentStringBuilderPool.Get();
-            pooled.Append("<mspace=");
-            pooled.Append(space);
-            pooled.Append('>');
-            pooled.Append(content);
-            pooled.Append("</mspace>");
-            return ConcurrentStringBuilderPool.Release(pooled);
+            var sb = ConcurrentStringBuilderPool.Get();
+            sb.Append("<mspace=");
+            sb.Append(space);
+            sb.Append('>');
+            sb.Append(content);
+            sb.Append("</mspace>");
+            return ConcurrentStringBuilderPool.Release(sb);
         }
 
         /*
