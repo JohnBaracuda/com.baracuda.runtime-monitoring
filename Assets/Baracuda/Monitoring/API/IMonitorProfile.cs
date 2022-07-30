@@ -26,9 +26,9 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         UnitType UnitType { get; }
         
-        [Obsolete("Setting custom update intervals is no longer supported!")] 
-        UpdateOptions UpdateOptions { get; }
-        
+        /// <summary>
+        /// True if the unit receives a custom tick event.
+        /// </summary>
         bool ReceiveTick { get; }
         
         /// <summary>
@@ -57,15 +57,24 @@ namespace Baracuda.Monitoring.API
         string[] Tags { get; }
         
         /// <summary>
-        /// Try to get a MonitoringMetaAttribute.
-        /// </summary>
-        bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute;
-        
-        /// <summary>
         /// The monitoring profiler caches every additional attribute that inherits from MonitoringMetaAttribute on
         /// the profile. You can access these custom attributes during runtime using this method without the need of
         /// reflection code.
         /// </summary>
         TAttribute GetMetaAttribute<TAttribute>() where TAttribute : MonitoringMetaAttribute;
+        
+        /// <summary>
+        /// Try to get a MonitoringMetaAttribute.
+        /// </summary>
+        bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute;
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Obsolete ---
+
+        [Obsolete("Setting custom update intervals is no longer supported!")] 
+        UpdateOptions UpdateOptions { get; }
+        
+        #endregion
     }
 }

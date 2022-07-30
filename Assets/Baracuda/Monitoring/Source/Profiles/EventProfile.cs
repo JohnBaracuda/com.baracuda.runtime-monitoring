@@ -23,6 +23,7 @@ namespace Baracuda.Monitoring.Source.Profiles
         public bool ShowInvokeCounter { get; } = true;
         public bool ShowTrueCount { get; } = true;
         public bool ShowSubscriberInfo { get; } = true;
+        public bool ShowSignature { get; } = true;
         
         public delegate string StateFormatDelegate(TTarget target, int invokeCount);
 
@@ -49,6 +50,11 @@ namespace Baracuda.Monitoring.Source.Profiles
         private EventProfile(EventInfo eventInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args) 
             : base(eventInfo, attribute, typeof(TTarget), typeof(TDelegate), UnitType.Event, args)
         {
+            if (eventInfo.EventHandlerType.GetInvokeMethod().ReturnType != typeof(void))
+            {
+                throw new ArgumentException($"Monitored event must not return a value! [{eventInfo.DeclaringType?.Name}.{eventInfo.Name}]");
+            }
+            
             _eventInfo = eventInfo;
 
             if (attribute is MonitorEventAttribute eventAttribute)
@@ -57,6 +63,7 @@ namespace Baracuda.Monitoring.Source.Profiles
                 ShowSubscriberCount = eventAttribute.ShowSubscriberCount;
                 ShowInvokeCounter = eventAttribute.ShowInvokeCounter;
                 ShowSubscriberInfo = eventAttribute.ShowSubscriberInfo;
+                ShowSignature = eventAttribute.ShowSignature;
             }
             
             var addMethod = eventInfo.GetAddMethod(true);
@@ -70,7 +77,6 @@ namespace Baracuda.Monitoring.Source.Profiles
 
             var counterDelegate = CreateCounterExpression(getterDelegate, ShowTrueCount);
             var subDelegate = ShowSubscriberInfo? CreateSubscriberDataExpression(getterDelegate, args.Settings, elementIndent) : null;
-            
             _formatState = CreateDisplayEventStateDelegate(counterDelegate, subDelegate, args.Settings);
         }
 
@@ -157,15 +163,22 @@ namespace Baracuda.Monitoring.Source.Profiles
 
         private StateFormatDelegate CreateDisplayEventStateDelegate(Func<TTarget, int> counterDelegate, Func<TTarget, string> subInfoDelegate, IMonitoringSettings settings)
         {
-            var signatureSb = ConcurrentStringBuilderPool.Get();
+            var csb = ConcurrentStringBuilderPool.Get();
             if (settings.AddClassName)
             {
-                signatureSb.Append(UnitTargetType.Name.Colorize(settings.ClassColor));
-                signatureSb.Append(settings.AppendSymbol);
+                csb.Append(UnitTargetType.Name.Colorize(settings.ClassColor));
+                csb.Append(settings.AppendSymbol);
             }
-            signatureSb.Append(_eventInfo.GetEventSignatureString().Colorize(settings.EventColor));
 
-            var signatureString = ConcurrentStringBuilderPool.Release(signatureSb);
+            csb.Append(_eventInfo.Name);
+            csb.Append(':');
+            if (ShowSignature)
+            {
+                csb.Append(' ');
+                csb.Append(_eventInfo.GetEventSignatureString().Colorize(settings.EventColor));
+            }
+
+            var signatureString = ConcurrentStringBuilderPool.Release(csb);
             
             if (ShowSubscriberCount)
             {

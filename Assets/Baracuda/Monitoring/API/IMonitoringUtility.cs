@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2022 Jonathan Lang
+
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace Baracuda.Monitoring.API

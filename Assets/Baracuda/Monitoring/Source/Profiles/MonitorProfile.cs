@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Source.Interfaces;
 using Baracuda.Monitoring.Source.Units;
 using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Pooling.Concretions;

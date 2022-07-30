@@ -121,7 +121,7 @@ namespace Baracuda.Monitoring.Source.Systems
         
         #region --- Raise Events ---
         
-        private void RaiseUnitCreated(MonitorUnit monitorUnit)
+        private void RaiseUnitCreated(IMonitorUnit monitorUnit)
         {
             if (!Dispatcher.IsMainThread())
             {
@@ -131,7 +131,7 @@ namespace Baracuda.Monitoring.Source.Systems
             UnitCreated?.Invoke(monitorUnit);
         }
 
-        private void RaiseUnitDisposed(MonitorUnit monitorUnit)
+        private void RaiseUnitDisposed(IMonitorUnit monitorUnit)
         {
             if (!Dispatcher.IsMainThread())
             {
@@ -270,7 +270,6 @@ namespace Baracuda.Monitoring.Source.Systems
                     }
 
                     guids.Add(profiles[j].MemberInfo);
-                        
                     var unit = profiles[j].CreateUnit(target);
                     units.Add(unit);
                     _instanceUnitCache.Add(unit);

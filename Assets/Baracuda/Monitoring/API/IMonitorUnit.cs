@@ -8,12 +8,12 @@ namespace Baracuda.Monitoring.API
     public interface IMonitorUnit
     {
         /// <summary>
-        /// Readable member name.
+        /// Readable display name.
         /// </summary>
         string Name { get; }
         
         /// <summary>
-        /// The target object of the monitored member. Null if static
+        /// The target object of the monitored member. Null if static.
         /// </summary>
         object Target { get; }
 
@@ -23,14 +23,14 @@ namespace Baracuda.Monitoring.API
         IMonitorProfile Profile { get; }
 
         /// <summary>
-        /// Force the monitored member to update its state. This will invoke a <see cref="MonitorUnit.ValueUpdated"/> event.
-        /// </summary>
-        void Refresh();
-
-        /// <summary>
-        /// The active state of the unit. Only active units are evaluated and updated. 
+        /// The active state of the unit. Only enabled units are updated and displayed.
         /// </summary>
         bool Enabled { get; set; }
+        
+        /// <summary>
+        /// Unique Id
+        /// </summary>
+        int UniqueID { get; }
         
         /// <summary>
         /// Event is invoked when the units active state has changed.
@@ -48,15 +48,14 @@ namespace Baracuda.Monitoring.API
         event Action Disposing;
         
         /// <summary>
-        /// Unique Id
+        /// Force the monitored member to update its state. This will invoke a <see cref="MonitorUnit.ValueUpdated"/> event.
         /// </summary>
-        int UniqueID { get; }
+        void Refresh();
 
         /// <summary>
         /// Get the current value or state of the monitored member as a formatted string. 
         /// </summary>
         string GetState();
-        
         
         //--------------------------------------------------------------------------------------------------------------
         

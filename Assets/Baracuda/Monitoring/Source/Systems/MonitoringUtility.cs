@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2022 Jonathan Lang
+
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Source.Interfaces;
 using Baracuda.Pooling.Concretions;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -15,7 +18,6 @@ namespace Baracuda.Monitoring.Source.Systems
         internal MonitoringUtility(IMonitoringManager monitoringManager)
         {
             _monitoringManager = monitoringManager;
-            this.RegisterMonitor();
         }
         
         //--------------------------------------------------------------------------------------------------------------
@@ -65,7 +67,6 @@ namespace Baracuda.Monitoring.Source.Systems
             return returnValue;
         }
 
-        [Monitor]
         public IReadOnlyCollection<string> GetAllTags()
         {
             return _tags;

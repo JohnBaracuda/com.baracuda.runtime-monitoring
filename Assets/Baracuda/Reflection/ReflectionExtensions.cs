@@ -808,22 +808,43 @@ namespace Baracuda.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string GetEventSignatureString(this EventInfo eventInfo)
         {
-            var methodInfo = eventInfo.EventHandlerType.GetMethod("Invoke");
-            var parameters = methodInfo?.GetParameters();
+            var eventType = eventInfo.EventHandlerType;
+            var methodInfo = eventType.GetInvokeMethod();
+            var parameters = methodInfo.GetParameters();
+            var isGeneric = eventType.IsGenericType;
 
-            var formatted = $"{eventInfo.Name}(";
-
-            if (parameters == null || parameters.Length == 0)
+            var sb = ConcurrentStringBuilderPool.Get();
+            sb.Append(eventType.GetNameWithoutGenericArity());
+            
+            if(eventType.IsGenericType){}
+            
+            if (parameters.Length > 0)
             {
-                return $"{formatted}void)";
+                sb.Append(isGeneric ? '<' : '(');
             }
 
             for (var i = 0; i < parameters.Length; i++)
             {
-                formatted = $"{formatted}{parameters[i].ParameterType.Name.ToTypeKeyWord()} {parameters[i].Name}, ";
+                var parameterInfo = parameters[i];
+                sb.Append(parameterInfo.ParameterType.ToReadableTypeString());
+                if (!isGeneric)
+                {
+                    sb.Append(' ');
+                    sb.Append(parameterInfo.Name);
+                }
+                if (i < parameters.Length - 1)
+                {
+                    sb.Append(',');
+                    sb.Append(' ');
+                }
             }
-
-            return $"{formatted.Remove(formatted.Length - 2, 2)})";
+            
+            if (parameters.Length > 0)
+            {
+                sb.Append(isGeneric ? '>' : ')');
+            }
+            
+            return ConcurrentStringBuilderPool.Release(sb);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -915,6 +936,14 @@ namespace Baracuda.Reflection
             var returnValue = type.FullName.Replace('+', '.');
             typeCacheFullName.Add(type, returnValue);
             return returnValue;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string GetNameWithoutGenericArity(this Type type)
+        {
+            var name = type.Name;
+            var index = name.IndexOf('`');
+            return index == -1 ? name : name.Substring(0, index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

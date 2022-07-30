@@ -45,13 +45,13 @@ namespace Baracuda.Monitoring
 
         #region --- Obsolete ---
 
-        [Obsolete("use MonitoringUI.ResetFilter() instead")]
+        [Obsolete("use IMonitoringUI.ResetFilter() instead!")]
         protected virtual void ResetFilter()
         {
             throw new InvalidOperationException();
         }
 
-        [Obsolete("use MonitoringUI.ApplyFilter() instead")]
+        [Obsolete("use IMonitoringUI.ApplyFilter() instead!")]
         protected virtual void Filter(string filter)
         {
             throw new InvalidOperationException();

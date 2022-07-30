@@ -45,18 +45,27 @@ namespace Baracuda.Monitoring.Example.Scripts
         {
             _animator = GetComponent<Animator>();
             _currentHealth = health;
-            PlayerMovement.OnReset += ResetState;
+            GameManager.Current.GameStateChanged += OnGameStateChanged;
         }
 
-        private void ResetState()
+        private void OnGameStateChanged(GameState gameState)
+        {
+            if (gameState == GameState.Respawning)
+            {
+                Reset();
+            }
+        }
+
+        private void Reset()
         {
             StopAllCoroutines();
             _cooldown = 0;
+            _animator.ResetTrigger(knockdown);
             _animator.SetTrigger(recover);
             _currentHealth = health;
             _isAlive = true;
         }
-        
+
         #endregion
         
         #region --- Damage Handling ---
@@ -79,6 +88,8 @@ namespace Baracuda.Monitoring.Example.Scripts
         private IEnumerator CooldownCoroutine()
         {
             _isAlive = false;
+            
+            _animator.ResetTrigger(recover);
             _animator.SetTrigger(knockdown);
             _cooldown = Random.Range(recoverCooldownMin, recoverCooldownMax);
             
@@ -89,7 +100,7 @@ namespace Baracuda.Monitoring.Example.Scripts
                 yield return null;
             }
 
-            ResetState();
+            Reset();
         }
         
         #endregion

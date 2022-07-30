@@ -14,7 +14,8 @@ namespace Baracuda.Monitoring
         SubCount = 1,
         InvokeCount = 2,
         TrueCount = 4,
-        SubInfo = 8
+        SubInfo = 8,
+        Signature = 16
     }
     
     /// <summary>
@@ -48,13 +49,17 @@ namespace Baracuda.Monitoring
         /// When enabled, every subscribed delegate will be displayed. 
         /// </summary>
         public bool ShowSubscriberInfo { get; set; } = true;
+
+        /// <summary>
+        /// When enabled, display the signature of the event.
+        /// </summary>
+        public bool ShowSignature { get; set; } = true;
         
         
         public MonitorEventAttribute()
         {
         }
 
-        
         public MonitorEventAttribute(EventDisplay options)
         {
             var value = (int)options;
@@ -62,6 +67,7 @@ namespace Baracuda.Monitoring
             ShowInvokeCounter = value.HasFlag32((int)EventDisplay.InvokeCount);
             ShowTrueCount = value.HasFlag32((int)EventDisplay.TrueCount);
             ShowSubscriberInfo = value.HasFlag32((int)EventDisplay.SubInfo);
+            ShowSignature = value.HasFlag32((int) EventDisplay.Signature);
         }
 
         //--------------------------------------------------------------------------------------------------------------
@@ -69,10 +75,11 @@ namespace Baracuda.Monitoring
         #region --- Obsolete ---
         
         [Obsolete("Use ShowSubscriberCount instead!")]
-        public bool ShowSubscriber { get; set; } = true;
-
-        [Obsolete("Signature will always be displayed!")]
-        public bool ShowSignature { get; set; } = true;
+        public bool ShowSubscriber        
+        {
+            get => ShowSubscriberCount;
+            set => ShowSubscriberCount = value;
+        }
         
         #endregion
     }
