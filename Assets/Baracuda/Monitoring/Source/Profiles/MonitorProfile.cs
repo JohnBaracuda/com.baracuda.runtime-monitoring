@@ -71,15 +71,20 @@ namespace Baracuda.Monitoring.Source.Profiles
 
             var settings = args.Settings;
             
-            foreach (var monitoringMetaAttribute in memberInfo.GetCustomAttributes<MonitoringMetaAttribute>())
+            foreach (var metaAttribute in memberInfo.GetCustomAttributes<MonitoringMetaAttribute>(true))
             {
-                _metaAttributes.Add(monitoringMetaAttribute.GetType(), monitoringMetaAttribute);
+                var key = metaAttribute is MOptionsAttribute ? typeof(MOptionsAttribute) : metaAttribute.GetType();
+                if (!_metaAttributes.ContainsKey(key))
+                {
+                    _metaAttributes.Add(key, metaAttribute);
+                }
             }
+
+            var utility = MonitoringSystems.Resolve<IMonitoringUtilityInternal>();
             
-            //Optimization
-            if (TryGetMetaAttribute<MFontAttribute>(out var fontAttribute))
+            if (TryGetMetaAttribute<MFontNameAttribute>(out var fontAttribute))
             {
-                MonitoringSystems.Resolve<IMonitoringUtilityInternal>().AddFontHash(fontAttribute.FontHash);
+                utility.AddFontHash(fontAttribute.FontHash);
             }
             
             FormatData = CreateFormatData(this, settings);
@@ -92,7 +97,11 @@ namespace Baracuda.Monitoring.Source.Profiles
             tags.Add(UnitValueType.Name.ToTypeKeyWord());
             if (TryGetMetaAttribute<MTagAttribute>(out var categoryAttribute))
             {
-                tags.AddRange(categoryAttribute.Tags);
+                foreach (var tag in categoryAttribute.Tags)
+                {
+                    tags.Add(tag);
+                    utility.AddTag(tag);
+                }
             }
             Tags = tags.ToArray();
             ConcurrentListPool<string>.Release(tags);

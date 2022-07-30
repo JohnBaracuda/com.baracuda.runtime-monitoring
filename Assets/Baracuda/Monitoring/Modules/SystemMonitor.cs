@@ -46,8 +46,8 @@ namespace Baracuda.Monitoring.Modules
 
         [Monitor]
         [MUpdateEvent(nameof(DisplayConfigUpdated))]
-        [MFormatOptions(UIPosition.LowerRight, GroupElement = false)]
-        [MFont("JetBrainsMono-Regular")]
+        [MOptions(UIPosition.LowerRight, GroupElement = false)]
+        [MFontName("JetBrainsMono-Regular")]
         [MBackgroundColor(ColorPreset.TransparentBlack)]
         [MGroupColor(ColorPreset.Transparent)]
         private string _systemInfo;

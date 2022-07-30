@@ -21,6 +21,14 @@ namespace Baracuda.Monitoring
         {
             ColorValue = colorPreset.ToColor();
         }
+
+        protected MColorAttribute(string colorValueHex)
+        {
+            if (!ColorUtility.TryParseHtmlString(colorValueHex, out ColorValue))
+            {
+                Debug.LogError($"[{GetType().Name}] {colorValueHex} is not a valid color hexadecimal value!");
+            }
+        }
     }
     
     //------------------------------------------------------------------------------------------------------------------

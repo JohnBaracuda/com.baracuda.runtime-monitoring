@@ -56,10 +56,10 @@ namespace Baracuda.Monitoring.Source.Systems
 
         internal ValueProcessorFactory(IMonitoringSettings settings)
         {
-            _xColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.XColor)}>";
-            _yColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.YColor)}>";
-            _zColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.ZColor)}>";
-            _wColor = $"<color=#{ColorUtility.ToHtmlStringRGBA(settings.WColor)}>";
+            _xColor = $"<color=#{ColorUtility.ToHtmlStringRGB(settings.XColor)}>";
+            _yColor = $"<color=#{ColorUtility.ToHtmlStringRGB(settings.YColor)}>";
+            _zColor = $"<color=#{ColorUtility.ToHtmlStringRGB(settings.ZColor)}>";
+            _wColor = $"<color=#{ColorUtility.ToHtmlStringRGB(settings.WColor)}>";
 
             _trueColored = "TRUE".Colorize(settings.TrueColor);
             _falseColored = "FALSE".Colorize(settings.FalseColor);

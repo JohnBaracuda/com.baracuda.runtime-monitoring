@@ -1,6 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
  
 using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Modules;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
@@ -17,6 +18,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         private void Awake()
         {
             _playerInput.InputModeChanged += OnToggleFilter;
+            _playerInput.ClearConsole += ConsoleMonitor.Clear;
         }
 
         private void OnToggleFilter(InputMode inputMode)

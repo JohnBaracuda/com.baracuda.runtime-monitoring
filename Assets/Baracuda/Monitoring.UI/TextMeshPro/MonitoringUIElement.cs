@@ -49,18 +49,18 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             _monitorUnit = monitorUnit;
             var profile = monitorUnit.Profile;
             var format = profile.FormatData;
-            
-            if (profile.TryGetMetaAttribute<MBackgroundColorAttribute>(out var backgroundColor))
+
+            if (format.BackgroundColor.HasValue)
             {
-                _backgroundImage.color = backgroundColor.ColorValue;
+                _backgroundImage.color = format.BackgroundColor.Value;
             }
-            if (profile.TryGetMetaAttribute<MTextColorAttribute>(out var textColor))
+            if (format.TextColor.HasValue)
             {
-                _tmpText.color = textColor.ColorValue;
+                _tmpText.color = format.TextColor.Value;
             }
 
-            _tmpText.font = profile.TryGetMetaAttribute<MFontAttribute>(out var fontAttribute)
-                ? _controller.GetFontAsset(fontAttribute.FontHash)
+            _tmpText.font = format.FontHash != 0
+                ? _controller.GetFontAsset(format.FontHash)
                 : _controller.GetDefaultFontAsset();
 
             _tmpText.alignment = ToTextAlignmentOptions(format.TextAlign);
@@ -70,10 +70,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
                 _tmpText.fontSize = format.FontSize;
             }
 
-            if (profile.TryGetMetaAttribute<MRichTextAttribute>(out var richTextAttribute))
-            {
-                _tmpText.richText = richTextAttribute.RichTextEnabled;
-            }
+            _tmpText.richText = format.RichTextEnabled;
             
             monitorUnit.ValueUpdated += _updateValueAction;
             monitorUnit.ActiveStateChanged += _activeStateAction;

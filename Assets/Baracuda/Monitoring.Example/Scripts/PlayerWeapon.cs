@@ -39,9 +39,9 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         [Monitor]
         [MUpdateEvent(nameof(OnAmmoChanged))]
-        [MFormatOptions(UIPosition.LowerLeft, FontSize = 16, GroupElement = false)]
+        [MOptions(UIPosition.LowerLeft, FontSize = 16, GroupElement = false)]
         [MValueProcessor(nameof(CurrentAmmunitionProcessor))]
-        [MFont("JetBrainsMono-Regular")]
+        [MFontName("JetBrainsMono-Regular")]
         private int _currentAmmunition;
 
         public event Action<int> OnAmmoChanged;

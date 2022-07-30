@@ -419,7 +419,7 @@ namespace Baracuda.Monitoring.Source.Profiles
         
         private int CalculateElementIndent()
         {
-            return TryGetMetaAttribute<MFormatOptionsAttribute>(out var formatAttribute)
+            return TryGetMetaAttribute<MOptionsAttribute>(out var formatAttribute)
                 ? formatAttribute.ElementIndent > -1 ? formatAttribute.ElementIndent : 2
                 : 2;
         }

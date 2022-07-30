@@ -27,5 +27,13 @@ namespace Baracuda.Monitoring
         public MGroupColorAttribute(ColorPreset colorPreset)  : base(colorPreset)
         {
         }
+        
+        /// <summary>
+        /// Determine the background color for the group of the displayed value.
+        /// </summary>
+        /// <param name="colorValueHex">Set the color via hexadecimal value</param>
+        public MGroupColorAttribute(string colorValueHex)  : base(colorValueHex)
+        {
+        } 
     }
 }

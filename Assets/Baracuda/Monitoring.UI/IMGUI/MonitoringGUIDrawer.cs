@@ -33,7 +33,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
         [Header("Coloring")]
         [SerializeField] private Color backgroundColor = Color.black;
 
-        [Header("Font")]
+        [Header("FontName")]
         [SerializeField] private Font defaultFont;
         [SerializeField] private Font[] availableFonts;
         
@@ -79,7 +79,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
             public Font Font { get; }
             public int ID { get; }
             public string Content { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; private set; }
-            private IFormatData FormatData { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
+            private IFormatData Format { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
 
             public readonly Texture2D BackgroundTexture;
             
@@ -93,21 +93,17 @@ namespace Baracuda.Monitoring.UI.IMGUI
             {
                 unit.ActiveStateChanged += SetActive;
                 Enabled = unit.Enabled;
-                FormatData = unit.Profile.FormatData;
+                Format = unit.Profile.FormatData;
                 ID = unit.UniqueID;
-                
-                Order = unit.Profile.TryGetMetaAttribute<MOrderAttribute>(out var orderAttribute)
-                    ? orderAttribute.Order
-                    : 0;
 
-                var backgroundColor = unit.Profile.TryGetMetaAttribute<MBackgroundColorAttribute>(out var colorAttribute)
-                    ? colorAttribute.ColorValue
-                    : ctx.backgroundColor;
+                Order = Format.Order;
+
+                var backgroundColor = Format.BackgroundColor.GetValueOrDefault(ctx.backgroundColor);
                 
-                if (unit.Profile.TryGetMetaAttribute<MTextColorAttribute>(out var textColorAttribute))
+                if (Format.TextColor.HasValue)
                 {
                     unit.ValueUpdated += UpdateColorized;
-                    _textColor = ColorUtility.ToHtmlStringRGBA(textColorAttribute.ColorValue);
+                    _textColor = ColorUtility.ToHtmlStringRGB(Format.TextColor.Value);
                 }
                 else
                 {
@@ -127,9 +123,9 @@ namespace Baracuda.Monitoring.UI.IMGUI
                     BackgroundTexture = texture;
                 }
 
-                if (unit.Profile.TryGetMetaAttribute<MFontAttribute>(out var fontAttribute))
+                if (Format.FontHash != 0)
                 {
-                    var fontAsset = ctx.GetFont(fontAttribute.FontHash);
+                    var fontAsset = ctx.GetFont(Format.FontHash);
                     if (fontAsset != null)
                     {
                         OverrideFont = true;
@@ -137,8 +133,8 @@ namespace Baracuda.Monitoring.UI.IMGUI
                     }
                 }
                 
-                _size = FormatData.FontSize > 0 
-                    ? FormatData.FontSize 
+                _size = Format.FontSize > 0 
+                    ? Format.FontSize 
                     : OverrideFont 
                         // ReSharper disable once PossibleNullReferenceException
                         ? Font.fontSize 

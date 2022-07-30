@@ -27,5 +27,13 @@ namespace Baracuda.Monitoring
         public MTextColorAttribute(ColorPreset colorPreset)  : base(colorPreset)
         {
         }
+        
+        /// <summary>
+        /// Determine the text color for the displayed value.
+        /// </summary>
+        /// <param name="colorValueHex">Set the color via hexadecimal value</param>
+        public MTextColorAttribute(string colorValueHex)  : base(colorValueHex)
+        {
+        } 
     }
 }

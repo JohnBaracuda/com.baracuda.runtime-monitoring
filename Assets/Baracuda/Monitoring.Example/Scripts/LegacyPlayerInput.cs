@@ -19,7 +19,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         [SerializeField] private KeyCode secondaryFireKey = KeyCode.Mouse1;
         [SerializeField] private KeyCode dashKey = KeyCode.LeftShift;
         [SerializeField] private KeyCode toggleFilterKey = KeyCode.Semicolon;
-        
+        [SerializeField] private KeyCode clearConsoleKey = KeyCode.C;
         #endregion
 
         #region --- Interface: Iplayerinput ---
@@ -41,6 +41,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         public bool DashPressed { get; private set; }
         
         public event Action<InputMode> InputModeChanged;
+        public event Action ClearConsole;
 
         #endregion
 
@@ -94,6 +95,11 @@ namespace Baracuda.Monitoring.Example.Scripts
                 PrimaryFirePressed = Input.GetKey(primaryFireKey);
                 SecondaryFirePressed = Input.GetKey(secondaryFireKey);
                 DashPressed = Input.GetKey(dashKey);
+            }
+
+            if (Input.GetKeyDown(clearConsoleKey))
+            {
+                ClearConsole?.Invoke();
             }
         }
     }

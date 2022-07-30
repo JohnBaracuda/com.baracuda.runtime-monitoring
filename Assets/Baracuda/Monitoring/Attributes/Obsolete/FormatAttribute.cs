@@ -5,10 +5,10 @@ using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.Obsolete
 {
-    [Obsolete("use MFormatOptionsAttribute instead!")]
     [Preserve]
+    [Obsolete("use MOptionsAttribute instead!")]
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
-    public sealed class FormatAttribute : MFormatOptionsAttribute
+    public sealed class FormatAttribute : MOptionsAttribute
     {
         public FormatAttribute(string format) : base(format)
         {

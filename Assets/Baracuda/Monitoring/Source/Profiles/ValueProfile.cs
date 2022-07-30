@@ -62,24 +62,42 @@ namespace Baracuda.Monitoring.Source.Profiles
                 SetAccessEnabled = valueAttribute.EnableSetAccess;
             }
             
-            if (TryGetMetaAttribute<MValueProcessorAttribute>(out var valueProcessorAttribute))
+            IsDirtyFunc = CreateIsDirtyFunction(unitValueType);
+
+            // Value Processor
+            
+            var valueProcessorName = default(string);
+
+            if (TryGetMetaAttribute<MValueProcessorAttribute>(out var valueProcessorAttribute) &&
+                !string.IsNullOrWhiteSpace(valueProcessorAttribute.Processor))
+            {
+                valueProcessorName = valueProcessorAttribute.Processor;
+            }
+            else if (TryGetMetaAttribute<MOptionsAttribute>(out var optionsAttribute) &&
+                     !string.IsNullOrWhiteSpace(optionsAttribute.ValueProcessor))
+            {
+                valueProcessorName = optionsAttribute.ValueProcessor;
+            }
+            
+            
+            if (valueProcessorName != null)
             {
                 var valueProcessorFactory = MonitoringSystems.Resolve<IValueProcessorFactory>();
-                var processorName = valueProcessorAttribute.Processor;
-                _instanceValueProcessorDelegate = valueProcessorFactory.FindCustomInstanceProcessor<TTarget, TValue>(processorName, FormatData);
-                _staticValueProcessorDelegate = valueProcessorFactory.FindCustomStaticProcessor<TTarget, TValue>(processorName, FormatData);
+                _instanceValueProcessorDelegate = valueProcessorFactory.FindCustomInstanceProcessor<TTarget, TValue>(valueProcessorName, FormatData);
+                _staticValueProcessorDelegate = valueProcessorFactory.FindCustomStaticProcessor<TTarget, TValue>(valueProcessorName, FormatData);
                 if (_instanceValueProcessorDelegate == null && _staticValueProcessorDelegate == null)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogValueProcessNotFound(processorName, unitTargetType);
+                    MonitoringSystems.Resolve<IMonitoringLogger>().LogValueProcessNotFound(valueProcessorName, unitTargetType);
                 }
             }
+            
             if (_staticValueProcessorDelegate == null && _instanceValueProcessorDelegate == null)
             {
                 var valueProcessorFactory = MonitoringSystems.Resolve<IValueProcessorFactory>();
                 _fallbackValueProcessorDelegate = valueProcessorFactory.CreateProcessorForType<TValue>(FormatData);
             }
-
-            IsDirtyFunc = CreateIsDirtyFunction(unitValueType);
+            
+            // Validator
             
             if (TryGetMetaAttribute<MShowIfAttribute>(out var conditionalAttribute))
             {

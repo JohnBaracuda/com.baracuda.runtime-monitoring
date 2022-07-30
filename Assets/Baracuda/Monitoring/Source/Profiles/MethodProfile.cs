@@ -23,7 +23,10 @@ namespace Baracuda.Monitoring.Source.Profiles
             MonitorProfileCtorArgs args) : base(methodInfo, attribute, typeof(TTarget), typeof(TValue),
             UnitType.Method, args)
         {
+            //TODO: Add custom value processor
+            
             var valueProcessor = MonitoringSystems.Resolve<IValueProcessorFactory>().CreateProcessorForType<TValue>(FormatData);
+            
             var parameter = CreateParameterArray(methodInfo, attribute);
             _getValueDelegate = CreateGetDelegate(methodInfo, parameter, valueProcessor, FormatData, args.Settings);
         }

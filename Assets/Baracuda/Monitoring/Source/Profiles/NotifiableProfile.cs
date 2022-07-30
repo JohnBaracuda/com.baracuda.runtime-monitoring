@@ -34,40 +34,36 @@ namespace Baracuda.Monitoring.Source.Profiles
             UnitType unityType,
             MonitorProfileCtorArgs args) : base(memberInfo, attribute, unitTargetType, unitValueType, unityType, args)
         {
-            var hasUpdateEventAttribute = false;
+            var updateEventName = default(string);
 
             if (TryGetMetaAttribute<MUpdateEventAttribute>(out var updateEventAttribute) &&
                 !string.IsNullOrWhiteSpace(updateEventAttribute.UpdateEvent))
             {
-                hasUpdateEventAttribute = true;
-                _addUpdateDelegate    = CreateUpdateHandlerDelegate<TTarget, TValue>(updateEventAttribute.UpdateEvent, this, true);
-                _addNotifyDelegate    = CreateNotifyHandlerDelegate<TTarget>        (updateEventAttribute.UpdateEvent, this, true);
-                _removeUpdateDelegate = CreateUpdateHandlerDelegate<TTarget, TValue>(updateEventAttribute.UpdateEvent, this, false);
-                _removeNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>        (updateEventAttribute.UpdateEvent, this, false);
+                updateEventName = updateEventAttribute.UpdateEvent;
+            }
+            else if (TryGetMetaAttribute<MOptionsAttribute>(out var optionsAttribute) &&
+                     !string.IsNullOrWhiteSpace(optionsAttribute.UpdateEvent))
+            {
+                updateEventName = optionsAttribute.UpdateEvent;
+            }
+            else if (attribute is MonitorValueAttribute valueAttribute)
+            {
+#pragma warning disable CS0618
+                updateEventName = valueAttribute.UpdateEvent;
+#pragma warning restore CS0618
+            }
+
+            if (updateEventName != null)
+            {
+                _addUpdateDelegate    = CreateUpdateHandlerDelegate<TTarget, TValue>(updateEventName, this, true);
+                _addNotifyDelegate    = CreateNotifyHandlerDelegate<TTarget>        (updateEventName, this, true);
+                _removeUpdateDelegate = CreateUpdateHandlerDelegate<TTarget, TValue>(updateEventName, this, false);
+                _removeNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>        (updateEventName, this, false);
 
                 if (_addUpdateDelegate != null || _addNotifyDelegate != null)
                 {
                     ReceiveTick = false;
                 }
-            }
-
-            if (attribute is MonitorValueAttribute valueAttribute)
-            {
-                if (!hasUpdateEventAttribute && ReceiveTick &&
-#pragma warning disable CS0618
-                    !string.IsNullOrWhiteSpace(valueAttribute.UpdateEvent))
-                {
-                    _addUpdateDelegate =    CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, true);
-                    _addNotifyDelegate =    CreateNotifyHandlerDelegate<TTarget>        (valueAttribute.UpdateEvent, this, true);
-                    _removeUpdateDelegate = CreateUpdateHandlerDelegate<TTarget, TValue>(valueAttribute.UpdateEvent, this, false);
-                    _removeNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>        (valueAttribute.UpdateEvent, this, false);
-
-                    if (_addUpdateDelegate != null || _addNotifyDelegate != null)
-                    {
-                        ReceiveTick = false;
-                    }
-                }
-#pragma warning restore CS0618
             }
 
             CustomUpdateEventAvailable = _addUpdateDelegate != null || _addNotifyDelegate != null;

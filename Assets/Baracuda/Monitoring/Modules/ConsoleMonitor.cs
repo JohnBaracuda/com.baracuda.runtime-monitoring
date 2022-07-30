@@ -42,27 +42,38 @@ namespace Baracuda.Monitoring.Modules
         #region --- Monitored Values ---
         
         [MonitorProperty]
-        [MBackgroundColor(ColorPreset.TransparentBlack)]
-        [MUpdateEvent(nameof(UpdateDisplayedLogs))]
-        [MFormatOptions(UIPosition.LowerRight, ShowIndexer = false, ElementIndent = 0, GroupElement = false)]
-        [MFont("JetBrainsMono-Regular")]
-        [MShowIf(Condition.CollectionNotEmpty)]
         [MOrder(-1000)]
+        [MBackgroundColor(ColorPreset.TransparentBlack)]
+        [MFontName("JetBrainsMono-Regular")]
+        [MOptions(UIPosition.LowerRight, ShowIndexer = false, ElementIndent = 0, GroupElement = false)]
+        [MShowIf(Condition.CollectionNotEmpty)]
+        [MUpdateEvent(nameof(UpdateDisplayedLogs))]
         private Queue<string> Console => messageLogCache;
         
         
         [Monitor]
-        [MBackgroundColor(ColorPreset.TransparentBlack)]
-        [MFormatOptions(UIPosition.LowerRight, GroupElement = false)]
-        [MFont("JetBrainsMono-Regular")]
-        [MShowIf(Condition.NotNullOrWhiteSpace)]
-        [MRichText(true)]
-        [MValueProcessor(nameof(StacktraceProcessor))]
         [MOrder(-1001)]
+        [MOptions(UIPosition.LowerRight, GroupElement = false)]
+        [MFontName("JetBrainsMono-Regular")]
+        [MBackgroundColor(ColorPreset.TransparentBlack)]
+        [MShowIf(Condition.NotNull)]
+        [MUpdateEvent(nameof(UpdateDisplayedLogs))]
+        [MValueProcessor(nameof(StacktraceProcessor))]
         private string LastLogStacktrace => lastLogStacktrace;
 
         #endregion
 
+        #region --- API ---
+
+        public static void Clear()
+        {
+            messageLogCache.Clear();
+            lastLogStacktrace = null;
+            //UpdateDisplayedLogs?.Invoke();
+        }
+        
+        #endregion
+        
         #region --- Event Methods ---
 
         protected override void Awake()

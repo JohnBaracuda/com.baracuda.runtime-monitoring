@@ -3,5 +3,6 @@
     internal interface IMonitoringUtilityInternal : IMonitoringSubsystem<IMonitoringUtilityInternal>
     {
         void AddFontHash(int fontHash);
+        void AddTag(string tag);
     }
 }

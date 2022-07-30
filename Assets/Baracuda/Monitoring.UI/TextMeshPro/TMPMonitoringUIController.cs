@@ -27,7 +27,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         [SerializeField] private int marginBottom;
         [SerializeField] private int marginRight;
         
-        [Header("Font")]
+        [Header("FontName")]
         [SerializeField] private TMP_FontAsset defaultFont;
         [SerializeField] private TMP_FontAsset[] availableFonts;
         

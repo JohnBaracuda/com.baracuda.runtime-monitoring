@@ -81,10 +81,12 @@ namespace Baracuda.Monitoring.Modules
         #region --- FPS ---
         
         [Monitor]
-        [MValueProcessor(nameof(FPSProcessor))]
-        [MUpdateEvent(nameof(FPSUpdated))]
-        [MFormatOptions(FontSize = 32, Position = UIPosition.UpperRight, GroupElement = false)]
         [MOrder(1002)]
+        [MFontSize(32)]
+        [MGroupElement(false)]
+        [MPosition(UIPosition.UpperRight)]
+        [MUpdateEvent(nameof(FPSUpdated))]
+        [MValueProcessor(nameof(FPSProcessor))]
         private float _fps;
 
         public string FPSProcessor(float value)
@@ -129,9 +131,11 @@ namespace Baracuda.Monitoring.Modules
         #region --- Vsync ---
         
         [Monitor] 
-        [MFormatOptions(FontSize = 16, Position = UIPosition.UpperRight, GroupElement = false)]
-        [MValueProcessor(nameof(ProcessorTargetFrameRate))]
         [MOrder(1001)]
+        [MFontSize(16)]
+        [MPosition(UIPosition.UpperRight)]
+        [MGroupElement(false)]
+        [MValueProcessor(nameof(ProcessorTargetFrameRate))]
         private int TargetFrameRate => Application.targetFrameRate;
 
         
@@ -144,7 +148,9 @@ namespace Baracuda.Monitoring.Modules
         }
         
         [Monitor] 
-        [MFormatOptions(FontSize = 16, Position = UIPosition.UpperRight, GroupElement = false)]
+        [MFontSize(16)]
+        [MPosition(UIPosition.UpperRight)]
+        [MGroupElement(false)]
         [MValueProcessor(nameof(ProcessorVsync))]
         [MOrder(1000)]
         private int Vsync => QualitySettings.vSyncCount;

@@ -24,5 +24,6 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         bool DashPressed { get; }
         event Action<InputMode> InputModeChanged;
+        event Action ClearConsole;
     }
 }

@@ -7,16 +7,18 @@ namespace Baracuda.Monitoring
 {
     [Preserve]
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method)]
-    public class MFontAttribute : MonitoringMetaAttribute
+    public class MFontNameAttribute : MonitoringMetaAttribute
     {
+        public readonly string FontName;
         public readonly int FontHash;
 
         /// <summary>
         /// Pass the name of a custom font style that will be used fot the target member.
-        /// Font assets must be registered to the UI Controller.
+        /// FontName assets must be registered to the UI Controller.
         /// </summary>
-        public MFontAttribute(string fontName)
+        public MFontNameAttribute(string fontName)
         {
+            FontName = fontName;
             FontHash = fontName.GetHashCode();
         }
     }

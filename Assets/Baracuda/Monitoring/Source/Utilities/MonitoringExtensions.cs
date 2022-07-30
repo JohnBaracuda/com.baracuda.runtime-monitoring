@@ -25,7 +25,7 @@ namespace Baracuda.Monitoring.Source.Utilities
 #if UNITY_2020_1_OR_NEWER
             return UnsafeUtility.As<TFrom, TTo>(ref value);
 #else
-            return (TTo)Convert.ChangeType(value, typeof(TTo));
+            return (TTo)(object)value;
 #endif
         }
 
@@ -85,7 +85,7 @@ namespace Baracuda.Monitoring.Source.Utilities
         {
             var pooled = ConcurrentStringBuilderPool.Get();
             pooled.Append("<color=#");
-            pooled.Append(ColorUtility.ToHtmlStringRGBA(color));
+            pooled.Append(ColorUtility.ToHtmlStringRGB(color));
             pooled.Append('>');
             pooled.Append(content);
             pooled.Append("</color>");

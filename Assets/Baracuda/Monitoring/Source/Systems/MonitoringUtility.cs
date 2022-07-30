@@ -9,11 +9,13 @@ namespace Baracuda.Monitoring.Source.Systems
 {
     internal class MonitoringUtility : IMonitoringUtility, IMonitoringUtilityInternal
     {
-        private IMonitoringManager _monitoringManager;
+        private readonly IMonitoringManager _monitoringManager;
+        private readonly HashSet<string> _tags = new HashSet<string>();
 
         internal MonitoringUtility(IMonitoringManager monitoringManager)
         {
             _monitoringManager = monitoringManager;
+            this.RegisterMonitor();
         }
         
         //--------------------------------------------------------------------------------------------------------------
@@ -28,6 +30,11 @@ namespace Baracuda.Monitoring.Source.Systems
         public void AddFontHash(int fontHash)
         {
             _fontHashSet.Add(fontHash);
+        }
+
+        public void AddTag(string tag)
+        {
+            _tags.Add(tag);
         }
 
         //--------------------------------------------------------------------------------------------------------------
@@ -58,5 +65,10 @@ namespace Baracuda.Monitoring.Source.Systems
             return returnValue;
         }
 
+        [Monitor]
+        public IReadOnlyCollection<string> GetAllTags()
+        {
+            return _tags;
+        }
     }
 }

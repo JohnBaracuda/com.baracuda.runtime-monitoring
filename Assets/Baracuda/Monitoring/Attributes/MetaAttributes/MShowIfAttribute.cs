@@ -16,8 +16,6 @@ namespace Baracuda.Monitoring
 
         internal readonly ValidationMethod ValidationMethod;
         
-        //TODO: 
-
         /// <summary>
         /// The monitored member will only be displayed if the given condition is true.
         /// </summary>
