@@ -34,6 +34,7 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 - [Systems and API](#systems-and-api)
 	- [Monitoring Manager](#monitoring-manager)
 	- [Monitoring UI](#monitoring-ui)
+	- [Monitoring UI Filtering](#ui-filtering)
 	- [Monitoring Settings](#monitoring-settings)
 	- [Monitoring Utility](#monitoring-utility)
 - [Compatibility](#compatibility)
@@ -372,18 +373,31 @@ Use Attributes to customize the monitoring process & display of your member. The
 ### Meta Attributes
  Attribute          | Description |     
 :-                  |:-     |      
-`[MFormatOptions]`  | Set optional formatting options (e.g. font size)|
-`[MTag]`            | Set optional tags used for filtering |
 `[MUpdateEvent]`    | Set an event that will trigger an refresh/update ([more](#update-event)) |
 `[MValueProcessor]` | Set a method that will process the value before it is displayed as a string ([more](#value-processor)) |
-`[MStyle]`          | UIToolkit only. Provide optional style names |
-`[MTextColor]`      | Set the text color for the target |
-`[MBackgroundColor]`| Set the background color for the target |
-`[MGroupColor]`     | Set the background color for the targets group |
 `[MShowIf]`         | Set custom validation logic  ([more](#conditional-display))  |
-`[MFont]`           | Set a custom font style/asset |
-`[MRichText]`       | Enable/disable RichText for the instance (to debug) |
-`[MOrder]`          | Set the relative UI order of the target |
+`[MTag]`            | Set optional tags used for filtering |
+
+### Meta Attributes ([Formatting](#ui-formatting))
+ Attribute          | Description |     
+:-                  |:-     |      
+`[MOptions]`  | Contains (almost) all of the options below. |
+`[MFormat]`  | Custom format string used to display the members value if possible.|
+`[MLabel]`  | Custom label for the member (otherwise humanized name).|
+`[MFontSize]`  | Set the font size for the element.|
+`[MFontName]`           | Pass the name of a custom font style that will be used for the target member.|
+`[MGroupName]`           | Set the group for the element. |
+`[MGroupElement]`           | Whether or not the unit should be wrapped in an object or type group. |
+`[MShowIndexer]`  | If the member is a collection, determine if the index of individual elements should be displayed or not. |
+`[MElementIndent]`  | The indent of individual elements of a displayed collection. |
+`[MPosition]`  | The preferred position of an individual UIElement on the canvas. |
+`[MTextAlign]`  | Horizontal text align. |
+`[MOrder]`          | Relative vertical order of the displayed element. |
+`[MRichText]`          | Override local RichText settings. |
+`[MTextColor]`      | Set the text color for the element. |
+`[MBackgroundColor]`| Set the background color for the element. |
+`[MGroupColor]`     | Set the background color for the elements group. |
+`[MStyle]`          | UIToolkit only. Provide optional style names. |
 
 ### Other Attributes
  Attribute               | Description |     
@@ -398,7 +412,7 @@ Use Attributes to customize the monitoring process & display of your member. The
 &nbsp;
 ## Value Processor
 
-You can add the MValueProcessorAttribute to a monitored field or porperty to gain more controll of its string representation. Use the attibute to pass the name of a method that will be used to parse the current value to a string. The value processor method must accept a value of the monitored members type, can be both static and non static (when monitoring a non non static member) and must return a string.
+You can add the MValueProcessorAttribute to a monitored field, porperty or method to gain more control of its string representation. Use the attribute to pass the name of a method that will be used to parse the current value to a string. The value processor method must accept a value of the monitored members type, can be both static and non static (when monitoring a non non static member) and must return a string.
 
 ```c#
 [MValueProcessor(nameof(IsAliveProcessor))]
@@ -426,7 +440,7 @@ private string IListProcessor(IList<string> elements)
 }
 ```
 
-Static processor methods can have certain overloads for objects that impliment generic collection interfaces, which allow you to process the value of individual elements of the collection instead of the whole collection all at once. 
+Static processor methods can have certain overloads for objects that implement generic collection interfaces, which allow you to process the value of individual elements of the collection instead of the whole collection all at once. 
 
 ```c#
 //IList<T> ValueProcessor
@@ -484,7 +498,7 @@ private static string IEnumerableValueProcessor(int number)
 &nbsp;
 ## Global Value Processor
 
-You can declare a static method as a global value processor that is then used to process the value for every monitored member of the given type (instanced value processors will still be prefered). The value processor mehtod must have a valid signature, meaning that is has to accept the monitored type as a fist or second argument, can optionally accept an IFormatData object as a first argument and must return a string. 
+You can declare a static method as a global value processor that is then used to process the value for every monitored member of the given type (instanced value processors will still be preferred). The value processor method must have a valid signature, meaning that is has to accept the monitored type as a fist or second argument, can optionally accept an IFormatData object as a first argument and must return a string. 
 
 ```c#
 
@@ -516,7 +530,7 @@ private static string GlobalValueProcessorVersion(IFormatData ctx, Version versi
 &nbsp;
 ## Conditional Display
 
-You can use the MShowIfAttribute to define conditions that controll if a monitored value is displayed or not. Note that the value will stil be monitored but not drawn, meaning that fields, properties, events & methods will still be accessed. There are three different ways to validate if the targeted member is displayed or not.
+You can use the MShowIfAttribute to define conditions that control if a monitored value is displayed or not. Note that the value will still be monitored but not drawn, meaning that fields, properties, events & methods will still be accessed. There are three different ways to validate if the targeted member is displayed or not.
 
 ### Validated by Condition
 
@@ -655,36 +669,93 @@ public void ContinueGame()
 &nbsp;
 ## UI Formatting
 
-Use the MFormatOptionsAttribute to pass additional formatting options. 
+Use the following attributes to apply custom formatting.
+
+ Attribute          | Description |     
+:-                  |:-     |      
+`[MOptions]`  | Contains (almost) all of the options below. |
+`[MFormat]`  | Custom format string used to display the members value if possible.|
+`[MLabel]`  | Custom label for the member (otherwise humanized name).|
+`[MFontSize]`  | Set the font size for the element.|
+`[MFontName]`           | Pass the name of a custom font style that will be used for the target member.|
+`[MGroupName]`           | Set the group for the element. |
+`[MGroupElement]`           | Whether or not the unit should be wrapped in an object or type group. |
+`[MShowIndexer]`  | If the member is a collection, determine if the index of individual elements should be displayed or not. |
+`[MElementIndent]`  | The indent of individual elements of a displayed collection. |
+`[MPosition]`  | The preferred position of an individual UI element on the canvas. |
+`[MTextAlign]`  | Horizontal text align. |
+`[MOrder]`          | Relative vertical order of the displayed element. |
+`[MRichText]`          | Override local RichText settings. |
+`[MTextColor]`      | Set the text color for the element. |
+`[MBackgroundColor]`| Set the background color for the element. |
+`[MGroupColor]`     | Set the background color for the elements group. |
+`[MStyle]`          | UIToolkit only. Provide optional style names. |
+
+The `[MOptions]` attribute contains almost all of the other options. Individual attributes will override settings passed with the `[MOptions]` attribute but depending on you preferences you can either use multiple attributes or just the `[MOptions]` attribute.
 
 ```c#
 // Will be displayed as "Value: 3.141"
 [Monitor]
-[MFormatOptions(Format = "0.000")]
+[MOptions(Format = "0.000", FontSize = 16)]
 private float pi = 3.14159265359;
 
-// Will be displayed as "Health Points: 100"
+// Effectively the same as
 [Monitor]
-[MFormatOptions(Label = "Health Points")]
-private int hp = 100;
-
-// Will be displayed at the lower right corner of the screen.
-[Monitor]
-[MFormatOptions(IPosition = UIPosition.LowerRight)]
-private string version = "2.0.1";
-
-// Will be displayed with a font size of 32.
-[Monitor]
-[MFormatOptions(FontSize = 32)]
-private string message = "Hello";
-
-// Will not be displayed as part of a group.
-[Monitor]
-[MFormatOptions(GroupElement = false)]
-private int fps;
+[MFormat("0.000")]
+[MFontSize(16)]
+private float pi = 3.14159265359;
 ```
 
+Creating a custom attribute and inheriting from `MOptionsAttribute` will let you use the constructor of the custom attribute to set multiple formatting options. The attribute can then be used on multiple monitored to apply its settings.
 
+```c#
+public class MCustomFormatting : MOptionsAttribute
+{
+    public MCustomFormatting()
+    {
+        Format = "0.00";
+        FontSize = 16;
+        Position = UIPosition.UpperRight;
+        GroupElement = false;
+    }
+}
+
+[Monitor]
+[MCustomFormatting]
+pubic int value1;
+
+[Monitor]
+[MCustomFormatting]
+pubic int value2;
+
+[Monitor]
+[MCustomFormatting]
+pubic int value3;
+
+// The code above does the same as the code below.
+
+[Monitor]
+[MFormat("0.000")]
+[MFontSize(16)]
+[MPosition(UIPosition.UpperRight)]
+[MGroupElement(false)]
+pubic int value1;
+
+[Monitor]
+[MFormat("0.000")]
+[MFontSize(16)]
+[MPosition(UIPosition.UpperRight)]
+[MGroupElement(false)]
+pubic int value2;
+
+[Monitor]
+[MFormat("0.000")]
+[MFontSize(16)]
+[MPosition(UIPosition.UpperRight)]
+[MGroupElement(false)]
+pubic int value3;
+
+```
 
 
 
@@ -743,7 +814,6 @@ Use the `IMonitoringSettigns` API can be used to access the current configuratio
 &nbsp;
 ## Monitoring UI
 
-
 Use the `IMonitoringUI` API to access the active MonitoringUIController and set properties like visibility, filtering etc.
 
 Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
@@ -754,9 +824,23 @@ Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#
 `bool IsVisible()`|True if monitoring UI is visible.|
 `T GetActiveUIController<T>()`|Get the currently active MonitoringUIController casted to a concrete implementation.|
 `void CreateMonitoringUI()`|Create a MonitoringUIController instance if there is none already. Disable 'Auto Instantiate UI' in the Monitoring Settings and use this method for more control over the timing in which the MonitoringUIController is instantiated. |
-`void ApplyFilter(string filter)`|Filter displayed units by their name, tags etc. |
-`void ResetFilter()`|Reset active filter.|
+`void ApplyFilter(string filter)`|Filter displayed units by their name, tags etc. [more](#ui-filtering)|
+`void ResetFilter()`|Reset active filter. [more](#ui-filtering)|
 `event Action<bool> VisibleStateChanged()`|Event invoked when the monitoring UI became visible or invisible.|
+
+
+
+
+
+&nbsp;
+## UI Filtering
+You can filter the currently displayed elements using `IMonitoringUI.ApplyFilter(string filter)`. Reset applied filter simply call `IMonitoringUI.ResetFilter()`. You can not only filter by name, but also by the following categories.
++ Member type (Field, Property, Event, Method)
++ The type of the monitored value (e.g. int, Vector3, string etc.)
++ Static and instance member.
++ The monitored members declaring type (e.g. 'GameController' to only display member from the class `GameController`)
++ Tags or categories applied by the  `[MTag]` attribute.
+
 
 
 
@@ -771,6 +855,7 @@ Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#
 :---         |:-                                        
 `bool IsFontHashUsed(int fontHash)`|Returns true if the passed hash from the name of a font asset is used by a MFontAttribute and therefore required by a monitoring unit. Used to dynamically load/unload required fonts.|
 `IMonitorUnit[] GetMonitorUnitsForTarget(object target)`|Get a list of IMonitorUnits registered to the passed target object.|
+`IReadOnlyCollection<string> GetAllTags()`| Get a list of all custom tags, applied by `[MTag]` attributes that can be used for filtering.|
 
 
 
