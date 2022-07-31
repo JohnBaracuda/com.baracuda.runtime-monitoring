@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 951393214394286727}
-  - component: {fileID: 6251697586421882988}
+  - component: {fileID: 3008639998994749404}
   m_Layer: 0
   m_Name: SystemMonitor
   m_TagString: Untagged
@@ -27,11 +27,12 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6251697586421882988
+--- !u!114 &3008639998994749404
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,9 +41,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 447313251140650317}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06dcdc68868b04e4f99e9416888e0381, type: 3}
+  m_Script: {fileID: 11500000, guid: 5fe10e48d1a14180af7c0801692a25ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dontDestroyOnLoad: 0
   showOperatingSystem: 1
   showOperatingSystemFamily: 0
   showDeviceType: 1

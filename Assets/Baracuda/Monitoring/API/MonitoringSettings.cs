@@ -20,7 +20,7 @@ namespace Baracuda.Monitoring.API
 
         [Tooltip("When enabled, monitoring UI is instantiated as soon as profiling has completed. " +
                  "Otherwise MonitoringUI.CreateMonitoringUI() must be called manually.")]
-        [SerializeField] private bool autoInstantiateUI = false;
+        [SerializeField] private bool autoInstantiateUI = true;
 
         [Tooltip("When enabled, initial profiling will be processed asynchronous on a background thread. (Disabled for WebGL)")]
         [SerializeField] private bool asyncProfiling = true;
@@ -91,14 +91,14 @@ namespace Baracuda.Monitoring.API
         #region --- Formatting ---
 
         [Tooltip("When enabled, class names will be used as a prefix for displayed units")] [SerializeField]
-        private bool addClassName = true;
+        private bool addClassName = false;
 
         [Tooltip("This symbol will be used to separate units class names and their member names.")] [SerializeField]
         private char appendSymbol = '.';
 
         [Tooltip("When enabled, names of monitored members will be humanized.(e.g. _playerHealth => Player Health)")]
         [SerializeField]
-        private bool humanizeNames = false;
+        private bool humanizeNames = true;
 
         [Tooltip("Collection of variable prefixes that should be removed when humanizing monitored member names")]
         [SerializeField]
@@ -114,7 +114,7 @@ namespace Baracuda.Monitoring.API
 
         [Header("Color")] 
         [SerializeField] private Color trueColor = Color.green;
-        [SerializeField] private Color falseColor = Color.gray;
+        [SerializeField] private Color falseColor = Color.red;
 
         [Header("Direction Color")] 
         [SerializeField] private Color xColor = new Color(0.41f, 0.38f, 1f);
@@ -196,7 +196,7 @@ namespace Baracuda.Monitoring.API
          * UI Controller   
          */
         
-        public MonitoringUIController UIControllerUIController => monitoringUIController;
+        public MonitoringUIController UIController => monitoringUIController;
         public bool OpenDisplayOnLoad => openDisplayOnLoad;
         public bool ShowRuntimeMonitoringObject => showRuntimeMonitoringObject;
         public bool ShowRuntimeUIController => showRuntimeUIController;

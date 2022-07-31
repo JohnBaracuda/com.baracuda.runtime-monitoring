@@ -1964,7 +1964,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: ConsoleMonitor
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7853074712235657122, guid: e23c05a4efd179649ba850e9c3052684, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: e23c05a4efd179649ba850e9c3052684, type: 3}
 --- !u!43 &1170481800
 Mesh:

@@ -43,7 +43,7 @@ namespace Baracuda.Monitoring.API
         bool ThrowOnTypeGenerationError { get; }
         int PreprocessBuildCallbackOrder { get; }
         bool LogTypeGenerationStats { get; }
-        MonitoringUIController UIControllerUIController { get; }
+        MonitoringUIController UIController { get; }
         Color OutParamColor { get; }
         public bool FilterLabel { get; }
         public bool FilterStaticOrInstance { get; }
