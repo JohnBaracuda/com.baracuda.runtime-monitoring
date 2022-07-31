@@ -381,6 +381,7 @@ Use Attributes to customize the monitoring process & display of your member. The
 `[MUpdateEvent]`    | Set an event that will trigger an refresh/update ([more](#update-event)) |
 `[MValueProcessor]` | Set a method that will process the value before it is displayed as a string ([more](#value-processor)) |
 `[MShowIf]`         | Set custom validation logic  ([more](#conditional-display))  |
+`[MEnabled]`         | Set the default enabled state of the monitored member.  |
 `[MTag]`            | Set optional tags used for filtering |
 
 ### Meta Attributes ([Formatting](#ui-formatting))
@@ -791,12 +792,38 @@ pubic int value3;
 
 &nbsp;
 ## UI Filtering
-You can filter the currently displayed elements using `IMonitoringUI.ApplyFilter(string filter)`. Reset applied filter by calling `IMonitoringUI.ResetFilter()`. You can not only filter by name, but also by the following categories.
-+ Member type (Field, Property, Event, Method)
-+ The type of the monitored value (e.g. int, Vector3, string etc.)
-+ Static and instance member.
-+ The monitored members declaring type (e.g. 'GameController' to only display member from the class `GameController`)
-+ Tags or categories applied by the  `[MTag]` attribute.
+You can filter the currently displayed elements using the monitoring filter API from `IMonitoringUI` . Filtering will check for a variety of matches. If you want more explicit filtering you can disable most of these checks by navigating to (menu: Tools > Monitoring > Settings > Filtering). You can also use the settings to determine if filtering should be case sensitive or case insensitive. By default filtering is case insensitive! 
+
+Optional Filter    | Description |        
+:--                 |:-                                              
+Filter Label   | Enable filtering using the displayed label. (case insensitive) This option is the most intuitive. |
+Filter Static or Instance | Filter for static or non static member with *static* or *instance* |
+Filter Type   | Enable filtering using the name of the type of the monitored member. (e.g. *bool*, *int*, *queue* etc.)|
+Filter Declaring Type | Enable filtering using the name of the members declaring type. (e.g. *MonoBehaviour*, *Player*, *GameController* etc.)|
+Filter Member Type | Enable filtering using the member type (*Field*, *Property*, *Event*, *Method*)|
+Filter Tags | Enable filtering using tags applied by the `[MTag]` attribute. [more](#attributes)|
+
+### Filter API
+```c#
+// Apply filter. (This filter will only show fields and properties)
+MonitoringSystems.Resolve<IMonitorUI>().ApplyFilter("Field & Property");
+
+// Reset filter.
+MonitoringSystems.Resolve<IMonitorUI>().ResetFilter();
+```
+
+&nbsp;
+### Absolute Filtering
+Append an `@` symbol to a filter for absolute filtering. Absolute filtering will always be case sensitive and only use the actual name of the monitored member. No other filters will be applied.
+
+### Combining Filters 
+Combine multiple filters with an logical OR `|` symbol.
+
+### Negation Filter
+Append an `!` to the beginning of a filter to negate it. 
+
+&nbsp;
+> I would recommend to use the example scene to test filtering in action. Press F5 when starting the example scene to open a simple filter text field. So far filtering does not support logical AND '&'
 
 
 
