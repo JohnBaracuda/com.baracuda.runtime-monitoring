@@ -7,7 +7,7 @@ namespace Baracuda.Monitoring
 {
     [Preserve]
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method)]
-    public class MOptionsAttribute : MonitoringMetaAttribute
+    public sealed class MOptionsAttribute : MonitoringMetaAttribute
     {
         /*
          * Formatting Options   

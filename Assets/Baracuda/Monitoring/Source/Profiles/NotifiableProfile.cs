@@ -46,12 +46,6 @@ namespace Baracuda.Monitoring.Source.Profiles
             {
                 updateEventName = optionsAttribute.UpdateEvent;
             }
-            else if (attribute is MonitorValueAttribute valueAttribute)
-            {
-#pragma warning disable CS0618
-                updateEventName = valueAttribute.UpdateEvent;
-#pragma warning restore CS0618
-            }
 
             if (updateEventName != null)
             {

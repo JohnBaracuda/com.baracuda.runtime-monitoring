@@ -7,24 +7,9 @@ using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring
 {
-    [Flags]
-    public enum EventDisplay
-    {
-        None = 0,
-        SubCount = 1,
-        InvokeCount = 2,
-        TrueCount = 4,
-        SubInfo = 8,
-        Signature = 16
-    }
-    
     /// <summary>
     /// Mark a C# event to be monitored at runtime.
-    /// When monitoring non static members, instances of the monitored class must be registered and unregistered
-    /// when they are created and destroyed using:
-    /// <see cref="MonitoringManager.RegisterTarget"/> or <see cref="MonitoringManager.UnregisterTarget"/>.
-    /// This process can be simplified by using monitored base types:
-    /// <br/><see cref="MonitoredObject"/>, <see cref="MonitoredBehaviour"/> or <see cref="MonitoredSingleton{T}"/>
+    /// When monitoring non static members, instances of the monitored class must be registered and unregistered.
     /// </summary>
     [AttributeUsage(AttributeTargets.Event)]
     [Preserve]
@@ -69,18 +54,5 @@ namespace Baracuda.Monitoring
             ShowSubscriberInfo = value.HasFlag32((int)EventDisplay.SubInfo);
             ShowSignature = value.HasFlag32((int) EventDisplay.Signature);
         }
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Obsolete ---
-        
-        [Obsolete("Use ShowSubscriberCount instead!")]
-        public bool ShowSubscriber        
-        {
-            get => ShowSubscriberCount;
-            set => ShowSubscriberCount = value;
-        }
-        
-        #endregion
     }
 }

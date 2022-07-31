@@ -61,17 +61,5 @@ namespace Baracuda.Monitoring.API
         /// Get the current value or state of the monitored member as a formatted string. 
         /// </summary>
         string GetState();
-        
-        //--------------------------------------------------------------------------------------------------------------
-        
-        #region --- Obsolete ---
-        
-        [Obsolete("use GetState instead!")]
-        string GetStateFormatted { get; }
-        
-        [Obsolete("use GetValue for IValueUnit instead!")]
-        string GetStateRaw { get; }
-        
-        #endregion
     }
 }

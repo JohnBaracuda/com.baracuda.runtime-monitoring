@@ -10,8 +10,6 @@ namespace Baracuda.Monitoring
     /// </summary>
     public abstract class MonitoringUIController : MonitoredBehaviour
     {
-        #region --- Abstract ---
-
         /// <summary>
         /// Return true if the UI is active and false if it is not active.
         /// </summary>
@@ -40,23 +38,5 @@ namespace Baracuda.Monitoring
         /// Use to remove UI elements for the passed unit.
         /// </summary>
         protected internal abstract void OnUnitDisposed(IMonitorUnit unit);
-
-        #endregion
-
-        #region --- Obsolete ---
-
-        [Obsolete("use IMonitoringUI.ResetFilter() instead!")]
-        protected virtual void ResetFilter()
-        {
-            throw new InvalidOperationException();
-        }
-
-        [Obsolete("use IMonitoringUI.ApplyFilter() instead!")]
-        protected virtual void Filter(string filter)
-        {
-            throw new InvalidOperationException();
-        }
-        
-        #endregion
     }
 }

@@ -181,14 +181,5 @@ namespace Baracuda.Monitoring.Source.Profiles
         
         
         #endregion
-
-        #region --- Obsolete ---
-
-#pragma warning disable CS0618
-        public UpdateOptions UpdateOptions { get; } = default;
-        public MemberType UnitType => MemberType;
-#pragma warning restore CS0618
-
-        #endregion
     }
 }

@@ -303,15 +303,5 @@ namespace Baracuda.Monitoring.API
         }
 
         #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-        
-        #region --- Obsolete ---
-
-        
-        [Obsolete("Use IMonitoringSettings instead. Resolve registered instance using MonitoringSystems.Resolve<IMonitoringSettings>()")]
-        public static IMonitoringSettings GetInstance() => MonitoringSystems.Resolve<IMonitoringSettings>();
-        
-        #endregion
     }
 }

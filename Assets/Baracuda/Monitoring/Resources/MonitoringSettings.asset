@@ -16,8 +16,7 @@ MonoBehaviour:
   autoInstantiateUI: 1
   asyncProfiling: 1
   openDisplayOnLoad: 1
-  monitoringUIController: {fileID: 843339411990045885, guid: a346941e8ff76a34f944fc2850d23a6e,
-    type: 3}
+  monitoringUIController: {fileID: 4062470990811542421, guid: cc50f3b5789885343bad909dd731c281, type: 3}
   showRuntimeMonitoringObject: 0
   showRuntimeUIController: 0
   logBadImageFormatException: 0
@@ -43,17 +42,17 @@ MonoBehaviour:
   - _
   enableRichText: 1
   trueColor: {r: 0, g: 1, b: 0, a: 1}
-  falseColor: {r: 1, g: 0, b: 0, a: 1}
-  xColor: {r: 0.41, g: 0.38, b: 1, a: 1}
+  falseColor: {r: 0.8867924, g: 0.004182993, b: 0.004182993, a: 1}
+  xColor: {r: 0.51188207, g: 0.48584908, b: 1, a: 1}
   yColor: {r: 0.49, g: 1, b: 0.53, a: 1}
   zColor: {r: 1, g: 0.38, b: 0.35, a: 1}
-  wColor: {r: 0.6, g: 0, b: 1, a: 1}
-  classColor: {r: 0.49, g: 0.49, b: 1, a: 1}
-  eventColor: {r: 1, g: 0.92, b: 0.53, a: 1}
-  sceneNameColor: {r: 1, g: 0.67, b: 0.85, a: 1}
+  wColor: {r: 0.7400007, g: 0, b: 1, a: 1}
+  classColor: {r: 0.75286585, g: 0.4901961, b: 1, a: 1}
+  eventColor: {r: 1, g: 0.94098115, b: 0.3726415, a: 1}
+  sceneNameColor: {r: 0.8686638, g: 0.67058825, b: 1, a: 1}
   targetObjectColor: {r: 0.39, g: 0.72, b: 1, a: 1}
   methodColor: {r: 0.56, g: 0.98, b: 0.53, a: 1}
-  outParameterColor: {r: 1, g: 0.27, b: 0.53, a: 1}
+  outParameterColor: {r: 1, g: 0.27058828, b: 0.6761452, a: 1}
   bannedAssemblyPrefixes:
   - Assembly-Plugin
   - DOTween

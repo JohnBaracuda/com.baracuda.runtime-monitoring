@@ -1,7 +1,11 @@
-﻿using System;
+﻿// Copyright (c) 2022 Jonathan Lang
+
+using System;
+using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring
 {
+    [Preserve]
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Event)]
     public class MEnabledAttribute : MonitoringMetaAttribute
     {
