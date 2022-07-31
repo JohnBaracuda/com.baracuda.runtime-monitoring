@@ -43,14 +43,14 @@ namespace Baracuda.Monitoring.API
         bool ThrowOnTypeGenerationError { get; }
         int PreprocessBuildCallbackOrder { get; }
         bool LogTypeGenerationStats { get; }
-        MonitoringUIController UIControllerUIController { get; }
+        MonitoringUIController UIController { get; }
         Color OutParamColor { get; }
-        public bool FilterLabel { get; }
-        public bool FilterStaticOrInstance { get; }
-        public bool FilterType  { get; }
-        public bool FilterDeclaringType { get; }
-        public bool FilterMemberType  { get; }
-        public bool FilterTags  { get; }
-        public StringComparison FilterComparison { get; }
+        bool FilterLabel { get; }
+        bool FilterStaticOrInstance { get; }
+        bool FilterType  { get; }
+        bool FilterDeclaringType { get; }
+        bool FilterMemberType  { get; }
+        bool FilterTags  { get; }
+        StringComparison FilterComparison { get; }
     }
 }

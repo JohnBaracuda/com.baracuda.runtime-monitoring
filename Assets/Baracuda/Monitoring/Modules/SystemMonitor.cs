@@ -45,6 +45,7 @@ namespace Baracuda.Monitoring.Modules
         #region --- Fields & Events ---
 
         [Monitor]
+        [MLabel("System")]
         [MUpdateEvent(nameof(DisplayConfigUpdated))]
         [MOptions(UIPosition.LowerRight, GroupElement = false)]
         [MFontName("JetBrainsMono-Regular")]

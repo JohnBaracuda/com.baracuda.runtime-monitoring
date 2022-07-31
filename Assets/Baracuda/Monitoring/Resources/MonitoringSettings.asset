@@ -16,41 +16,44 @@ MonoBehaviour:
   autoInstantiateUI: 1
   asyncProfiling: 1
   openDisplayOnLoad: 1
-  monitoringUIController: {fileID: 4062470990811542421, guid: cc50f3b5789885343bad909dd731c281, type: 3}
-  showRuntimeMonitoringObject: 1
-  showRuntimeUIController: 1
-  logBadImageFormatException: 1
+  monitoringUIController: {fileID: 843339411990045885, guid: a346941e8ff76a34f944fc2850d23a6e,
+    type: 3}
+  showRuntimeMonitoringObject: 0
+  showRuntimeUIController: 0
+  logBadImageFormatException: 0
   logOperationCanceledException: 0
   logThreadAbortException: 2
   logUnknownExceptions: 4
-  logProcessorNotFoundException: 3
-  logInvalidProcessorSignatureException: 3
+  logProcessorNotFoundException: 2
+  logInvalidProcessorSignatureException: 2
   filterLabel: 1
   filterStaticOrInstance: 1
   filterType: 1
   filterDeclaringType: 1
   filterMemberType: 1
   filterTags: 1
+  filterComparison: 5
   addClassName: 0
   appendSymbol: 46
   humanizeNames: 1
   variablePrefixes:
   - m_
   - s_
+  - r_
   - _
   enableRichText: 1
   trueColor: {r: 0, g: 1, b: 0, a: 1}
-  falseColor: {r: 0.8679245, g: 0.23335704, b: 0.25258785, a: 1}
-  xColor: {r: 1, g: 0.38039216, b: 0.34901962, a: 1}
+  falseColor: {r: 1, g: 0, b: 0, a: 1}
+  xColor: {r: 0.41, g: 0.38, b: 1, a: 1}
   yColor: {r: 0.49, g: 1, b: 0.53, a: 1}
-  zColor: {r: 0.5294118, g: 0.6, b: 0.9254902, a: 1}
-  wColor: {r: 0.72646046, g: 0, b: 1, a: 1}
-  classColor: {r: 0.81021065, g: 0.6084906, b: 1, a: 1}
-  eventColor: {r: 0.9245283, g: 0.6826526, b: 0.41429335, a: 1}
+  zColor: {r: 1, g: 0.38, b: 0.35, a: 1}
+  wColor: {r: 0.6, g: 0, b: 1, a: 1}
+  classColor: {r: 0.49, g: 0.49, b: 1, a: 1}
+  eventColor: {r: 1, g: 0.92, b: 0.53, a: 1}
   sceneNameColor: {r: 1, g: 0.67, b: 0.85, a: 1}
   targetObjectColor: {r: 0.39, g: 0.72, b: 1, a: 1}
-  methodColor: {r: 0.73500466, g: 0.8867924, b: 0.72365606, a: 1}
-  outParameterColor: {r: 0.8784314, g: 0.44313726, b: 0.7358992, a: 1}
+  methodColor: {r: 0.56, g: 0.98, b: 0.53, a: 1}
+  outParameterColor: {r: 1, g: 0.27, b: 0.53, a: 1}
   bannedAssemblyPrefixes:
   - Assembly-Plugin
   - DOTween
@@ -59,4 +62,4 @@ MonoBehaviour:
   useIPreprocessBuildWithReport: 1
   throwOnTypeGenerationError: 1
   preprocessBuildCallbackOrder: 0
-  logTypeGenerationStats: 0
+  logTypeGenerationStats: 1

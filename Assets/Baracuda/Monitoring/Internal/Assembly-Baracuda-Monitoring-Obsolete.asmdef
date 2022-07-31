@@ -1,0 +1,16 @@
+{
+    "name": "Assembly-Baracuda-Obsolete",
+    "rootNamespace": "",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "__OBSOLETE"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

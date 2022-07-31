@@ -146,12 +146,14 @@ namespace Baracuda.Monitoring.Source.Systems
         private void InstantiateMonitoringUI(IMonitoringManager manager, IMonitoringSettings settings, IReadOnlyList<IMonitorUnit> staticUnits,
             IReadOnlyList<IMonitorUnit> instanceUnits)
         {
-            if (settings.UIControllerUIController == null)
+            if (settings.UIController == null)
             {
+                Debug.LogWarning("UI Controller is null. Please select an active UI Controller!\n" +
+                                 "Window: <b>Tools => Runtime Monitoring => Settings => UI Controller => Monitoring UI Controller</b>");
                 return;
             }
             
-            _controllerInstance = Object.Instantiate(settings.UIControllerUIController);
+            _controllerInstance = Object.Instantiate(settings.UIController);
             
             Object.DontDestroyOnLoad(_controllerInstance.gameObject);
             _controllerInstance.gameObject.hideFlags = settings.ShowRuntimeUIController ? HideFlags.None : HideFlags.HideInHierarchy;
@@ -202,8 +204,13 @@ namespace Baracuda.Monitoring.Source.Systems
             _ticker.ValidationTickEnabled = false;
 
             const char OR = '|';
+#if UNITY_2020_1_OR_NEWER
             const char NOT = '!';
             const char ABSOLUTE = '@';
+#else
+            const string NOT = "!";
+            const string ABSOLUTE = "@";            
+#endif
             var list = _manager.GetAllMonitoringUnits();
             var filters = filterString.Split(OR);
             
