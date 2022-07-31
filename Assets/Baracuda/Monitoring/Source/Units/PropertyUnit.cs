@@ -9,12 +9,6 @@ namespace Baracuda.Monitoring.Source.Units
 {
     public sealed class PropertyUnit<TTarget, TValue> : ValueUnit<TTarget, TValue> where TTarget : class
     {
-        #region --- Properties ---
-
-        public override IMonitorProfile Profile => _propertyProfile;
-
-        #endregion
-        
         //--------------------------------------------------------------------------------------------------------------
         
         #region --- Fields ---

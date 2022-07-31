@@ -1,4 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
+
+using System;
 using System.Collections;
 using System.Globalization;
 using UnityEngine;
@@ -6,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
-    [DisableMonitoring]
+    //[DisableMonitoring]
     public class ShootingTarget : MonitoredBehaviour
     {
         #region --- Inspector ---
@@ -21,9 +23,9 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         #region --- Fields ---
         
-        [Monitor] 
+        [Monitor] [MEnabled(false)]
         private bool _isAlive = true;
-        [Monitor] 
+        [Monitor] [MEnabled(false)]
         private float _currentHealth;
         private float _cooldown = 0f;
         private Animator _animator;
@@ -46,6 +48,15 @@ namespace Baracuda.Monitoring.Example.Scripts
             _animator = GetComponent<Animator>();
             _currentHealth = health;
             GameManager.Current.GameStateChanged += OnGameStateChanged;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (GameManager.TryGetCurrent(out var current))
+            {
+                current.GameStateChanged -= OnGameStateChanged;
+            }
         }
 
         private void OnGameStateChanged(GameState gameState)

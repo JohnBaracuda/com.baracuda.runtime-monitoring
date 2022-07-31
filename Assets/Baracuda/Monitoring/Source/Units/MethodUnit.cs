@@ -11,12 +11,6 @@ namespace Baracuda.Monitoring.Source.Units
 {
     public sealed class MethodUnit<TTarget, TValue> : MonitorUnit, IGettableValue<MethodResult<TValue>>
     {
-        #region --- Properties ---
-
-        public override IMonitorProfile Profile => _methodProfile;
-
-        #endregion
-        
         //--------------------------------------------------------------------------------------------------------------
         
         #region --- Fields ---

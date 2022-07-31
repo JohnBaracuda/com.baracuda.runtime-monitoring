@@ -108,6 +108,11 @@ namespace Baracuda.Monitoring
         /// <footer>Note: use the nameof keyword to pass the name of the method.</footer> 
         public string UpdateEvent { get; set; }
 
+        /// <summary>
+        /// Set the default enabled state for the monitored member.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
         //--------------------------------------------------------------------------------------------------------------
         
         public MOptionsAttribute(string format)

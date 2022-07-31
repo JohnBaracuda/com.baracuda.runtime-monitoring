@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
 using Baracuda.Monitoring.Source.Utilities;
@@ -18,15 +19,16 @@ namespace Baracuda.Monitoring.Source.Systems
         public bool ValidationTickEnabled { get; set; } = true;
 
         //--------------------------------------------------------------------------------------------------------------
-        
-        private static event Action UpdateTick;
-        private static event Action ValidationTick;
+
+        private readonly List<IMonitorUnit> _activeTickReceiver = new List<IMonitorUnit>(64);
+        private event Action ValidationTick;
 
         //--------------------------------------------------------------------------------------------------------------
         
         internal MonitoringTicker(IMonitoringManager monitoringManager)
         {
             monitoringManager.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
+            this.RegisterMonitor();
         }
 
         private void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
@@ -54,7 +56,7 @@ namespace Baracuda.Monitoring.Source.Systems
                     return;
                 }
 
-                UpdateTick?.Invoke();
+                UpdateTick();
                 ValidationTick?.Invoke();
             };
         }
@@ -74,7 +76,7 @@ namespace Baracuda.Monitoring.Source.Systems
             if (updateTimer > .05f)
             {
                 updateTimer = 0;
-                UpdateTick?.Invoke();
+                UpdateTick();
             }
 
             validationTimer += deltaTime;
@@ -88,15 +90,23 @@ namespace Baracuda.Monitoring.Source.Systems
             }
         }
 
-        
-        public void AddUpdateTicker(Action tickAction)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void UpdateTick()
         {
-            UpdateTick += tickAction;
+            for (var i = 0; i < _activeTickReceiver.Count; i++)
+            {
+                _activeTickReceiver[i].Refresh();
+            }
+        }
+        
+        public void AddUpdateTicker(IMonitorUnit unit)
+        {
+            _activeTickReceiver.Add(unit);
         }
 
-        public void RemoveUpdateTicker(Action tickAction)
+        public void RemoveUpdateTicker(IMonitorUnit unit)
         {
-            UpdateTick -= tickAction;
+            _activeTickReceiver.Remove(unit);
         }
 
         public void AddValidationTicker(Action tickAction)

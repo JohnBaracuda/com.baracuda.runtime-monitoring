@@ -32,6 +32,11 @@ namespace Baracuda.Monitoring.API
         bool ReceiveTick { get; }
         
         /// <summary>
+        /// Get the default enabled state of the unit.
+        /// </summary>
+        bool DefaultEnabled { get; }
+        
+        /// <summary>
         /// The target or declaring type of the monitored member.
         /// </summary>
         Type UnitTargetType { get; }

@@ -12,8 +12,8 @@ namespace Baracuda.Monitoring.Source.Interfaces
         /// </summary>
         bool ValidationTickEnabled { get; set; }
         
-        void AddUpdateTicker(Action tickAction);
-        void RemoveUpdateTicker(Action tickAction);
+        void AddUpdateTicker(IMonitorUnit unit);
+        void RemoveUpdateTicker(IMonitorUnit unit);
         
         void AddValidationTicker(Action tickAction);
         void RemoveValidationTicker(Action tickAction);

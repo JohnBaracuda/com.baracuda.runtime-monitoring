@@ -217,9 +217,11 @@ namespace Baracuda.Monitoring.Source.Systems
         public void ResetFilter()
         {
             _ticker.ValidationTickEnabled = true;
-            foreach (var unit in _manager.GetAllMonitoringUnits())
+            var units = _manager.GetAllMonitoringUnits();
+            for (var i = 0; i < units.Count; i++)
             {
-                unit.Enabled = true;
+                var unit = units[i];
+                unit.Enabled = unit.Profile.DefaultEnabled;
             }
         }
 

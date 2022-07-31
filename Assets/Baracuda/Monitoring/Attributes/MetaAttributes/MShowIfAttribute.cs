@@ -1,5 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
- 
+
 using System;
 using Baracuda.Monitoring.Source.Utilities;
 
@@ -8,13 +8,18 @@ namespace Baracuda.Monitoring
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class MShowIfAttribute : MonitoringMetaAttribute
     {
-        public readonly Condition Condition;
-        public readonly string MemberName;
+        // Method validation.
+        public string MemberName { get; }
+        
+        // Unary condition.
+        public Condition Condition { get; }
+        
+        // Binary condition.
+        public Comparison Comparison { get; }
+        public object Other { get; }
 
-        public readonly Comparison Comparison;
-        public readonly object Other;
-
-        internal readonly ValidationMethod ValidationMethod;
+        // Applied validation method.
+        internal ValidationMethod ValidationMethod { get; }
         
         /// <summary>
         /// The monitored member will only be displayed if the given condition is true.
@@ -134,6 +139,6 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Show if the value is a collection that is not null and contains at least 1 item.
         /// </summary>
-        CollectionNotEmpty = 9
+        CollectionNotEmpty = 9,
     }
 }

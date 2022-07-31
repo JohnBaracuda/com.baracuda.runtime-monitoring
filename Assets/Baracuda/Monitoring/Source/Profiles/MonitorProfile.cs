@@ -21,6 +21,7 @@ namespace Baracuda.Monitoring.Source.Profiles
         public MemberInfo MemberInfo { get; }
         public UnitType UnitType { get; }
         public bool ReceiveTick { get; protected set; } = true;
+        public bool DefaultEnabled { get; } = true;
         public Type UnitTargetType { get; }
         public Type UnitValueType { get; }
         public bool IsStatic { get; }
@@ -86,6 +87,15 @@ namespace Baracuda.Monitoring.Source.Profiles
             if (TryGetMetaAttribute<MFontNameAttribute>(out var fontAttribute))
             {
                 utility.AddFontHash(fontAttribute.FontHash);
+            }
+
+            if (TryGetMetaAttribute<MEnabledAttribute>(out var enabledAttribute))
+            {
+                DefaultEnabled = enabledAttribute.Enabled;
+            }
+            else if (TryGetMetaAttribute<MOptionsAttribute>(out var optionsAttribute))
+            {
+                DefaultEnabled = optionsAttribute.Enabled;
             }
             
             FormatData = CreateFormatData(this, settings);

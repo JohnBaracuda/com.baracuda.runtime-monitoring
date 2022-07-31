@@ -9,12 +9,6 @@ namespace Baracuda.Monitoring.Source.Units
 {
     public class EventUnit<TTarget, TDelegate> : MonitorUnit where TTarget : class where TDelegate : Delegate
     {
-        #region --- Properties ---
-
-        public override IMonitorProfile Profile => _eventProfile;
-
-        #endregion
-        
         //--------------------------------------------------------------------------------------------------------------
         
         #region --- Fields ---

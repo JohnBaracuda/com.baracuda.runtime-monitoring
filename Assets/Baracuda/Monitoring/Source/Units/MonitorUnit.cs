@@ -41,8 +41,8 @@ namespace Baracuda.Monitoring.Source.Units
         /// <summary>
         /// The <see cref="MonitorProfile"/> of the monitored member.
         /// </summary>
-        public abstract IMonitorProfile Profile { get; }
-        
+        public IMonitorProfile Profile { get; }
+
         /// <summary>
         /// Unique UniqueID
         /// </summary>
@@ -60,7 +60,18 @@ namespace Baracuda.Monitoring.Source.Units
                 {
                     return;
                 }
-
+                if (Profile.ReceiveTick)
+                {
+                    if (value)
+                    {
+                        _ticker.AddUpdateTicker(this);
+                    }
+                    else
+                    {
+                        _ticker.RemoveUpdateTicker(this);
+                    }
+                }
+                
                 _isActive = value;
                 ActiveStateChanged?.Invoke(_isActive);
             }
@@ -82,7 +93,8 @@ namespace Baracuda.Monitoring.Source.Units
 
         protected const string NULL = "<color=red>NULL</color>";
         private static int backingID;
-        private bool _isActive = true;
+        private bool _isActive = false;
+        private readonly IMonitoringTicker _ticker;
 
         #endregion
         
@@ -138,18 +150,16 @@ namespace Baracuda.Monitoring.Source.Units
         
         #region --- Ctor ---
 
-        protected MonitorUnit(object target, MonitorProfile profile)
+        protected MonitorUnit(object target, IMonitorProfile profile)
         {
+            _ticker = MonitoringSystems.Resolve<IMonitoringTicker>();
+            Profile = profile;
             Target = target;
             Name = (target is UnityEngine.Object unityObject)
                 ? unityObject.name
                 : profile.UnitTargetType.Name;
             UniqueID = backingID++;
-
-            if (profile.ReceiveTick)
-            {
-                MonitoringSystems.Resolve<IMonitoringTicker>().AddUpdateTicker(Refresh);
-            }
+            Enabled = profile.DefaultEnabled;
         }
 
         #endregion
@@ -160,11 +170,14 @@ namespace Baracuda.Monitoring.Source.Units
 
         public virtual void Dispose()
         {
-            RaiseDisposing();
             if (Profile.ReceiveTick)
             {
-                MonitoringSystems.Resolve<IMonitoringTicker>().RemoveUpdateTicker(Refresh);
+                _ticker.RemoveUpdateTicker(this);
             }
+            RaiseDisposing();
+
+            Disposing = null;
+            ValueUpdated = null;
         }
 
         public override string ToString()
