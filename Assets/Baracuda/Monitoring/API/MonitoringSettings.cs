@@ -83,6 +83,8 @@ namespace Baracuda.Monitoring.API
         [SerializeField] private bool filterMemberType = true;
         [Tooltip("When enabled, custom tags can be used for filtering.")]
         [SerializeField] private bool filterTags = true;
+        [Tooltip("Set the string comparison used for filtering. Absolute filtering is always case sensitive!")]
+        [SerializeField] private StringComparison filterComparison = StringComparison.OrdinalIgnoreCase;
         
         #endregion
         
@@ -220,7 +222,8 @@ namespace Baracuda.Monitoring.API
         public bool FilterDeclaringType => filterDeclaringType;
         public bool FilterMemberType => filterMemberType;
         public bool FilterTags => filterTags;
-        
+        public StringComparison FilterComparison => filterComparison;
+
         /*
          * Formatting   
          */

@@ -61,6 +61,7 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _filterDeclaringType;
         private SerializedProperty _filterMemberType;
         private SerializedProperty _filterTags;
+        private SerializedProperty _filterComparison;
         
         private SerializedProperty _trueColor;
         private SerializedProperty _falseColor;
@@ -204,6 +205,8 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_filterDeclaringType);
                 EditorGUILayout.PropertyField(_filterMemberType);
                 EditorGUILayout.PropertyField(_filterTags);
+                EditorGUILayout.Space();
+                EditorGUILayout.PropertyField(_filterComparison);
                 EditorGUILayout.Space();
             }
             

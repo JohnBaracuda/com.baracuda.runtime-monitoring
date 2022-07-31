@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using System;
 using Baracuda.Monitoring.Source.Types;
 using UnityEngine;
 
@@ -50,5 +51,6 @@ namespace Baracuda.Monitoring.API
         public bool FilterDeclaringType { get; }
         public bool FilterMemberType  { get; }
         public bool FilterTags  { get; }
+        public StringComparison FilterComparison { get; }
     }
 }

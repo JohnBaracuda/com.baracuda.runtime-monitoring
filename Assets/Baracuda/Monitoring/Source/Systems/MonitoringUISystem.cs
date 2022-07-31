@@ -201,11 +201,11 @@ namespace Baracuda.Monitoring.Source.Systems
         {
             _ticker.ValidationTickEnabled = false;
 
-            const char AND = '&';
+            const char OR = '|';
             const char NOT = '!';
             const char ABSOLUTE = '@';
             var list = _manager.GetAllMonitoringUnits();
-            var filters = filterString.Split(AND);
+            var filters = filterString.Split(OR);
             
             for (var i = 0; i < list.Count; i++)
             {
@@ -231,13 +231,13 @@ namespace Baracuda.Monitoring.Source.Systems
                         goto End;
                     }
                         
-                    if (unit.Name.IndexOf(filterOnlyLetters, StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (unit.Name.IndexOf(filterOnlyLetters, _settings.FilterComparison) >= 0)
                     {
                         unitEnabled = !filterNoSpace.StartsWith(NOT);
                         goto End;
                     }
                     
-                    if (unit.TargetName.IndexOf(filterOnlyLetters, StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (unit.TargetName.IndexOf(filterOnlyLetters, _settings.FilterComparison) >= 0)
                     {
                         unitEnabled = !filterNoSpace.StartsWith(NOT);
                         goto End;
@@ -246,7 +246,7 @@ namespace Baracuda.Monitoring.Source.Systems
                     // Filter with tags.
                     for (var tagIndex = 0; tagIndex < tags.Length; tagIndex++)
                     {
-                        if (tags[tagIndex].NoSpace().IndexOf(filterOnlyLetters, StringComparison.OrdinalIgnoreCase) < 0)
+                        if (tags[tagIndex].NoSpace().IndexOf(filterOnlyLetters, _settings.FilterComparison) < 0)
                         {
                             continue;
                         }
