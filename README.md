@@ -19,7 +19,7 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 	- [License](#license)
 	- [Technical Information](#technical-information)
 	- [Feature List](#features)
-	- [Import](#import)
+	- [Import & Update](#import-and-update)
 - [Monitoring Member](#monitoring-member)
 	- [Instanced & Static Member](#instanced-and-static-member)
 	- [Monitoring Fields & Properties](#monitoring-fields-and-properties)
@@ -136,7 +136,7 @@ public class Player : MonoBehaviour
     }
 }
 ```
-![basic example](https://johnbaracuda.com/media/img/monitoring/Example_03.png)
+![basic example](https://johnbaracuda.com/media/img/monitoring/Example_runtime_01.png)
 
 
 
@@ -185,6 +185,7 @@ Download and import Runtime Monitoring. To setup a different UI Controller (IMGU
 + TextMeshPro based uGUI support.
 + UIToolkit support.
 + Detached UI Interface for custom UI solutions.
++ Apply filter to displayed units.
 + Custom control of how monitored members are displayed.
 + Works both asynchronous and synchronous (WebGL supported).
 + Mono & IL2CPP support.
@@ -198,9 +199,11 @@ Download and import Runtime Monitoring. To setup a different UI Controller (IMGU
 
 
 &nbsp;
-## Import
+## Import and Update
 
 Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. You can also download this asset from the [Asset Store!](https://u3d.as/2QxJ). Take a look at [Setup](#setup) instructions for more information how to import optional packages. (spoiler: via the settings window)
+
+> ⚠️ If you are updating from an older version of this tool, I would advise to perform a clean update. Delete the Baracuda folder and import this asset again. Be aware that this may temporarily cause compile errors. You could also remove every usage of this tool before. 
 
 
 
@@ -208,10 +211,12 @@ Import this asset into your project as a .unitypackage available at [Runtime-Mon
 &nbsp;
 # Monitoring Member
 
-If you skipped to this part here is a quick TLDR: Just place the `[Monitor]` attribute an a field, property, event or method and get its value or state monitored in a customizable UI during runtime. When monitoring non static (instances), you have to register the monitored target, as shown in the next point. Other than that there is not much to it. Just try it out yourself. 
+Place the `[Monitor]` attribute an a field, property, event or method and get its value or state monitored in a customizable UI during runtime. When monitoring non static (instances), you have to register the monitored target, as shown in the next point. Other than that there is not much to it. Just try it out yourself. 
 
+&nbsp;
+![example](https://johnbaracuda.com/media/img/monitoring/Example_member_01.png)
 
-
+> Note that the PlayerMovement class in this example is calling `this.RegisterMonitor()` in its Awake and `this.UnregisterMonitor` in its OnDestory method.
 
 &nbsp;
 ## Instanced and Static Member
@@ -323,7 +328,7 @@ public delegate void GameStateDelegate(GameState gameState);
 public event Action<Player> OnPlayerSpawn;
 ```
 
-![example](https://johnbaracuda.com/media/img/monitoring/Example_event_02.png)
+![example](https://johnbaracuda.com/media/img/monitoring/Example_event_03.png)
 
 
 
@@ -332,10 +337,17 @@ public event Action<Player> OnPlayerSpawn;
 &nbsp;
 ## Monitoring Methods
 
-A method can be monitored like a field or property by displaying its return value. Method also have the the additional feature that out parameters are monitored too. You can also set default parameter values by passing them to the constructor of the `[MonitorMethod]` attribute. Even methods that return void can be monitored if they have at least one out parameter. Default and [Global Value Processor](#global-value-processor) are applied to monitored out parameters, meaning that collections, vectors etc. assigned via out parameter are displayed in a readable way and not just formatted with ToString().
+A method can be monitored like a field or property with the additional feature that their out parameters are monitored too. Default parameter values can be set by passing them to the constructor of the `[MonitorMethod]` attribute. Even methods that return void can be monitored if they have at least one out parameter. Default and [Global Value Processor](#global-value-processor) are applied to monitored out parameters, meaning that collections, vectors etc. assigned via out parameter are displayed in a readable way and not just formatted with ToString().
+
 ```c#
+[Monitor]
+public string GetName()
+{
+	return "Hello World"
+}
+
 [MonitorMethod(3, 5)]
-public float Multiply(int lhs, int rhs)
+public int Multiply(int lhs, int rhs)
 {
     // Displayed value will be 15;
     return lhs * rhs;
@@ -356,7 +368,9 @@ public void Populate(out Vector3[] verts)
 }
 ```
 
+![example](https://johnbaracuda.com/media/img/monitoring/Example_method_01.png)
 
+> This example additionally shows that out parameters are formatted too.
 
 
 
@@ -446,6 +460,16 @@ private string IListProcessor(IList<string> elements)
 }
 ```
 
+
+&nbsp;
+ >This example demonstrates how to create a simple progress bar with the help of a value processor. Note that this code is already relatively optimized.
+
+![example](https://johnbaracuda.com/media/img/monitoring/Example_valueprocessor_01.png)
+
+
+&nbsp;
+### Static Value Processor
+
 Static processor methods can have certain overloads for objects that implement generic collection interfaces, which allow you to process the value of individual elements of the collection instead of the whole collection all at once. 
 
 ```c#
@@ -494,8 +518,6 @@ private static string IEnumerableValueProcessor(int number)
     return $"{number} is {((number & 1) == 0? "Even" : "Odd")}";
 }
 ```
-
-![value processor example](https://johnbaracuda.com/media/img/monitoring/Example_01.png)
 
 
 
@@ -785,8 +807,9 @@ pubic int value3;
 
 ```
 
+![example](https://johnbaracuda.com/media/img/monitoring/Example_formatting_01.png)
 
-
+ >Note that this is for display purposes only. There is no need to apply that many formatting options to every monitored member. Formatting is 100% optional.
 
 
 
@@ -912,6 +935,7 @@ Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#
 
 Use the `IMonitoringSettigns` API can be used to access the current configuration set in the monitoring settings window. This API is readonly and mostly used by internal processes. So far it is available for transparency reasons only.
 
+![example](https://johnbaracuda.com/media/img/monitoring/Example_settings_01.png)
 
 
 &nbsp;
