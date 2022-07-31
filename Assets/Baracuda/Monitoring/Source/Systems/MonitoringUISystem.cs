@@ -3,9 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -187,33 +188,80 @@ namespace Baracuda.Monitoring.Source.Systems
         /*
          * Filtering   
          */
+
+        private static readonly Regex onlyLetter = new Regex(@"[^a-zA-Z0-9]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         
         public void ApplyFilter(string filter)
         {
+            ApplyFilterInternal(filter);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ApplyFilterInternal(string filterString)
+        {
             _ticker.ValidationTickEnabled = false;
+
+            const char AND = '&';
+            const char NOT = '!';
+            const char ABSOLUTE = '@';
             var list = _manager.GetAllMonitoringUnits();
+            var filters = filterString.Split(AND);
+            
             for (var i = 0; i < list.Count; i++)
             {
                 var unit = list[i];
                 var tags = unit.Profile.Tags;
                 var unitEnabled = false;
-                if (unit.Name.NoSpace().IndexOf(filter.NoSpace(), StringComparison.CurrentCultureIgnoreCase) >= 0)
+                    
+                for (var filterIndex = 0; filterIndex < filters.Length; filterIndex++)
                 {
-                    unit.Enabled = true;
-                    continue;
-                }
-                for (var j = 0; j < tags.Length; j++)
-                {
-                    if (tags[j].NoSpace().IndexOf(filter.NoSpace(), StringComparison.CurrentCultureIgnoreCase) >= 0)
+                    var filter =  filters[filterIndex];
+                    var filterOnlyLetters = onlyLetter.Replace(filter, string.Empty);
+                    var filterNoSpace = filter.NoSpace();
+                    
+                    unitEnabled = filterNoSpace.StartsWith(NOT);
+                    
+                    if (filterNoSpace.StartsWith(ABSOLUTE))
                     {
-                        unitEnabled = true;
-                        break;
+                        var absoluteFilter = filterNoSpace.Substring(1);
+                        if (unit.Name.StartsWith(absoluteFilter))
+                        {
+                            unitEnabled = true;
+                        }
+                        goto End;
+                    }
+                        
+                    if (unit.Name.IndexOf(filterOnlyLetters, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        unitEnabled = !filterNoSpace.StartsWith(NOT);
+                        goto End;
+                    }
+                    
+                    if (unit.TargetName.IndexOf(filterOnlyLetters, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        unitEnabled = !filterNoSpace.StartsWith(NOT);
+                        goto End;
+                    }
+                    
+                    // Filter with tags.
+                    for (var tagIndex = 0; tagIndex < tags.Length; tagIndex++)
+                    {
+                        if (tags[tagIndex].NoSpace().IndexOf(filterOnlyLetters, StringComparison.OrdinalIgnoreCase) < 0)
+                        {
+                            continue;
+                        }
+
+                        unitEnabled = !filterNoSpace.StartsWith(NOT);
+                        goto End;
                     }
                 }
+
+                End:
                 unit.Enabled = unitEnabled;
             }
         }
-
+        
+        
         public void ResetFilter()
         {
             _ticker.ValidationTickEnabled = true;

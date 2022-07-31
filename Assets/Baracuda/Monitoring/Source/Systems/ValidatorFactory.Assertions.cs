@@ -3,7 +3,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Reflection;
 using UnityEngine;
 

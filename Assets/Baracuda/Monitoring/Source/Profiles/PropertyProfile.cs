@@ -2,8 +2,8 @@
 
 using System;
 using System.Reflection;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Monitoring.Source.Units;
-using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Reflection;
 
 namespace Baracuda.Monitoring.Source.Profiles
@@ -48,7 +48,7 @@ namespace Baracuda.Monitoring.Source.Profiles
         private PropertyProfile(
             PropertyInfo propertyInfo,
             MonitorAttribute attribute,
-            MonitorProfileCtorArgs args) : base(propertyInfo, attribute, typeof(TTarget), typeof(TValue), UnitType.Property, args)
+            MonitorProfileCtorArgs args) : base(propertyInfo, attribute, typeof(TTarget), typeof(TValue), MemberType.Property, args)
         {
 #if !ENABLE_IL2CPP 
             var backField = propertyInfo.GetBackingField();

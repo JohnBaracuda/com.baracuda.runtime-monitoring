@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -54,6 +54,13 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _integerFormat;
         private SerializedProperty _vectorFormat;
         private SerializedProperty _quaternionFormat;
+
+        private SerializedProperty _filterLabel;
+        private SerializedProperty _filterStaticOrInstance;
+        private SerializedProperty _filterType;
+        private SerializedProperty _filterDeclaringType;
+        private SerializedProperty _filterMemberType;
+        private SerializedProperty _filterTags;
         
         private SerializedProperty _trueColor;
         private SerializedProperty _falseColor;
@@ -186,6 +193,18 @@ namespace Baracuda.Monitoring.Editor
             if (Foldout["Optional Packages"])
             {
                 DrawAdditionalPackages();
+            }
+
+            if (Foldout["Filtering"])
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.PropertyField(_filterLabel);
+                EditorGUILayout.PropertyField(_filterStaticOrInstance);
+                EditorGUILayout.PropertyField(_filterType);
+                EditorGUILayout.PropertyField(_filterDeclaringType);
+                EditorGUILayout.PropertyField(_filterMemberType);
+                EditorGUILayout.PropertyField(_filterTags);
+                EditorGUILayout.Space();
             }
             
             if (Foldout["Formatting"])
@@ -451,7 +470,7 @@ namespace Baracuda.Monitoring.Editor
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
-
+        
         #region --- Package GUI ---
 
         private readonly GUIContent _showPackage =

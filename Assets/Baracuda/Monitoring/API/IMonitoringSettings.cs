@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.API
@@ -44,5 +44,11 @@ namespace Baracuda.Monitoring.API
         bool LogTypeGenerationStats { get; }
         MonitoringUIController UIControllerUIController { get; }
         Color OutParamColor { get; }
+        public bool FilterLabel { get; }
+        public bool FilterStaticOrInstance { get; }
+        public bool FilterType  { get; }
+        public bool FilterDeclaringType { get; }
+        public bool FilterMemberType  { get; }
+        public bool FilterTags  { get; }
     }
 }

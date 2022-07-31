@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
 using Baracuda.Monitoring.Source.Profiles;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Reflection;
 using Baracuda.Threading;
 using Debug = UnityEngine.Debug;

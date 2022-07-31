@@ -6,8 +6,8 @@ using System.Reflection;
 using System.Text;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Monitoring.Source.Units;
-using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Reflection;
 using UnityEngine;
 
@@ -21,7 +21,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             MethodInfo methodInfo,
             MonitorAttribute attribute,
             MonitorProfileCtorArgs args) : base(methodInfo, attribute, typeof(TTarget), typeof(TValue),
-            UnitType.Method, args)
+            MemberType.Method, args)
         {
             //TODO: Add custom value processor
             

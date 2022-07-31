@@ -8,9 +8,14 @@ namespace Baracuda.Monitoring.API
     public interface IMonitorUnit
     {
         /// <summary>
-        /// Readable display name.
+        /// Name of the monitored member.
         /// </summary>
         string Name { get; }
+        
+        /// <summary>
+        /// Readable target object display name.
+        /// </summary>
+        string TargetName { get; }
         
         /// <summary>
         /// The target object of the monitored member. Null if static.

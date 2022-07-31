@@ -8,8 +8,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Monitoring.Source.Units;
-using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Reflection;
 using UnityEngine;
 

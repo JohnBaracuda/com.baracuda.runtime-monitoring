@@ -2,8 +2,8 @@
 
 using System;
 using System.Reflection;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Monitoring.Source.Units;
-using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Reflection;
 
 namespace Baracuda.Monitoring.Source.Profiles
@@ -46,7 +46,7 @@ namespace Baracuda.Monitoring.Source.Profiles
         #region --- Ctor ---
         
         private FieldProfile(FieldInfo fieldInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args) 
-            : base(fieldInfo, attribute, typeof(TTarget), typeof(TValue), UnitType.Field, args)
+            : base(fieldInfo, attribute, typeof(TTarget), typeof(TValue), MemberType.Field, args)
         {
             _getValueDelegate = fieldInfo.CreateGetter<TTarget, TValue>();
             _setValueDelegate = SetAccessEnabled

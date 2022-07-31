@@ -2,7 +2,7 @@
 
 using System;
 using System.Reflection;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 
 namespace Baracuda.Monitoring.API
 {
@@ -24,7 +24,7 @@ namespace Baracuda.Monitoring.API
         /// <summary>
         /// The type of the member (either field, property or event)
         /// </summary>
-        UnitType UnitType { get; }
+        MemberType MemberType { get; }
         
         /// <summary>
         /// True if the unit receives a custom tick event.
@@ -79,6 +79,9 @@ namespace Baracuda.Monitoring.API
 
         [Obsolete("Setting custom update intervals is no longer supported!")] 
         UpdateOptions UpdateOptions { get; }
+       
+        [Obsolete("Use MemberType instead!")] 
+        MemberType UnitType { get; }
         
         #endregion
     }

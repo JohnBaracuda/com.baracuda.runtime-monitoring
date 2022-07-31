@@ -4,7 +4,7 @@ using System;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
 
-namespace Baracuda.Monitoring.Source.Utilities
+namespace Baracuda.Monitoring.Source.Types
 {
     public class OutParameterHandleT<TValue> : OutParameterHandle
     {

@@ -3,7 +3,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -12,6 +12,7 @@ namespace Baracuda.Monitoring.API
 {
     public class MonitoringSettings : ScriptableObject, IMonitoringSettings
     {
+
         #region --- General ---
 
 #pragma warning disable CS0414
@@ -22,8 +23,7 @@ namespace Baracuda.Monitoring.API
         [SerializeField] private bool autoInstantiateUI = false;
 
         [Tooltip("When enabled, initial profiling will be processed asynchronous on a background thread. (Disabled for WebGL)")]
-        [SerializeField]
-        private bool asyncProfiling = true;
+        [SerializeField] private bool asyncProfiling = true;
 
         [Tooltip("When enabled, the monitoring display will be opened as soon as profiling has completed.")]
         [SerializeField] private bool openDisplayOnLoad = true;
@@ -69,6 +69,23 @@ namespace Baracuda.Monitoring.API
 
         #endregion
 
+        #region --- Filtering ---
+        
+        [Tooltip("When enabled, label are used for filtering.")]
+        [SerializeField] private bool filterLabel = true;
+        [Tooltip("When enabled, static and instance can be used for filtering.")]
+        [SerializeField] private bool filterStaticOrInstance = true;
+        [Tooltip("When enabled, the type name can be used for filtering. (e.g. int, float, string, etc.)")]
+        [SerializeField] private bool filterType = true;
+        [Tooltip("When enabled, the members declaring type name can be used for filtering. (e.g. Player, MonoBehaviour etc.)")]
+        [SerializeField] private bool filterDeclaringType = true;
+        [Tooltip("When enabled, the member type can be used for filtering. (e.g. Field, Property, etc.)")]
+        [SerializeField] private bool filterMemberType = true;
+        [Tooltip("When enabled, custom tags can be used for filtering.")]
+        [SerializeField] private bool filterTags = true;
+        
+        #endregion
+        
         #region --- Formatting ---
 
         [Tooltip("When enabled, class names will be used as a prefix for displayed units")] [SerializeField]
@@ -192,7 +209,18 @@ namespace Baracuda.Monitoring.API
         public LoggingLevel LogUnknownExceptions => logUnknownExceptions;
         public LoggingLevel LogProcessorNotFoundException => logProcessorNotFoundException;
         public LoggingLevel LogInvalidProcessorSignatureException => logInvalidProcessorSignatureException;
-
+        
+        /*
+         * Filtering
+         */
+        
+        public bool FilterLabel => filterLabel;
+        public bool FilterStaticOrInstance => filterStaticOrInstance;
+        public bool FilterType => filterType;
+        public bool FilterDeclaringType => filterDeclaringType;
+        public bool FilterMemberType => filterMemberType;
+        public bool FilterTags => filterTags;
+        
         /*
          * Formatting   
          */
@@ -220,7 +248,7 @@ namespace Baracuda.Monitoring.API
         public Color ClassColor => classColor;
         public Color EventColor => eventColor;
         public Color OutParamColor => outParameterColor;
-
+        
         /*
          * Assembly Settings   
          */

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Reflection;
 
 namespace Baracuda.Monitoring.Source.Profiles
@@ -53,9 +53,9 @@ namespace Baracuda.Monitoring.Source.Profiles
             MonitorAttribute attribute,
             Type unitTargetType,
             Type unitValueType, 
-            UnitType unitType,
+            MemberType memberType,
             MonitorProfileCtorArgs args) 
-            : base(memberInfo, attribute, unitTargetType, unitValueType, unitType, args)
+            : base(memberInfo, attribute, unitTargetType, unitValueType, memberType, args)
         {
             if (attribute is MonitorValueAttribute valueAttribute)
             {

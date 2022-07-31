@@ -6,7 +6,6 @@ using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
 using Baracuda.Monitoring.Source.Profiles;
 using Baracuda.Reflection;
-using UnityEngine;
 
 namespace Baracuda.Monitoring.Source.Units
 {
@@ -24,9 +23,14 @@ namespace Baracuda.Monitoring.Source.Units
         #region --- Properties ---
 
         /// <summary>
-        /// 
+        /// Name of the monitored member.
         /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// Readable target object display name.
+        /// </summary>
+        public string TargetName { get; }
 
         /// <summary>
         /// Get the current value or state of the monitored member as a formatted string. 
@@ -155,11 +159,12 @@ namespace Baracuda.Monitoring.Source.Units
             _ticker = MonitoringSystems.Resolve<IMonitoringTicker>();
             Profile = profile;
             Target = target;
-            Name = (target is UnityEngine.Object unityObject)
+            TargetName = (target is UnityEngine.Object unityObject)
                 ? unityObject.name
                 : profile.UnitTargetType.Name;
             UniqueID = backingID++;
             Enabled = profile.DefaultEnabled;
+            Name = profile.MemberInfo.Name;
         }
 
         #endregion

@@ -11,7 +11,7 @@ using System.Text;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.IL2CPP;
 using Baracuda.Monitoring.Source.Profiles;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Pooling.Concretions;
 using Baracuda.Reflection;
 using UnityEditor;

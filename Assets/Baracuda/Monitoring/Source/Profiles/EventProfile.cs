@@ -7,8 +7,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Monitoring.Source.Units;
-using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Pooling.Concretions;
 using Baracuda.Reflection;
 using UnityEngine;
@@ -48,7 +48,7 @@ namespace Baracuda.Monitoring.Source.Profiles
         }
        
         private EventProfile(EventInfo eventInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args) 
-            : base(eventInfo, attribute, typeof(TTarget), typeof(TDelegate), UnitType.Event, args)
+            : base(eventInfo, attribute, typeof(TTarget), typeof(TDelegate), MemberType.Event, args)
         {
             if (eventInfo.EventHandlerType.GetInvokeMethod().ReturnType != typeof(void))
             {

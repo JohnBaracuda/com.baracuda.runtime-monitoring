@@ -5,7 +5,7 @@ using System.Text;
 using Baracuda.Monitoring.API;
 using Baracuda.Reflection;
 
-namespace Baracuda.Monitoring.Source.Utilities
+namespace Baracuda.Monitoring.Source.Types
 {
     /// <summary>
     /// Out parameter handle capable of handing readonly ref struct out parameters in IL2CPP Runtime.

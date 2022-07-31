@@ -3,7 +3,7 @@
 using System;
 using System.Reflection;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 
 namespace Baracuda.Monitoring.Source.Profiles
 {
@@ -31,7 +31,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             MonitorAttribute attribute,
             Type unitTargetType,
             Type unitValueType,
-            UnitType unityType,
+            MemberType unityType,
             MonitorProfileCtorArgs args) : base(memberInfo, attribute, unitTargetType, unitValueType, unityType, args)
         {
             var updateEventName = default(string);

@@ -4,9 +4,9 @@ using Baracuda.Monitoring.API;
 using Baracuda.Reflection;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Source.Utilities
+namespace Baracuda.Monitoring.Source.Types
 {
-    public class FormatData : IFormatData
+    internal class FormatData : IFormatData
     {
         public string Format { get; internal set; }
         public bool ShowIndexer { get; internal set; }

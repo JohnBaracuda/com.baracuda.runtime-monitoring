@@ -3,12 +3,12 @@
 using System;
 using System.Runtime.CompilerServices;
 using Baracuda.Pooling.Concretions;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 #if UNITY_2020_1_OR_NEWER
-using Unity.Collections.LowLevel.Unsafe;
 #endif
 
-namespace Baracuda.Monitoring.Source.Utilities
+namespace Baracuda.Monitoring.Source.Types
 {
     public static class MonitoringExtensions
     {
@@ -70,7 +70,7 @@ namespace Baracuda.Monitoring.Source.Utilities
             }
         }
 #endif
-
+        
         public static bool HasFlag32(this int lhs, int rhs)
         {
             return unchecked ((uint)lhs & (uint)rhs) > 0; 
@@ -136,7 +136,7 @@ namespace Baracuda.Monitoring.Source.Utilities
 
         public static string NoSpace(this string str)
         {
-            return str.Replace(" ", "");
+            return str.Replace(" ", string.Empty);
         }
         
         public static string Humanize(this string target, string[] prefixes = null)

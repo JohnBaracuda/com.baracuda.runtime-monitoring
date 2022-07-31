@@ -3,7 +3,7 @@
 using System;
 using System.Text;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Source.Systems

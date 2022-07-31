@@ -25,6 +25,12 @@ MonoBehaviour:
   logUnknownExceptions: 4
   logProcessorNotFoundException: 3
   logInvalidProcessorSignatureException: 3
+  filterLabel: 1
+  filterStaticOrInstance: 1
+  filterType: 1
+  filterDeclaringType: 1
+  filterMemberType: 1
+  filterTags: 1
   addClassName: 0
   appendSymbol: 46
   humanizeNames: 1

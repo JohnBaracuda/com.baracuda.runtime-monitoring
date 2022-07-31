@@ -3,7 +3,7 @@
 using System;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Profiles;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 
 namespace Baracuda.Monitoring.Source.Units
 {

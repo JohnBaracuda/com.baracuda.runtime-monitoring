@@ -3,7 +3,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Baracuda.Monitoring.Source.Utilities;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Reflection;
 
 namespace Baracuda.Monitoring.Source.Systems

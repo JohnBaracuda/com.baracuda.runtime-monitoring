@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
+using Baracuda.Monitoring.Source.Types;
 using Baracuda.Monitoring.Source.Units;
-using Baracuda.Monitoring.Source.Utilities;
 using Baracuda.Pooling.Concretions;
 using Baracuda.Reflection;
-using static Baracuda.Monitoring.Source.Utilities.FormatData;
+using static Baracuda.Monitoring.Source.Types.FormatData;
 
 namespace Baracuda.Monitoring.Source.Profiles
 {
@@ -19,7 +19,7 @@ namespace Baracuda.Monitoring.Source.Profiles
         
         public MonitorAttribute Attribute { get; }
         public MemberInfo MemberInfo { get; }
-        public UnitType UnitType { get; }
+        public MemberType MemberType { get; }
         public bool ReceiveTick { get; protected set; } = true;
         public bool DefaultEnabled { get; } = true;
         public Type UnitTargetType { get; }
@@ -59,14 +59,14 @@ namespace Baracuda.Monitoring.Source.Profiles
             MonitorAttribute attribute,
             Type unitTargetType,
             Type unitValueType,
-            UnitType unityType,
+            MemberType unityType,
             MonitorProfileCtorArgs args)
         {
             Attribute = attribute;
             MemberInfo = memberInfo;
             UnitTargetType = unitTargetType;
             UnitValueType = unitValueType;
-            UnitType = unityType; 
+            MemberType = unityType; 
 
             var intFlag = (int) args.ReflectedMemberFlags;
             IsStatic = intFlag.HasFlag32((int) BindingFlags.Static);
@@ -101,12 +101,33 @@ namespace Baracuda.Monitoring.Source.Profiles
             FormatData = CreateFormatData(this, settings);
             
             var tags = ConcurrentListPool<string>.Get();
-            tags.Add(FormatData.Label);
-            tags.Add(UnitType.AsString());
-            tags.Add(IsStatic ? "Static" : "Instance");
-            tags.Add(UnitTargetType.Name);
-            tags.Add(UnitValueType.Name.ToTypeKeyWord());
-            if (TryGetMetaAttribute<MTagAttribute>(out var categoryAttribute))
+
+            if(settings.FilterLabel)
+            {
+                tags.Add(FormatData.Label);
+            }
+            
+            if(settings.FilterMemberType)
+            {
+                tags.Add(MemberType.AsString());
+            }
+            
+            if(settings.FilterStaticOrInstance)
+            {
+                tags.Add(IsStatic ? "Static" : "Instance");
+            }
+            
+            if(settings.FilterDeclaringType)
+            {
+                tags.Add(UnitTargetType.Name);
+            }
+            
+            if(settings.FilterType)
+            {
+                tags.Add(UnitValueType.Name.ToTypeKeyWord());
+            }
+            
+            if(settings.FilterTags && TryGetMetaAttribute<MTagAttribute>(out var categoryAttribute))
             {
                 foreach (var tag in categoryAttribute.Tags)
                 {
@@ -165,6 +186,7 @@ namespace Baracuda.Monitoring.Source.Profiles
 
 #pragma warning disable CS0618
         public UpdateOptions UpdateOptions { get; } = default;
+        public MemberType UnitType => MemberType;
 #pragma warning restore CS0618
 
         #endregion

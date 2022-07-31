@@ -8,7 +8,7 @@ using Baracuda.Monitoring.API;
 using Baracuda.Reflection;
 #endif
 
-namespace Baracuda.Monitoring.Source.Utilities
+namespace Baracuda.Monitoring.Source.Types
 {
     public abstract class OutParameterHandle
     {

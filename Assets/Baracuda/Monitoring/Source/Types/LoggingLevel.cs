@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
-namespace Baracuda.Monitoring.Source.Utilities
+namespace Baracuda.Monitoring.Source.Types
 {
     public enum LoggingLevel
     {
