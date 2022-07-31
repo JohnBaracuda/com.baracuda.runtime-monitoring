@@ -77,12 +77,12 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
         {
             base.Awake();
             
-            var manager = MonitoringSystems.Resolve<IMonitoringManager>();
+            var utility = MonitoringSystems.Resolve<IMonitoringUtility>();
             for (var i = 0; i < availableFonts.Length; i++)
             {
                 var fontAsset = availableFonts[i];
                 var hash = fontAsset.name.GetHashCode();
-                if (manager.IsFontHasUsed(hash))
+                if (utility.IsFontHashUsed(hash))
                 {
                     _loadedFonts.Add(hash, fontAsset);
                 }

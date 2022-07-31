@@ -148,4 +148,24 @@ namespace Baracuda.Monitoring
         Center = 1,
         Right = 2
     }
+
+    public static class EnumExtensions
+    {
+        public static string AsString(this UIPosition position)
+        {
+            switch (position)
+            {
+                case UIPosition.UpperLeft:
+                    return nameof(UIPosition.UpperLeft);
+                case UIPosition.UpperRight:
+                    return nameof(UIPosition.UpperRight);
+                case UIPosition.LowerLeft:
+                    return nameof(UIPosition.LowerLeft);
+                case UIPosition.LowerRight:
+                    return nameof(UIPosition.LowerRight);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(position));
+            }
+        }
+    }
 }

@@ -23,6 +23,15 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
         private static IMonitoringSettings settings;
         private VisualElement _parent;
+        
+        private readonly Comparison<VisualElement> _comparison = (lhs, rhs) =>
+            {
+                if (lhs is MonitoringUIElement mLhs && rhs is MonitoringUIElement mRhs)
+                {
+                    return mLhs.Order < mRhs.Order ? 1 : mLhs.Order > mRhs.Order ? -1 : 0;
+                }
+                return 0;
+            };
 
         #endregion
 
@@ -32,6 +41,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
         public IMonitorUnit Unit { get; }
         public string[] Tags { get; }
+        public int Order { get; }
         
         #endregion
 
@@ -57,7 +67,10 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
             Unit.ActiveStateChanged += UpdateActiveState;
 
             var profile = monitorUnit.Profile;
+            var formatData = profile.FormatData;
             pickingMode = PickingMode.Ignore;
+
+            Order = formatData.Order;
 
             if (Unit.Profile.FormatData.FontSize > 0)
             {
@@ -72,20 +85,18 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                     AddToClassList(styles.ClassList[i]);
                 }
             }
+
+            if (formatData.BackgroundColor.HasValue)
+            {
+                style.backgroundColor = new StyleColor(formatData.BackgroundColor.Value);
+            }
+            if (formatData.TextColor.HasValue)
+            {
+                style.color = new StyleColor(formatData.TextColor.Value);
+            }
+
+            var font = formatData.FontHash != 0 ? provider.GetFont(formatData.FontHash) : provider.DefaultFont;
             
-            if (profile.TryGetMetaAttribute<MBackgroundColorAttribute>(out var backgroundColorAttribute))
-            {
-                style.backgroundColor = new StyleColor(backgroundColorAttribute.ColorValue);
-            }
-            if (profile.TryGetMetaAttribute<MTextColorAttribute>(out var textColorAttribute))
-            {
-                style.color = new StyleColor(textColorAttribute.ColorValue);
-            }
-
-            var font = profile.TryGetMetaAttribute<MFontAttribute>(out var fontAttribute)
-                ? provider.GetFont(fontAttribute.FontHash)
-                : provider.DefaultFont;
-
             style.unityFontDefinition = new StyleFontDefinition(font);
             
             if (monitorUnit.Profile.IsStatic)
@@ -98,6 +109,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
             }
 
             UpdateGUI(Unit.GetState());
+            UpdateActiveState(Unit.Enabled);
         }
 
         private void SetupInstanceUnit(VisualElement rootVisualElement, IMonitorUnit monitorUnit, IMonitorProfile profile, IStyleProvider provider)
@@ -155,17 +167,23 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                 _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
                 _parent.Add(this);
                 
+                
+                
                 if (profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute))
                 {
                     _parent.style.backgroundColor = new StyleColor(groupColorAttribute.ColorValue);
                 }
+                
+                _parent.Sort(_comparison);
             }
             else
             {
-                rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(this);
+                var root = rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString());
+                root.Add(this);
+                root.Sort(_comparison);
             }
         }
-
+        
         private void SetupStaticUnit(VisualElement rootVisualElement, IMonitorProfile profile, IStyleProvider provider)
         {
             for (var i = 0; i < provider.StaticUnitStyles.Length; i++)
@@ -224,10 +242,14 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                 {
                     _parent.style.backgroundColor = new StyleColor(groupColorAttribute.ColorValue);
                 }
+                
+                _parent.Sort(_comparison);
             }
             else
             {
-                rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(this);
+                var root = rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString());
+                root.Add(this);
+                root.Sort(_comparison);
             }
         }
 
