@@ -744,7 +744,7 @@ MonoBehaviour:
   marginLeft: 2
   marginBottom: 2
   marginRight: 2
-  defaultFont: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  defaultFont: {fileID: 11400000, guid: d6c6768f2b3115b4180a0dd2c02347e8, type: 2}
   availableFonts:
   - {fileID: 11400000, guid: e1923fd50dcc53e42bc0288551c5a60f, type: 2}
   - {fileID: 11400000, guid: 6dae74a5abb08a64baf13bedce510bfc, type: 2}

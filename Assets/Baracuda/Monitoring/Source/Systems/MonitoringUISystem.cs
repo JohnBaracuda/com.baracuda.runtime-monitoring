@@ -204,8 +204,13 @@ namespace Baracuda.Monitoring.Source.Systems
             _ticker.ValidationTickEnabled = false;
 
             const char OR = '|';
+#if UNITY_2020_1_OR_NEWER
             const char NOT = '!';
             const char ABSOLUTE = '@';
+#else
+            const string NOT = "!";
+            const string ABSOLUTE = "@";            
+#endif
             var list = _manager.GetAllMonitoringUnits();
             var filters = filterString.Split(OR);
             
