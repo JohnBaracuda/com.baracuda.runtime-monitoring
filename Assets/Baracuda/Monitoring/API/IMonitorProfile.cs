@@ -72,5 +72,17 @@ namespace Baracuda.Monitoring.API
         /// Try to get a MonitoringMetaAttribute.
         /// </summary>
         bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute;
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Obsolete ---
+
+        [Obsolete("Setting custom update intervals is no longer supported!")] 
+        UpdateOptions UpdateOptions { get; }
+       
+        [Obsolete("Use MemberType instead!")] 
+        MemberType UnitType { get; }
+        
+        #endregion
     }
 }

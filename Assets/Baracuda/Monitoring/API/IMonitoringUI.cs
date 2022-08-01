@@ -59,5 +59,14 @@ namespace Baracuda.Monitoring.API
         /// Reset active filter.
         /// </summary>
         void ResetFilter();
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Oboslete ---
+
+        [Obsolete("Use ApplyFilter(string filter) instead!")]
+        void Filter(string filter);
+        
+        #endregion
     }
 }

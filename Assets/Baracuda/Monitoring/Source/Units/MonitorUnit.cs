@@ -12,7 +12,7 @@ namespace Baracuda.Monitoring.Source.Units
     /// <summary>
     /// Object wrapping and handling the monitoring of a monitored member.
     /// </summary>
-    public abstract class MonitorUnit : IDisposable, IMonitorUnit
+    public abstract class MonitorUnit : IDisposable, IMonitorUnit, ITickReceiver
     {
         #region --- Delegates ---
 
@@ -80,6 +80,16 @@ namespace Baracuda.Monitoring.Source.Units
                 ActiveStateChanged?.Invoke(_isActive);
             }
         }
+
+        #endregion
+
+        #region --- Obsolete ---
+        
+        [Obsolete("Use GetState instead!")]
+        public string GetStateFormatted => GetState();
+        
+        [Obsolete]
+        public string GetStateRaw => (this as IGettableValue)?.GetValueAsObject().ToString();
 
         #endregion
 
