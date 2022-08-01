@@ -7,17 +7,6 @@ using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring
 {
-    [Flags]
-    public enum EventDisplay
-    {
-        None = 0,
-        SubCount = 1,
-        InvokeCount = 2,
-        TrueCount = 4,
-        SubInfo = 8,
-        Signature = 16
-    }
-    
     /// <summary>
     /// Mark a C# event to be monitored at runtime.
     /// When monitoring non static members, instances of the monitored class must be registered and unregistered
