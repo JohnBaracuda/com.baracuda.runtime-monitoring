@@ -8,113 +8,55 @@ using UnityEngine.UI;
 
 namespace Baracuda.Monitoring.UI.TextMeshPro
 {
-    internal class MonitoringUIElement : MonoBehaviour
+    [DisableMonitoring]
+    [RequireComponent(typeof(RectTransform))]
+    internal class MonitoringUIElement : MonitoringUIParentElement
     {
-        #region --- Fields ---
+        [SerializeField] private TMP_Text tmpText;
+        [SerializeField] private Image backgroundImage;
         
-        private TMP_Text _tmpText;
-        private Image _backgroundImage; 
-        private IMonitorUnit _monitorUnit;
-        private Action<string> _updateValueAction;
-        private Action<bool> _activeStateAction;
-        private TMPMonitoringUIController _controller;
-
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Base Setup ---
+        private Action<string> _update;
+        private Action<bool> _toggle;
+        
+        internal override int Order => _order;
+        private int _order;
 
         private void Awake()
         {
-            _tmpText = GetComponent<TMP_Text>();
-            _backgroundImage = GetComponentInChildren<Image>();
-            _updateValueAction = UpdateUI;
-            _activeStateAction = UpdateActiveState;
-            _tmpText.richText = MonitoringSystems.Resolve<IMonitoringSettings>().RichText;
-        }
-        
-        #endregion
-
-        #region --- Unit Setup ---
-
-        internal void InjectController(TMPMonitoringUIController controller)
-        {
-            _controller = controller;
+            _toggle = gameObject.SetActive;
+            _update = str => tmpText.text = str;
         }
 
-        public void SetupForUnit(IMonitorUnit monitorUnit)
+        public void Setup(IMonitorUnit monitorUnit)
         {
-            _monitorUnit = monitorUnit;
-            var profile = monitorUnit.Profile;
-            var format = profile.FormatData;
-
+            var controller = MonitoringSystems.Resolve<IMonitoringUI>().GetActiveUIController<TMPMonitoringUIController>();
+            
+            var format = monitorUnit.Profile.FormatData;
+            
+            tmpText.font = format.FontHash != 0
+                ? controller.GetFontAsset(format.FontHash)
+                : controller.GetDefaultFontAsset();
+            
             if (format.BackgroundColor.HasValue)
             {
-                _backgroundImage.color = format.BackgroundColor.Value;
+                backgroundImage.color = format.BackgroundColor.Value;
             }
             if (format.TextColor.HasValue)
             {
-                _tmpText.color = format.TextColor.Value;
+                tmpText.color = format.TextColor.Value;
             }
-
-            _tmpText.font = format.FontHash != 0
-                ? _controller.GetFontAsset(format.FontHash)
-                : _controller.GetDefaultFontAsset();
-
-            _tmpText.alignment = ToTextAlignmentOptions(format.TextAlign);
-
             if (format.FontSize > 0)
             {
-                _tmpText.fontSize = format.FontSize;
+                tmpText.fontSize = format.FontSize;
             }
 
-            _tmpText.richText = format.RichTextEnabled;
+            tmpText.richText = format.RichTextEnabled;
+            tmpText.alignment = format.TextAlign.ToTextAlignmentOptions();
+            _order = format.Order;
             
-            monitorUnit.ValueUpdated += _updateValueAction;
-            monitorUnit.ActiveStateChanged += _activeStateAction;
-            _updateValueAction(monitorUnit.GetState());
+            monitorUnit.ValueUpdated += _update;
+            monitorUnit.ActiveStateChanged += _toggle;
+            _update(monitorUnit.GetState());
         }
-
-
-        private static TextAlignmentOptions ToTextAlignmentOptions(HorizontalTextAlign align)
-        {
-            switch (align)
-            {
-                case HorizontalTextAlign.Left:
-                    return TextAlignmentOptions.Left;
-                case HorizontalTextAlign.Center:
-                    return TextAlignmentOptions.Center;
-                case HorizontalTextAlign.Right:
-                    return TextAlignmentOptions.Right;
-            }
-            return TextAlignmentOptions.Left;
-        }
-        
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Update & ResetElement ---
-
-        public void ResetElement()
-        {
-            _monitorUnit.ValueUpdated -= _updateValueAction;
-            _monitorUnit.ActiveStateChanged -= _activeStateAction;
-            _monitorUnit = null;
-            _tmpText.richText = MonitoringSystems.Resolve<IMonitoringSettings>().RichText;
-        }
-
-        private void UpdateUI(string text)
-        {
-            _tmpText.text = text;
-        }
-
-        private void UpdateActiveState(bool activeState)
-        {
-            gameObject.SetActive(activeState);
-        }
-        
-        #endregion
     }
 }

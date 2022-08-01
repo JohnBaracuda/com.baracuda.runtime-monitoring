@@ -7,10 +7,10 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
     [ExecuteAlways]
     internal class UIControllerComponents : MonoBehaviour
     {
-        public RectTransform upperLeftTransform;
-        public RectTransform upperRightTransform;
-        public RectTransform lowerLeftTransform;
-        public RectTransform lowerRightTransform;
+        public MonitoringUISection upperLeftSection;
+        public MonitoringUISection upperRightSection;
+        public MonitoringUISection lowerLeftSection;
+        public MonitoringUISection lowerRightSection;
         
         public MonitoringUIElement elementPrefab;
         public MonitoringUIGroup groupPrefab;

@@ -38,9 +38,8 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
 
         private Stack<MonitoringUIElement> _uiElementPool;
         private Stack<MonitoringUIGroup> _uiGroupPool;
-        private Dictionary<IMonitorUnit, MonitoringUIElement> _activeMonitoringUIElements;
-        private Dictionary<object, MonitoringUIGroup> _activeGroups;
-        private Dictionary<string, MonitoringUIGroup> _activeGroupsStr;
+        
+        
         private Transform _transform;
         private UIControllerComponents _components;
         private Canvas _canvas;
@@ -69,11 +68,11 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             base.Awake();
             _transform = transform;
             _components = GetComponent<UIControllerComponents>();
+            
+            // Pools
             _uiElementPool = new Stack<MonitoringUIElement>(initialElementPoolSize);
             _uiGroupPool = new Stack<MonitoringUIGroup>(initialGroupPoolSize);
-            _activeMonitoringUIElements = new Dictionary<IMonitorUnit, MonitoringUIElement>();
-            _activeGroups = new Dictionary<object, MonitoringUIGroup>(initialGroupPoolSize);
-            _activeGroupsStr = new Dictionary<string, MonitoringUIGroup>(initialGroupPoolSize);
+            
             _canvas = GetComponent<Canvas>();
             
             InitializeElementPool();
@@ -97,7 +96,37 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
 
         #endregion
 
+        //--------------------------------------------------------------------------------------------------------------
+
         #region --- Pooling ---
+
+        internal MonitoringUIElement GetElementFromPool()
+        {
+            return _uiElementPool.Count > 0 ? _uiElementPool.Pop() : CreateEmptyElement();
+        }
+
+        internal MonitoringUIGroup GetGroupFromPool()
+        {
+            return _uiGroupPool.Count > 0 ? _uiGroupPool.Pop() : CreateEmptyGroup();
+        }
+        
+        internal void ReleaseElementToPool(MonitoringUIElement element)
+        {
+            element.SetParent(_transform);
+            element.SetGameObjectInactive();
+            _uiElementPool.Push(element);
+        }
+
+        internal void ReleaseGroupToPool(MonitoringUIGroup uiGroup)
+        {
+            uiGroup.SetParent(_transform);
+            uiGroup.SetGameObjectInactive();
+            _uiGroupPool.Push(uiGroup);
+        }
+
+        #endregion
+
+        #region --- Pooling Internal ---
 
         private void InitializeElementPool()
         {
@@ -124,28 +153,13 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MonitoringUIElement CreateEmptyElement()
         {
-            var emptyElement = Instantiate(_components.elementPrefab, transform);
-            emptyElement.InjectController(this);
-            emptyElement.SetGameObjectInactive();
-            return emptyElement;
+            return Instantiate(_components.elementPrefab, transform);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MonitoringUIGroup CreateEmptyGroup()
         {
-            var emptyGroup = Instantiate(_components.groupPrefab, transform);
-            emptyGroup.SetGameObjectInactive();
-            return emptyGroup;
-        }
-
-        private MonitoringUIElement GetElementFromPool()
-        {
-            return _uiElementPool.Count > 0 ? _uiElementPool.Pop() : CreateEmptyElement();
-        }
-        
-        private MonitoringUIGroup GetGroupFromPool()
-        {
-            return _uiGroupPool.Count > 0 ? _uiGroupPool.Pop() : CreateEmptyGroup();
+            return Instantiate(_components.groupPrefab, transform);
         }
         
         #endregion
@@ -183,105 +197,35 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
 
         protected override void OnUnitCreated(IMonitorUnit unit)
         {
-            var element = GetElementFromPool();
-            var parent = SetupParentForUnit(unit);
-            element.SetParent(parent);
-            element.SetupForUnit(unit);
-            element.SetGameObjectActive();
-            _activeMonitoringUIElements.Add(unit, element);
+            var section = GetSection(unit.Profile.FormatData.Position);
+            section.AddChild(unit);
         }
+        
         protected override void OnUnitDisposed(IMonitorUnit unit)
         {
-            var element = _activeMonitoringUIElements[unit];
-            _activeMonitoringUIElements.Remove(unit);
-            element.ResetElement();
-            element.SetGameObjectInactive();
-            element.SetParent(_transform);
-            _uiElementPool.Push(element);
-
-            if (_activeGroups.TryGetValue(unit.Target, out var uiGroup))
-            {
-                uiGroup.RemoveChild(unit);
-                if (uiGroup.ChildCount > 0)
-                {
-                    return;
-                }
-
-                uiGroup.SetGameObjectInactive();
-                uiGroup.SetParent(_transform);
-                _uiGroupPool.Push(uiGroup);
-            }
+            var section = GetSection(unit.Profile.FormatData.Position);
+            section.RemoveChild(unit);
         }
         
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Group Setup ---
-
-        private Transform SetupParentForUnit(IMonitorUnit unit)
-        {
-            var profile = unit.Profile;
-            var data = profile.FormatData;
-            var position = data.Position;
-            
-            if (!data.AllowGrouping)
-            {
-                return GetPositionTransform(position);
-            }
-
-            if (profile.IsStatic)
-            {
-                var groupName = data.Group;
-
-                if (_activeGroupsStr.TryGetValue(groupName, out var uiGroup))
-                {
-                    uiGroup.AddChild(unit);
-                    return uiGroup.transform;
-                }
-
-                uiGroup = GetGroupFromPool();
-                uiGroup.SetTitle(groupName);
-                uiGroup.SetParent(GetPositionTransform(position));
-                uiGroup.SetGameObjectActive();
-                uiGroup.AddChild(unit);
-                _activeGroupsStr.Add(groupName, uiGroup);
-                return uiGroup.transform;
-            }
-            else
-            {
-                var groupName = data.Group;
-
-                if (_activeGroups.TryGetValue(unit.Target, out var uiGroup))
-                {
-                    uiGroup.AddChild(unit);
-                    return uiGroup.transform;
-                }
-
-                uiGroup = GetGroupFromPool();
-                var title = $"{groupName} | {(unit.Target is UnityEngine.Object obj ? obj.name : unit.Target.ToString())}";
-                uiGroup.SetTitle(title);
-                uiGroup.SetParent(GetPositionTransform(position));
-                uiGroup.SetGameObjectActive();
-                uiGroup.AddChild(unit);
-                _activeGroups.Add(unit.Target, uiGroup);
-                return uiGroup.transform;
-            }
-        }
+        #region --- Misc ---
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Transform GetPositionTransform(UIPosition uiPosition)
+        private MonitoringUISection GetSection(UIPosition uiPosition)
         {
             switch (uiPosition)
             {
                 case UIPosition.UpperLeft:
-                    return _components.upperLeftTransform;
+                    return _components.upperLeftSection;
                 case UIPosition.UpperRight:
-                    return _components.upperRightTransform;
+                    return _components.upperRightSection;
                 case UIPosition.LowerLeft:
-                    return _components.lowerLeftTransform;
+                    return _components.lowerLeftSection;
                 case UIPosition.LowerRight:
-                    return _components.lowerRightTransform;
+                    return _components.lowerRightSection;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -305,10 +249,10 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             try
             {
                 _components = _components ? _components : GetComponent<UIControllerComponents>();
-                _components.upperLeftTransform.GetComponent<HorizontalOrVerticalLayoutGroup>().spacing = elementSpacing;
-                _components.upperRightTransform.GetComponent<HorizontalOrVerticalLayoutGroup>().spacing = elementSpacing;
-                _components.lowerLeftTransform.GetComponent<HorizontalOrVerticalLayoutGroup>().spacing = elementSpacing;
-                _components.lowerRightTransform.GetComponent<HorizontalOrVerticalLayoutGroup>().spacing = elementSpacing;
+                _components.upperLeftSection.GetComponent<HorizontalOrVerticalLayoutGroup>().spacing = elementSpacing;
+                _components.upperRightSection.GetComponent<HorizontalOrVerticalLayoutGroup>().spacing = elementSpacing;
+                _components.lowerLeftSection.GetComponent<HorizontalOrVerticalLayoutGroup>().spacing = elementSpacing;
+                _components.lowerRightSection.GetComponent<HorizontalOrVerticalLayoutGroup>().spacing = elementSpacing;
                 GetComponent<HorizontalOrVerticalLayoutGroup>().padding =
                     new RectOffset(marginLeft, marginRight, marginTop, marginBottom);
             }

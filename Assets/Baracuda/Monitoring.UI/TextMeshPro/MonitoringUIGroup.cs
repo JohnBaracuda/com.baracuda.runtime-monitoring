@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
- 
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Baracuda.Monitoring.API;
@@ -10,40 +11,61 @@ using UnityEngine.UI;
 namespace Baracuda.Monitoring.UI.TextMeshPro
 {
     [RequireComponent(typeof(RectTransform))]
-    public class MonitoringUIGroup : MonoBehaviour
+    internal class MonitoringUIGroup : MonitoringUIParentElement
     {
+        public int ChildCount { get; private set; }
+        
+        internal override int Order { get; }
+        
         [SerializeField] private TMP_Text groupTitle;
-        [SerializeField] private Image backgroundImage; 
-        
-        private readonly List<IMonitorUnit> _children = new List<IMonitorUnit>(10);
-        public int ChildCount => _children.Count;
+        [SerializeField] private Image backgroundImage;
 
+        private Transform _transform;
+        private TMPMonitoringUIController _controller;
+        private Action<bool> _checkVisibility;
 
-        public void AddChild(IMonitorUnit unit)
+        private readonly List<IMonitorUnit> _children = new List<IMonitorUnit>(8);
+
+        private void Awake()
         {
-            if (unit.Profile.TryGetMetaAttribute<MGroupColorAttribute>(out var colorAttribute))
+            _transform = transform;
+            _checkVisibility = childVisible => 
             {
-                backgroundImage.color = colorAttribute.ColorValue;
-            }
+                gameObject.SetActive(childVisible || IsAnyChildVisible());
+                bool IsAnyChildVisible()
+                {
+                    var visible = false;
+                    for (var i = 0; i < _children.Count; i++)
+                    {
+                        if (_children[i].Enabled)
+                        {
+                            visible = true;
+                            break;
+                        }
+                    }
+                    return visible;
+                }
+            };
+        }
 
-            _children.Add(unit);
-            unit.ActiveStateChanged += EvaluateActiveState;
-        }
-        
-        public void RemoveChild(IMonitorUnit unit)
-        {
-            _children.Remove(unit);
-            unit.ActiveStateChanged -= EvaluateActiveState;
-        }
-        
-        public void SetTitle(string title)
+        public void SetupGroup(string title, TMPMonitoringUIController controller)
         {
             groupTitle.text = title;
+            _controller = controller;
         }
 
-        private void EvaluateActiveState(bool activeState)
+        public void AddChild(IMonitorUnit monitorUnit)
         {
-            gameObject.SetActive(activeState || _children.Any(unit => unit.Enabled));
+            var element = _controller.GetElementFromPool();
+            element.SetParent(_transform);
+            element.SetActive(monitorUnit.Enabled);
+            element.Setup(monitorUnit);
+
+            monitorUnit.ActiveStateChanged += _checkVisibility;
+            _children.Add(monitorUnit);
+            
+            ChildCount++;
+            backgroundImage.color = monitorUnit.Profile.FormatData.GroupColor.GetValueOrDefault(backgroundImage.color);
         }
     }
 }
