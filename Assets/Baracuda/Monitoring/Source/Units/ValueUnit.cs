@@ -72,6 +72,7 @@ namespace Baracuda.Monitoring.Source.Units
             }
             
             // Prefer event based validation
+            // TODO: Reverse validator
             else if (validationFunc != null)
             {
                 switch (validationFunc)

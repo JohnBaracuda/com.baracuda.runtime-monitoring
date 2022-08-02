@@ -6,7 +6,7 @@ using UnityEngine.Scripting;
 namespace Baracuda.Monitoring
 {
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
     public class MBackgroundColorAttribute : MColorAttribute
     {
         /// <summary>

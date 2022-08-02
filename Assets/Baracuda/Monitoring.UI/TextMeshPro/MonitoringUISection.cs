@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Source.Types;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,11 +15,20 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         private TMPMonitoringUIController _controller;
         private Transform _transform;
         
-        private readonly Dictionary<string, MonitoringUIGroup> _staticGroups =
+        private readonly Dictionary<string, MonitoringUIGroup> _namedGroups =
             new Dictionary<string, MonitoringUIGroup>();
         
-        private readonly Dictionary<object, MonitoringUIGroup> _instanceGroups =
+        private readonly Dictionary<object, MonitoringUIGroup> _targetedGroups =
             new Dictionary<object, MonitoringUIGroup>();
+
+        private readonly Dictionary<IMonitorUnit, MonitoringUIElement> _unitUIElements =
+            new Dictionary<IMonitorUnit, MonitoringUIElement>(32);
+            
+        private readonly List<MonitoringUIBase> _children = new List<MonitoringUIBase>();
+
+        /*
+         * Setup   
+         */
         
         private void Awake()
         {
@@ -35,19 +46,63 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             }
             else
             {
-                var element = _controller.GetElementFromPool();
-                element.SetParent(_transform);
-                element.SetActive(monitorUnit.Enabled);
-                element.Setup(monitorUnit);
+                var unitUIElement = _controller.GetElementFromPool();
+                unitUIElement.SetParent(_transform);
+                unitUIElement.SetActive(monitorUnit.Enabled);
+                unitUIElement.Setup(monitorUnit);
+                _unitUIElements.Add(monitorUnit, unitUIElement);
+                _children.Add(unitUIElement);
             }
-            //Sort
+            
+            _children.Sort(MonitoringUIBase.Comparison);
+            for (var i = 0; i < _children.Count; i++)
+            {
+                _children[i].SetSiblingIndex(i);
+            }
         }
 
         internal void RemoveChild(IMonitorUnit monitorUnit)
         {
-            
+            var profile = monitorUnit.Profile;
+            var format = profile.FormatData;
+            var groupName = format.Group;
+            if (profile.FormatData.AllowGrouping)
+            {
+                MonitoringUIGroup uiGroup;
+                if (profile.IsStatic)
+                {
+                    uiGroup = _namedGroups[groupName];
+                    uiGroup.RemoveChild(monitorUnit);
+                    if (uiGroup.ChildCount != 0)
+                    {
+                        return;
+                    }
+                    _namedGroups.Remove(groupName);
+                    _children.Remove(uiGroup);
+                    _controller.ReleaseGroupToPool(uiGroup);
+                }
+                else
+                {
+                    uiGroup = _targetedGroups[monitorUnit.Target];
+                    uiGroup.RemoveChild(monitorUnit);
+                    if (uiGroup.ChildCount != 0)
+                    {
+                        return;
+                    }
+                    _targetedGroups.Remove(monitorUnit.Target);
+                    _children.Remove(uiGroup);
+                    _controller.ReleaseGroupToPool(uiGroup);
+                }
+            }
+            else
+            {
+                var unitUIElement = _unitUIElements[monitorUnit];
+                _unitUIElements.Remove(monitorUnit);
+                _children.Remove(unitUIElement);
+                _controller.ReleaseElementToPool(unitUIElement);
+            }
         }
-
+        
         private bool TryGetGroupForNewUnit(IMonitorUnit monitorUnit, out MonitoringUIGroup uiGroup)
         {
             if (!monitorUnit.Profile.FormatData.AllowGrouping)
@@ -57,7 +112,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             }
 
             uiGroup = GetGroupForUnit(monitorUnit);
-            
+
             return true;
         }
 
@@ -66,36 +121,40 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             var profile = monitorUnit.Profile;
             var format = profile.FormatData;
             var groupName = format.Group;
-            
-            if (profile.IsStatic)
+
+            if (profile.IsStatic || groupName != null)
             {
-                if (!_staticGroups.TryGetValue(groupName, out var uiGroup))
+                if (_namedGroups.TryGetValue(groupName, out var uiGroup))
                 {
-                    uiGroup = _controller.GetGroupFromPool();
-                    uiGroup.SetParent(_transform);
-                    uiGroup.SetGameObjectActive();
-                    uiGroup.SetupGroup(groupName, _controller);
-                    _staticGroups.Add(groupName, uiGroup);
+                    return uiGroup;
                 }
+
+                uiGroup = MakeGroup(groupName);
+                _namedGroups.Add(groupName, uiGroup);
                 return uiGroup;
             }
             else
             {
-                if (!_instanceGroups.TryGetValue(monitorUnit.Target, out var uiGroup))
+                if (_targetedGroups.TryGetValue(monitorUnit.Target, out var uiGroup))
                 {
-                    uiGroup = _controller.GetGroupFromPool();
-                    uiGroup.SetParent(_transform);
-                    uiGroup.SetGameObjectActive();
-                    uiGroup.SetupGroup(MakeTargetGroupName(monitorUnit.Target, groupName), _controller);
-                    _instanceGroups.Add(monitorUnit.Target, uiGroup);
+                    return uiGroup;
                 }
+
+                uiGroup = MakeGroup($"{profile.DeclaringType.Name} | {monitorUnit.TargetName}");
+                _targetedGroups.Add(monitorUnit.Target, uiGroup);
                 return uiGroup;
+            }
+
+            MonitoringUIGroup MakeGroup(string title)
+            {
+                var group = _controller.GetGroupFromPool();
+                group.SetParent(_transform);
+                group.SetGameObjectActive();
+                group.SetupGroup(title, _controller);
+                _children.Add(group);
+                return group;
             }
         }
 
-        private static string MakeTargetGroupName(object target, string groupName)
-        {
-            return $"{groupName} | {(target is UnityEngine.Object unityObject ? unityObject.name : target.ToString())}";
-        }
     }
 }

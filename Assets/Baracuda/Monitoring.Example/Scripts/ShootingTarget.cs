@@ -1,6 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using System;
 using System.Collections;
 using System.Globalization;
 using UnityEngine;
@@ -8,7 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
-    //[DisableMonitoring]
+    [MGroupOrder(-100)]
     public class ShootingTarget : MonitoredBehaviour
     {
         #region --- Inspector ---
@@ -23,10 +22,10 @@ namespace Baracuda.Monitoring.Example.Scripts
         
         #region --- Fields ---
         
-        [Monitor] [MEnabled(false)]
         private bool _isAlive = true;
-        [Monitor] [MEnabled(false)]
+        [Monitor] [MShowIf(Condition.NotZero)]
         private float _currentHealth;
+        [Monitor] [MShowIf(Condition.NotZero)]
         private float _cooldown = 0f;
         private Animator _animator;
         

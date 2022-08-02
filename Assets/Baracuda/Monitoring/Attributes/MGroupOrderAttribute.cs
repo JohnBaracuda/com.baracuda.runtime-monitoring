@@ -7,14 +7,14 @@ namespace Baracuda.Monitoring
 {
     [Preserve]
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
-    public class MOrderAttribute : MonitoringMetaAttribute
+    public class MGroupOrderAttribute : MonitoringMetaAttribute
     {
         public readonly int Order;
 
         /// <summary>
-        /// Set a elements order in its UI group.
+        /// Set a elements order for its UI group.
         /// </summary>
-        public MOrderAttribute(int order)
+        public MGroupOrderAttribute(int order)
         {
             Order = order;
         }

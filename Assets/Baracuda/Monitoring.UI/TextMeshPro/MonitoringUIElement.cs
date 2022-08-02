@@ -10,27 +10,33 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
 {
     [DisableMonitoring]
     [RequireComponent(typeof(RectTransform))]
-    internal class MonitoringUIElement : MonitoringUIParentElement
+    internal class MonitoringUIElement : MonitoringUIBase
     {
         [SerializeField] private TMP_Text tmpText;
         [SerializeField] private Image backgroundImage;
+        [SerializeField] private Canvas backgroundCanvas;
         
         private Action<string> _update;
         private Action<bool> _toggle;
-        
-        internal override int Order => _order;
+        private IMonitorUnit _monitorUnit;
+
+        internal bool Enabled => _monitorUnit.Enabled;
+        protected override int Order => _order;
+
         private int _order;
+        private int _sortingOrder;
 
         private void Awake()
         {
             _toggle = gameObject.SetActive;
             _update = str => tmpText.text = str;
+            _sortingOrder = backgroundCanvas.sortingOrder;
         }
-
+        
         public void Setup(IMonitorUnit monitorUnit)
         {
             var controller = MonitoringSystems.Resolve<IMonitoringUI>().GetActiveUIController<TMPMonitoringUIController>();
-            
+            _monitorUnit = monitorUnit;
             var format = monitorUnit.Profile.FormatData;
             
             tmpText.font = format.FontHash != 0
@@ -57,6 +63,12 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             monitorUnit.ValueUpdated += _update;
             monitorUnit.ActiveStateChanged += _toggle;
             _update(monitorUnit.GetState());
+            _toggle(monitorUnit.Enabled);
+        }
+
+        private void OnEnable()
+        {
+            backgroundCanvas.sortingOrder = _sortingOrder;
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Baracuda.Monitoring.API
         int ElementIndent { get; }
         bool RichTextEnabled { get; }
         int Order { get; }
+        int GroupOrder { get; }
         Color? TextColor { get; }
         Color? BackgroundColor { get; }
         Color? GroupColor { get; }

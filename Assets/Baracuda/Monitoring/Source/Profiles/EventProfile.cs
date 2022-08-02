@@ -178,7 +178,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             var csb = ConcurrentStringBuilderPool.Get();
             if (settings.AddClassName)
             {
-                csb.Append(UnitTargetType.Name.Colorize(settings.ClassColor));
+                csb.Append(DeclaringType.Name.Colorize(settings.ClassColor));
                 csb.Append(settings.AppendSymbol);
             }
 

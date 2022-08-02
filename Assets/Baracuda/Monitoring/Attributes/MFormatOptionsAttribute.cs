@@ -7,7 +7,7 @@ namespace Baracuda.Monitoring.Obsolete
 {
     [Preserve]
     [Obsolete("use MOptionsAttribute instead!")]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
     public sealed class MFormatOptionsAttribute : MOptionsAttribute
     {
         public MFormatOptionsAttribute(string format) : base(format)

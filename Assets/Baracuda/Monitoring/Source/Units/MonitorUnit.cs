@@ -161,7 +161,7 @@ namespace Baracuda.Monitoring.Source.Units
             Target = target;
             TargetName = (target is UnityEngine.Object unityObject)
                 ? unityObject.name
-                : profile.UnitTargetType.Name;
+                : profile.DeclaringType.Name;
             UniqueID = backingID++;
             Enabled = profile.DefaultEnabled;
             Name = profile.MemberInfo.Name;

@@ -39,12 +39,12 @@ namespace Baracuda.Monitoring.API
         /// <summary>
         /// The target or declaring type of the monitored member.
         /// </summary>
-        Type UnitTargetType { get; }
+        Type DeclaringType { get; }
         
         /// <summary>
-        /// The (value)type of the monitored member.
+        /// The type of the monitored member.
         /// </summary>
-        Type UnitValueType { get; }
+        Type MonitoredMemberType { get; }
         
         /// <summary>
         /// Indicates if monitored member is static or not.
@@ -82,6 +82,12 @@ namespace Baracuda.Monitoring.API
        
         [Obsolete("Use MemberType instead!")] 
         MemberType UnitType { get; }
+        
+        [Obsolete("Use DeclaringType instead!")]
+        Type UnitTargetType { get; }
+        
+        [Obsolete("Use MonitoredMemberType instead!")]
+        Type UnitValueType { get; }
         
         #endregion
     }

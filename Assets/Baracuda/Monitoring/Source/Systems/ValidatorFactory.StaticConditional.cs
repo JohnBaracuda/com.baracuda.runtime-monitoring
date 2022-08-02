@@ -58,6 +58,11 @@ namespace Baracuda.Monitoring.Source.Systems
                     return typeof(TValue).IsNumeric()
                         ? (Func<TValue, bool>) ((value) => Comparer<TValue>.Default.Compare(value, default) != 0)
                         : null;
+                
+                case Condition.Zero:
+                    return typeof(TValue).IsNumeric()
+                        ? (Func<TValue, bool>) ((value) => Comparer<TValue>.Default.Compare(value, default) == 0)
+                        : null;
 
                 case Condition.Negative:
                     return typeof(TValue).IsNumeric()

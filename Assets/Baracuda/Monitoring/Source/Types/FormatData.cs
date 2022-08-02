@@ -18,6 +18,7 @@ namespace Baracuda.Monitoring.Source.Types
         public HorizontalTextAlign TextAlign { get; internal set; }
         public bool AllowGrouping { get; internal set; }
         public string Group { get; internal set; }
+        public int GroupOrder { get; internal set; }
         public int ElementIndent { get; internal set; }
         public bool RichTextEnabled { get; internal set; } = true;
         public int Order { get; internal set; }
@@ -75,7 +76,7 @@ namespace Baracuda.Monitoring.Source.Types
 
             var group = profile.TryGetMetaAttribute<MGroupNameAttribute>(out var groupNameAttribute)
                 ? groupNameAttribute.GroupName
-                : optionsAttribute?.GroupName ?? MakeGroup();
+                : optionsAttribute?.GroupName ?? (profile.IsStatic ? MakeGroup() : null);
             
             var elementIndent = profile.TryGetMetaAttribute<MElementIndentAttribute>(out var elementIndentAttribute)
                 ? elementIndentAttribute.ElementIndent
@@ -87,6 +88,10 @@ namespace Baracuda.Monitoring.Source.Types
             
             var order = profile.TryGetMetaAttribute<MOrderAttribute>(out var orderAttribute)
                 ? orderAttribute.Order
+                : optionsAttribute?.Order ?? 0;
+            
+            var groupOrder = profile.TryGetMetaAttribute<MGroupOrderAttribute>(out var groupOrderAttribute)
+                ? groupOrderAttribute.Order
                 : optionsAttribute?.Order ?? 0;
 
             var textColor = profile.TryGetMetaAttribute<MTextColorAttribute>(out var textColorAttribute)
@@ -117,6 +122,7 @@ namespace Baracuda.Monitoring.Source.Types
                 ElementIndent = elementIndent,
                 RichTextEnabled = richText,
                 Order = order,
+                GroupOrder = groupOrder,
                 TextColor = textColor,
                 BackgroundColor = backgroundColor,
                 GroupColor = groupColor
@@ -136,11 +142,11 @@ namespace Baracuda.Monitoring.Source.Types
 
             string MakeGroup()
             {
-                return profile.UnitTargetType.IsGenericType
-                    ? profile.UnitTargetType.ToReadableTypeString()
+                return profile.DeclaringType.IsGenericType
+                    ? profile.DeclaringType.ToReadableTypeString()
                     : (settings.HumanizeNames
-                        ? profile.UnitTargetType.Name.Humanize()
-                        : profile.UnitTargetType.Name);
+                        ? profile.DeclaringType.Name.Humanize()
+                        : profile.DeclaringType.Name);
             }
             
             string MakeLabel()
@@ -149,7 +155,7 @@ namespace Baracuda.Monitoring.Source.Types
                 
                 if (settings.AddClassName)
                 {
-                    humanizedLabel = $"{profile.UnitTargetType.Name.Colorize(settings.ClassColor)}{settings.AppendSymbol.ToString()}{humanizedLabel}";
+                    humanizedLabel = $"{profile.DeclaringType.Name.Colorize(settings.ClassColor)}{settings.AppendSymbol.ToString()}{humanizedLabel}";
                 }
 
                 return humanizedLabel;

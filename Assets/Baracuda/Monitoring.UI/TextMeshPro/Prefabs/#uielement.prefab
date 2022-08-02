@@ -61,6 +61,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tmpText: {fileID: 7918389006502372644}
   backgroundImage: {fileID: 5430216150058680596}
+  backgroundCanvas: {fileID: 5298523542535742954}
 --- !u!114 &7918389006502372644
 MonoBehaviour:
   m_ObjectHideFlags: 0

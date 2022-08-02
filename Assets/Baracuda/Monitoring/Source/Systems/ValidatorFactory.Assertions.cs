@@ -64,6 +64,9 @@ namespace Baracuda.Monitoring.Source.Systems
                 case Condition.NotZero:
                     Debug.Assert(monitoredType.IsNumeric(), $"{memberInfo.ToHumanizedString()} is not a numeric type! Cannot use Condition.NotZero!");
                     break;
+                case Condition.Zero:
+                    Debug.Assert(monitoredType.IsNumeric(), $"{memberInfo.ToHumanizedString()} is not a numeric type! Cannot use Condition.Zero!");
+                    break;
                 case Condition.Negative:
                     Debug.Assert(monitoredType.IsNumeric(), $"{memberInfo.ToHumanizedString()} is not a numeric type! Cannot use Condition.Negative!");
                     break;

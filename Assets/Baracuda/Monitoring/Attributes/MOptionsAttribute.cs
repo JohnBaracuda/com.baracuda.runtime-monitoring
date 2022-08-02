@@ -6,7 +6,7 @@ using UnityEngine.Scripting;
 namespace Baracuda.Monitoring
 {
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
     public class MOptionsAttribute : MonitoringMetaAttribute
     {
         /*
@@ -69,6 +69,11 @@ namespace Baracuda.Monitoring
         /// Relative vertical order of the displayed element.
         /// </summary>
         public int Order { get; set; }
+        
+        /// <summary>
+        /// Relative vertical order of the displayed element.
+        /// </summary>
+        public int GroupOrder { get; set; }
 
         /// <summary>
         /// Override local RichText settings.

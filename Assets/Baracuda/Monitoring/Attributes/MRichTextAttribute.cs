@@ -4,7 +4,7 @@ using System;
 
 namespace Baracuda.Monitoring
 {
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Class)]
     public class MRichTextAttribute : MonitoringMetaAttribute
     {
         public readonly bool RichTextEnabled;

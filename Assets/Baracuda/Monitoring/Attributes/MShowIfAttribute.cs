@@ -10,6 +10,7 @@ namespace Baracuda.Monitoring
     {
         // Method validation.
         public string MemberName { get; }
+        public bool RequiredResult { get; }
         
         // Unary condition.
         public Condition Condition { get; }
@@ -20,7 +21,7 @@ namespace Baracuda.Monitoring
 
         // Applied validation method.
         internal ValidationMethod ValidationMethod { get; }
-        
+
         /// <summary>
         /// The monitored member will only be displayed if the given condition is true.
         /// </summary>
@@ -38,9 +39,10 @@ namespace Baracuda.Monitoring
         /// on the passed bool value. 
         /// Please remember that adding conditions will add additional overhead.
         /// </summary>
-        public MShowIfAttribute(string memberName)
+        public MShowIfAttribute(string memberName, bool result = true)
         {
             MemberName = memberName;
+            RequiredResult = result;
             ValidationMethod = ValidationMethod.ByMember;
         }
         
@@ -112,9 +114,14 @@ namespace Baracuda.Monitoring
         NotNull = 3,
         
         /// <summary>
-        /// Show if the value is a number and not zero(0).
+        /// Show if the value is a number and not zero (0).
         /// </summary>
         NotZero = 4,
+        
+        /// <summary>
+        /// Show if the value is a number and zero (0).
+        /// </summary>
+        Zero = 10,
         
         /// <summary>
         /// Show if the value is a negative number.

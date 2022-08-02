@@ -80,10 +80,6 @@ namespace Baracuda.Monitoring.Modules
 
         #region --- FPS ---
         
-        
-        
-        
-        
         [Monitor]
         [MOrder(1000)]
         [MFontSize(32)]

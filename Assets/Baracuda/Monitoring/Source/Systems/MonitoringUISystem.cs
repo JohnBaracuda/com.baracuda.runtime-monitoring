@@ -16,6 +16,7 @@ namespace Baracuda.Monitoring.Source.Systems
     {
         private MonitoringUIController _controllerInstance;
         private bool _bufferUICreation = false;
+        private string _activeFilter;
         
         // Dependencies
         private readonly IMonitoringSettings _settings;
@@ -105,7 +106,7 @@ namespace Baracuda.Monitoring.Source.Systems
 
                     if (_settings.AutoInstantiateUI || _bufferUICreation)
                     {
-                        InstantiateMonitoringUI(_manager, _settings, staticUnits, instanceUnits);
+                        InstantiateMonitoringUI(staticUnits, instanceUnits);
                     }
                 };
             }
@@ -139,32 +140,39 @@ namespace Baracuda.Monitoring.Source.Systems
 
             var instanceUnits = _manager.GetInstanceUnits();
             var staticUnits = _manager.GetStaticUnits();
-            InstantiateMonitoringUI(_manager, _settings, instanceUnits, staticUnits);
+            InstantiateMonitoringUI(instanceUnits, staticUnits);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void InstantiateMonitoringUI(IMonitoringManager manager, IMonitoringSettings settings, IReadOnlyList<IMonitorUnit> staticUnits,
-            IReadOnlyList<IMonitorUnit> instanceUnits)
+        private void InstantiateMonitoringUI(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
         {
-            if (settings.UIController == null)
+            if (_settings.UIController == null)
             {
                 Debug.LogWarning("UI Controller is null. Please select an active UI Controller!\n" +
                                  "Window: <b>Tools => Runtime Monitoring => Settings => UI Controller => Monitoring UI Controller</b>");
                 return;
             }
             
-            _controllerInstance = Object.Instantiate(settings.UIController);
+            _controllerInstance = Object.Instantiate(_settings.UIController);
             
             Object.DontDestroyOnLoad(_controllerInstance.gameObject);
-            _controllerInstance.gameObject.hideFlags = settings.ShowRuntimeUIController ? HideFlags.None : HideFlags.HideInHierarchy;
+            _controllerInstance.gameObject.hideFlags = _settings.ShowRuntimeUIController ? HideFlags.None : HideFlags.HideInHierarchy;
 
-            manager.UnitCreated += _controllerInstance.OnUnitCreated;
-            manager.UnitDisposed += _controllerInstance.OnUnitDisposed;
+            _manager.UnitCreated += _controllerInstance.OnUnitCreated;
+            _manager.UnitDisposed += _controllerInstance.OnUnitDisposed;
             
             Application.quitting += () =>
             {
-                manager.UnitCreated -= _controllerInstance.OnUnitCreated;
-                manager.UnitDisposed -= _controllerInstance.OnUnitDisposed;
+                _manager.UnitCreated -= _controllerInstance.OnUnitCreated;
+                _manager.UnitDisposed -= _controllerInstance.OnUnitDisposed;
+            };
+
+            _manager.UnitCreated += _ =>
+            {
+                if (_activeFilter != null)
+                {
+                    ApplyFilter(_activeFilter);
+                }
             };
             
             for (var i = 0; i < staticUnits.Count; i++)
@@ -177,7 +185,7 @@ namespace Baracuda.Monitoring.Source.Systems
                 _controllerInstance.OnUnitCreated(instanceUnits[i]);
             }
 
-            if (settings.OpenDisplayOnLoad)
+            if (_settings.OpenDisplayOnLoad)
             {
                 Show();
             }
@@ -201,9 +209,10 @@ namespace Baracuda.Monitoring.Source.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ApplyFilterInternal(string filterString)
         {
+            _activeFilter = filterString;
             _ticker.ValidationTickEnabled = false;
-
-            const char OR = '|';
+            
+            const char AND = '&';
 #if UNITY_2020_1_OR_NEWER
             const char NOT = '!';
             const char ABSOLUTE = '@';
@@ -212,7 +221,7 @@ namespace Baracuda.Monitoring.Source.Systems
             const string ABSOLUTE = "@";            
 #endif
             var list = _manager.GetAllMonitoringUnits();
-            var filters = filterString.Split(OR);
+            var filters = filterString.Split(AND);
             
             for (var i = 0; i < list.Count; i++)
             {
@@ -271,6 +280,7 @@ namespace Baracuda.Monitoring.Source.Systems
         
         public void ResetFilter()
         {
+            _activeFilter = null;
             _ticker.ValidationTickEnabled = true;
             var units = _manager.GetAllMonitoringUnits();
             for (var i = 0; i < units.Count; i++)

@@ -7,7 +7,7 @@ using UnityEngine.Scripting;
 namespace Baracuda.Monitoring
 {
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
     public abstract class MColorAttribute : MonitoringMetaAttribute
     {
         public readonly Color ColorValue;

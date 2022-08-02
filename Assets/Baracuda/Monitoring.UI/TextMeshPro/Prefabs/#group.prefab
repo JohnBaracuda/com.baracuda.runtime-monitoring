@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7843598141814796326}
   - component: {fileID: 7668346302233231536}
-  - component: {fileID: 5556178366701447758}
   - component: {fileID: 1153763103836357195}
   m_Layer: 5
   m_Name: '#tmp-group-title'
@@ -29,7 +28,6 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9067327839057053188}
   m_RootOrder: 0
@@ -47,18 +45,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3912108906887479220}
   m_CullTransparentMesh: 1
---- !u!114 &5556178366701447758
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3912108906887479220}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a321e21e578740a79a3884cd77740d73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1153763103836357195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,7 +60,6 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -179,7 +164,6 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7843598141814796326}
   m_Father: {fileID: 0}
@@ -202,7 +186,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7870c2b7944ccf845b1852dbd8f7b3ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verticalLayoutGroup: {fileID: 4434110846759084365}
   groupTitle: {fileID: 1153763103836357195}
   backgroundImage: {fileID: 874942030172786551}
 --- !u!114 &4434110846759084365
@@ -230,7 +213,6 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!222 &5308607707574206390
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -254,7 +236,6 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 0
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

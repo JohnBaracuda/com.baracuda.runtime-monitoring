@@ -13,7 +13,7 @@ namespace Baracuda.Monitoring
         /// Manually set the group for the element.
         /// </summary>
         public readonly string GroupName;
-
+        
         /// <summary>
         /// Manually set the group for the element.
         /// </summary>

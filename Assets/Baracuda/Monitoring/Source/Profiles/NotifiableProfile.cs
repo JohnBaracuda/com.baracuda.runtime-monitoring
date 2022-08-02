@@ -114,7 +114,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             string eventName, IMonitorProfile profile, bool createAddMethod)
         {
             // check instance events:
-            var instanceEvent = profile.UnitTargetType.GetEvent(eventName, INSTANCE_FLAGS);
+            var instanceEvent = profile.DeclaringType.GetEvent(eventName, INSTANCE_FLAGS);
             if (instanceEvent != null)
             {
                 var method = createAddMethod
@@ -132,7 +132,7 @@ namespace Baracuda.Monitoring.Source.Profiles
 
 
             //------------------------
-            var staticEvent = profile.UnitTargetType.GetEvent(eventName, STATIC_FLAGS);
+            var staticEvent = profile.DeclaringType.GetEvent(eventName, STATIC_FLAGS);
             if (staticEvent != null)
             {
                 var method = createAddMethod
@@ -156,7 +156,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             IMonitorProfile profile, bool createAddMethod)
         {
             // check instance events:
-            var instanceEvent = profile.UnitTargetType.GetEvent(eventName, INSTANCE_FLAGS);
+            var instanceEvent = profile.DeclaringType.GetEvent(eventName, INSTANCE_FLAGS);
             if (instanceEvent != null)
             {
                 var method = createAddMethod
@@ -173,7 +173,7 @@ namespace Baracuda.Monitoring.Source.Profiles
 
 
             //------------------------
-            var staticEvent = profile.UnitTargetType.GetEvent(eventName, STATIC_FLAGS);
+            var staticEvent = profile.DeclaringType.GetEvent(eventName, STATIC_FLAGS);
             if (staticEvent != null)
             {
                 var method = createAddMethod

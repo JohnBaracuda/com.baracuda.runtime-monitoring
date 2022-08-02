@@ -10,7 +10,7 @@ namespace Baracuda.Monitoring
     /// Attributes inheriting from this class can be used to provide monitoring units with additional meta data.
     /// These attributes will be cached on the Monitoring Profile and can be queried with <see cref="IMonitorProfile.TryGetMetaAttribute{TAttribute}"/>.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
     [Preserve]
     public abstract class MonitoringMetaAttribute : Attribute
     {

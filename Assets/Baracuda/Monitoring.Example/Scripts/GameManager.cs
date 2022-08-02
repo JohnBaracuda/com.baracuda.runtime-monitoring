@@ -25,7 +25,9 @@ namespace Baracuda.Monitoring.Example.Scripts
         }
       
         [Monitor]
-        [MFontSize(24)]
+        [MFontSize(26)]
+        [MGroupElement(false)]
+        [MOrder(100)]
         [MShowIf(Condition.Positive)]
         private int _deathTimer = 0;
         

@@ -22,13 +22,12 @@ namespace Baracuda.Monitoring.Source.Profiles
         public MemberType MemberType { get; }
         public bool ReceiveTick { get; protected set; } = true;
         public bool DefaultEnabled { get; } = true;
-        public Type UnitTargetType { get; }
-        public Type UnitValueType { get; }
+        public Type DeclaringType { get; }
+        public Type MonitoredMemberType { get; }
         public bool IsStatic { get; }
         public string[] Tags { get; }
         public IFormatData FormatData { get; }
         
-
         public bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute
         {
             attribute = GetMetaAttribute<TAttribute>();
@@ -57,15 +56,15 @@ namespace Baracuda.Monitoring.Source.Profiles
         protected MonitorProfile(
             MemberInfo memberInfo,
             MonitorAttribute attribute,
-            Type unitTargetType,
+            Type declaringType,
             Type unitValueType,
             MemberType unityType,
             MonitorProfileCtorArgs args)
         {
             Attribute = attribute;
             MemberInfo = memberInfo;
-            UnitTargetType = unitTargetType;
-            UnitValueType = unitValueType;
+            DeclaringType = declaringType;
+            MonitoredMemberType = unitValueType;
             MemberType = unityType; 
 
             var intFlag = (int) args.ReflectedMemberFlags;
@@ -81,6 +80,15 @@ namespace Baracuda.Monitoring.Source.Profiles
                     _metaAttributes.Add(key, metaAttribute);
                 }
             }
+            // Class scoped.
+            foreach (var metaAttribute in declaringType.GetCustomAttributes<MonitoringMetaAttribute>(true))
+            {
+                var key = metaAttribute is MOptionsAttribute ? typeof(MOptionsAttribute) : metaAttribute.GetType();
+                if (!_metaAttributes.ContainsKey(key))
+                {
+                    _metaAttributes.Add(key, metaAttribute);
+                }
+            }
 
             var utility = MonitoringSystems.Resolve<IMonitoringUtilityInternal>();
             
@@ -89,9 +97,9 @@ namespace Baracuda.Monitoring.Source.Profiles
                 utility.AddFontHash(fontAttribute.FontHash);
             }
 
-            if (TryGetMetaAttribute<MEnabledAttribute>(out var enabledAttribute))
+            if (TryGetMetaAttribute<MVisibleAttribute>(out var enabledAttribute))
             {
-                DefaultEnabled = enabledAttribute.Enabled;
+                DefaultEnabled = enabledAttribute.Visible;
             }
             else if (TryGetMetaAttribute<MOptionsAttribute>(out var optionsAttribute))
             {
@@ -119,12 +127,12 @@ namespace Baracuda.Monitoring.Source.Profiles
             
             if(settings.FilterDeclaringType)
             {
-                tags.Add(UnitTargetType.Name);
+                tags.Add(DeclaringType.Name);
             }
             
             if(settings.FilterType)
             {
-                tags.Add(UnitValueType.Name.ToTypeKeyWord());
+                tags.Add(MonitoredMemberType.Name.ToTypeKeyWord());
             }
             
             if(settings.FilterTags && TryGetMetaAttribute<MTagAttribute>(out var categoryAttribute))
@@ -187,6 +195,8 @@ namespace Baracuda.Monitoring.Source.Profiles
 #pragma warning disable CS0618
         public UpdateOptions UpdateOptions { get; } = default;
         public MemberType UnitType => MemberType;
+        public Type UnitTargetType => DeclaringType;
+        public Type UnitValueType => MonitoredMemberType;
 #pragma warning restore CS0618
 
         #endregion
