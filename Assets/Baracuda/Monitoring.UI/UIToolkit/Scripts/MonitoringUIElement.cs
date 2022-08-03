@@ -11,7 +11,7 @@ using UnityEngine.UIElements;
 
 namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 {
-    public class MonitoringUIElement : Label, IMonitoringUIElement
+    public class MonitoringUIElement : Label, IMonitoringUIElement, IOrder
     {
         #region --- Fields: Instance & Static ---
 
@@ -26,7 +26,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
         
         private readonly Comparison<VisualElement> _comparison = (lhs, rhs) =>
             {
-                if (lhs is MonitoringUIElement mLhs && rhs is MonitoringUIElement mRhs)
+                if (lhs is IOrder mLhs && rhs is IOrder mRhs)
                 {
                     return mLhs.Order < mRhs.Order ? 1 : mLhs.Order > mRhs.Order ? -1 : 0;
                 }
@@ -137,8 +137,9 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                 if (!objectGroups.TryGetValue(monitorUnit.Target, out _parent))
                 {
                     // Add styles to parent
-                    _parent = new VisualElement
+                    _parent = new OrderedVisualElement
                     {
+                        Order = profile.FormatData.GroupOrder,
                         pickingMode = PickingMode.Ignore,
                         style =
                         {
@@ -151,8 +152,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                     }
 
                     // Add styles to label
-                    var label = new Label(
-                        $"{profile.FormatData.Group} | {(monitorUnit.Target is UnityEngine.Object obj ? obj.name : monitorUnit.Target.ToString())}");
+                    var label = new Label($"{profile.DeclaringType.Name} | {monitorUnit.TargetName}");
 
                     for (var i = 0; i < provider.InstanceLabelStyles.Length; i++)
                     {
@@ -167,7 +167,10 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                 _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
                 _parent.Add(this);
                 
-                
+                if (_parent is OrderedVisualElement orderParent && profile.FormatData.GroupOrder != 0)
+                {
+                    orderParent.Order = profile.FormatData.GroupOrder;
+                }
                 
                 if (profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute))
                 {
@@ -207,11 +210,12 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
             if (profile.FormatData.AllowGrouping)
             {
-                if (!typeGroups.TryGetValue(profile.UnitTargetType, out _parent))
+                if (!typeGroups.TryGetValue(profile.DeclaringType, out _parent))
                 {
                     // Add styles to parent
-                    _parent = new VisualElement
+                    _parent = new OrderedVisualElement
                     {
+                        Order = profile.FormatData.GroupOrder,
                         pickingMode = PickingMode.Ignore,
                         style =
                         {
@@ -232,11 +236,16 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
                     _parent.Add(label);
                     rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(_parent);
-                    typeGroups.Add(profile.UnitTargetType, _parent);
+                    typeGroups.Add(profile.DeclaringType, _parent);
                 }
-
+                
                 _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
                 _parent.Add(this);
+
+                if (_parent is OrderedVisualElement orderParent && profile.FormatData.GroupOrder != 0)
+                {
+                    orderParent.Order = profile.FormatData.GroupOrder;
+                }
                 
                 if (profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute))
                 {
@@ -267,12 +276,12 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
             RemoveFromHierarchy();
             
             // Because the unit could have been the only unit in a group we have to check for that case and remove the group if necessary. 
-            if (typeGroups.TryGetValue(Unit.Profile.UnitTargetType, out _parent))
+            if (typeGroups.TryGetValue(Unit.Profile.DeclaringType, out _parent))
             {
                 if (_parent.childCount <= 1)
                 {
                     _parent.RemoveFromHierarchy();
-                    typeGroups.Remove(Unit.Profile.UnitTargetType);
+                    typeGroups.Remove(Unit.Profile.DeclaringType);
                 }
             }
             

@@ -2,12 +2,12 @@
     <Style src="project://database/Assets/Baracuda/Monitoring.UI/UIToolkit/Content/StyleSheet-Monitoring.uss?fileID=7433441132597879392&amp;guid=ea0a2652fe2ac074791f8ceda558591f&amp;type=3#StyleSheet-Monitoring" />
     <ui:VisualElement name="frame" picking-mode="Ignore" style="width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0);">
         <ui:VisualElement name="top" picking-mode="Ignore" style="flex-grow: 1; flex-direction: row;">
-            <ui:VisualElement name="UpperLeft" picking-mode="Ignore" style="flex-grow: 1; align-items: flex-start;" />
-            <ui:VisualElement name="UpperRight" picking-mode="Ignore" style="flex-grow: 1; align-items: flex-end;" />
+            <ui:VisualElement name="UpperLeft" picking-mode="Ignore" style="flex-grow: 1; align-items: flex-start; padding-left: 3px; padding-right: 3px; padding-top: 2px; padding-bottom: 0;" />
+            <ui:VisualElement name="UpperRight" picking-mode="Ignore" style="flex-grow: 1; align-items: flex-end; padding-left: 3px; padding-right: 3px; padding-top: 2px; padding-bottom: 2px;" />
         </ui:VisualElement>
         <ui:VisualElement name="bot" picking-mode="Ignore" style="flex-grow: 1; flex-direction: row;">
-            <ui:VisualElement name="LowerLeft" picking-mode="Ignore" style="flex-grow: 1; align-items: flex-start; justify-content: flex-end;" />
-            <ui:VisualElement name="LowerRight" picking-mode="Ignore" style="flex-grow: 1; align-items: flex-end; justify-content: flex-end;" />
+            <ui:VisualElement name="LowerLeft" picking-mode="Ignore" style="flex-grow: 1; align-items: flex-start; justify-content: flex-end; padding-bottom: 3px; padding-right: 3px; padding-left: 3px; margin-top: 0; padding-top: 0;" />
+            <ui:VisualElement name="LowerRight" picking-mode="Ignore" style="flex-grow: 1; align-items: flex-end; justify-content: flex-end; padding-left: 3px; padding-right: 3px; padding-top: 0; padding-bottom: 3px;" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
