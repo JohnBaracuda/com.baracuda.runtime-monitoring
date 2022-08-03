@@ -26,6 +26,7 @@ namespace Baracuda.Monitoring.Source.Profiles
         public Type MonitoredMemberType { get; }
         public bool IsStatic { get; }
         public string[] Tags { get; }
+        public string[] CustomTags { get; } = Array.Empty<string>();
         public IFormatData FormatData { get; }
         
         public bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute
@@ -135,13 +136,29 @@ namespace Baracuda.Monitoring.Source.Profiles
                 tags.Add(MonitoredMemberType.Name.ToTypeKeyWord());
             }
             
-            if(settings.FilterTags && TryGetMetaAttribute<MTagAttribute>(out var categoryAttribute))
+            if(settings.FilterTags)
             {
-                foreach (var tag in categoryAttribute.Tags)
+                var customTags = ConcurrentListPool<string>.Get();
+                if (memberInfo.TryGetCustomAttribute<MTagAttribute>(out var memberTags))
                 {
-                    tags.Add(tag);
-                    utility.AddTag(tag);
+                    foreach (var tag in memberTags.Tags)
+                    {
+                        customTags.Add(tag);
+                        utility.AddTag(tag);
+                        tags.Add(tag);
+                    }
                 }
+                if (declaringType.TryGetCustomAttribute<MTagAttribute>(out var classTags))
+                {
+                    foreach (var tag in classTags.Tags)
+                    {
+                        customTags.Add(tag);
+                        utility.AddTag(tag);
+                        tags.Add(tag);
+                    }
+                }
+                CustomTags = customTags.ToArray();
+                ConcurrentListPool<string>.Release(customTags);
             }
             Tags = tags.ToArray();
             ConcurrentListPool<string>.Release(tags);

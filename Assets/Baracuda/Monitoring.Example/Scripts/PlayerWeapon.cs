@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
+    [MTag("PlayerState")]
     public class PlayerWeapon : MonitoredBehaviour
     {
         #region --- Fields ---

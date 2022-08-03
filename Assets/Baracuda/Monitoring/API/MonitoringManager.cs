@@ -13,8 +13,6 @@ namespace Baracuda.Monitoring.API
     [Obsolete("Use IMonitoringManager instead. Resolve registered instance using MonitoringSystems.Resolve<IMonitoringManager>()")]
     public static class MonitoringManager
     {
-        #region --- API ---
-
         [Obsolete("Use IMonitoringManager instead. Resolve registered instance using MonitoringSystems.Resolve<IMonitoringManager>()")]
         public static bool IsInitialized => MonitoringSystems.Resolve<IMonitoringManager>().IsInitialized;
 
@@ -113,7 +111,5 @@ namespace Baracuda.Monitoring.API
             get => MonitoringSystems.Resolve<IMonitoringTicker>().ValidationTickEnabled;
             set => MonitoringSystems.Resolve<IMonitoringTicker>().ValidationTickEnabled = value;
         }
-
-        #endregion
     }
 }

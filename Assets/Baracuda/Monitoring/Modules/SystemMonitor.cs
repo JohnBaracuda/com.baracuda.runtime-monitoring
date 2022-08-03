@@ -1,160 +1,97 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Modules
 {
+    [MVisible(false)]
+    [MOptions(UIPosition.LowerRight)]
+    [MFontName("JetBrainsMono-Regular")]
+    [MGroupColor(ColorPreset.TransparentBlack)]
+    [MGroupName("System")]
     public class SystemMonitor : MonitorModuleBase
     {
-        #region --- Inspector ---
+        #region --- Fields ---
 
-        [Header("Operating System")] 
-        [SerializeField] private bool showOperatingSystem = true;
-        [SerializeField] private bool showOperatingSystemFamily = false;
+        [MTag("OS")][MOrder(6)]
+        [Monitor] private string _operatingSystem;
+        [MTag("OS")][MOrder(6)]
+        [Monitor] private string _operatingSystemFamily;
 
-        [Header("Device")] 
-        [SerializeField] private bool showDeviceType = true;
-        [SerializeField] private bool showDeviceModel = false;
-        [SerializeField] private bool showDeviceName = false;
+        [MTag("Device")][MOrder(5)]
+        [Monitor] private string _deviceType;
+        [MTag("Device")][MOrder(5)]
+        [Monitor] private string _deviceModel;
+        [MTag("Device")][MOrder(5)]
+        [Monitor] private string _deviceName;
 
-        [Header("Processor")] 
-        [SerializeField] private bool showProcessorType = true;
-        [SerializeField] private bool showProcessorFrequency = false;
-        [SerializeField] private bool showProcessorCount = false;
+        [MTag("CPU")][MOrder(4)]
+        [Monitor] private string _processorType;
+        [MTag("CPU")][MOrder(4)]
+        [Monitor] private string _processorFrequency;
+        [MTag("CPU")][MOrder(4)]
+        [Monitor] private string _processorCount;
 
-        [Header("Memory")]
-        [SerializeField] private bool showSystemMemory = true;
+        [MTag("RAM")][MOrder(3)]
+        [Monitor] private string _systemMemory;
+
+        [MTag("GPU")][MOrder(2)]
+        [Monitor] private string _graphicsDeviceName;
+        [MTag("GPU")][MOrder(2)]
+        [Monitor] private string _graphicsDeviceType;
+        [MTag("GPU")][MOrder(2)]
+        [Monitor] private string _graphicsMemorySize;
+        [MTag("GPU")][MOrder(2)]
+        [Monitor] private string _graphicsMultiThreaded;
+
+        [MTag("Mobile")][MOrder(1)]
+        [Monitor] private string _batteryLevel;
+        [MTag("Mobile")][MOrder(1)]
+        [Monitor] private string _batteryStatus;
         
-        [Header("GPU")]
-        [SerializeField] private bool showGraphicsDeviceName = true;
-        [SerializeField] private bool showGraphicsDeviceType = true;
-        [SerializeField] private bool showGraphicsMemorySize = true;
-        [SerializeField] private bool showGraphicsMultiThreaded = false;
+        [MTag("Path")][MOrder(0)]
+        [Monitor] private string _dataPath;
+        [MTag("Path")][MOrder(0)]
+        [Monitor] private string _persistentDataPath;
+        [MTag("Path")][MOrder(0)]
+        [Monitor] private string _consoleLogPath;
+        [MTag("Path")][MOrder(0)]
+        [Monitor] private string _streamingAssetsPath;
+        [MTag("Path")][MOrder(0)]
+        [Monitor] private string _temporaryCachePath;
         
-        [Header("Battery")] 
-        [SerializeField] private bool showBatteryLevel = false;
-        [SerializeField] private bool showBatteryStatus = false;
-        
-        #endregion
-
-        #region --- Fields & Events ---
-
-        [Monitor]
-        [MLabel("System")]
-        [MUpdateEvent(nameof(DisplayConfigUpdated))]
-        [MOptions(UIPosition.LowerRight, GroupElement = false)]
-        [MFontName("JetBrainsMono-Regular")]
-        [MBackgroundColor(ColorPreset.TransparentBlack)]
-        [MGroupColor(ColorPreset.Transparent)]
-        private string _systemInfo;
-
-        private event Action DisplayConfigUpdated;
-
         #endregion
 
         #region --- Setup ---
 
-         private void OnValidate()
-        {
-            UpdateDisplay();
-        }
-
         private void Start()
         {
-            UpdateDisplay();
-        }
+            _operatingSystem = SystemInfo.operatingSystem;
+            _operatingSystemFamily = SystemInfo.operatingSystemFamily.ToString();
 
-        private void UpdateDisplay()
-        {
-            var sb = StringBuilderPool.Get();
-
-            var entries = new List<(string title, string value)>(30);
-
-            if (showOperatingSystem)
-            {
-                entries.Add(("Operating System", SystemInfo.operatingSystem));
-            }
-            if (showOperatingSystemFamily)
-            {
-                entries.Add(("Operating System Family", SystemInfo.operatingSystemFamily.ToString()));
-            }
-
-            if (showDeviceModel)
-            {
-                entries.Add(("Device Model", SystemInfo.deviceModel));
-            }
-            if (showDeviceName)
-            {
-                entries.Add(("Device Name", SystemInfo.deviceName));
-            }
-            if (showDeviceType)
-            {
-                entries.Add(("Device Type", SystemInfo.deviceType.ToString()));
-            }
+            _deviceModel = SystemInfo.deviceModel;
+            _deviceName = SystemInfo.deviceName;
+            _deviceType = SystemInfo.deviceType.ToString();
             
-            if (showProcessorType)
-            {
-                entries.Add(("Processor Type", SystemInfo.processorType));
-            }
-            if (showProcessorCount)
-            {
-                entries.Add(("Processor Count", SystemInfo.processorCount.ToString()));
-            }
-            if (showProcessorFrequency)
-            {
-                entries.Add(("Processor Frequency", SystemInfo.processorFrequency.ToString()));
-            }
-            
-            if (showSystemMemory)
-            {
-                entries.Add(("System Memory Size", SystemInfo.systemMemorySize.ToString("N0", CultureInfo.InvariantCulture) + " GB"));
-            }
-            
-            if(showGraphicsDeviceName)
-            {
-                entries.Add(("Graphics Device Name", SystemInfo.graphicsDeviceName));
-            }
-            if(showGraphicsDeviceType)
-            {
-                entries.Add(("Graphics Device Type", SystemInfo.graphicsDeviceType.ToString()));
-            }
-            if(showGraphicsMemorySize)
-            {
-                entries.Add(("Graphics Memory Size", SystemInfo.graphicsMemorySize.ToString("N0", CultureInfo.InvariantCulture) + " GB"));
-            }
-            if(showGraphicsMultiThreaded)
-            {
-                entries.Add(("Graphics Multi Threaded", SystemInfo.graphicsMultiThreaded.ToString()));
-            }
-            
-            if (showBatteryLevel)
-            {
-                entries.Add(("Battery Level", SystemInfo.batteryLevel.ToString(CultureInfo.InvariantCulture)));
-            }
-            if (showBatteryStatus)
-            {
-                entries.Add(("Battery Status", SystemInfo.batteryStatus.ToString()));
-            }
+            _processorType = SystemInfo.processorType;
+            _processorCount = SystemInfo.processorCount.ToString();
+            _processorFrequency = (SystemInfo.processorFrequency * .001f).ToString("0.00", CultureInfo.InvariantCulture) + "GHz";
 
-            var max = entries.Select(valueTuple => valueTuple.title.Length).Prepend(0).Max();
+            _systemMemory = SystemInfo.systemMemorySize.ToString("N0", CultureInfo.InvariantCulture) + " GB";
+            _graphicsDeviceName = SystemInfo.graphicsDeviceName;
+            _graphicsDeviceType = SystemInfo.graphicsDeviceType.ToString();
+            _graphicsMemorySize = SystemInfo.graphicsMemorySize.ToString("N0", CultureInfo.InvariantCulture) + " GB";
+            _graphicsMultiThreaded = SystemInfo.graphicsMultiThreaded.ToString();
 
-            foreach (var (title, value) in entries)
-            {
-                sb.Append('\n');
-                sb.Append(title);
-                sb.Append(':');
-                sb.Append(new string(' ', max + 1 - title.Length));
-                sb.Append(value);
-            }
+            _batteryLevel = SystemInfo.batteryLevel.ToString(CultureInfo.InvariantCulture);
+            _batteryStatus = SystemInfo.batteryStatus.ToString();
 
-            _systemInfo = StringBuilderPool.Release(sb);
-
-            DisplayConfigUpdated?.Invoke();
+            _dataPath = Application.dataPath;
+            _persistentDataPath = Application.persistentDataPath;
+            _consoleLogPath = Application.consoleLogPath;
+            _streamingAssetsPath = Application.streamingAssetsPath;
+            _temporaryCachePath = Application.temporaryCachePath;
         }
         
         #endregion

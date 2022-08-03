@@ -17,7 +17,7 @@ namespace Baracuda.Monitoring.API
     public static class MonitoringSystems
     {
         #region --- System Localization ---
-
+        
         private static readonly Dictionary<Type, object> systems = new Dictionary<Type, object>(8);
 
         [Pure]

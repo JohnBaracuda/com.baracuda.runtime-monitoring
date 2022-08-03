@@ -200,33 +200,24 @@ namespace Baracuda.Monitoring.Source.Systems
          */
 
         private static readonly Regex onlyLetter = new Regex(@"[^a-zA-Z0-9]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        
-        public void ApplyFilter(string filter)
-        {
-            ApplyFilterInternal(filter);
-        }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ApplyFilterInternal(string filterString)
+        public void ApplyFilter(string filterString)
         {
             _activeFilter = filterString;
             _ticker.ValidationTickEnabled = false;
             
+            //TODO: Expose to settings
             const char AND = '&';
-#if UNITY_2020_1_OR_NEWER
-            const char NOT = '!';
-            const char ABSOLUTE = '@';
-#else
             const string NOT = "!";
-            const string ABSOLUTE = "@";            
-#endif
+            const string ABSOLUTE = "@";
+            const string TAG = "$";
+
             var list = _manager.GetAllMonitoringUnits();
             var filters = filterString.Split(AND);
             
             for (var i = 0; i < list.Count; i++)
             {
                 var unit = list[i];
-                var tags = unit.Profile.Tags;
                 var unitEnabled = false;
                     
                 for (var filterIndex = 0; filterIndex < filters.Length; filterIndex++)
@@ -246,6 +237,28 @@ namespace Baracuda.Monitoring.Source.Systems
                         }
                         goto End;
                     }
+
+                    if (filterNoSpace.StartsWith(TAG))
+                    {
+                        var tagFilter = filterNoSpace.Substring(1);
+                        var customTags = unit.Profile.CustomTags;
+                        if (string.IsNullOrWhiteSpace(tagFilter))
+                        {
+                            goto End;
+                        }
+                        for (var tagIndex = 0; tagIndex < customTags.Length; tagIndex++)
+                        {
+                            var customTag = customTags[tagIndex];
+                            if (customTag.IndexOf(filterOnlyLetters, _settings.FilterComparison) < 0)
+                            {
+                                continue;
+                            }
+
+                            unitEnabled = true;
+                            goto End;
+                        }
+                        goto End;
+                    }
                         
                     if (unit.Name.IndexOf(filterOnlyLetters, _settings.FilterComparison) >= 0)
                     {
@@ -260,6 +273,7 @@ namespace Baracuda.Monitoring.Source.Systems
                     }
                     
                     // Filter with tags.
+                    var tags = unit.Profile.Tags;
                     for (var tagIndex = 0; tagIndex < tags.Length; tagIndex++)
                     {
                         if (tags[tagIndex].NoSpace().IndexOf(filterOnlyLetters, _settings.FilterComparison) < 0)
@@ -276,8 +290,8 @@ namespace Baracuda.Monitoring.Source.Systems
                 unit.Enabled = unitEnabled;
             }
         }
-        
-        
+
+
         public void ResetFilter()
         {
             _activeFilter = null;

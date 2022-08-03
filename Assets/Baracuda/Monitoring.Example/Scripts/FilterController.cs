@@ -14,7 +14,6 @@ namespace Baracuda.Monitoring.Example.Scripts
         [Header("UI")] 
         [SerializeField] private GameObject uiParent;
     
-    
         private void Awake()
         {
             _playerInput.InputModeChanged += OnToggleFilter;

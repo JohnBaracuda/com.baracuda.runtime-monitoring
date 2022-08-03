@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Modules
 {
+    [MTag("Console")]
     public class ConsoleMonitor : MonitorModuleBase
     {
         #region --- Static ---

@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
+    [MTag("PlayerState")]
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : MonitoredBehaviour
     {

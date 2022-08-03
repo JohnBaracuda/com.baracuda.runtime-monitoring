@@ -62,6 +62,11 @@ namespace Baracuda.Monitoring.API
         string[] Tags { get; }
         
         /// <summary>
+        /// String array that only contains custom tags applied with the tag attribute. 
+        /// </summary>
+        string[] CustomTags { get; }
+        
+        /// <summary>
         /// The monitoring profiler caches every additional attribute that inherits from MonitoringMetaAttribute on
         /// the profile. You can access these custom attributes during runtime using this method without the need of
         /// reflection code.
