@@ -719,7 +719,7 @@ Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#
 &nbsp;
 ## UI Formatting
 
-Use the following attributes to apply custom formatting.
+Formatting attributes can be used to apply custom styling options on how a monitored member is displayed. There are multiple ways to [reduce boiler plate code](#reducing-boiler-plate-code). 
 
  Attribute          | Description |     
 :-                  |:-     |      
@@ -756,10 +756,43 @@ private float pi = 3.14159265359;
 private float pi = 3.14159265359;
 ```
 
-You creating a custom attribute and inheriting from `MOptionsAttribute` will let you use the constructor of the custom attribute to set multiple values. The attribute can then be used on multiple monitored to apply its settings.
+### Reducing Boiler Plate Code
++ Creating a custom attribute and inheriting from `MOptionsAttribute` will let you use the constructor of the custom attribute to set multiple values. The attribute can then be used on multiple monitored members to apply its settings.
++ Any formatting or meta attribute applied to a class is also applied to every monitored member declared within it. Attributes directly applied to a member within such a class will always override the class scoped values meaning that you can still apply individual options to members within such a class. The `[MTag]` attribute is the only attribute that will is not overridden but added. This means that tags applied to a class scope will apply to every monitored member of that class even if these members have a custom tag attribute themselves.
+
+> The three code segments below effectively all do the same but with different approaches. 
 
 ```c#
-public class MCustomFormatting : MOptionsAttribute
+class MyClass 
+{
+	[Monitor]
+	[MFormat("0.000")]
+	[MFontSize(16)]
+	[MPosition(UIPosition.UpperRight)]
+	[MGroupElement(false)]
+	[MTag("Gameplay")]
+	pubic int value1;
+	
+	[Monitor]
+	[MFormat("0.000")]
+	[MFontSize(16)]
+	[MPosition(UIPosition.UpperRight)]
+	[MGroupElement(false)]
+	[MTag("Gameplay")]
+	pubic int value2;
+	
+	[Monitor]
+	[MFormat("0.000")]
+	[MFontSize(16)]
+	[MPosition(UIPosition.UpperRight)]
+	[MGroupElement(false)]
+	[MTag("Gameplay")]
+	pubic int value3;
+}
+```
+
+```c#
+public class MGameplayValues : MOptionsAttribute
 {
 	public MCustomFormatting()
 	{
@@ -767,44 +800,44 @@ public class MCustomFormatting : MOptionsAttribute
 		FontSize = 16;
 		Position = UIPosition.UpperRight;
 		GroupElement = false;
+		Tags = new string[] {"Gameplay"};
 	}
 }
 
-[Monitor]
-[MCustomFormatting]
-pubic int value1;
+class MyClass
+{
+	[Monitor]
+	[MGameplayValues]
+	pubic int value1;
+	
+	[Monitor]
+	[MGameplayValues]
+	pubic int value2;
+	
+	[Monitor]
+	[MGameplayValues]
+	pubic int value3;
+}
 
-[Monitor]
-[MCustomFormatting]
-pubic int value2;
+```
 
-[Monitor]
-[MCustomFormatting]
-pubic int value3;
-
-// The code above does the same as the code below.
-
-[Monitor]
+```c#
 [MFormat("0.000")]
 [MFontSize(16)]
 [MPosition(UIPosition.UpperRight)]
 [MGroupElement(false)]
-pubic int value1;
+[MTag("Gameplay")]
+class MyClass 
+{
+	[Monitor]
+	pubic int value1;
 
-[Monitor]
-[MFormat("0.000")]
-[MFontSize(16)]
-[MPosition(UIPosition.UpperRight)]
-[MGroupElement(false)]
-pubic int value2;
-
-[Monitor]
-[MFormat("0.000")]
-[MFontSize(16)]
-[MPosition(UIPosition.UpperRight)]
-[MGroupElement(false)]
-pubic int value3;
-
+	[Monitor]
+	pubic int value2;
+	
+	[Monitor]
+	pubic int value3;
+}
 ```
 
 ![example](https://johnbaracuda.com/media/img/monitoring/Example_formatting_01.png)
@@ -837,16 +870,22 @@ MonitoringSystems.Resolve<IMonitorUI>().ResetFilter();
 
 &nbsp;
 ### Absolute Filtering
-Append an `@` symbol to a filter for absolute filtering. Absolute filtering will always be case sensitive and only use the actual name of the monitored member. No other filters will be applied.
+Filter stating with a `@` are always case sensitive and only use the actual name of the monitored member.
+
+### Tag only Filtering
+Filter stating with a `$` only use tags applied with the custom `[MTag]` attribute. [more](#attributes)
 
 ### Combining Filters 
-Combine multiple filters with an logical OR `|` symbol.
+Use a  `&` symbol to combine multiple filters.
 
 ### Negation Filter
 Append an `!` to the beginning of a filter to negate it. 
 
 &nbsp;
-> I would recommend to use the example scene to test filtering in action. Press F5 when starting the example scene to open a simple filter text field. So far filtering does not support logical AND '&'
+You can change all of the symbols mentioned above in the monitoring settings by navigating to (menu: Tools > RuntimeMonitoring > Settings > Filtering).
+
+&nbsp;
+> This example shows a custom filtering setup in the example scene. I would recommend to test it yourself.
 
 
 
