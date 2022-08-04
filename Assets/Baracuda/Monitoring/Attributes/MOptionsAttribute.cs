@@ -94,6 +94,11 @@ namespace Baracuda.Monitoring
         /// Determine the background color for the group of the displayed value.
         /// </summary>
         public string GroupColor { get; set; }
+        
+        /// <summary>
+        /// Set optional tags for the monitored member.
+        /// </summary>
+        public string[] Tags { get; set; }
 
         /*
          * Monitoring Options   
@@ -128,6 +133,11 @@ namespace Baracuda.Monitoring
         public MOptionsAttribute(UIPosition position)
         {
             Position = position;
+        }
+        
+        public MOptionsAttribute(string[] tags)
+        {
+            Tags = tags;
         }
 
         public MOptionsAttribute()

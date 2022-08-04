@@ -85,6 +85,14 @@ namespace Baracuda.Monitoring.API
         [SerializeField] private bool filterTags = true;
         [Tooltip("Set the string comparison used for filtering. Absolute filtering is always case sensitive!")]
         [SerializeField] private StringComparison filterComparison = StringComparison.OrdinalIgnoreCase;
+        [Tooltip("Symbol can be used to combine multiple filters.")]
+        [SerializeField] private char filterAppendSymbol = '&';
+        [Tooltip("Symbol can be used to negate a filter.")]
+        [SerializeField] private char filterNegateSymbol = '!';
+        [Tooltip("Symbol can be used for absolute filtering, meaning that it is only searching for exact member names.")]
+        [SerializeField] private char filterAbsoluteSymbol = '@';
+        [Tooltip("Symbol can be used to tag filtering, meaning that it is only searching for custom tags.")]
+        [SerializeField] private char filterTagsSymbol = '$';
         
         #endregion
         
@@ -223,6 +231,10 @@ namespace Baracuda.Monitoring.API
         public bool FilterMemberType => filterMemberType;
         public bool FilterTags => filterTags;
         public StringComparison FilterComparison => filterComparison;
+        public char FilterAppendSymbol => filterAppendSymbol;
+        public char FilterNegateSymbol => filterNegateSymbol;
+        public char FilterAbsoluteSymbol => filterAbsoluteSymbol;
+        public char FilterTagsSymbol => filterTagsSymbol;
 
         /*
          * Formatting   

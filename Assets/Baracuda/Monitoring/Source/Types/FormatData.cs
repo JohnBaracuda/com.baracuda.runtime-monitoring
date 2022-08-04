@@ -92,7 +92,7 @@ namespace Baracuda.Monitoring.Source.Types
             
             var groupOrder = profile.TryGetMetaAttribute<MGroupOrderAttribute>(out var groupOrderAttribute)
                 ? groupOrderAttribute.Order
-                : optionsAttribute?.Order ?? 0;
+                : optionsAttribute?.GroupOrder ?? 0;
 
             var textColor = profile.TryGetMetaAttribute<MTextColorAttribute>(out var textColorAttribute)
                 ? textColorAttribute.ColorValue

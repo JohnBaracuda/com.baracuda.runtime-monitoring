@@ -139,6 +139,15 @@ namespace Baracuda.Monitoring.Source.Profiles
             if(settings.FilterTags)
             {
                 var customTags = ConcurrentListPool<string>.Get();
+                if (TryGetMetaAttribute<MOptionsAttribute>(out var optionsAttribute))
+                {
+                    foreach (var tag in optionsAttribute.Tags)
+                    {
+                        customTags.Add(tag);
+                        utility.AddTag(tag);
+                        tags.Add(tag);
+                    }
+                }
                 if (memberInfo.TryGetCustomAttribute<MTagAttribute>(out var memberTags))
                 {
                     foreach (var tag in memberTags.Tags)

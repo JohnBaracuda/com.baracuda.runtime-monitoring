@@ -52,5 +52,9 @@ namespace Baracuda.Monitoring.API
         bool FilterMemberType  { get; }
         bool FilterTags  { get; }
         StringComparison FilterComparison { get; }
+        char FilterAppendSymbol { get; }
+        char FilterNegateSymbol { get; }
+        char FilterAbsoluteSymbol { get; }
+        char FilterTagsSymbol { get; }
     }
 }

@@ -206,14 +206,19 @@ namespace Baracuda.Monitoring.Source.Systems
             _activeFilter = filterString;
             _ticker.ValidationTickEnabled = false;
             
-            //TODO: Expose to settings
-            const char AND = '&';
-            const string NOT = "!";
-            const string ABSOLUTE = "@";
-            const string TAG = "$";
+            var and = _settings.FilterAppendSymbol;
+#if UNITY_2020_1_OR_NEWER
+            var not = _settings.FilterNegateSymbol;
+            var absolute = _settings.FilterAbsoluteSymbol;
+            var tag = _settings.FilterTagsSymbol;
+#else
+            var not = _settings.FilterNegateSymbol.ToString();
+            var absolute = _settings.FilterAbsoluteSymbol.ToString();
+            var tag = _settings.FilterTagsSymbol.ToString();
+#endif
 
             var list = _manager.GetAllMonitoringUnits();
-            var filters = filterString.Split(AND);
+            var filters = filterString.Split(and);
             
             for (var i = 0; i < list.Count; i++)
             {
@@ -226,9 +231,9 @@ namespace Baracuda.Monitoring.Source.Systems
                     var filterOnlyLetters = onlyLetter.Replace(filter, string.Empty);
                     var filterNoSpace = filter.NoSpace();
                     
-                    unitEnabled = filterNoSpace.StartsWith(NOT);
+                    unitEnabled = filterNoSpace.StartsWith(not);
                     
-                    if (filterNoSpace.StartsWith(ABSOLUTE))
+                    if (filterNoSpace.StartsWith(absolute))
                     {
                         var absoluteFilter = filterNoSpace.Substring(1);
                         if (unit.Name.StartsWith(absoluteFilter))
@@ -238,7 +243,7 @@ namespace Baracuda.Monitoring.Source.Systems
                         goto End;
                     }
 
-                    if (filterNoSpace.StartsWith(TAG))
+                    if (filterNoSpace.StartsWith(tag))
                     {
                         var tagFilter = filterNoSpace.Substring(1);
                         var customTags = unit.Profile.CustomTags;
@@ -262,13 +267,13 @@ namespace Baracuda.Monitoring.Source.Systems
                         
                     if (unit.Name.IndexOf(filterOnlyLetters, _settings.FilterComparison) >= 0)
                     {
-                        unitEnabled = !filterNoSpace.StartsWith(NOT);
+                        unitEnabled = !filterNoSpace.StartsWith(not);
                         goto End;
                     }
                     
                     if (unit.TargetName.IndexOf(filterOnlyLetters, _settings.FilterComparison) >= 0)
                     {
-                        unitEnabled = !filterNoSpace.StartsWith(NOT);
+                        unitEnabled = !filterNoSpace.StartsWith(not);
                         goto End;
                     }
                     
@@ -281,7 +286,7 @@ namespace Baracuda.Monitoring.Source.Systems
                             continue;
                         }
 
-                        unitEnabled = !filterNoSpace.StartsWith(NOT);
+                        unitEnabled = !filterNoSpace.StartsWith(not);
                         goto End;
                     }
                 }

@@ -62,6 +62,10 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _filterMemberType;
         private SerializedProperty _filterTags;
         private SerializedProperty _filterComparison;
+        private SerializedProperty _filterAppendSymbol;
+        private SerializedProperty _filterNegateSymbol;
+        private SerializedProperty _filterAbsoluteSymbol;
+        private SerializedProperty _filterTagsSymbol;
         
         private SerializedProperty _trueColor;
         private SerializedProperty _falseColor;
@@ -207,6 +211,11 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_filterTags);
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_filterComparison);
+                EditorGUILayout.Space();
+                EditorGUILayout.PropertyField(_filterAppendSymbol);
+                EditorGUILayout.PropertyField(_filterNegateSymbol);
+                EditorGUILayout.PropertyField(_filterAbsoluteSymbol);
+                EditorGUILayout.PropertyField(_filterTagsSymbol);
                 EditorGUILayout.Space();
             }
             
