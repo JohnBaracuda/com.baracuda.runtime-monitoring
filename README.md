@@ -15,11 +15,11 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 ## Table of Contents
 
 - [Getting started](#getting-started)
+ 	- [Import & Update](#import-and-update)
 	- [Setup](#setup)
 	- [License](#license)
 	- [Technical Information](#technical-information)
 	- [Feature List](#features)
-	- [Import & Update](#import-and-update)
 - [Monitoring Member](#monitoring-member)
 	- [Instanced & Static Member](#instanced-and-static-member)
 	- [Monitoring Fields & Properties](#monitoring-fields-and-properties)
@@ -141,6 +141,19 @@ public class Player : MonoBehaviour
 
 
 
+
+&nbsp;
+## Import and Update
+
+Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. You can also download this asset from the [Asset Store!](https://u3d.as/2QxJ). Take a look at [Setup](#setup) instructions for more information how to import optional packages. (spoiler: via the settings window)
+
+#### ⚠️ Important for version updates!
+>  When updating from an older version of this tool it is recommended to perform a clean update. Delete the Baracuda folder and import this asset again. Be aware that this may temporarily cause compile errors. To maintain compatibility when upgrading from an older version multiple files are contained in a special assembly named Assembly-Baracuda-Obsolete. This assembly and all of its contents can be deleted after a successful import. Obsolete files are located at (Baracuda/Monitoring/Internal) & (Baracuda/Monitoring/Interface)
+
+
+
+
+
 &nbsp;
 ## Setup
 Download and import Runtime Monitoring. To setup a different UI Controller (IMGUI, TMP or UIToolkit) follow these optional steps:
@@ -196,14 +209,6 @@ Download and import Runtime Monitoring. To setup a different UI Controller (IMGU
 + Many more features. 
 
 
-
-
-&nbsp;
-## Import and Update
-
-Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. You can also download this asset from the [Asset Store!](https://u3d.as/2QxJ). Take a look at [Setup](#setup) instructions for more information how to import optional packages. (spoiler: via the settings window)
-
-> ⚠️ If you are updating from an older version of this tool, I would advise to perform a clean update. Delete the Baracuda folder and import this asset again. Be aware that this may temporarily cause compile errors. You could also remove every usage of this tool before. 
 
 
 
@@ -872,12 +877,12 @@ class MyClass
 ```
 
 When applying multiple formatting attributes either directly on the monitored member or via proxy, it may happen that the same attribute is applied with different values. In this case there is a clear structure which attribute will be used. 
-+ 1. Directly applied to the monitored member.
-+ 2. Applied to the monitored member by `[MOptions]`
-+ 3. Applied to the monitored member by a custom `[MAttributeCollection]` 
-+ 4. Directly applied to the monitored members class.
-+ 5. Applied to the monitored members class by `[MOptions]`
-+ 6. Applied to the monitored members class by a custom `[MAttributeCollection]` 
+1. Directly applied to the monitored member.
+2. Applied to the monitored member by `[MOptions]`
+3. Applied to the monitored member by a custom `[MAttributeCollection]` 
+4. Directly applied to the monitored members class.
+5. Applied to the monitored members class by `[MOptions]`
+6. Applied to the monitored members class by a custom `[MAttributeCollection]` 
 
 ![example](https://johnbaracuda.com/media/img/monitoring/Example_formatting_01.png)
 
@@ -925,6 +930,8 @@ You can change all of the symbols mentioned above in the monitoring settings by 
 
 &nbsp;
 > This example shows a custom filtering setup in the example scene. I would recommend to test it yourself.
+
+![example](https://johnbaracuda.com/media/img/monitoring/Example_filter_01.png)
 
 
 
