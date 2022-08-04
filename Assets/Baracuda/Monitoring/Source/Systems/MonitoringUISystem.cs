@@ -207,15 +207,9 @@ namespace Baracuda.Monitoring.Source.Systems
             _ticker.ValidationTickEnabled = false;
             
             var and = _settings.FilterAppendSymbol;
-#if UNITY_2020_1_OR_NEWER
-            var not = _settings.FilterNegateSymbol;
-            var absolute = _settings.FilterAbsoluteSymbol;
-            var tag = _settings.FilterTagsSymbol;
-#else
             var not = _settings.FilterNegateSymbol.ToString();
             var absolute = _settings.FilterAbsoluteSymbol.ToString();
             var tag = _settings.FilterTagsSymbol.ToString();
-#endif
 
             var list = _manager.GetAllMonitoringUnits();
             var filters = filterString.Split(and);

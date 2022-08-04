@@ -1,4 +1,6 @@
-﻿using UnityEngine.UIElements;
+﻿// Copyright (c) 2022 Jonathan Lang
+
+using UnityEngine.UIElements;
 
 namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 {

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿// Copyright (c) 2022 Jonathan Lang
+
+using System.Collections.Generic;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Types;
 using UnityEngine;
 using UnityEngine.UI;
 
