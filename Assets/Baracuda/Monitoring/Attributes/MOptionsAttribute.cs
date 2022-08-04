@@ -94,11 +94,11 @@ namespace Baracuda.Monitoring
         /// Determine the background color for the group of the displayed value.
         /// </summary>
         public string GroupColor { get; set; }
-        
+
         /// <summary>
         /// Set optional tags for the monitored member.
         /// </summary>
-        public string[] Tags { get; set; }
+        public string[] Tags { get; set; } = Array.Empty<string>();
 
         /*
          * Monitoring Options   

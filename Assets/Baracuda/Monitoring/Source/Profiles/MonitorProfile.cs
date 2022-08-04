@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
@@ -72,8 +73,20 @@ namespace Baracuda.Monitoring.Source.Profiles
             IsStatic = intFlag.HasFlag32((int) BindingFlags.Static);
 
             var settings = args.Settings;
+            var memberAttributeCollectionType = memberInfo.GetCustomAttribute<MAttributeCollection>(true)?.GetType();
+            var classAttributeCollectionType = declaringType.GetCustomAttribute<MAttributeCollection>(true)?.GetType();
             
+            // Member
             foreach (var metaAttribute in memberInfo.GetCustomAttributes<MonitoringMetaAttribute>(true))
+            {
+                var key = metaAttribute is MOptionsAttribute ? typeof(MOptionsAttribute) : metaAttribute.GetType();
+                if (!_metaAttributes.ContainsKey(key))
+                {
+                    _metaAttributes.Add(key, metaAttribute);
+                }
+            }
+            // Member attribute collection
+            foreach (var metaAttribute in memberAttributeCollectionType?.GetCustomAttributes<MonitoringMetaAttribute>(true) ?? Enumerable.Empty<MonitoringMetaAttribute>())
             {
                 var key = metaAttribute is MOptionsAttribute ? typeof(MOptionsAttribute) : metaAttribute.GetType();
                 if (!_metaAttributes.ContainsKey(key))
@@ -83,6 +96,15 @@ namespace Baracuda.Monitoring.Source.Profiles
             }
             // Class scoped.
             foreach (var metaAttribute in declaringType.GetCustomAttributes<MonitoringMetaAttribute>(true))
+            {
+                var key = metaAttribute is MOptionsAttribute ? typeof(MOptionsAttribute) : metaAttribute.GetType();
+                if (!_metaAttributes.ContainsKey(key))
+                {
+                    _metaAttributes.Add(key, metaAttribute);
+                }
+            }
+            // Class attribute collection.
+            foreach (var metaAttribute in classAttributeCollectionType?.GetCustomAttributes<MonitoringMetaAttribute>(true) ?? Enumerable.Empty<MonitoringMetaAttribute>())
             {
                 var key = metaAttribute is MOptionsAttribute ? typeof(MOptionsAttribute) : metaAttribute.GetType();
                 if (!_metaAttributes.ContainsKey(key))
