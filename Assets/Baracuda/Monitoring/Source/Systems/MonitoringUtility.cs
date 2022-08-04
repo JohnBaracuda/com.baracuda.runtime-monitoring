@@ -14,6 +14,7 @@ namespace Baracuda.Monitoring.Source.Systems
     {
         private readonly IMonitoringManager _monitoringManager;
         private readonly HashSet<string> _tags = new HashSet<string>();
+        private readonly HashSet<string> _typeStrings = new HashSet<string>();
 
         internal MonitoringUtility(IMonitoringManager monitoringManager)
         {
@@ -37,6 +38,11 @@ namespace Baracuda.Monitoring.Source.Systems
         public void AddTag(string tag)
         {
             _tags.Add(tag);
+        }
+
+        public void AddTypeString(string typeString)
+        {
+            _typeStrings.Add(typeString);
         }
 
         //--------------------------------------------------------------------------------------------------------------
@@ -70,6 +76,11 @@ namespace Baracuda.Monitoring.Source.Systems
         public IReadOnlyCollection<string> GetAllTags()
         {
             return _tags;
+        }
+        
+        public IReadOnlyCollection<string> GetAllTypeStrings()
+        {
+            return _typeStrings;
         }
     }
 }

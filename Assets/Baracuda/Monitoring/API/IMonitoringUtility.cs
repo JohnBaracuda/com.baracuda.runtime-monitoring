@@ -23,5 +23,7 @@ namespace Baracuda.Monitoring.API
         /// Get a list of all custom tags, applied by [MTag] attributes that can be used for filtering. 
         /// </summary>
         [Pure] IReadOnlyCollection<string> GetAllTags();
+        
+        [Pure] IReadOnlyCollection<string> GetAllTypeStrings();
     }
 }

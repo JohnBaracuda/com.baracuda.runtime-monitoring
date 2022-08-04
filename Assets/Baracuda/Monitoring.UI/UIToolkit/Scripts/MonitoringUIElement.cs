@@ -16,7 +16,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
         #region --- Fields: Instance & Static ---
 
         private static readonly Dictionary<object, VisualElement> objectGroups = new Dictionary<object, VisualElement>();
-        private static readonly Dictionary<Type, VisualElement> typeGroups = new Dictionary<Type, VisualElement>();
+        private static readonly Dictionary<string, VisualElement> namedGroups = new Dictionary<string, VisualElement>();
 
         private static IMonitoringSettings Settings =>
             settings != null ? settings : settings = MonitoringSystems.Resolve<IMonitoringSettings>();
@@ -134,50 +134,98 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
             if (profile.FormatData.AllowGrouping)
             {
-                if (!objectGroups.TryGetValue(monitorUnit.Target, out _parent))
+                if (!string.IsNullOrWhiteSpace(profile.FormatData.Group))
                 {
-                    // Add styles to parent
-                    _parent = new OrderedVisualElement
+                    if (!namedGroups.TryGetValue(profile.FormatData.Group, out _parent))
                     {
-                        Order = profile.FormatData.GroupOrder,
-                        pickingMode = PickingMode.Ignore,
-                        style =
+                        // Add styles to parent
+                        _parent = new OrderedVisualElement
                         {
-                            unityTextAlign = style.unityTextAlign
+                            Order = profile.FormatData.GroupOrder,
+                            pickingMode = PickingMode.Ignore,
+                            style =
+                            {
+                                unityTextAlign = style.unityTextAlign
+                            }
+                        };
+                        for (var i = 0; i < provider.InstanceGroupStyles.Length; i++)
+                        {
+                            _parent.AddToClassList(provider.InstanceGroupStyles[i]);
                         }
-                    };
-                    for (var i = 0; i < provider.InstanceGroupStyles.Length; i++)
-                    {
-                        _parent.AddToClassList(provider.InstanceGroupStyles[i]);
+
+                        // Add styles to label
+                        var label = new Label($"{profile.FormatData.Group}");
+
+                        for (var i = 0; i < provider.InstanceLabelStyles.Length; i++)
+                        {
+                            label.AddToClassList(provider.InstanceLabelStyles[i]);
+                        }
+
+                        _parent.Add(label);
+                        rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(_parent);
+                        namedGroups.Add(profile.FormatData.Group, _parent);
                     }
 
-                    // Add styles to label
-                    var label = new Label($"{profile.DeclaringType.Name} | {monitorUnit.TargetName}");
-
-                    for (var i = 0; i < provider.InstanceLabelStyles.Length; i++)
+                    _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
+                    _parent.Add(this);
+                    
+                    if (_parent is OrderedVisualElement orderParent && profile.FormatData.GroupOrder != 0)
                     {
-                        label.AddToClassList(provider.InstanceLabelStyles[i]);
+                        orderParent.Order = profile.FormatData.GroupOrder;
+                    }
+                    
+                    if (profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute))
+                    {
+                        _parent.style.backgroundColor = new StyleColor(groupColorAttribute.ColorValue);
+                    }
+                    _parent.Sort(_comparison);
+                }
+                else
+                {
+                    if (!objectGroups.TryGetValue(monitorUnit.Target, out _parent))
+                    {
+                        // Add styles to parent
+                        _parent = new OrderedVisualElement
+                        {
+                            Order = profile.FormatData.GroupOrder,
+                            pickingMode = PickingMode.Ignore,
+                            style =
+                            {
+                                unityTextAlign = style.unityTextAlign
+                            }
+                        };
+                        for (var i = 0; i < provider.InstanceGroupStyles.Length; i++)
+                        {
+                            _parent.AddToClassList(provider.InstanceGroupStyles[i]);
+                        }
+
+                        // Add styles to label
+                        var label = new Label($"{profile.DeclaringType.Name} | {monitorUnit.TargetName}");
+
+                        for (var i = 0; i < provider.InstanceLabelStyles.Length; i++)
+                        {
+                            label.AddToClassList(provider.InstanceLabelStyles[i]);
+                        }
+
+                        _parent.Add(label);
+                        rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(_parent);
+                        objectGroups.Add(monitorUnit.Target, _parent);
                     }
 
-                    _parent.Add(label);
-                    rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(_parent);
-                    objectGroups.Add(monitorUnit.Target, _parent);
+                    _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
+                    _parent.Add(this);
+                    
+                    if (_parent is OrderedVisualElement orderParent && profile.FormatData.GroupOrder != 0)
+                    {
+                        orderParent.Order = profile.FormatData.GroupOrder;
+                    }
+                    
+                    if (profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute))
+                    {
+                        _parent.style.backgroundColor = new StyleColor(groupColorAttribute.ColorValue);
+                    }
+                    _parent.Sort(_comparison);
                 }
-
-                _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
-                _parent.Add(this);
-                
-                if (_parent is OrderedVisualElement orderParent && profile.FormatData.GroupOrder != 0)
-                {
-                    orderParent.Order = profile.FormatData.GroupOrder;
-                }
-                
-                if (profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute))
-                {
-                    _parent.style.backgroundColor = new StyleColor(groupColorAttribute.ColorValue);
-                }
-                
-                _parent.Sort(_comparison);
             }
             else
             {
@@ -210,7 +258,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
             if (profile.FormatData.AllowGrouping)
             {
-                if (!typeGroups.TryGetValue(profile.DeclaringType, out _parent))
+                if (!namedGroups.TryGetValue(profile.FormatData.Group, out _parent))
                 {
                     // Add styles to parent
                     _parent = new OrderedVisualElement
@@ -236,7 +284,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
                     _parent.Add(label);
                     rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(_parent);
-                    typeGroups.Add(profile.DeclaringType, _parent);
+                    namedGroups.Add(profile.FormatData.Group, _parent);
                 }
                 
                 _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
@@ -274,17 +322,18 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
             _parent = null;
 
             RemoveFromHierarchy();
-            
-            // Because the unit could have been the only unit in a group we have to check for that case and remove the group if necessary. 
-            if (typeGroups.TryGetValue(Unit.Profile.DeclaringType, out _parent))
+
+            if (Unit.Profile.FormatData.Group != null)
             {
-                if (_parent.childCount <= 1)
+                if (namedGroups.TryGetValue(Unit.Profile.FormatData.Group, out _parent))
                 {
-                    _parent.RemoveFromHierarchy();
-                    typeGroups.Remove(Unit.Profile.DeclaringType);
+                    if (_parent.childCount <= 1)
+                    {
+                        _parent.RemoveFromHierarchy();
+                        namedGroups.Remove(Unit.Profile.FormatData.Group);
+                    }
                 }
             }
-            
             if  (objectGroups.TryGetValue(Unit.Target, out _parent) && _parent.childCount <= 1)
             {
                 _parent.RemoveFromHierarchy();

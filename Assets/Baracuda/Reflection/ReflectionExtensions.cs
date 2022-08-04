@@ -1078,12 +1078,6 @@ namespace Baracuda.Reflection
             }
         }
         
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ToHumanizedString(this MemberInfo member)
-        {
-            return $"{member.Name} in {member.DeclaringType?.Name}";
-        }
-
         #endregion
         
 

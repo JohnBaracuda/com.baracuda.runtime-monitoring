@@ -65,7 +65,7 @@ namespace Baracuda.Monitoring.Source.Systems
         public void BeginProfiling(CancellationToken ct)
         {
             _settings = MonitoringSystems.Resolve<IMonitoringSettings>();
-
+            
             if (_settings.AsyncProfiling)
             {
                 Task.Run(() => BeginProfilingAsync(ct), ct);

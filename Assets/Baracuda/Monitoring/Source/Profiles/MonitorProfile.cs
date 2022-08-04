@@ -155,7 +155,9 @@ namespace Baracuda.Monitoring.Source.Profiles
             
             if(settings.FilterType)
             {
-                tags.Add(MonitoredMemberType.Name.ToTypeKeyWord());
+                var readableString = MonitoredMemberType.ToReadableTypeString();
+                tags.Add(readableString);
+                utility.AddTypeString(readableString);
             }
             
             if(settings.FilterTags)

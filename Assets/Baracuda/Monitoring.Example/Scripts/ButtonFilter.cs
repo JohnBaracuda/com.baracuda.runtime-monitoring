@@ -10,9 +10,18 @@ namespace Baracuda.Monitoring.Example.Scripts
     public class ButtonFilter : MonoBehaviour
     {
         [SerializeField] private bool isReset;
-        
-        private IMonitoringUI _monitoringUI;
+
+        public string Filter
+        {
+            get => _filter;
+            set
+            {
+                _filter = value;
+                GetComponentInChildren<Text>().text = _filter;
+            }
+        }
         private string _filter;
+        private IMonitoringUI _monitoringUI;
         
         private void Awake()
         {
@@ -27,7 +36,7 @@ namespace Baracuda.Monitoring.Example.Scripts
             }
             else
             {
-                button.onClick.AddListener(() => _monitoringUI.ApplyFilter(_filter));
+                button.onClick.AddListener(() => _monitoringUI.ApplyFilter(Filter));
             }
         }
     }

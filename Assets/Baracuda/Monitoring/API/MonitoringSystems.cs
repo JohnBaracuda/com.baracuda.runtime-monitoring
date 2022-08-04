@@ -75,8 +75,18 @@ namespace Baracuda.Monitoring.API
             Register<IMonitoringPlugin>(new MonitoringPluginData());
             Register<IMonitoringSettings>(settings);
             Register<IMonitoringLogger>(new MonitoringLogging(settings));
+            
+#if !UNITY_EDITOR
+            var ticker = new MonitoringTicker(manager);
+            Register<IMonitoringTicker>(ticker);
+            Register<IMonitoringUI>(new MonitoringUISystem(manager, settings, ticker));
+            Register<IValueProcessorFactory>(new ValueProcessorFactory(settings));
+            Register<IValidatorFactory>(new ValidatorFactory());
+            Register<IMonitoringProfiler>(new MonitoringProfiler()).BeginProfiling(Dispatcher.RuntimeToken);
+#endif
         }
 
+#if UNITY_EDITOR
         /// <summary>
         /// Install runtime systems. (Ticker etc.)
         /// </summary>
@@ -101,6 +111,7 @@ namespace Baracuda.Monitoring.API
         {
             Register<IMonitoringProfiler>(new MonitoringProfiler()).BeginProfiling(Dispatcher.RuntimeToken);
         }
+#endif
         
         #endregion
     }

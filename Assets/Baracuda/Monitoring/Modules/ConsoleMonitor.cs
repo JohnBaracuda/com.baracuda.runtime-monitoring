@@ -103,12 +103,20 @@ namespace Baracuda.Monitoring.Modules
 
         #region --- Message Log Caching ---
  
+#if UNITY_WEBGL
+        static ConsoleMonitor()
+        {
+            Application.logMessageReceivedThreaded -= OnLogMessageReceived;
+            Application.logMessageReceivedThreaded += OnLogMessageReceived;
+        }
+#else
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Setup()
         {
             Application.logMessageReceivedThreaded -= OnLogMessageReceived;
             Application.logMessageReceivedThreaded += OnLogMessageReceived;
         }
+#endif
 
         private static void OnLogMessageReceived(string condition, string stacktrace, LogType type)
         {

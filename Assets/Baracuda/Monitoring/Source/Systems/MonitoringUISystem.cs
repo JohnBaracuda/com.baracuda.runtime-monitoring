@@ -199,7 +199,7 @@ namespace Baracuda.Monitoring.Source.Systems
          * Filtering   
          */
 
-        private static readonly Regex onlyLetter = new Regex(@"[^a-zA-Z0-9]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex onlyLetter = new Regex(@"[^a-zA-Z0-9<>_]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public void ApplyFilter(string filterString)
         {

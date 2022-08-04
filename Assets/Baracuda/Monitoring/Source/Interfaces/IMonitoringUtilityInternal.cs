@@ -8,5 +8,6 @@ namespace Baracuda.Monitoring.Source.Interfaces
     {
         void AddFontHash(int fontHash);
         void AddTag(string tag);
+        void AddTypeString(string typeString);
     }
 }

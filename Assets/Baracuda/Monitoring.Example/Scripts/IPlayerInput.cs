@@ -23,6 +23,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         bool SecondaryFirePressed { get; }
 
         bool DashPressed { get; }
+        event Action ToggleMonitoring;
         event Action<InputMode> InputModeChanged;
         event Action ClearConsole;
     }

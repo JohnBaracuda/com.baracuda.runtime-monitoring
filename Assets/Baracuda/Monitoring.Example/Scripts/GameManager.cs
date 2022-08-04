@@ -36,35 +36,39 @@ namespace Baracuda.Monitoring.Example.Scripts
         [SerializeField] [Range(0,4)] private int vsyncCount = 0;
         [SerializeField] private bool logInit = false;
         
+        
         protected override void Awake()
         {
             base.Awake();
-            
+#if !UNITY_WEBGL
             QualitySettings.vSyncCount = vsyncCount;
             Application.targetFrameRate = maxFrameRate;
+#endif
 
             if (logInit)
             {
                 Debug.Log($"Setting vSync to [{QualitySettings.vSyncCount}]!", this);
                 Debug.Log($"Setting target frame rate to [{Application.targetFrameRate}]!", this);
             }
-            
-            PlayerState.OnPlayerDeath += delegate
-            {
-                StartCoroutine(PlayerDied());
-            };
         }
 
         private IEnumerator Start()
         {
+            PlayerState.OnPlayerDeath += delegate
+            {
+                StartCoroutine(PlayerDied());
+            };
+            
             yield return new WaitForSeconds(3);
             
-            Debug.Log("[Tip] Press F3 to toggle the monitoring display.");
+            Debug.Log($"[Tip] Press [{LegacyPlayerInput.ToggleMonitoringKey}] to toggle the monitoring display.");
             
             yield return new WaitForSeconds(3);
             
-            Debug.Log("[Tip] Press F5 to open a filtering input field.");
+            Debug.Log($"[Tip] Press [{LegacyPlayerInput.ToggleFilterKey}] to open a filtering input field.");
         }
+        
+        
 
         private IEnumerator PlayerDied()
         {
