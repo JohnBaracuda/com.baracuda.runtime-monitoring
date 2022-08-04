@@ -404,19 +404,20 @@ Use Attributes to customize the monitoring process & display of your member. The
 `[MOptions]`  | Contains (almost) all of the options below. |
 `[MFormat]`  | Custom format string used to display the members value if possible.|
 `[MLabel]`  | Custom label for the member (otherwise humanized name).|
-`[MFontSize]`  | Set the font size for the element.|
-`[MFontName]`           | Pass the name of a custom font style that will be used for the target member.|
-`[MGroupName]`           | Set the group for the element. |
-`[MGroupElement]`           | Whether or not the unit should be wrapped in an object or type group. |
-`[MShowIndexer]`  | If the member is a collection, determine if the index of individual elements should be displayed or not. |
+`[MFontSize]`  | Set the font size for the monitored member.|
+`[MFontName]`           | Pass the name of a custom font style that will be used for the monitored member.|
+`[MGroupName]`           | Set the group for the monitored member. |
+`[MGroupElement]`           | Whether or not the monitored member should be wrapped in a group. |
+`[MShowIndexer]`  | If the monitored member is a collection, determine if the index of individual elements should be displayed or not. |
 `[MElementIndent]`  | The indent of individual elements of a displayed collection. |
-`[MPosition]`  | The preferred position of an individual UIElement on the canvas. |
+`[MPosition]`  | The preferred position of an individual monitored member on the canvas. |
 `[MTextAlign]`  | Horizontal text align. |
-`[MOrder]`          | Relative vertical order of the displayed element. |
+`[MOrder]`          | Relative vertical order of the monitored member. |
+`[MGroupOrder]`          | Relative vertical order of the group of the monitored member. |
 `[MRichText]`          | Override local RichText settings. |
 `[MTextColor]`      | Set the text color for the element. |
-`[MBackgroundColor]`| Set the background color for the element. |
-`[MGroupColor]`     | Set the background color for the elements group. |
+`[MBackgroundColor]`| Set the background color for the monitored member. |
+`[MGroupColor]`     | Set the background color for the group of the monitored member. |
 `[MStyle]`          | UIToolkit only. Provide optional style names. |
 
 ### Other Attributes
@@ -726,20 +727,22 @@ Formatting attributes can be used to apply custom styling options on how a monit
 `[MOptions]`  | Contains (almost) all of the options below. |
 `[MFormat]`  | Custom format string used to display the members value if possible.|
 `[MLabel]`  | Custom label for the member (otherwise humanized name).|
-`[MFontSize]`  | Set the font size for the element.|
-`[MFontName]`           | Pass the name of a custom font style that will be used for the target member.|
-`[MGroupName]`           | Set the group for the element. |
-`[MGroupElement]`           | Whether or not the unit should be wrapped in an object or type group. |
-`[MShowIndexer]`  | If the member is a collection, determine if the index of individual elements should be displayed or not. |
+`[MFontSize]`  | Set the font size for the monitored member.|
+`[MFontName]`           | Pass the name of a custom font style that will be used for the monitored member.|
+`[MGroupName]`           | Set the group for the monitored member. |
+`[MGroupElement]`           | Whether or not the monitored member should be wrapped in a group. |
+`[MShowIndexer]`  | If the monitored member is a collection, determine if the index of individual elements should be displayed or not. |
 `[MElementIndent]`  | The indent of individual elements of a displayed collection. |
-`[MPosition]`  | The preferred position of an individual UI element on the canvas. |
+`[MPosition]`  | The preferred position of an individual monitored member on the canvas. |
 `[MTextAlign]`  | Horizontal text align. |
-`[MOrder]`          | Relative vertical order of the displayed element. |
+`[MOrder]`          | Relative vertical order of the monitored member. |
+`[MGroupOrder]`          | Relative vertical order of the group of the monitored member. |
 `[MRichText]`          | Override local RichText settings. |
 `[MTextColor]`      | Set the text color for the element. |
-`[MBackgroundColor]`| Set the background color for the element. |
-`[MGroupColor]`     | Set the background color for the elements group. |
+`[MBackgroundColor]`| Set the background color for the monitored member. |
+`[MGroupColor]`     | Set the background color for the group of the monitored member. |
 `[MStyle]`          | UIToolkit only. Provide optional style names. |
+`[MAttributeCollection]`  | Can be used to create custom preset attributes to reduce boiler plate code. |
 
 The `[MOptions]` attribute contains almost all of the other options. Individual attributes will override settings passed with the `[MOptions]` attribute but depending on you preferences you can either use multiple attributes or just the `[MOptions]` attribute.
 
@@ -759,8 +762,9 @@ private float pi = 3.14159265359;
 ### Reducing Boiler Plate Code
 + Creating a custom attribute and inheriting from `MOptionsAttribute` will let you use the constructor of the custom attribute to set multiple values. The attribute can then be used on multiple monitored members to apply its settings.
 + Any formatting or meta attribute applied to a class is also applied to every monitored member declared within it. Attributes directly applied to a member within such a class will always override the class scoped values meaning that you can still apply individual options to members within such a class. The `[MTag]` attribute is the only attribute that will is not overridden but added. This means that tags applied to a class scope will apply to every monitored member of that class even if these members have a custom tag attribute themselves.
++ Any formatting or meta attribute applied to a custom attribute that inherits from `[MAttributeCollection]`  will be added to monitored member with that custom attribute. This is a similar way like the fist option of this list but does not require overriding a constructor. It acts more like a bridge or proxy.
 
-> The three code segments below effectively all do the same but with different approaches. 
+> The code segments below all do the same but with different approaches. 
 
 ```c#
 class MyClass 
@@ -792,9 +796,9 @@ class MyClass
 ```
 
 ```c#
-public class MGameplayValues : MOptionsAttribute
+public class MyFromatting : MOptionsAttribute
 {
-	public MCustomFormatting()
+	public MyFromatting()
 	{
 		Format = "0.00";
 		FontSize = 16;
@@ -807,18 +811,45 @@ public class MGameplayValues : MOptionsAttribute
 class MyClass
 {
 	[Monitor]
-	[MGameplayValues]
+	[MyFromatting]
 	pubic int value1;
 	
 	[Monitor]
-	[MGameplayValues]
+	[MyFromatting]
 	pubic int value2;
 	
 	[Monitor]
-	[MGameplayValues]
+	[MyFromatting]
 	pubic int value3;
 }
 
+```
+
+```c#
+
+[MFormat("0.000")]
+[MFontSize(16)]
+[MPosition(UIPosition.UpperRight)]
+[MGroupElement(false)]
+[MTag("Gameplay")]
+class MyFromatting : MAttributeCollection
+{
+}
+
+class MyClass 
+{
+	[Monitor]
+	[MyFromatting]
+	pubic int value1;
+	
+	[Monitor]
+	[MyFromatting]
+	pubic int value2;
+	
+	[Monitor]
+	[MyFromatting]
+	pubic int value3;
+}
 ```
 
 ```c#
@@ -839,6 +870,14 @@ class MyClass
 	pubic int value3;
 }
 ```
+
+When applying multiple formatting attributes either directly on the monitored member or via proxy, it may happen that the same attribute is applied with different values. In this case there is a clear structure which attribute will be used. 
++ 1. Directly applied to the monitored member.
++ 2. Applied to the monitored member by `[MOptions]`
++ 3. Applied to the monitored member by a custom `[MAttributeCollection]` 
++ 4. Directly applied to the monitored members class.
++ 5. Applied to the monitored members class by `[MOptions]`
++ 6. Applied to the monitored members class by a custom `[MAttributeCollection]` 
 
 ![example](https://johnbaracuda.com/media/img/monitoring/Example_formatting_01.png)
 
