@@ -64,17 +64,13 @@ namespace Baracuda.Monitoring.Source.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RegisterTarget<T>(T target) where T : class
         {
-#if !DISABLE_MONITORING
             RegisterTargetInternal(target);
-#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void UnregisterTarget<T>(T target) where T : class
         {
-#if !DISABLE_MONITORING
             UnregisterTargetInternal(target);
-#endif
         }
 
         /*
@@ -90,7 +86,6 @@ namespace Baracuda.Monitoring.Source.Systems
         [Pure] 
         public IReadOnlyList<IMonitorUnit> GetAllMonitoringUnits() => _monitoringUnitCache;
         
-        public bool ValidationTickEnabled { get; set; } = true;
 
         #endregion
 
@@ -112,7 +107,6 @@ namespace Baracuda.Monitoring.Source.Systems
         private volatile bool _isInitialized = false;
         private ProfilingCompletedListener _profilingCompleted;
         
-                
 #if DEBUG
         private readonly HashSet<object> _registeredObjects = new HashSet<object>();
 #endif
@@ -148,9 +142,7 @@ namespace Baracuda.Monitoring.Source.Systems
         /*
          * Conditional Compilation   
          */
-        
-#if !DISABLE_MONITORING
-        
+ 
         #region --- Target Registration ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -331,7 +323,5 @@ namespace Baracuda.Monitoring.Source.Systems
         }
 
         #endregion
-
-#endif //DISABLE_MONITORING
     }
 }

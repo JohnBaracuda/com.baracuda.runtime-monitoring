@@ -17,8 +17,6 @@ using Debug = UnityEngine.Debug;
 
 namespace Baracuda.Monitoring.Source.Systems
 {
-#if !DISABLE_MONITORING
-
     /// <summary>
     /// Class responsible for creating <see cref="MonitorProfile"/>s for member found in custom assemblies that were
     /// flagged to be monitored by the use of a <see cref="MonitorAttribute"/>. 
@@ -1160,5 +1158,4 @@ namespace Baracuda.Monitoring.Source.Systems
         #endregion
         
     }
-#endif // !DISABLE_MONITORING
 }

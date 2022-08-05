@@ -63,6 +63,21 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         static MonitoringSystems()
         {
+#if !DISABLE_MONITORING
+            InstallCoreSystems();
+#else
+            InstallDummySystems();
+#endif
+        }
+
+        /*
+         * Install Systems   
+         */
+        
+#if !DISABLE_MONITORING
+
+        private static void InstallCoreSystems()
+        {
             var manager = new Baracuda.Monitoring.Source.Systems.MonitoringManager();
             Register<IMonitoringManager>(manager);
             Register<IMonitoringManagerInternal>(manager);
@@ -76,42 +91,43 @@ namespace Baracuda.Monitoring.API
             Register<IMonitoringSettings>(settings);
             Register<IMonitoringLogger>(new MonitoringLogging(settings));
             
-#if !UNITY_EDITOR
-            var ticker = new MonitoringTicker(manager);
-            Register<IMonitoringTicker>(ticker);
-            Register<IMonitoringUI>(new MonitoringUISystem(manager, settings, ticker));
-            Register<IValueProcessorFactory>(new ValueProcessorFactory(settings));
-            Register<IValidatorFactory>(new ValidatorFactory());
-            Register<IMonitoringProfiler>(new MonitoringProfiler()).BeginProfiling(Dispatcher.RuntimeToken);
-#endif
-        }
-
 #if UNITY_EDITOR
-        /// <summary>
-        /// Install runtime systems. (Ticker etc.)
-        /// </summary>
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void InstallSubsystems()
-        {
-            var manager = Resolve<IMonitoringManager>();
-            var settings = Resolve<IMonitoringSettings>();
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+#endif
             var ticker = new MonitoringTicker(manager);
-
             Register<IMonitoringTicker>(ticker);
             Register<IMonitoringUI>(new MonitoringUISystem(manager, settings, ticker));
             Register<IValueProcessorFactory>(new ValueProcessorFactory(settings));
             Register<IValidatorFactory>(new ValidatorFactory());
-        }
-
-        /// <summary>
-        /// Begin assembly profiling.
-        /// </summary>
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-        private static void InstallReflectionSubsystems()
-        {
             Register<IMonitoringProfiler>(new MonitoringProfiler()).BeginProfiling(Dispatcher.RuntimeToken);
         }
+        
+#else // DISABLE_MONITORING
+        
+        private static void InstallDummySystems()
+        {
+            Register<IMonitoringPlugin>(new MonitoringPluginData());
+            var settings = MonitoringSettings.FindOrCreateSettingsAsset();
+            var dummy = new MonitoringSystemDummy();
+            Register<IMonitoringSettings>(settings);
+            Register<IMonitoringManager>(dummy);
+            Register<IMonitoringUI>(dummy);
+            Register<IMonitoringUtility>(dummy);
+            
+            Register<IMonitoringManagerInternal>(dummy);
+            Register<IMonitoringUtilityInternal>(dummy);
+            Register<IMonitoringLogger>(dummy);
+            Register<IMonitoringTicker>(dummy);
+            Register<IValueProcessorFactory>(dummy);
+            Register<IValidatorFactory>(dummy);
+            Register<IMonitoringProfiler>(dummy);
+        }
 #endif
+
+
         
         #endregion
     }

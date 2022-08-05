@@ -334,7 +334,7 @@ namespace Baracuda.Monitoring.Editor
 #if DISABLE_MONITORING
                 EditorGUILayout.HelpBox("The symbol 'DISABLE_MONITORING' is active!", MessageType.Info);
                 GUI.enabled = false;
-                EditorGUILayout.PropertyField(_enableMonitoring);
+                EditorGUILayout.Toggle("Enable Monitoring", false);
                 GUI.enabled = true;
 #else
             EditorGUILayout.PropertyField(_enableMonitoring);
