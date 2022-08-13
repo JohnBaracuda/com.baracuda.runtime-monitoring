@@ -13,7 +13,6 @@ namespace Baracuda.Monitoring.API
         bool AsyncProfiling { get; }
         bool OpenDisplayOnLoad { get; }
         bool ShowRuntimeMonitoringObject { get; }
-        bool ShowRuntimeUIController { get; }
         LoggingLevel LogBadImageFormatException { get; }
         LoggingLevel LogOperationCanceledException { get; }
         LoggingLevel LogThreadAbortException { get; }

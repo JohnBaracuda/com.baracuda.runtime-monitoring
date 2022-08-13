@@ -38,9 +38,6 @@ namespace Baracuda.Monitoring.API
         [Tooltip("When enabled, the monitoring runtime object is set visible in the hierarchy.")] [SerializeField]
         private bool showRuntimeMonitoringObject = false;
 
-        [Tooltip("When enabled, the monitoring UI Controller object is set visible in the hierarchy.")] [SerializeField]
-        private bool showRuntimeUIController = false;
-
         [Tooltip("BadImageFormatException is a rare exception that may occur during profiling.")] [SerializeField]
         private LoggingLevel logBadImageFormatException = LoggingLevel.None;
 
@@ -207,7 +204,6 @@ namespace Baracuda.Monitoring.API
         public MonitoringUIController UIController => monitoringUIController;
         public bool OpenDisplayOnLoad => openDisplayOnLoad;
         public bool ShowRuntimeMonitoringObject => showRuntimeMonitoringObject;
-        public bool ShowRuntimeUIController => showRuntimeUIController;
 
         /*
          * Logging   

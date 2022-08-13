@@ -14,9 +14,10 @@ namespace Baracuda.Monitoring.Source.Systems
 {
     internal class MonitoringUISystem : IMonitoringUI
     {
-        private MonitoringUIController _controllerInstance;
+        //private MonitoringUIController _controllerInstance;
         private bool _bufferUICreation = false;
         private string _activeFilter;
+        private bool _initialized = false;
         
         // Dependencies
         private readonly IMonitoringSettings _settings;
@@ -29,37 +30,37 @@ namespace Baracuda.Monitoring.Source.Systems
         
         public void Show()
         {
-            if (_controllerInstance)
+            if (MonitoringUIController.Current)
             {
-                _controllerInstance.ShowMonitoringUI();
+                MonitoringUIController.Current.ShowMonitoringUI();
                 VisibleStateChanged?.Invoke(true);
             }
         }
 
         public void Hide()
         {
-            if (_controllerInstance)
+            if (MonitoringUIController.Current)
             {
-                _controllerInstance.HideMonitoringUI();
+                MonitoringUIController.Current.HideMonitoringUI();
                 VisibleStateChanged?.Invoke(false);
             }
         }
 
         public bool ToggleDisplay()
         {
-            if (_controllerInstance == null)
+            if (MonitoringUIController.Current == null)
             {
                 return false;
             }
 
-            if (_controllerInstance.IsVisible())
+            if (MonitoringUIController.Current.IsVisible())
             {
-                _controllerInstance.HideMonitoringUI();
+                MonitoringUIController.Current.HideMonitoringUI();
                 VisibleStateChanged?.Invoke(false);
             }
             else
             {
-                _controllerInstance.ShowMonitoringUI();
+                MonitoringUIController.Current.ShowMonitoringUI();
                 VisibleStateChanged?.Invoke(true);
             }
 
@@ -70,17 +71,17 @@ namespace Baracuda.Monitoring.Source.Systems
 
         public bool IsVisible()
         {
-            return _controllerInstance != null && _controllerInstance.IsVisible();
+            return MonitoringUIController.Current != null && MonitoringUIController.Current.IsVisible();
         }
 
         public MonitoringUIController GetActiveUIController()
         {
-            return _controllerInstance;
+            return MonitoringUIController.Current;
         }
 
         public TUIController GetActiveUIController<TUIController>() where TUIController : MonitoringUIController
         {
-            return _controllerInstance as TUIController;
+            return MonitoringUIController.Current as TUIController;
         }
 
         /*
@@ -92,10 +93,26 @@ namespace Baracuda.Monitoring.Source.Systems
             _manager = manager;
             _settings = settings;
             _ticker = ticker;
-            
+        }
+
+        
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void StaticInitialize()
+        {
+            MonitoringSystems.Resolve<IMonitoringUI>().Initialize();
+        }
+        
+        public void Initialize()
+        {
+            if (_initialized)
+            {
+                return;
+            }
+
             if (_settings.EnableMonitoring)
             {
-                _manager.ProfilingCompleted  += (staticUnits, instanceUnits) =>
+                _initialized = true;
+                _manager.ProfilingCompleted += (staticUnits, instanceUnits) =>
                 {
 #if UNITY_EDITOR
                     if (!Application.isPlaying)
@@ -103,14 +120,21 @@ namespace Baracuda.Monitoring.Source.Systems
                         return;
                     }
 #endif
-
-                    if (_settings.AutoInstantiateUI || _bufferUICreation)
+                    if (MonitoringUIController.Current)
                     {
-                        InstantiateMonitoringUI(staticUnits, instanceUnits);
+                        SetupController(MonitoringUIController.Current, staticUnits, instanceUnits);
+                    }
+                    else if (_settings.AutoInstantiateUI || _bufferUICreation)
+                    {
+                        if (TryCreateMonitoringUI(out var controller))
+                        {
+                            SetupController(controller, staticUnits, instanceUnits);
+                        }
                     }
                 };
             }
         }
+        
 
         /*
          * Instantiation   
@@ -140,31 +164,37 @@ namespace Baracuda.Monitoring.Source.Systems
 
             var instanceUnits = _manager.GetInstanceUnits();
             var staticUnits = _manager.GetStaticUnits();
-            InstantiateMonitoringUI(instanceUnits, staticUnits);
+            
+            if (TryCreateMonitoringUI(out var controller))
+            {
+                SetupController(controller, staticUnits, instanceUnits);
+            }
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void InstantiateMonitoringUI(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
+        private bool TryCreateMonitoringUI(out MonitoringUIController controller)
         {
             if (_settings.UIController == null)
             {
                 Debug.LogWarning("UI Controller is null. Please select an active UI Controller!\n" +
                                  "Window: <b>Tools => Runtime Monitoring => Settings => UI Controller => Monitoring UI Controller</b>");
-                return;
+                controller = null;
+                return false;
             }
-            
-            _controllerInstance = Object.Instantiate(_settings.UIController);
-            
-            Object.DontDestroyOnLoad(_controllerInstance.gameObject);
-            _controllerInstance.gameObject.hideFlags = _settings.ShowRuntimeUIController ? HideFlags.None : HideFlags.HideInHierarchy;
 
-            _manager.UnitCreated += _controllerInstance.OnUnitCreated;
-            _manager.UnitDisposed += _controllerInstance.OnUnitDisposed;
+            controller = Object.Instantiate(_settings.UIController);
+            return true;
+        }
+
+        private void SetupController(MonitoringUIController controller, IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
+        {
+            _manager.UnitCreated += controller.OnUnitCreated;
+            _manager.UnitDisposed += controller.OnUnitDisposed;
             
             Application.quitting += () =>
             {
-                _manager.UnitCreated -= _controllerInstance.OnUnitCreated;
-                _manager.UnitDisposed -= _controllerInstance.OnUnitDisposed;
+                _manager.UnitCreated -= controller.OnUnitCreated;
+                _manager.UnitDisposed -= controller.OnUnitDisposed;
             };
 
             _manager.UnitCreated += _ =>
@@ -177,12 +207,12 @@ namespace Baracuda.Monitoring.Source.Systems
             
             for (var i = 0; i < staticUnits.Count; i++)
             {
-                _controllerInstance.OnUnitCreated(staticUnits[i]);
+                controller.OnUnitCreated(staticUnits[i]);
             }
 
             for (var i = 0; i < instanceUnits.Count; i++)
             {
-                _controllerInstance.OnUnitCreated(instanceUnits[i]);
+                controller.OnUnitCreated(instanceUnits[i]);
             }
 
             if (_settings.OpenDisplayOnLoad)

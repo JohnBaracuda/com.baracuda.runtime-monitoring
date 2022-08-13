@@ -176,6 +176,11 @@ namespace Baracuda.Monitoring.Source.Systems
         {
         }
         
+        public void Initialize()
+        {
+            
+        }
+        
         #endregion
 
         #region --- IMonitoringUtility ---

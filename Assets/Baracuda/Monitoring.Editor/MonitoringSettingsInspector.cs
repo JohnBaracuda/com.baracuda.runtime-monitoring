@@ -36,7 +36,6 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _monitoringUIController;
         
         private SerializedProperty _showRuntimeMonitoringObject; 
-        private SerializedProperty _showRuntimeUIController;
         private SerializedProperty _logBadImageFormatException;
         private SerializedProperty _logOperationCanceledException;
         private SerializedProperty _logThreadAbortException;
@@ -252,7 +251,6 @@ namespace Baracuda.Monitoring.Editor
             {
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_showRuntimeMonitoringObject);
-                EditorGUILayout.PropertyField(_showRuntimeUIController);
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_logBadImageFormatException);
                 EditorGUILayout.PropertyField(_logOperationCanceledException);
