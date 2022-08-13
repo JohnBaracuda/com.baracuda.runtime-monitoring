@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Baracuda.Monitoring.API;
-using Baracuda.Pooling.Concretions;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.UI.IMGUI
@@ -83,9 +83,11 @@ namespace Baracuda.Monitoring.UI.IMGUI
             
             private readonly string _textColor;
             private readonly int _size;
-
+            
             private static readonly Dictionary<Color, Texture2D> backgroundTexturePool =
                 new Dictionary<Color, Texture2D>();
+
+            private readonly StringBuilder _stringBuilder = new StringBuilder(100);
 
             public GUIElement(IMonitorUnit unit, MonitoringGUIDrawer ctx)
             {
@@ -150,28 +152,28 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
             private void Update(string text)
             {
-                var sb = StringBuilderPool.Get();
-                sb.Append("<size=");
-                sb.Append(_size);
-                sb.Append('>');
-                sb.Append(text);
-                sb.Append("</size>");
-                Content = StringBuilderPool.Release(sb);
+                _stringBuilder.Clear();
+                _stringBuilder.Append("<size=");
+                _stringBuilder.Append(_size);
+                _stringBuilder.Append('>');
+                _stringBuilder.Append(text);
+                _stringBuilder.Append("</size>");
+                Content = _stringBuilder.ToString();
             }
             
             private void UpdateColorized(string text)
             {
-                var sb = StringBuilderPool.Get();
-                sb.Append("<size=");
-                sb.Append(_size);
-                sb.Append('>');
-                sb.Append("<color=#");
-                sb.Append(_textColor);
-                sb.Append('>');
-                sb.Append(text);
-                sb.Append("</color>");
-                sb.Append("</size>");
-                Content = StringBuilderPool.Release(sb);
+                _stringBuilder.Clear();
+                _stringBuilder.Append("<size=");
+                _stringBuilder.Append(_size);
+                _stringBuilder.Append('>');
+                _stringBuilder.Append("<color=#");
+                _stringBuilder.Append(_textColor);
+                _stringBuilder.Append('>');
+                _stringBuilder.Append(text);
+                _stringBuilder.Append("</color>");
+                _stringBuilder.Append("</size>");
+                Content = _stringBuilder.ToString();
             }
 
             private void SetActive(bool activeState)

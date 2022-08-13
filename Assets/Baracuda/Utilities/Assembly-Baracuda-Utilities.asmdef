@@ -1,5 +1,5 @@
 {
-    "name": "Assembly-Baracuda-Pooling",
+    "name": "Assembly-Baracuda-Utilities",
     "rootNamespace": "",
     "references": [],
     "includePlatforms": [],
@@ -7,10 +7,8 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [
-        "__OBSOLETE"
-    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false
 }
