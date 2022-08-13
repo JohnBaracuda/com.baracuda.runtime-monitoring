@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Source.Units
 {
-    public sealed class MethodUnit<TTarget, TValue> : MonitorUnit, IGettableValue<MethodResult<TValue>>
+    public sealed class MethodUnit<TTarget, TValue> : MonitorUnit, IGettableValue<MethodResult<TValue>> where TTarget : class
     {
         //--------------------------------------------------------------------------------------------------------------
         
