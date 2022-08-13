@@ -4249,8 +4249,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 1832031589}
+        m_TargetAssemblyTypeName: Baracuda.Monitoring.Example.Scripts.MonitoringExampleController,
+          Assembly-Baracuda-Monitoring.Example
         m_MethodName: OnInputChanged
         m_Mode: 0
         m_Arguments:
