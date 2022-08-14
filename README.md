@@ -73,7 +73,7 @@ public event Action OnHealthChanged;
 ```
 
 #### ⚠️ Important!
->  When monitoring instance (non static) member, objects of these classes must be registered when they are created and unregistered when they are destroyed. [Leran More](#instanced-and-static-member)
+>  When monitoring instance (non static) member, objects of these classes must be registered when they are created and unregistered when they are destroyed. [Learn More](#instanced-and-static-member)
 
 ```c#
 
