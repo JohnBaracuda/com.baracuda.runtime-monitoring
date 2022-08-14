@@ -276,10 +276,6 @@ namespace Baracuda.Monitoring.Source.Systems
             {
                 _activeInstanceUnits.Add(target, units.ToArray());
             }
-            else
-            {
-                _registeredTargets.Remove(target);
-            }
             ConcurrentListPool<MemberInfo>.Release(guids);
             ConcurrentListPool<MonitorUnit>.Release(units);
         }
