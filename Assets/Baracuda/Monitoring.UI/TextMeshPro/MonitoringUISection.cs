@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
 using System.Collections.Generic;
+using System.Text;
 using Baracuda.Monitoring.API;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,6 +26,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             new Dictionary<IMonitorUnit, MonitoringUIElement>(32);
             
         private readonly List<MonitoringUIBase> _children = new List<MonitoringUIBase>();
+        private static readonly StringBuilder stringBuilder = new StringBuilder(64);
 
         /*
          * Setup   
@@ -140,7 +142,16 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
                     return uiGroup;
                 }
 
-                uiGroup = MakeGroup($"{profile.DeclaringType.Name} | {monitorUnit.TargetName}");
+                stringBuilder.Clear();
+                stringBuilder.Append(profile.DeclaringType.Name);
+                if (profile.DeclaringType.Name != monitorUnit.TargetName)
+                {
+                    stringBuilder.Append(' ');
+                    stringBuilder.Append('|');
+                    stringBuilder.Append(' ');
+                    stringBuilder.Append(monitorUnit.TargetName);
+                }
+                uiGroup = MakeGroup(stringBuilder.ToString());
                 _targetedGroups.Add(monitorUnit.Target, uiGroup);
                 return uiGroup;
             }

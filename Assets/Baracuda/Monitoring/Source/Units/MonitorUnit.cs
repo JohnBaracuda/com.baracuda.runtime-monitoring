@@ -159,9 +159,19 @@ namespace Baracuda.Monitoring.Source.Units
             _ticker = MonitoringSystems.Resolve<IMonitoringTicker>();
             Profile = profile;
             Target = target;
-            TargetName = (target is UnityEngine.Object unityObject)
-                ? unityObject.name
-                : profile.DeclaringType.Name;
+            if (target is UnityEngine.Object unityObject)
+            {
+                TargetName = unityObject.name;
+            }
+            else if (profile.DeclaringType.IsInterface)
+            {
+                TargetName = $"({target.GetType().Name})";
+            }
+            else
+            {
+                TargetName = profile.DeclaringType.Name;
+            }
+
             UniqueID = backingID++;
             Enabled = profile.DefaultEnabled;
             Name = profile.MemberInfo.Name;

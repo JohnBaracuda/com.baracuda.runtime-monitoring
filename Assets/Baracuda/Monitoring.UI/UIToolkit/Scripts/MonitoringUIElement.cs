@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Baracuda.Monitoring.API;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -20,9 +21,10 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
         private static IMonitoringSettings Settings =>
             settings != null ? settings : settings = MonitoringSystems.Resolve<IMonitoringSettings>();
-
+        
         private static IMonitoringSettings settings;
         private VisualElement _parent;
+        private static readonly StringBuilder stringBuilder = new StringBuilder(64);
         
         private readonly Comparison<VisualElement> _comparison = (lhs, rhs) =>
             {
@@ -200,7 +202,16 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                         }
 
                         // Add styles to label
-                        var label = new Label($"{profile.DeclaringType.Name} | {monitorUnit.TargetName}");
+                        stringBuilder.Clear();
+                        stringBuilder.Append(profile.DeclaringType.Name);
+                        if (profile.DeclaringType.Name != monitorUnit.TargetName)
+                        {
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append('|');
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append(monitorUnit.TargetName);
+                        }
+                        var label = new Label(stringBuilder.ToString());
 
                         for (var i = 0; i < provider.InstanceLabelStyles.Length; i++)
                         {
