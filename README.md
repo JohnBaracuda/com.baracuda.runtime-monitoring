@@ -70,6 +70,39 @@ public int GetHealthPoints() => healthPoints;
 [Monitor]
 public event Action OnHealthChanged;
 
+```
+
+#### ⚠️ Important!
+>  When monitoring instance (non static) member, objects of these classes must be registered when they are created and unregistered when they are destroyed. [Leran More](#instanced-and-static-member)
+
+```c#
+
+// Register & unregister objects with members you want to monitor.
+// This process can be simplified / automated (Take a look at Monitoring Objects)
+
+public class Player : MonoBehaviour
+{
+    [Monitor]
+    private int healthPoints;
+
+    private void Awake()
+    {
+        MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(this);
+	// Or use this extension method:
+	this.RegisterMonitor();
+    }
+
+    private void OnDestroy()
+    {
+        MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(this);
+        // Or use this extension method:
+	this.UnregisterMonitor();
+    }
+}
+
+```
+
+```c#
 
 // Monitor static member as well as instance member
 
@@ -115,26 +148,6 @@ public bool TryGetPlayer(int playerId, out var player)
 {
     // ...
 }
-
-
-// Register & unregister objects with members you want to monitor.
-// This process can be simplified / automated (Take a look at Monitoring Objects)
-
-public class Player : MonoBehaviour
-{
-    [Monitor]
-    private int healthPoints;
-
-    private void Awake()
-    {
-        MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(this);
-    }
-
-    private void OnDestroy()
-    {
-        MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(this);
-    }
-}
 ```
 ![basic example](https://johnbaracuda.com/media/img/monitoring/Example_runtime_01.png)
 
@@ -159,8 +172,11 @@ Import this asset into your project as a .unitypackage available at [Runtime-Mon
 Download and import Runtime Monitoring. To setup a different UI Controller (IMGUI, TMP or UIToolkit) follow these optional steps:
 + Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
 + Depending on the Unity version and your preferences, import and optional UIController package.
-+ Use the `Monitoring UI Controller` field in the UI Controller foldout or use the `Set Active UIController` button on a listed element to set the active UI Controller.
++ Set the prefab as the active UI Controller.
 + The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
+>  If you drag and drop a UIController asset into your scene, this controller will be used instead.
+&nbsp;
+
 ![basic example](https://johnbaracuda.com/media/img/monitoring/Example_06.png)
 
 
