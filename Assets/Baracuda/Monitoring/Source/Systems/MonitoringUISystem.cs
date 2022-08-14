@@ -14,11 +14,12 @@ namespace Baracuda.Monitoring.Source.Systems
 {
     internal class MonitoringUISystem : IMonitoringUI
     {
-        //private MonitoringUIController _controllerInstance;
+        private static MonitoringUISystem current;
+        
         private bool _bufferUICreation = false;
         private string _activeFilter;
         private bool _initialized = false;
-        
+
         // Dependencies
         private readonly IMonitoringSettings _settings;
         private readonly IMonitoringManager _manager;
@@ -93,13 +94,14 @@ namespace Baracuda.Monitoring.Source.Systems
             _manager = manager;
             _settings = settings;
             _ticker = ticker;
+            current = this;
         }
 
         
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void StaticInitialize()
         {
-            MonitoringSystems.Resolve<IMonitoringUI>().Initialize();
+            current?.Initialize();
         }
         
         public void Initialize()

@@ -60,11 +60,6 @@ namespace Baracuda.Monitoring.API
         /// </summary>
         void ResetFilter();
 
-        /// <summary>
-        /// Called once during setup phase.
-        /// </summary>
-        void Initialize();
-
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Oboslete ---

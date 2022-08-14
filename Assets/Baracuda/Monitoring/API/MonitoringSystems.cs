@@ -92,7 +92,7 @@ namespace Baracuda.Monitoring.API
             Register<IMonitoringLogger>(new MonitoringLogging(settings));
             
 #if UNITY_EDITOR
-            if (!Application.isPlaying)
+            if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
