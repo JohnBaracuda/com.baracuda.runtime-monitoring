@@ -1083,13 +1083,18 @@ namespace Baracuda.Reflection
 
         #region --- Base Type Reflection ---
                 
-        public static Type[] GetBaseTypes(this Type type, bool includeThis)
+        public static Type[] GetBaseTypes(this Type type, bool includeThis, bool includeInterfaces = false)
         {
             var temp = ConcurrentListPool<Type>.Get();
-
+            
             if (includeThis)
             {
                 temp.Add(type);
+            }
+
+            if (includeInterfaces)
+            {
+                temp.AddRange(type.GetInterfaces());
             }
             
             while (type.BaseType != null)

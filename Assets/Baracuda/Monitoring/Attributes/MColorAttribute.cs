@@ -50,6 +50,7 @@ namespace Baracuda.Monitoring
         
         Orange = 11,
         Lime = 12,
+        LightBlue = 13,
         
         //Extend this enum and its extension method class to add custom color presets.
     }
@@ -88,6 +89,8 @@ namespace Baracuda.Monitoring
                     return new Color(1f, 0.5f, 0f);
                 case ColorPreset.Lime:
                     return new Color(0.5f, 1f, 0f);
+                case ColorPreset.LightBlue:
+                    return new Color(0.7f, 0.9f, 1f);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(colorPreset), colorPreset, null);
             }

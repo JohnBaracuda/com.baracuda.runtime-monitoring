@@ -236,7 +236,7 @@ namespace Baracuda.Monitoring.Source.Systems
 
         private void CreateInstanceUnits(object target, Type type)
         {
-            var validTypes = type.GetBaseTypes(true);
+            var validTypes = type.GetBaseTypes(true, true);
             // create a new array to cache the units instances that will be created. 
             var units = ConcurrentListPool<MonitorUnit>.Get();
             var guids = ConcurrentListPool<MemberInfo>.Get();
