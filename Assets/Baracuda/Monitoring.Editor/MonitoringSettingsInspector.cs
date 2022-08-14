@@ -60,6 +60,8 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _filterDeclaringType;
         private SerializedProperty _filterMemberType;
         private SerializedProperty _filterTags;
+        private SerializedProperty _filterInterfaces;
+        
         private SerializedProperty _filterComparison;
         private SerializedProperty _filterAppendSymbol;
         private SerializedProperty _filterNegateSymbol;
@@ -208,6 +210,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_filterDeclaringType);
                 EditorGUILayout.PropertyField(_filterMemberType);
                 EditorGUILayout.PropertyField(_filterTags);
+                EditorGUILayout.PropertyField(_filterInterfaces);
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_filterComparison);
                 EditorGUILayout.Space();

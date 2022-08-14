@@ -161,15 +161,15 @@ namespace Baracuda.Monitoring.Source.Units
             Target = target;
             if (target is UnityEngine.Object unityObject)
             {
-                TargetName = unityObject.name;
-            }
-            else if (profile.DeclaringType.IsInterface)
-            {
-                TargetName = $"({target.GetType().Name})";
+                TargetName = profile.DeclaringType.IsInterface 
+                    ? $"{target.GetType().Name} ({unityObject.name})" 
+                    : unityObject.name;
             }
             else
             {
-                TargetName = profile.DeclaringType.Name;
+                TargetName = profile.DeclaringType.IsInterface
+                    ? $"({target.GetType().Name})"
+                    : profile.DeclaringType.Name;
             }
 
             UniqueID = backingID++;

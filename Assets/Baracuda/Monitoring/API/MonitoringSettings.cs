@@ -80,6 +80,8 @@ namespace Baracuda.Monitoring.API
         [SerializeField] private bool filterMemberType = true;
         [Tooltip("When enabled, custom tags can be used for filtering.")]
         [SerializeField] private bool filterTags = true;
+        [Tooltip("When enabled, you can use the filter 'Interface' to only display monitored interfaces.")]
+        [SerializeField] private bool filterInterfaces = true;
         [Tooltip("Set the string comparison used for filtering. Absolute filtering is always case sensitive!")]
         [SerializeField] private StringComparison filterComparison = StringComparison.OrdinalIgnoreCase;
         [Tooltip("Symbol can be used to combine multiple filters.")]
@@ -226,6 +228,7 @@ namespace Baracuda.Monitoring.API
         public bool FilterDeclaringType => filterDeclaringType;
         public bool FilterMemberType => filterMemberType;
         public bool FilterTags => filterTags;
+        public bool FilterInterfaces => filterInterfaces;
         public StringComparison FilterComparison => filterComparison;
         public char FilterAppendSymbol => filterAppendSymbol;
         public char FilterNegateSymbol => filterNegateSymbol;

@@ -147,6 +147,11 @@ namespace Baracuda.Monitoring.Source.Profiles
             {
                 tags.Add(IsStatic ? "Static" : "Instance");
             }
+
+            if (settings.FilterInterfaces && declaringType.IsInterface)
+            {
+                tags.Add("Interface");
+            }
             
             if(settings.FilterDeclaringType)
             {
