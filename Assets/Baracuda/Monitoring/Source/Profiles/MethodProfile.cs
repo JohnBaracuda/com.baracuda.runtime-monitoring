@@ -8,7 +8,8 @@ using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
 using Baracuda.Monitoring.Source.Types;
 using Baracuda.Monitoring.Source.Units;
-using Baracuda.Reflection;
+using Baracuda.Utilities.Extensions;
+using Baracuda.Utilities.Reflection;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Source.Profiles
@@ -89,7 +90,7 @@ namespace Baracuda.Monitoring.Source.Profiles
                 var current = parameterInfos[i];
                 if (current.IsOut)
                 {
-                    var outArgName = $"  {"out".Colorize(settings.OutParamColor)} {current.Name}";
+                    var outArgName = $"  {"out".ColorizeString(settings.OutParamColor)} {current.Name}";
                     var parameterFormat = new FormatData
                     {
                         Format = format.Format,

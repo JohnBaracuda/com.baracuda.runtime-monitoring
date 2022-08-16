@@ -1,8 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Pooling.Utils;
-
-namespace Baracuda.Pooling.Interface
+namespace Baracuda.Utilities.Pooling
 {
     public interface IObjectPool<T>
     {

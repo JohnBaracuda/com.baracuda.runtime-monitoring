@@ -1,9 +1,8 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using System.Collections.Generic;
-using Baracuda.Pooling.Utils;
 
-namespace Baracuda.Pooling.Abstractions
+namespace Baracuda.Utilities.Pooling.Source
 {
     public class CollectionPool<TCollection, TItem> where TCollection : class, ICollection<TItem>, new()
     {

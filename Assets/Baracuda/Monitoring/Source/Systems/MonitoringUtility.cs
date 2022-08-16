@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Pooling.Concretions;
+using Baracuda.Utilities.Pooling;
 using JetBrains.Annotations;
 using UnityEngine;
 

@@ -12,8 +12,9 @@ using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.IL2CPP;
 using Baracuda.Monitoring.Source.Profiles;
 using Baracuda.Monitoring.Source.Types;
-using Baracuda.Pooling.Concretions;
-using Baracuda.Reflection;
+using Baracuda.Utilities.Extensions;
+using Baracuda.Utilities.Pooling;
+using Baracuda.Utilities.Reflection;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -810,7 +811,7 @@ namespace Baracuda.Monitoring.Editor
                     continue;
                 }
                 var intFlag = (int) unityAssembly.flags;
-                if (intFlag.HasFlag32((int)AssemblyFlags.EditorAssembly))
+                if (unchecked((uint) intFlag & (uint) AssemblyFlags.EditorAssembly) > 0)
                 {
                     return true;
                 }

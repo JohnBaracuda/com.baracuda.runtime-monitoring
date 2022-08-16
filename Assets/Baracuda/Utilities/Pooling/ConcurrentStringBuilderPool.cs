@@ -3,11 +3,10 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Baracuda.Pooling.Abstractions;
-using Baracuda.Pooling.Interface;
+using Baracuda.Utilities.Pooling.Source;
 using UnityEngine;
 
-namespace Baracuda.Pooling.Concretions
+namespace Baracuda.Utilities.Pooling
 {
     /// <summary>
     /// Thread safe version of a <see cref="StringBuilderPool"/>

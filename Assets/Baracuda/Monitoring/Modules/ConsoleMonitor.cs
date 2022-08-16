@@ -3,8 +3,8 @@
 using System;
 using System.Collections.Generic;
 using Baracuda.Monitoring.Source.Types;
-using Baracuda.Pooling.Concretions;
 using Baracuda.Threading;
+using Baracuda.Utilities.Pooling;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Modules
@@ -130,7 +130,7 @@ namespace Baracuda.Monitoring.Modules
             sb.Append(AsString(type));
             sb.Append(']');
             sb.Append(' ');
-            sb.Append(condition.Colorize(GetColor(type)));
+            sb.Append(condition.ColorizeString(GetColor(type)));
            
             messageLogCache.Enqueue(ConcurrentStringBuilderPool.Release(sb));
             if (messageLogCache.Count > messageCacheSize)
@@ -146,19 +146,19 @@ namespace Baracuda.Monitoring.Modules
         {
             if (stacktrace == null)
             {
-                return "null".Colorize(Color.red);
+                return "null".ColorizeString(Color.red);
             }
 
             var sb = StringBuilderPool.Get();
             sb.Append("Stacktrace:\n");
             if (truncateStacktrace && stacktrace.Length > maxStacktraceLenght)
             {
-                sb.Append(stacktrace.Substring(0, maxStacktraceLenght).Colorize(stackTraceColor));
+                sb.Append(stacktrace.Substring(0, maxStacktraceLenght).ColorizeString(stackTraceColor));
                 sb.Append("...");
             }
             else
             {
-                sb.Append(stacktrace.Colorize(stackTraceColor));
+                sb.Append(stacktrace.ColorizeString(stackTraceColor));
             }
 
             return StringBuilderPool.Release(sb);

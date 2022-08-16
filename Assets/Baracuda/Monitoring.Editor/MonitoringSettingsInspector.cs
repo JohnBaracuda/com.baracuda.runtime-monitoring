@@ -161,8 +161,9 @@ namespace Baracuda.Monitoring.Editor
         
         private SerializedProperty FindProperty(string member)
         {
-            var parsedMemberName = member.BeginsWith('_') ? member.Remove(0, 1) : member;
+            var parsedMemberName = (!string.IsNullOrWhiteSpace(member) && member[0] == '_') ? member.Remove(0, 1) : member;
             return serializedObject.FindProperty(parsedMemberName);
+
         }
 
         #endregion

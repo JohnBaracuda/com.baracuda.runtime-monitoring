@@ -52,11 +52,11 @@ namespace Baracuda.Monitoring
         public MonitorEventAttribute(EventDisplay options)
         {
             var value = (int)options;
-            ShowSubscriberCount = value.HasFlag32((int)EventDisplay.SubCount);
-            ShowInvokeCounter = value.HasFlag32((int)EventDisplay.InvokeCount);
-            ShowTrueCount = value.HasFlag32((int)EventDisplay.TrueCount);
-            ShowSubscriberInfo = value.HasFlag32((int)EventDisplay.SubInfo);
-            ShowSignature = value.HasFlag32((int) EventDisplay.Signature);
+            ShowSubscriberCount = value.HasFlagFast((int)EventDisplay.SubCount);
+            ShowInvokeCounter = value.HasFlagFast((int)EventDisplay.InvokeCount);
+            ShowTrueCount = value.HasFlagFast((int)EventDisplay.TrueCount);
+            ShowSubscriberInfo = value.HasFlagFast((int)EventDisplay.SubInfo);
+            ShowSignature = value.HasFlagFast((int) EventDisplay.Signature);
         }
 
         //--------------------------------------------------------------------------------------------------------------

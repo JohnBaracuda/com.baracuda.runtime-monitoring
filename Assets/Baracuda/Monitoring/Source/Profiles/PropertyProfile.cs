@@ -4,7 +4,8 @@ using System;
 using System.Reflection;
 using Baracuda.Monitoring.Source.Types;
 using Baracuda.Monitoring.Source.Units;
-using Baracuda.Reflection;
+using Baracuda.Utilities.Extensions;
+using Baracuda.Utilities.Reflection;
 
 namespace Baracuda.Monitoring.Source.Profiles
 {

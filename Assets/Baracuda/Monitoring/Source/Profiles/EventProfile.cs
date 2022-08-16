@@ -9,8 +9,9 @@ using System.Text;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Types;
 using Baracuda.Monitoring.Source.Units;
-using Baracuda.Pooling.Concretions;
-using Baracuda.Reflection;
+using Baracuda.Utilities.Extensions;
+using Baracuda.Utilities.Pooling;
+using Baracuda.Utilities.Reflection;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Source.Profiles
@@ -132,9 +133,9 @@ namespace Baracuda.Monitoring.Source.Profiles
                         sb.Append(i);
                         sb.Append(']');
                         sb.Append(' ');
-                        sb.Append(item.Method.DeclaringType?.ToReadableTypeString().Colorize(settings.ClassColor) ?? "NULL".Colorize(Color.red));
+                        sb.Append(item.Method.DeclaringType?.ToReadableTypeString().ColorizeString(settings.ClassColor) ?? "NULL".ColorizeString(Color.red));
                         sb.Append(settings.AppendSymbol);
-                        sb.Append(item.Method.Name.Colorize(settings.MethodColor));
+                        sb.Append(item.Method.Name.ColorizeString(settings.MethodColor));
                     
                         if (!(delegateTarget is Component component))
                         {
@@ -145,15 +146,15 @@ namespace Baracuda.Monitoring.Source.Profiles
                         {
                             sb.Append(' ');
                             sb.Append('(');
-                            sb.Append(component.gameObject.scene.name.Colorize(settings.SceneNameColor));
+                            sb.Append(component.gameObject.scene.name.ColorizeString(settings.SceneNameColor));
                             sb.Append(' ');
-                            sb.Append(component.name.Colorize(settings.TargetObjectColor));
+                            sb.Append(component.name.ColorizeString(settings.TargetObjectColor));
                             sb.Append(')');
                         }
                         else
                         {
                             sb.Append(' ');
-                            sb.Append("NULL! Target was destroyed!".Colorize(Color.red));
+                            sb.Append("NULL! Target was destroyed!".ColorizeString(Color.red));
                         }
                     }
 
@@ -178,7 +179,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             var csb = ConcurrentStringBuilderPool.Get();
             if (settings.AddClassName)
             {
-                csb.Append(DeclaringType.Name.Colorize(settings.ClassColor));
+                csb.Append(DeclaringType.Name.ColorizeString(settings.ClassColor));
                 csb.Append(settings.AppendSymbol);
             }
 
@@ -187,7 +188,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             if (ShowSignature)
             {
                 csb.Append(' ');
-                csb.Append(_eventInfo.GetEventSignatureString().Colorize(settings.EventColor));
+                csb.Append(_eventInfo.GetEventSignatureString().ColorizeString(settings.EventColor));
             }
 
             var signatureString = ConcurrentStringBuilderPool.Release(csb);

@@ -61,8 +61,8 @@ namespace Baracuda.Monitoring.Source.Systems
             _zColor = $"<color=#{ColorUtility.ToHtmlStringRGB(settings.ZColor)}>";
             _wColor = $"<color=#{ColorUtility.ToHtmlStringRGB(settings.WColor)}>";
 
-            _trueColored = "TRUE".Colorize(settings.TrueColor);
-            _falseColored = "FALSE".Colorize(settings.FalseColor);
+            _trueColored = "TRUE".ColorizeString(settings.TrueColor);
+            _falseColored = "FALSE".ColorizeString(settings.FalseColor);
         }
     }
 }

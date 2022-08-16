@@ -220,7 +220,7 @@ namespace Baracuda.Monitoring.Source.Systems
                     stringBuilder.Clear();
                     stringBuilder.Append(name);
                     stringBuilder.Append(": ");
-                    stringBuilder.Append(value.ToString(format).Colorize(value));
+                    stringBuilder.Append(value.ToString(format).ColorizeString(value));
                     return stringBuilder.ToString();
                 };
             }
@@ -231,7 +231,7 @@ namespace Baracuda.Monitoring.Source.Systems
                     stringBuilder.Clear();
                     stringBuilder.Append(name);
                     stringBuilder.Append(": ");
-                    stringBuilder.Append(value.ToString().Colorize(value));
+                    stringBuilder.Append(value.ToString().ColorizeString(value));
                     return stringBuilder.ToString();
                 };
             }
@@ -254,7 +254,7 @@ namespace Baracuda.Monitoring.Source.Systems
                     stringBuilder.Clear();
                     stringBuilder.Append(name);
                     stringBuilder.Append(": ");
-                    stringBuilder.Append(value.ToString(format).Colorize(value));
+                    stringBuilder.Append(value.ToString(format).ColorizeString(value));
                     return stringBuilder.ToString();
                 };
             }
@@ -265,7 +265,7 @@ namespace Baracuda.Monitoring.Source.Systems
                     stringBuilder.Clear();
                     stringBuilder.Append(name);
                     stringBuilder.Append(": ");
-                    stringBuilder.Append(value.ToString().Colorize(value));
+                    stringBuilder.Append(value.ToString().ColorizeString(value));
                     return stringBuilder.ToString();
                 };
             }

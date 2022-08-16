@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Types;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -255,7 +254,7 @@ namespace Baracuda.Monitoring.Source.Systems
                 {
                     var filter =  filters[filterIndex];
                     var filterOnlyLetters = onlyLetter.Replace(filter, string.Empty);
-                    var filterNoSpace = filter.NoSpace();
+                    var filterNoSpace = filter.Replace(" ", string.Empty);
                     
                     unitEnabled = filterNoSpace.StartsWith(not);
                     
@@ -307,7 +306,7 @@ namespace Baracuda.Monitoring.Source.Systems
                     var tags = unit.Profile.Tags;
                     for (var tagIndex = 0; tagIndex < tags.Length; tagIndex++)
                     {
-                        if (tags[tagIndex].NoSpace().IndexOf(filterOnlyLetters, _settings.FilterComparison) < 0)
+                        if (tags[tagIndex].Replace(" ", string.Empty).IndexOf(filterOnlyLetters, _settings.FilterComparison) < 0)
                         {
                             continue;
                         }

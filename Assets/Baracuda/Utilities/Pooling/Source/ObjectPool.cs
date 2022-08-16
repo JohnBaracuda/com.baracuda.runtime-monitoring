@@ -2,12 +2,9 @@
 
 using System;
 using System.Collections.Generic;
-using Baracuda.Pooling.Concretions;
-using Baracuda.Pooling.Interface;
-using Baracuda.Pooling.Utils;
 using JetBrains.Annotations;
 
-namespace Baracuda.Pooling.Abstractions
+namespace Baracuda.Utilities.Pooling.Source
 {
     public abstract class ObjectPool<T> : ObjectPool, IObjectPool<T>
     {

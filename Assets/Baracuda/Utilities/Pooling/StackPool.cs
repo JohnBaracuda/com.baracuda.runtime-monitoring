@@ -1,10 +1,9 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using System.Collections.Generic;
-using Baracuda.Pooling.Abstractions;
-using Baracuda.Pooling.Utils;
+using Baracuda.Utilities.Pooling.Source;
 
-namespace Baracuda.Pooling.Concretions
+namespace Baracuda.Utilities.Pooling
 {
     public class StackPool<T>
     {

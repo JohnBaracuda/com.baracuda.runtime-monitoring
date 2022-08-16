@@ -39,12 +39,12 @@ namespace Baracuda.Monitoring.Example.Scripts
          *  Private Fields   
          */
 
-        [Monitor]
-        [MUpdateEvent(nameof(OnAmmoChanged))]
-        [MOptions(UIPosition.LowerLeft, FontSize = 16, GroupElement = false)]
-        [MValueProcessor(nameof(CurrentAmmunitionProcessor))]
-        [MFontName("JetBrainsMono-Regular")]
-        private int _currentAmmunition;
+        // [Monitor]
+        // [MUpdateEvent(nameof(OnAmmoChanged))]
+        // [MOptions(UIPosition.LowerLeft, FontSize = 16, GroupElement = false)]
+        // [MValueProcessor(nameof(CurrentAmmunitionProcessor))]
+        // [MFontName("JetBrainsMono-Regular")]
+        // private int _currentAmmunition;
 
         public event Action<int> OnAmmoChanged;
 
@@ -65,6 +65,10 @@ namespace Baracuda.Monitoring.Example.Scripts
          * Value Processor   
          */
         
+        [Monitor]
+        [MValueProcessor(nameof(CurrentAmmunitionProcessor))]
+        private int _currentAmmunition;
+        
         private string CurrentAmmunitionProcessor(int current)
         {
             var sb = new StringBuilder();
@@ -74,9 +78,11 @@ namespace Baracuda.Monitoring.Example.Scripts
             sb.Append(ammunition.ToString("00"));
             sb.Append(' ');
 
+            var color = new Color(.25f, .25f, .3f);
             sb.Append('▐', current);
-            var gray = new Color(.25f, .25f, .3f);
-            sb.Append(gray.ToRichText());
+            sb.Append("<color=#");
+            sb.Append(ColorUtility.ToHtmlStringRGB(color));
+            sb.Append('>');
             sb.Append('▐', ammunition - current);
             sb.Append("</color>");
 

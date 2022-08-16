@@ -1,9 +1,8 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using System;
-using Baracuda.Pooling.Interface;
 
-namespace Baracuda.Pooling.Utils
+namespace Baracuda.Utilities.Pooling
 {
     public readonly struct PooledObject<T> : IDisposable
     {

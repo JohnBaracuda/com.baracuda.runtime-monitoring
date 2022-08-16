@@ -5,7 +5,8 @@ using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
 using Baracuda.Monitoring.Source.Profiles;
-using Baracuda.Reflection;
+using Baracuda.Utilities.Extensions;
+using Baracuda.Utilities.Reflection;
 
 namespace Baracuda.Monitoring.Source.Units
 {

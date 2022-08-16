@@ -1,11 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using System.Text;
-using Baracuda.Pooling.Abstractions;
-using Baracuda.Pooling.Utils;
+using Baracuda.Utilities.Pooling.Source;
 using UnityEngine;
 
-namespace Baracuda.Pooling.Concretions
+namespace Baracuda.Utilities.Pooling
 {
     public static class StringBuilderPool
     {

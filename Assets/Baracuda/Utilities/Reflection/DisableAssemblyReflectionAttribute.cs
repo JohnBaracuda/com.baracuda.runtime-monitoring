@@ -1,10 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using System;
-using Baracuda.Reflection;
+using Baracuda.Utilities.Reflection;
 
 [assembly: DisableAssemblyReflection]
-namespace Baracuda.Reflection
+namespace Baracuda.Utilities.Reflection
 {
     /// <summary>
     /// Disable reflection for the target assembly or class.

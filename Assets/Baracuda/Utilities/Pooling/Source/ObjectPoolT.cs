@@ -3,7 +3,7 @@
 using System;
 using JetBrains.Annotations;
 
-namespace Baracuda.Pooling.Abstractions
+namespace Baracuda.Utilities.Pooling.Source
 {
     public class ObjectPoolT<T> : ObjectPool<T>
     {

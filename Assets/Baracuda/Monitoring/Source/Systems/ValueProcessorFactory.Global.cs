@@ -47,7 +47,7 @@ namespace Baracuda.Monitoring.Source.Systems
             if (parameterInfos.Length != 2)
             {
                 var message =
-                    $"[GlobalValueProcessor] parameter length mismatch for method! {methodInfo.DeclaringType?.Name.Colorize(GetColor())}.{methodInfo.Name.Colorize(GetColor())}\n{GetAttachment()}";
+                    $"[GlobalValueProcessor] parameter length mismatch for method! {methodInfo.DeclaringType?.Name.ColorizeString(GetColor())}.{methodInfo.Name.ColorizeString(GetColor())}\n{GetAttachment()}";
                 Debug.LogWarning(message);
                 return false;
             }
@@ -55,7 +55,7 @@ namespace Baracuda.Monitoring.Source.Systems
             if (parameterInfos[0].ParameterType != typeof(IFormatData))
             {
                 var message =
-                    $"[GlobalValueProcessor] first parameter is not of type IFormatData! {methodInfo.DeclaringType?.Name.Colorize(GetColor())}.{methodInfo.Name.Colorize(GetColor())}\n{GetAttachment()}";
+                    $"[GlobalValueProcessor] first parameter is not of type IFormatData! {methodInfo.DeclaringType?.Name.ColorizeString(GetColor())}.{methodInfo.Name.ColorizeString(GetColor())}\n{GetAttachment()}";
                 Debug.LogWarning(message);
                 return false;
             }
@@ -63,7 +63,7 @@ namespace Baracuda.Monitoring.Source.Systems
             if (methodInfo.ReturnType != typeof(string))
             {
                 var message =
-                    $"[GlobalValueProcessor] method does not return a string! {methodInfo.DeclaringType?.Name.Colorize(GetColor())}.{methodInfo.Name.Colorize(GetColor())}\n{GetAttachment()}";
+                    $"[GlobalValueProcessor] method does not return a string! {methodInfo.DeclaringType?.Name.ColorizeString(GetColor())}.{methodInfo.Name.ColorizeString(GetColor())}\n{GetAttachment()}";
                 Debug.LogWarning(message);
                 return false;
             }

@@ -8,8 +8,9 @@ using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.Source.Interfaces;
 using Baracuda.Monitoring.Source.Types;
 using Baracuda.Monitoring.Source.Units;
-using Baracuda.Pooling.Concretions;
-using Baracuda.Reflection;
+using Baracuda.Utilities.Extensions;
+using Baracuda.Utilities.Pooling;
+using Baracuda.Utilities.Reflection;
 using static Baracuda.Monitoring.Source.Types.FormatData;
 
 namespace Baracuda.Monitoring.Source.Profiles
@@ -70,7 +71,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             MemberType = unityType; 
 
             var intFlag = (int) args.ReflectedMemberFlags;
-            IsStatic = intFlag.HasFlag32((int) BindingFlags.Static);
+            IsStatic = intFlag.HasFlagFast((int) BindingFlags.Static);
 
             var settings = args.Settings;
             var memberAttributeCollectionType = memberInfo.GetCustomAttribute<MAttributeCollection>(true)?.GetType();

@@ -1,7 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
-using Baracuda.Reflection;
+using Baracuda.Utilities.Extensions;
+using Baracuda.Utilities.Pooling;
+using Baracuda.Utilities.Reflection;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Source.Types
@@ -25,11 +28,11 @@ namespace Baracuda.Monitoring.Source.Types
         public Color? TextColor { get; internal set; }
         public Color? BackgroundColor { get; internal set; }
         public Color? GroupColor { get; internal set; }
-        
+
         /*
          * Ctor   
          */
-    
+
         internal FormatData()
         {
         }
@@ -37,7 +40,7 @@ namespace Baracuda.Monitoring.Source.Types
         /*
          * Factory   
          */
-        
+
         internal static IFormatData CreateFormatData(IMonitorProfile profile, IMonitoringSettings settings)
         {
             var optionsAttribute = profile.GetMetaAttribute<MOptionsAttribute>();
@@ -45,31 +48,31 @@ namespace Baracuda.Monitoring.Source.Types
             var format = profile.TryGetMetaAttribute<MFormatAttribute>(out var formatAttribute)
                 ? formatAttribute.Format
                 : optionsAttribute?.Format;
-            
+
             var showIndexer = profile.TryGetMetaAttribute<MShowIndexerAttribute>(out var showIndexerAttribute)
                 ? showIndexerAttribute.ShowIndexer
                 : optionsAttribute?.ShowIndexer ?? true;
-            
+
             var label = profile.TryGetMetaAttribute<MLabelAttribute>(out var labelAttribute)
                 ? labelAttribute.Label
                 : optionsAttribute?.Label ?? MakeLabel();
-            
+
             var fontSize = profile.TryGetMetaAttribute<MFontSizeAttribute>(out var fontSizeAttribute)
                 ? fontSizeAttribute.FontSize
                 : optionsAttribute?.FontSize ?? -1;
-            
+
             var fontName = profile.TryGetMetaAttribute<MFontNameAttribute>(out var fontNameAttribute)
                 ? fontNameAttribute.FontName
                 : optionsAttribute?.FontName;
-            
+
             var position = profile.TryGetMetaAttribute<MPositionAttribute>(out var positionAttribute)
                 ? positionAttribute.Position
                 : optionsAttribute?.Position ?? UIPosition.UpperLeft;
-            
+
             var align = profile.TryGetMetaAttribute<MTextAlignAttribute>(out var textAlignAttribute)
                 ? textAlignAttribute.TextAlign
                 : optionsAttribute?.TextAlign ?? HorizontalTextAlign.Left;
-            
+
             var allowGrouping = profile.TryGetMetaAttribute<MGroupElementAttribute>(out var groupElementAttribute)
                 ? groupElementAttribute.GroupElement
                 : optionsAttribute?.GroupElement ?? true;
@@ -77,19 +80,19 @@ namespace Baracuda.Monitoring.Source.Types
             var group = profile.TryGetMetaAttribute<MGroupNameAttribute>(out var groupNameAttribute)
                 ? groupNameAttribute.GroupName
                 : optionsAttribute?.GroupName ?? (profile.IsStatic ? MakeGroup() : null);
-            
+
             var elementIndent = profile.TryGetMetaAttribute<MElementIndentAttribute>(out var elementIndentAttribute)
                 ? elementIndentAttribute.ElementIndent
                 : optionsAttribute?.ElementIndent ?? -1;
-            
+
             var richText = profile.TryGetMetaAttribute<MRichTextAttribute>(out var richTextAttribute)
                 ? richTextAttribute.RichTextEnabled
                 : optionsAttribute?.RichText ?? true;
-            
+
             var order = profile.TryGetMetaAttribute<MOrderAttribute>(out var orderAttribute)
                 ? orderAttribute.Order
                 : optionsAttribute?.Order ?? 0;
-            
+
             var groupOrder = profile.TryGetMetaAttribute<MGroupOrderAttribute>(out var groupOrderAttribute)
                 ? groupOrderAttribute.Order
                 : optionsAttribute?.GroupOrder ?? 0;
@@ -98,15 +101,16 @@ namespace Baracuda.Monitoring.Source.Types
                 ? textColorAttribute.ColorValue
                 : MakeColor(optionsAttribute?.TextColor);
 
-            var backgroundColor = profile.TryGetMetaAttribute<MBackgroundColorAttribute>(out var backgroundColorAttribute)
-                ? backgroundColorAttribute.ColorValue
-                : MakeColor(optionsAttribute?.BackgroundColor);
-            
+            var backgroundColor =
+                profile.TryGetMetaAttribute<MBackgroundColorAttribute>(out var backgroundColorAttribute)
+                    ? backgroundColorAttribute.ColorValue
+                    : MakeColor(optionsAttribute?.BackgroundColor);
+
             var groupColor = profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute)
                 ? groupColorAttribute.ColorValue
                 : MakeColor(optionsAttribute?.GroupColor);
-            
-            
+
+
             return new FormatData
             {
                 Format = format,
@@ -127,16 +131,17 @@ namespace Baracuda.Monitoring.Source.Types
                 BackgroundColor = backgroundColor,
                 GroupColor = groupColor
             };
-            
+
             //Nested
-            
-                        
+
+
             Color? MakeColor(string colorString)
             {
                 if (colorString != null && ColorUtility.TryParseHtmlString(colorString, out var color))
                 {
                     return color;
                 }
+
                 return null;
             }
 
@@ -145,21 +150,130 @@ namespace Baracuda.Monitoring.Source.Types
                 return profile.DeclaringType.IsGenericType
                     ? profile.DeclaringType.ToReadableTypeString()
                     : (settings.HumanizeNames
-                        ? profile.DeclaringType.Name.Humanize()
+                        ? Humanize(profile.DeclaringType.Name)
                         : profile.DeclaringType.Name);
             }
-            
+
             string MakeLabel()
             {
-                var humanizedLabel = settings.HumanizeNames? profile.MemberInfo.Name.Humanize(settings.VariablePrefixes) : profile.MemberInfo.Name;
-                
+                var humanizedLabel = settings.HumanizeNames
+                    ? Humanize(profile.MemberInfo.Name, settings.VariablePrefixes)
+                    : profile.MemberInfo.Name;
+
                 if (settings.AddClassName)
                 {
-                    humanizedLabel = $"{profile.DeclaringType.Name.Colorize(settings.ClassColor)}{settings.AppendSymbol.ToString()}{humanizedLabel}";
+                    humanizedLabel =
+                        $"{profile.DeclaringType.Name.ColorizeString(settings.ClassColor)}{settings.AppendSymbol.ToString()}{humanizedLabel}";
                 }
 
                 return humanizedLabel;
             }
+        }
+
+        private static string Humanize(string target, string[] prefixes = null)
+        {
+            if (IsConstantStringSyntax(target))
+            {
+                return ToCamel(target.Replace('_', ' '));
+            }
+
+            if (prefixes != null)
+            {
+                for (var i = 0; i < prefixes.Length; i++)
+                {
+                    if (target.StartsWith(prefixes[i]))
+                    {
+                        target = target.Replace(prefixes[i], string.Empty);
+                    }
+                }
+            }
+
+            target = target.Replace('_', ' ');
+
+            var chars = ConcurrentListPool<char>.Get();
+
+            for (var i = 0; i < target.Length; i++)
+            {
+                if (i == 0)
+                {
+                    chars.Add(char.ToUpper(target[i]));
+                    continue;
+                }
+
+                if (i < target.Length - 1)
+                {
+                    if (char.IsUpper(target[i]) && !char.IsUpper(target[i + 1])
+                        || char.IsUpper(target[i]) && !char.IsUpper(target[i - 1]))
+                    {
+                        if (i > 1)
+                        {
+                            chars.Add(' ');
+                        }
+                    }
+                }
+
+                chars.Add(target[i]);
+            }
+
+            var array = chars.ToArray();
+            ConcurrentListPool<char>.Release(chars);
+            return ReduceWhitespace(new string(array));
+
+            string ReduceWhitespace(string value)
+            {
+                var sb = ConcurrentStringBuilderPool.Get();
+                var previousIsWhitespaceFlag = false;
+                for (var i = 0; i < value.Length; i++)
+                {
+                    if (char.IsWhiteSpace(value[i]))
+                    {
+                        if (previousIsWhitespaceFlag)
+                        {
+                            continue;
+                        }
+
+                        previousIsWhitespaceFlag = true;
+                    }
+                    else
+                    {
+                        previousIsWhitespaceFlag = false;
+                    }
+
+                    sb.Append(value[i]);
+                }
+
+                return ConcurrentStringBuilderPool.Release(sb);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string ToCamel(string content)
+        {
+            var sb = ConcurrentStringBuilderPool.Get();
+
+            for (var i = 0; i < content.Length; i++)
+            {
+                var current = content[i];
+                var last = i > 0 ? content[i - 1] : ' ';
+                sb.Append(last == ' ' ? char.ToUpper(current) : char.ToLower(current));
+            }
+
+            return ConcurrentStringBuilderPool.Release(sb);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool IsConstantStringSyntax(string input)
+        {
+            for (var i = 0; i < input.Length; i++)
+            {
+                var character = input[i];
+                if (!char.IsUpper(character) && character != '_')
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
+using Baracuda.Utilities.Extensions;
 
-namespace Baracuda.Reflection
+namespace Baracuda.Utilities.Reflection
 {
     public static class AssemblyProfiler
     {
