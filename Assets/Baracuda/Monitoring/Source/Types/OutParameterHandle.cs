@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Baracuda.Monitoring.API;
 #if ENABLE_IL2CPP
-using Baracuda.Reflection;
+using Baracuda.Utilities.Extensions;
 #endif
 
 namespace Baracuda.Monitoring.Source.Types
