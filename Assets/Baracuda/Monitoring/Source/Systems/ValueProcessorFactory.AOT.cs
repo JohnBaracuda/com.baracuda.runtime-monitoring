@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.IL2CPP;
 using UnityEngine;
@@ -13,6 +14,15 @@ namespace Baracuda.Monitoring.Source.Systems
         #region --- AOT ---
 
 #if ENABLE_IL2CPP || UNITY_EDITOR
+        [Preserve]
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        internal static void AOTList<TList, TElement>() where TList : IList<TElement>
+        {
+            GuardAOTRuntimeMethodCall();
+            CreateIListFuncWithoutIndexArgument<TList, TElement>(null, null);
+            CreateIListFuncWithIndexArgument<TList, TElement>(null, null);
+        }
+        
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
         internal static void AOTValueTypeArray<T>() where T : struct
@@ -35,6 +45,8 @@ namespace Baracuda.Monitoring.Source.Systems
         {
             GuardAOTRuntimeMethodCall();
             DictionaryProcessor<TKey, TValue>(null);
+            CreateIDictionaryFunc<Dictionary<TKey, TValue>, TKey, TValue>(null, null);
+            CreateIDictionaryFunc<IDictionary<TKey, TValue>, TKey, TValue>(null, null);
         }
         
         [Preserve]

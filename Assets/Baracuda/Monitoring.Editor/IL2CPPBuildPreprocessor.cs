@@ -644,17 +644,36 @@ namespace Baracuda.Monitoring.Editor
             {
                 ProcessValueTypeArray(type);
             }
-            else if (viableType.IsArray)
+            if (viableType.IsArray)
             {
                 ProcessArray(type);
             }
-            else if (viableType.IsGenericIDictionary())
+            if (viableType.IsGenericIDictionary())
             {
                 ProcessDictionary(type);
             }
-            else if (viableType.IsGenericIEnumerable(true))
+            if (viableType.IsGenericIEnumerable(true))
             {
                 ProcessEnumerable(type);
+            }
+            if (viableType.IsGenericIList())
+            {
+                ProcessList(type);
+            }
+            
+            void ProcessList(Type valueType)
+            {
+                var stringBuilder = StringBuilderPool.Get();
+                stringBuilder.Append("\n        ");
+                stringBuilder.Append(aotBridgeClass);
+                stringBuilder.Append('.');
+                stringBuilder.Append("AOTList");
+                stringBuilder.Append('<');
+                stringBuilder.Append(valueType.ToReadableTypeStringFullName());
+                stringBuilder.Append(", ");
+                stringBuilder.Append(valueType.GetGenericArguments()[0].ToReadableTypeStringFullName());
+                stringBuilder.Append(">();");
+                signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
             
             void ProcessValueTypeArray(Type valueType)

@@ -89,7 +89,7 @@ namespace Baracuda.Monitoring.Source.Systems
 
         public void LogValueProcessNotFound(string processor, Type type)
         {
-            var message = $"[ValueProcessor] Processor: {processor} in {type.Name} was not found! Only static methods are valid value processors";
+            var message = $"[ValueProcessor] Processor: {processor} in {type.Name} with a valid signature was not found! Note that only static methods are valid value processors";
             LogInternal(message, _processorNotFoundLoggingLevel);
         }
         
