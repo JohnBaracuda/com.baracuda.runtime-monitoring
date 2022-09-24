@@ -30,7 +30,7 @@ namespace Baracuda.Utilities.Extensions
             attribute = null;
             return false;
         }
-        
+
         public static bool HasAttribute<T>(this ICustomAttributeProvider provider, bool inherited = true) where T : Attribute
         {
             try
@@ -47,12 +47,12 @@ namespace Baracuda.Utilities.Extensions
         {
             return memberInfo.GetCustomAttribute<T>() != null;
         }
-        
+
         public static bool LacksAttribute<T>(this MemberInfo memberInfo) where T : Attribute
         {
             return memberInfo.GetCustomAttribute<T>() == null;
         }
-        
+
         public static T FindAttributeInMono<T>(this GameObject target, bool inherit = true) where T : Attribute
         {
             foreach (var component in target.GetComponents<MonoBehaviour>())
@@ -66,7 +66,7 @@ namespace Baracuda.Utilities.Extensions
 
             return null;
         }
-        
+
         public static T[] FindAttributesInMono<T>(this GameObject target, bool inherit = true) where T : Attribute
         {
             var attributes = new List<T>(3);
@@ -102,7 +102,7 @@ namespace Baracuda.Utilities.Extensions
 
             return attributes.ToArray();
         }
-        
+
         public static TAttribute GetAttribute<TAttribute>(this Enum value) where TAttribute : Attribute
         {
             var enumType = value.GetType();
@@ -113,24 +113,24 @@ namespace Baracuda.Utilities.Extensions
                 .OfType<TAttribute>()
                 .SingleOrDefault();
         }
-        
+
         #endregion
-        
+
         #region --- Invoke Method ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static MethodInfo GetInvokeMethod(this Type type, BindingFlags flags =  
-            BindingFlags.Static | 
-            BindingFlags.NonPublic | 
+        public static MethodInfo GetInvokeMethod(this Type type, BindingFlags flags =
+            BindingFlags.Static |
+            BindingFlags.NonPublic |
             BindingFlags.Instance |
-            BindingFlags.Public | 
+            BindingFlags.Public |
             BindingFlags.FlattenHierarchy)
         {
             return type.GetMethod("Invoke", flags);
         }
-        
+
         #endregion
-        
+
         #region --- FieldInfo Getter & Setter ---
 
 #if !ENABLE_IL2CPP && UNITY_2021_3_OR_NEWER
@@ -140,7 +140,7 @@ namespace Baracuda.Utilities.Extensions
             {
                 return (target) => (TResult)field.GetValue(target);;
             }
-            
+
             var methodName = $"{field!.ReflectedType!.FullName}.get_{field.Name}";
             var setterMethod = new DynamicMethod(methodName, typeof(TResult), new[] {typeof(TTarget)}, true);
             var gen = setterMethod.GetILGenerator();
@@ -181,7 +181,7 @@ namespace Baracuda.Utilities.Extensions
 #else
         public static Func<TTarget, TResult> CreateGetter<TTarget, TResult>(this FieldInfo field)
         {
-            return target => (TResult)field.GetValue(target);
+            return target => (TResult) field.GetValue(target);
         }
 
         public static Action<TTarget, TValue> CreateSetter<TTarget, TValue>(this FieldInfo field)
@@ -189,30 +189,30 @@ namespace Baracuda.Utilities.Extensions
             return (target, value) => field.SetValue(target, value);
         }
 #endif
-        
+
         public static Func<TResult> CreateStaticGetter<TResult>(this FieldInfo field)
         {
-            return () => (TResult)field.GetValue(null);
+            return () => (TResult) field.GetValue(null);
         }
-        
+
 
         #endregion
-        
+
         #region --- MemberInfo Casting ---
 
         private const BindingFlags EVENT_FLAGS = BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance |
                                                  BindingFlags.Public | BindingFlags.FlattenHierarchy;
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static FieldInfo AsFieldInfo(this EventInfo eventInfo)
         {
             return eventInfo.DeclaringType?.GetField(eventInfo.Name, EVENT_FLAGS);
         }
-        
+
         #endregion
-        
+
         #region --- Delegate Creation ---
-        
+
         public static Delegate CreateMatchingDelegate(this MethodInfo methodInfo, object target)
         {
             Func<Type[], Type> getType;
@@ -231,11 +231,11 @@ namespace Baracuda.Utilities.Extensions
                 types = types.Concat(new[] {methodInfo.ReturnType});
             }
 
-            return isStatic 
-                ? Delegate.CreateDelegate(getType(types.ToArray()), methodInfo) 
+            return isStatic
+                ? Delegate.CreateDelegate(getType(types.ToArray()), methodInfo)
                 : Delegate.CreateDelegate(getType(types.ToArray()), target, methodInfo.Name);
         }
-        
+
         public static Delegate CreateMatchingDelegate(this MethodInfo methodInfo)
         {
             Func<Type[], Type> getType;
@@ -255,13 +255,13 @@ namespace Baracuda.Utilities.Extensions
 
             return Delegate.CreateDelegate(getType(types.ToArray()), methodInfo);
         }
-        
+
         #endregion
-        
+
         #region --- Backing Field Access ---
-        
+
 #if !ENABLE_IL2CPP
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
           public static FieldInfo GetBackingField(this PropertyInfo propertyInfo,
             bool strictCheckIsAutoProperty = false)
@@ -319,7 +319,7 @@ namespace Baracuda.Utilities.Extensions
         {
             return null != pi.GetCustomAttribute<CompilerGeneratedAttribute>();
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool StrictCheckIsAutoPropertyBackingField(PropertyInfo pi, FieldInfo fi)
         {
@@ -359,7 +359,7 @@ namespace Baracuda.Utilities.Extensions
                 : -1;
         }
 #endif
-        
+
         #endregion
 
         #region --- Underlying & Collection Types ---
@@ -411,7 +411,7 @@ namespace Baracuda.Utilities.Extensions
         {
             return propertyInfo?.GetMethod?.IsStatic ?? propertyInfo?.SetMethod?.IsStatic ?? throw new InvalidProgramException();
         }
-        
+
         public static bool IsStatic(this EventInfo eventInfo)
         {
             return eventInfo.AddMethod?.IsStatic ?? eventInfo.RemoveMethod.IsStatic;
@@ -426,7 +426,7 @@ namespace Baracuda.Utilities.Extensions
         {
             return eventDelegate?.GetInvocationList().Length ?? 0;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string GetSubscriberCountString<TDelegate>(this TDelegate eventDelegate) where TDelegate : Delegate
         {
@@ -436,7 +436,7 @@ namespace Baracuda.Utilities.Extensions
         #endregion
 
         #region --- Display String Formatting ---
-        
+
         private static readonly Dictionary<Type, string> typeCache = new Dictionary<Type, string>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -456,9 +456,9 @@ namespace Baracuda.Utilities.Extensions
 
             var sb = ConcurrentStringBuilderPool.Get();
             sb.Append(eventType.GetNameWithoutGenericArity());
-            
-            if(eventType.IsGenericType){}
-            
+
+            if (eventType.IsGenericType){}
+
             if (parameters.Length > 0)
             {
                 sb.Append(isGeneric ? '<' : '(');
@@ -467,7 +467,7 @@ namespace Baracuda.Utilities.Extensions
             for (var i = 0; i < parameters.Length; i++)
             {
                 var parameterInfo = parameters[i];
-                sb.Append(parameterInfo.ParameterType.ToReadableTypeString());
+                sb.Append(parameterInfo.ParameterType.HumanizedName());
                 if (!isGeneric)
                 {
                     sb.Append(' ');
@@ -479,12 +479,12 @@ namespace Baracuda.Utilities.Extensions
                     sb.Append(' ');
                 }
             }
-            
+
             if (parameters.Length > 0)
             {
                 sb.Append(isGeneric ? '>' : ')');
             }
-            
+
             return ConcurrentStringBuilderPool.Release(sb);
         }
 
@@ -497,24 +497,26 @@ namespace Baracuda.Utilities.Extensions
 
             stringBuilder.Append(methodInfo.ReturnType.Name);
 
-            if (parameters.Any())
+            if (!parameters.Any())
             {
-                stringBuilder.Append(' ');
-                stringBuilder.Append('(');
-                for (var i = 0; i < parameters.Length; i++)
-                {
-                    stringBuilder.Append(parameters[i].ParameterType.Name);
-                    stringBuilder.Append(' ');
-                    stringBuilder.Append(parameters[i].Name);
-                    if (i != parameters.Length - 1)
-                    {
-                        stringBuilder.Append(',');
-                        stringBuilder.Append(' ');
-                    }
-                }
-                stringBuilder.Append(')');
+                return stringBuilder.ToString();
             }
-            
+
+            stringBuilder.Append(' ');
+            stringBuilder.Append('(');
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                stringBuilder.Append(parameters[i].ParameterType.Name);
+                stringBuilder.Append(' ');
+                stringBuilder.Append(parameters[i].Name);
+                if (i != parameters.Length - 1)
+                {
+                    stringBuilder.Append(',');
+                    stringBuilder.Append(' ');
+                }
+            }
+            stringBuilder.Append(')');
+
 
             return stringBuilder.ToString();
         }
@@ -573,12 +575,12 @@ namespace Baracuda.Utilities.Extensions
             }
 
             Debug.Assert(type.FullName != null, $"type.FullName != null | {type.Name}, {type.DeclaringType}");
-            
+
             var returnValue = type.FullName.Replace('+', '.');
             typeCacheFullName.Add(type, returnValue);
             return returnValue;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string GetNameWithoutGenericArity(this Type type)
         {
@@ -588,7 +590,7 @@ namespace Baracuda.Utilities.Extensions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ToReadableTypeString(this Type type)
+        public static string HumanizedName(this Type type)
         {
             if (typeCache.TryGetValue(type, out var value))
             {
@@ -604,7 +606,7 @@ namespace Baracuda.Utilities.Extensions
 
                 foreach (var t in arguments)
                 {
-                    var arg = ToReadableTypeString(t);
+                    var arg = HumanizedName(t);
 
                     if (argBuilder.Length > 0)
                     {
@@ -625,10 +627,10 @@ namespace Baracuda.Utilities.Extensions
                 var retType = builder.ToString().Replace('+', '.');
 
                 typeCache.Add(type, retType);
-                
+
                 ConcurrentStringBuilderPool.ReleaseStringBuilder(builder);
                 ConcurrentStringBuilderPool.ReleaseStringBuilder(argBuilder);
-                
+
                 return retType;
             }
 
@@ -718,15 +720,15 @@ namespace Baracuda.Utilities.Extensions
                     return typeKeyword;
             }
         }
-        
+
         #endregion
-        
+
         #region --- Base Type Reflection ---
-                
+
         public static Type[] GetBaseTypes(this Type type, bool includeThis, bool includeInterfaces = false)
         {
             var temp = ConcurrentListPool<Type>.Get();
-            
+
             if (includeThis)
             {
                 temp.Add(type);
@@ -736,12 +738,12 @@ namespace Baracuda.Utilities.Extensions
             {
                 temp.AddRange(type.GetInterfaces());
             }
-            
+
             while (type.BaseType != null)
             {
                 temp.Add(type.BaseType);
                 type = type.BaseType;
-                if(type == typeof(MonoBehaviour) || type == typeof(ScriptableObject))
+                if (type == typeof(MonoBehaviour) || type == typeof(ScriptableObject))
                 {
                     break;
                 }
@@ -751,7 +753,7 @@ namespace Baracuda.Utilities.Extensions
             ConcurrentListPool<Type>.Release(temp);
             return array;
         }
-        
+
         public static Type[] GetDeclaringTypes(this Type type, bool includeThis)
         {
             var temp = ConcurrentListPool<Type>.Get();
@@ -760,7 +762,7 @@ namespace Baracuda.Utilities.Extensions
             {
                 temp.Add(type);
             }
-            
+
             while (type.DeclaringType != null)
             {
                 temp.Add(type.DeclaringType);
@@ -771,7 +773,7 @@ namespace Baracuda.Utilities.Extensions
             ConcurrentListPool<Type>.Release(temp);
             return array;
         }
-        
+
         public static Type[] GetBaseTypesExcludeUnityTypes(this Type type, bool includeThis)
         {
             var temp = ConcurrentListPool<Type>.Get();
@@ -780,10 +782,10 @@ namespace Baracuda.Utilities.Extensions
             {
                 temp.Add(type);
             }
-            
+
             while (type.BaseType != null)
             {
-                if(type.BaseType == typeof(MonoBehaviour) || type.BaseType == typeof(ScriptableObject))
+                if (type.BaseType == typeof(MonoBehaviour) || type.BaseType == typeof(ScriptableObject))
                 {
                     break;
                 }
@@ -798,13 +800,13 @@ namespace Baracuda.Utilities.Extensions
 
         private static readonly Dictionary<Type, Dictionary<string, MemberInfo>> memberCache =
             new Dictionary<Type, Dictionary<string, MemberInfo>>();
-        
-        
+
+
         public static void SetMemberValue<TValue>(this Type type, string memberName, object target, BindingFlags flags, TValue value)
         {
             GetMemberValue(memberName, type, target, flags);
         }
-        
+
         public static void SetMemberValue<TValue>(string memberName, Type type, object target, BindingFlags flags, TValue value)
         {
             if (memberCache.TryGetValue(type, out var dictionary) &&
@@ -816,11 +818,11 @@ namespace Baracuda.Utilities.Extensions
                         break;
                     case PropertyInfo pi: pi.SetValue(target, value);
                         break;
-                    case MethodInfo mi: mi.Invoke(target, new object[]{value});
+                    case MethodInfo mi: mi.Invoke(target, new object[] {value});
                         break;
                 }
             }
-            
+
             var fieldInfo = type.GetFieldIncludeBaseTypes(memberName, flags);
             if (fieldInfo != null)
             {
@@ -828,12 +830,12 @@ namespace Baracuda.Utilities.Extensions
                 fieldInfo.SetValue(target, value);
                 return;
             }
-            
+
             var methodInfo = type.GetMethodIncludeBaseTypes(memberName, flags);
             if (methodInfo != null)
             {
                 Cache(methodInfo);
-                methodInfo.Invoke(target, new object[]{value});
+                methodInfo.Invoke(target, new object[] {value});
                 return;
             }
 
@@ -842,7 +844,6 @@ namespace Baracuda.Utilities.Extensions
             {
                 Cache(propertyInfo);
                 propertyInfo.SetValue(target, value);
-                return;
             }
 
             void Cache(MemberInfo member)
@@ -853,17 +854,20 @@ namespace Baracuda.Utilities.Extensions
                 }
                 else
                 {
-                    memberCache.Add(type, new Dictionary<string, MemberInfo>(){{memberName, member}});
+                    memberCache.Add(type, new Dictionary<string, MemberInfo>
+                    {
+                        {memberName, member}
+                    });
                 }
             }
         }
-        
-        
+
+
         public static object GetMemberValue(this Type type, string memberName, object target, BindingFlags flags)
         {
             return GetMemberValue(memberName, type, target, flags);
         }
-        
+
         public static object GetMemberValue(string memberName, Type type, object target, BindingFlags flags)
         {
             if (memberCache.TryGetValue(type, out var dictionary) &&
@@ -876,14 +880,14 @@ namespace Baracuda.Utilities.Extensions
                     case MethodInfo mi: return mi.Invoke(target, Array.Empty<object>());
                 }
             }
-            
+
             var fieldInfo = type.GetFieldIncludeBaseTypes(memberName, flags);
             if (fieldInfo != null)
             {
                 Cache(fieldInfo);
                 return fieldInfo.GetValue(target);
             }
-            
+
             var methodInfo = type.GetMethodIncludeBaseTypes(memberName, flags);
             if (methodInfo != null)
             {
@@ -906,18 +910,21 @@ namespace Baracuda.Utilities.Extensions
                 }
                 else
                 {
-                    memberCache.Add(type, new Dictionary<string, MemberInfo>(){{memberName, member}});
+                    memberCache.Add(type, new Dictionary<string, MemberInfo>
+                    {
+                        {memberName, member}
+                    });
                 }
             }
-            
+
             return null;
         }
-        
-        public static FieldInfo GetFieldIncludeBaseTypes(this Type type, string fieldName, BindingFlags flags = 
-            BindingFlags.Static | 
-            BindingFlags.NonPublic | 
+
+        public static FieldInfo GetFieldIncludeBaseTypes(this Type type, string fieldName, BindingFlags flags =
+            BindingFlags.Static |
+            BindingFlags.NonPublic |
             BindingFlags.Instance |
-            BindingFlags.Public | 
+            BindingFlags.Public |
             BindingFlags.FlattenHierarchy)
         {
             FieldInfo fieldInfo = null;
@@ -927,7 +934,7 @@ namespace Baracuda.Utilities.Extensions
             {
                 fieldInfo = targetType.GetField(fieldName, flags);
                 targetType = targetType.BaseType;
-                
+
                 if (targetType == null)
                 {
                     return null;
@@ -936,12 +943,12 @@ namespace Baracuda.Utilities.Extensions
 
             return fieldInfo;
         }
-        
-        public static PropertyInfo GetPropertyIncludeBaseTypes(this Type type, string propertyName, BindingFlags flags = 
-            BindingFlags.Static | 
-            BindingFlags.NonPublic | 
+
+        public static PropertyInfo GetPropertyIncludeBaseTypes(this Type type, string propertyName, BindingFlags flags =
+            BindingFlags.Static |
+            BindingFlags.NonPublic |
             BindingFlags.Instance |
-            BindingFlags.Public | 
+            BindingFlags.Public |
             BindingFlags.FlattenHierarchy)
         {
             PropertyInfo propertyInfo = null;
@@ -951,7 +958,7 @@ namespace Baracuda.Utilities.Extensions
             {
                 propertyInfo = targetType.GetProperty(propertyName, flags);
                 targetType = targetType.BaseType;
-                
+
                 if (targetType == null)
                 {
                     return null;
@@ -960,8 +967,8 @@ namespace Baracuda.Utilities.Extensions
 
             return propertyInfo;
         }
-        
-        
+
+
         public static MethodInfo GetMethodIncludeBaseTypes(this Type type, string methodName, BindingFlags flags)
         {
             MethodInfo methodInfo = null;
@@ -972,7 +979,7 @@ namespace Baracuda.Utilities.Extensions
             {
                 methodInfo = targetType.GetMethod(methodName, flags);
                 targetType = targetType.BaseType;
-                
+
                 if (targetType == null || value++ > 10)
                 {
                     return null;
@@ -981,7 +988,7 @@ namespace Baracuda.Utilities.Extensions
 
             return methodInfo;
         }
-        
+
         public static EventInfo GetEventIncludeBaseTypes(this Type type, string eventName, BindingFlags flags)
         {
             EventInfo eventInfo = null;
@@ -991,7 +998,7 @@ namespace Baracuda.Utilities.Extensions
             {
                 eventInfo = targetType.GetEvent(eventName, flags);
                 targetType = targetType.BaseType;
-                
+
                 if (targetType == null)
                 {
                     return null;
@@ -1002,7 +1009,7 @@ namespace Baracuda.Utilities.Extensions
         }
 
         /*
-         * Multiple   
+         * Multiple
          */
 
         public static FieldInfo[] GetFieldsIncludeBaseTypes(this Type type, BindingFlags flags)
@@ -1010,13 +1017,13 @@ namespace Baracuda.Utilities.Extensions
             var fieldInfos = ConcurrentListPool<FieldInfo>.Get();
             var typesToCheck = ConcurrentListPool<Type>.Get();
             var targetType = type;
-            
+
             while (targetType.EqualsNone(typeof(MonoBehaviour), typeof(ScriptableObject), typeof(object)))
             {
                 typesToCheck.Add(targetType);
                 targetType = targetType?.BaseType;
             }
-            
+
             for (var i = typesToCheck.Count - 1; i >= 0; i--)
             {
                 fieldInfos.AddRange(typesToCheck[i].GetFields(flags));
@@ -1027,19 +1034,19 @@ namespace Baracuda.Utilities.Extensions
             ConcurrentListPool<FieldInfo>.Release(fieldInfos);
             return array;
         }
-        
+
         public static PropertyInfo[] GetPropertiesIncludeBaseTypes(this Type type, BindingFlags flags)
         {
             var propertyInfos = ConcurrentListPool<PropertyInfo>.Get();
             var typesToCheck = ConcurrentListPool<Type>.Get();
             var targetType = type;
-            
+
             while (targetType.EqualsNone(typeof(MonoBehaviour), typeof(ScriptableObject), typeof(object)))
             {
                 typesToCheck.Add(targetType);
                 targetType = targetType?.BaseType;
             }
-            
+
             for (var i = typesToCheck.Count - 1; i >= 0; i--)
             {
                 propertyInfos.AddRange(typesToCheck[i].GetProperties(flags));
@@ -1050,20 +1057,20 @@ namespace Baracuda.Utilities.Extensions
             ConcurrentListPool<PropertyInfo>.Release(propertyInfos);
             return array;
         }
-        
-        
+
+
         public static MethodInfo[] GetMethodsIncludeBaseTypes(this Type type, BindingFlags flags)
         {
             var methodInfos = ConcurrentListPool<MethodInfo>.Get();
             var typesToCheck = ConcurrentListPool<Type>.Get();
             var targetType = type;
-            
+
             while (targetType.EqualsNone(typeof(MonoBehaviour), typeof(ScriptableObject), typeof(object)))
             {
                 typesToCheck.Add(targetType);
                 targetType = targetType?.BaseType;
             }
-            
+
             for (var i = typesToCheck.Count - 1; i >= 0; i--)
             {
                 methodInfos.AddRange(typesToCheck[i].GetMethods(flags));
@@ -1074,19 +1081,19 @@ namespace Baracuda.Utilities.Extensions
             ConcurrentListPool<MethodInfo>.Release(methodInfos);
             return array;
         }
- 
+
         public static MemberInfo[] GetMembersIncludeBaseTypes(this Type type, BindingFlags flags)
         {
             var memberInfos = ConcurrentListPool<MemberInfo>.Get();
             var typesToCheck = ConcurrentListPool<Type>.Get();
             var targetType = type;
-            
+
             while (targetType.EqualsNone(typeof(MonoBehaviour), typeof(ScriptableObject), typeof(object)))
             {
                 typesToCheck.Add(targetType);
                 targetType = targetType?.BaseType;
             }
-            
+
             for (var i = typesToCheck.Count - 1; i >= 0; i--)
             {
                 memberInfos.AddRange(typesToCheck[i].GetMembers(flags));
@@ -1097,18 +1104,18 @@ namespace Baracuda.Utilities.Extensions
             ConcurrentListPool<MemberInfo>.Release(memberInfos);
             return array;
         }
-        
-        
+
+
         #endregion
 
         #region --- Helper ---
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool EqualsNone<T>(this T target, T otherA, T otherB, T otherC) where T : class
         {
             return !(target.Equals(otherA) || target.Equals(otherB) || target.Equals(otherC));
         }
-        
+
         #endregion
     }
 }

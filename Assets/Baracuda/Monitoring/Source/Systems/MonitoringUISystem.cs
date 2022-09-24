@@ -324,6 +324,11 @@ namespace Baracuda.Monitoring.Source.Systems
 
         public void ResetFilter()
         {
+            if (string.IsNullOrWhiteSpace(_activeFilter))
+            {
+                return;
+            }
+            
             _activeFilter = null;
             _ticker.ValidationTickEnabled = true;
             var units = _manager.GetAllMonitoringUnits();

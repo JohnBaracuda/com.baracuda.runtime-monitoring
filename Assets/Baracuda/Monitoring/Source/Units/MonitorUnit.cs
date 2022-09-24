@@ -198,7 +198,7 @@ namespace Baracuda.Monitoring.Source.Units
 
         public override string ToString()
         {
-            return GetType().ToReadableTypeString();
+            return GetType().HumanizedName();
         }
 
         #endregion

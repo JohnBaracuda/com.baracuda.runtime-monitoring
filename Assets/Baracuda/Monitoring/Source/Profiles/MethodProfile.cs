@@ -25,7 +25,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             MemberType.Method, args)
         {
             var valueProcessor = MonitoringSystems.Resolve<IValueProcessorFactory>().CreateProcessorForType<TValue>(FormatData);
-            
+
             var parameter = CreateParameterArray(methodInfo, attribute);
             _getValueDelegate = CreateGetDelegate(methodInfo, parameter, valueProcessor, FormatData, args.Settings);
         }
@@ -42,12 +42,12 @@ namespace Baracuda.Monitoring.Source.Profiles
             var sb = new StringBuilder();
             var parameterInfos = methodInfo.GetParameters();
             var parameterHandles = CreateParameterHandles(parameterInfos, format, settings);
-            
-            
+
+
             if (methodInfo.ReturnType == typeof(void))
             {
                 var @void = new VoidValue().ConvertFast<VoidValue, TValue>();
-                
+
                 return target =>
                 {
                     sb.Clear();
@@ -102,8 +102,8 @@ namespace Baracuda.Monitoring.Source.Profiles
                         Group = format.Group,
                         ElementIndent = Mathf.Max(format.ElementIndent * 2, 4)
                     };
-                    
-                    
+
+
                     var handle = OutParameterHandle.CreateForType(current.ParameterType, parameterFormat);
                     handles.Add(i, handle);
                 }
@@ -116,7 +116,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             var parameterInfos = methodInfo.GetParameters();
             var paramArray = new object[parameterInfos.Length];
             var monitorMethodAttribute = attribute as MonitorMethodAttribute;
-            
+
             for (var i = 0; i < parameterInfos.Length; i++)
             {
                 var current = parameterInfos[i];
@@ -127,7 +127,7 @@ namespace Baracuda.Monitoring.Source.Profiles
                 }
                 else
                 {
-                    var defaultValue = current.HasDefaultValue? current.DefaultValue : currentType.GetDefault();
+                    var defaultValue = current.HasDefaultValue ? current.DefaultValue : currentType.GetDefault();
                     paramArray[i] = defaultValue;
                 }
             }

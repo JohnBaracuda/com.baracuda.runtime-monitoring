@@ -39,7 +39,7 @@ namespace Baracuda.Monitoring.Editor
             OnPreprocessBuildInternal();
 #endif
         }
-        
+
         #endregion
 
         #region --- Interface ---
@@ -62,7 +62,7 @@ namespace Baracuda.Monitoring.Editor
             }
 #endif
         }
-        
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -70,54 +70,54 @@ namespace Baracuda.Monitoring.Editor
         #region --- Fields ---
 
         /*
-         * Const fields   
+         * Const fields
          */
 
-        private const BindingFlags STATIC_FLAGS = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+        private const BindingFlags StaticFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
-        private const BindingFlags INSTANCE_FLAGS = BindingFlags.Instance | BindingFlags.Public |
+        private const BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.Public |
                                                     BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
-        
-        
+
+
         private static readonly string preserveAttribute = $"[{typeof(PreserveAttribute).FullName}]";
         private static readonly string methodImpAttribute = $"[{typeof(MethodImplAttribute).FullName}({typeof(MethodImplOptions).FullName}.{MethodImplOptions.NoOptimization.ToString()})]";
         private static readonly string aotBridgeClass = typeof(AOTBridge).FullName;
-        
+
         /*
-         * Queues & Caches   
+         * Queues & Caches
          */
 
         private static readonly List<string> fieldProfileDefinitions = new List<string>();
         private static readonly List<string> propertyProfileDefinitions = new List<string>();
         private static readonly List<string> eventProfileDefinitions = new List<string>();
         private static readonly List<string> methodProfileDefinitions = new List<string>();
-        
+
         private static readonly HashSet<Type> uniqueTypeDefinitions = new HashSet<Type>();
         private static readonly HashSet<Type> uniqueMonitoredTypes = new HashSet<Type>();
         private static readonly List<string> signatureDefinitions = new List<string>();
-        
+
         private static readonly List<string> errorBuffer = new List<string>();
 
         private static int id;
 
         private static IStatCounter Stats { get; set; }
-        
+
         #endregion
-        
+
         #region --- Preprocess Internal ---
 
         private static void OnPreprocessBuildInternal()
         {
             ResetQueuesAndCaches();
             unityAssemblies = CompilationPipeline.GetAssemblies();
-            
+
             var textFile = MonitoringSystems.Resolve<IMonitoringSettings>().ScriptFileIL2CPP;
             var filePath = AssetDatabase.GetAssetPath(textFile);
-            
+
             Debug.Log($"Starting IL2CPP AOT type definition generation.\nFilePath: {filePath}");
 
             ProfileAssembliesAndCreateDefinitions();
-            
+
             var stringBuilder = new StringBuilder(short.MaxValue);
 
             AppendHeaderText(stringBuilder);
@@ -128,16 +128,16 @@ namespace Baracuda.Monitoring.Editor
             AppendProfileDefinitions(stringBuilder, propertyProfileDefinitions, "Property Profiles");
             AppendProfileDefinitions(stringBuilder, eventProfileDefinitions, "Event Profiles");
             AppendProfileDefinitions(stringBuilder, methodProfileDefinitions, "Method Profiles");
-            
+
             AppendMethodDefinitions(stringBuilder);
-            
+
             AppendCloseClass(stringBuilder);
             AppendIfDefEnd(stringBuilder);
-            
+
             AppendStats(stringBuilder);
-            
+
             Debug.Log($"Writing type definitions to file.\nFilePath: {filePath}");
-            
+
             WriteContentToFile(filePath, stringBuilder);
 
             if (errorBuffer.Any())
@@ -147,7 +147,7 @@ namespace Baracuda.Monitoring.Editor
                     Debug.LogWarning(errorMessage);
                 }
             }
-            
+
             AssetDatabase.Refresh();
             Debug.Log("Successfully completed IL2CPP AOT type definition generation");
 
@@ -155,7 +155,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 Debug.Log(Stats.ToString(false));
             }
-            
+
             ResetQueuesAndCaches();
         }
 
@@ -191,12 +191,12 @@ namespace Baracuda.Monitoring.Editor
             AppendLineBreak(stringBuilder);
             AppendLine(stringBuilder);
         }
-        
+
         private static void AppendMethodDefinitions(StringBuilder stringBuilder)
         {
             AppendComment(stringBuilder, "Value Processor Method Definitions");
             AppendLineBreak(stringBuilder);
-            
+
             stringBuilder.Append("\n    ");
             stringBuilder.Append(preserveAttribute);
             stringBuilder.Append("\n    ");
@@ -205,17 +205,17 @@ namespace Baracuda.Monitoring.Editor
             stringBuilder.Append("private static void AOT()");
             stringBuilder.Append("\n    ");
             stringBuilder.Append("{");
-            
+
             for (var i = 0; i < signatureDefinitions.Count; i++)
             {
                 var definition = signatureDefinitions[i];
                 stringBuilder.Append(definition);
             }
-            
+
             stringBuilder.Append("\n    ");
             stringBuilder.Append("}");
         }
-        
+
         #endregion
 
         #region --- Append Meta ---
@@ -241,7 +241,7 @@ namespace Baracuda.Monitoring.Editor
             stringBuilder.Append("//https://github.com/JohnBaracuda/Runtime-Monitoring");
             stringBuilder.Append('\n');
         }
-        
+
         private static void AppendCopyrightNote(StringBuilder stringBuilder)
         {
             stringBuilder.Append("// Copyright (c) 2022 Jonathan Lang\n");
@@ -282,7 +282,7 @@ namespace Baracuda.Monitoring.Editor
             stringBuilder.Append('}');
             stringBuilder.Append('\n');
         }
-        
+
         #endregion
 
         #region --- Append Stats ---
@@ -290,18 +290,18 @@ namespace Baracuda.Monitoring.Editor
         private static void AppendStats(StringBuilder stringBuilder)
         {
             AppendComment(stringBuilder, new string('-', 118), 0);
-            AppendLineBreak(stringBuilder,2);
+            AppendLineBreak(stringBuilder, 2);
             stringBuilder.Append(Stats.ToString(true));
             AppendComment(stringBuilder, new string('-', 118), 0);
             AppendLineBreak(stringBuilder);
             AppendComment(stringBuilder, "If this file contains any errors please contact me and/or create an issue in the linked repository." , 0);
             AppendComment(stringBuilder, "https://github.com/JohnBaracuda/Runtime-Monitoring" , 0);
         }
-        
+
         #endregion
 
         #region --- Append Misc ---
-        
+
         private static void AppendLineBreak(StringBuilder stringBuilder, int breaks = 1)
         {
             for (var i = 0; i < breaks; i++)
@@ -309,7 +309,7 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('\n');
             }
         }
-        
+
         private static void AppendComment(StringBuilder stringBuilder, string comment, int indent = 4)
         {
             stringBuilder.Append('\n');
@@ -317,14 +317,14 @@ namespace Baracuda.Monitoring.Editor
             stringBuilder.Append("//");
             stringBuilder.Append(comment);
         }
-        
+
         private static void AppendLine(StringBuilder stringBuilder)
         {
             stringBuilder.Append("    //");
             stringBuilder.Append(new string('-', 114));
             stringBuilder.Append('\n');
         }
-        
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -339,11 +339,11 @@ namespace Baracuda.Monitoring.Editor
                 {
                     continue;
                 }
-                
+
                 foreach (var type in filteredAssembly.GetTypes())
                 {
                     // Static Fields
-                    foreach (var fieldInfo in type.GetFields(STATIC_FLAGS))
+                    foreach (var fieldInfo in type.GetFields(StaticFlags))
                     {
                         if (fieldInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -351,16 +351,16 @@ namespace Baracuda.Monitoring.Editor
                         }
                     }
                     // Instance Fields
-                    foreach (var fieldInfo in type.GetFields(INSTANCE_FLAGS))
+                    foreach (var fieldInfo in type.GetFields(InstanceFlags))
                     {
                         if (fieldInfo.HasAttribute<MonitorAttribute>(true))
                         {
                             ProfileFieldInfo(fieldInfo);
                         }
                     }
-                    
+
                     // Static Properties
-                    foreach (var propertyInfo in type.GetProperties(STATIC_FLAGS))
+                    foreach (var propertyInfo in type.GetProperties(StaticFlags))
                     {
                         if (propertyInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -368,16 +368,16 @@ namespace Baracuda.Monitoring.Editor
                         }
                     }
                     // Instance Properties
-                    foreach (var propertyInfo in type.GetProperties(INSTANCE_FLAGS))
+                    foreach (var propertyInfo in type.GetProperties(InstanceFlags))
                     {
                         if (propertyInfo.HasAttribute<MonitorAttribute>(true))
                         {
                             ProfilePropertyInfo(propertyInfo);
                         }
                     }
-                    
+
                     // Static Events
-                    foreach (var eventInfo in type.GetEvents(STATIC_FLAGS))
+                    foreach (var eventInfo in type.GetEvents(StaticFlags))
                     {
                         if (eventInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -385,16 +385,16 @@ namespace Baracuda.Monitoring.Editor
                         }
                     }
                     // Instance Events
-                    foreach (var eventInfo in type.GetEvents(INSTANCE_FLAGS))
+                    foreach (var eventInfo in type.GetEvents(InstanceFlags))
                     {
                         if (eventInfo.HasAttribute<MonitorAttribute>(true))
                         {
                             ProfileEventInfo(eventInfo);
                         }
                     }
-                    
+
                     // Static Methods
-                    foreach (var methodInfo in type.GetMethods(STATIC_FLAGS))
+                    foreach (var methodInfo in type.GetMethods(StaticFlags))
                     {
                         if (methodInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -402,7 +402,7 @@ namespace Baracuda.Monitoring.Editor
                         }
                     }
                     // Instance Methods
-                    foreach (var methodInfo in type.GetMethods(INSTANCE_FLAGS))
+                    foreach (var methodInfo in type.GetMethods(InstanceFlags))
                     {
                         if (methodInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -485,7 +485,7 @@ namespace Baracuda.Monitoring.Editor
                 errorBuffer.Add(exception.Message);
             }
         }
-        
+
         private static void ProfileMethodInfo(MethodInfo methodInfo)
         {
             try
@@ -495,12 +495,12 @@ namespace Baracuda.Monitoring.Editor
                     Debug.LogWarning($"Monitored Method {methodInfo.DeclaringType?.Name}.{methodInfo.Name} needs a return value or out parameter!");
                     return;
                 }
-                
+
                 Stats.IncrementStat("Monitored Member");
                 Stats.IncrementStat($"Monitored Member {(methodInfo.IsStatic? "Static" : "Instance")}");
                 Stats.IncrementStat("Monitored Methods", "MemberInfo");
                 Stats.IncrementStat($"Monitored Methods {(methodInfo.IsStatic? "Static" : "Instance")}", "MemberInfo");
-                
+
                 var template = typeof(MethodProfile<,>);
                 var declaring = methodInfo.DeclaringType;
                 var monitored = methodInfo.ReturnType;
@@ -514,13 +514,13 @@ namespace Baracuda.Monitoring.Editor
                 }
                 errorBuffer.Add(exception.Message);
             }
-            
+
             foreach (var parameterInfo in methodInfo.GetParameters().Where(info => info.IsOut))
             {
                 try
                 {
                     Stats.IncrementStat("Monitored Out Parameter", "Out Parameter");
-                    Stats.IncrementStat($"Monitored Out Parameter {parameterInfo.ParameterType.ToReadableTypeString()}", "Out Parameter");
+                    Stats.IncrementStat($"Monitored Out Parameter {parameterInfo.ParameterType.HumanizedName()}", "Out Parameter");
                     TryCreateOutParameterHandleDefinition(parameterInfo.ParameterType);
                 }
                 catch (Exception exception)
@@ -533,13 +533,13 @@ namespace Baracuda.Monitoring.Editor
                 }
             }
         }
-        
+
         #endregion
 
         #region --- Type Definitions ---
 
         /*
-         * Out Param Type Def   
+         * Out Param Type Def
          */
 
         private static void TryCreateOutParameterHandleDefinition(Type type)
@@ -550,7 +550,7 @@ namespace Baracuda.Monitoring.Editor
                 return;
             }
             var concreteType = typeof(OutParameterHandleT<>).MakeGenericType(underlying);
-            
+
             if (TryCreateUniqueTypeDefString(concreteType, out var str))
             {
                 methodProfileDefinitions.Add(str);
@@ -559,16 +559,16 @@ namespace Baracuda.Monitoring.Editor
 
 
         /*
-         * Profile Type Def   
+         * Profile Type Def
          */
-        
+
         private static void CreateProfileTypeDefFor(Type template, Type declaringType, Type monitoredType, in ICollection<string> definitionList)
         {
             if (monitoredType.IsGenericParameter)
             {
                 return;
             }
-            
+
             var declaring = MakeViableType(declaringType);
             var monitored = MakeViableType(monitoredType);
 
@@ -576,13 +576,13 @@ namespace Baracuda.Monitoring.Editor
             {
                 return;
             }
-            
-            
+
+
             CreateMethodSig(monitored);
-            Stats.IncrementStat($"Monitored {monitored.ToReadableTypeString()}", "Monitored Types");
-            
+            Stats.IncrementStat($"Monitored {monitored.HumanizedName()}", "Monitored Types");
+
             var definition = template.MakeGenericType(declaring, monitored);
-            
+
             if (TryCreateUniqueTypeDefString(definition, out var str))
             {
                 definitionList.Add(str);
@@ -590,9 +590,9 @@ namespace Baracuda.Monitoring.Editor
         }
 
         /*
-         * Create Definition String   
+         * Create Definition String
          */
-        
+
         private static bool TryCreateUniqueTypeDefString(Type type, out string defString)
         {
             if (uniqueTypeDefinitions.Contains(type))
@@ -605,16 +605,16 @@ namespace Baracuda.Monitoring.Editor
             defString = CreateTypeDefinitionString(type);
             return true;
         }
-        
+
         private static string CreateTypeDefinitionString(Type type)
         {
             var stringBuilder = StringBuilderPool.Get();
             stringBuilder.Append("\n    //");
-            stringBuilder.Append(type.ToReadableTypeString());
+            stringBuilder.Append(type.HumanizedName());
             stringBuilder.Append("\n    ");
             stringBuilder.Append(preserveAttribute);
             stringBuilder.Append("\n    ");
-            stringBuilder.Append(type.ToReadableTypeStringFullName());
+            stringBuilder.Append(MakeAccessibleSyntaxString(type));
             stringBuilder.Append(' ');
             stringBuilder.Append("AOT_GENERATED_TYPE_");
             stringBuilder.Append(id++);
@@ -639,7 +639,7 @@ namespace Baracuda.Monitoring.Editor
             }
 
             uniqueMonitoredTypes.Add(viableType);
-            
+
             if (viableType.IsValueTypeArray())
             {
                 ProcessValueTypeArray(type);
@@ -660,7 +660,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 ProcessList(type);
             }
-            
+
             void ProcessList(Type valueType)
             {
                 var stringBuilder = StringBuilderPool.Get();
@@ -669,13 +669,13 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTList");
                 stringBuilder.Append('<');
-                stringBuilder.Append(valueType.ToReadableTypeStringFullName());
+                stringBuilder.Append(MakeAccessibleSyntaxString(valueType));
                 stringBuilder.Append(", ");
-                stringBuilder.Append(valueType.GetGenericArguments()[0].ToReadableTypeStringFullName());
+                stringBuilder.Append(MakeAccessibleSyntaxString(valueType.GetGenericArguments()[0]));
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
-            
+
             void ProcessValueTypeArray(Type valueType)
             {
                 var stringBuilder = StringBuilderPool.Get();
@@ -684,11 +684,11 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTValueTypeArray");
                 stringBuilder.Append('<');
-                stringBuilder.Append(valueType.GetElementType().ToReadableTypeStringFullName());
+                stringBuilder.Append(MakeAccessibleSyntaxString(valueType.GetElementType()));
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
-            
+
             void ProcessArray(Type arrayType)
             {
                 var stringBuilder = StringBuilderPool.Get();
@@ -697,7 +697,7 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTReferenceTypeArray");
                 stringBuilder.Append('<');
-                stringBuilder.Append(arrayType.GetElementType().ToReadableTypeStringFullName());
+                stringBuilder.Append(MakeAccessibleSyntaxString(arrayType.GetElementType()));
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
@@ -710,9 +710,9 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTDictionary");
                 stringBuilder.Append('<');
-                stringBuilder.Append(dictionaryType.GetGenericArguments()[0].ToReadableTypeStringFullName());
+                stringBuilder.Append(MakeAccessibleSyntaxString(dictionaryType.GetGenericArguments()[0]));
                 stringBuilder.Append(',');
-                stringBuilder.Append(dictionaryType.GetGenericArguments()[1].ToReadableTypeStringFullName());
+                stringBuilder.Append(MakeAccessibleSyntaxString(dictionaryType.GetGenericArguments()[1]));
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
@@ -725,12 +725,12 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('.');
                 stringBuilder.Append("AOTEnumerable");
                 stringBuilder.Append('<');
-                stringBuilder.Append(enumerableType.GetGenericArguments()[0].ToReadableTypeStringFullName());
+                stringBuilder.Append(MakeAccessibleSyntaxString(enumerableType.GetGenericArguments()[0]));
                 stringBuilder.Append(">();");
                 signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
             }
         }
-        
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -746,7 +746,7 @@ namespace Baracuda.Monitoring.Editor
             }
 
             var underlying = (type.IsByRef ? type.GetElementType() : type) ?? type;
-            
+
             if (underlying == typeof(void))
             {
                 return typeof(VoidValue);
@@ -783,34 +783,89 @@ namespace Baracuda.Monitoring.Editor
             }
 
             var error =
-                $"[MONITORING] Error: {type.ToReadableTypeString()} is not accessible! ({type.FullName?.Replace('+', '.')})" +
+                $"[MONITORING] Error: {type.HumanizedName()} is not accessible! ({type.FullName?.Replace('+', '.')})" +
                 $"\nCannot generate AOT code for unmanaged internal/private types! " +
-                $"Please make sure that {type.ToReadableTypeString()} and all of its declaring types are either public or use a managed type instead of struct!";
-            
+                $"Please make sure that {type.HumanizedName()} and all of its declaring types are either public or use a managed type instead of struct!";
+
             errorBuffer.Add(error);
-            
+
             return null;
         }
-        
-        
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string MakeAccessibleSyntaxString(Type type)
+        {
+            if (type.IsStatic())
+            {
+                return typeof(object).FullName?.Replace('+', '.');
+            }
+
+            if (!type.IsAccessible())
+            {
+                return typeof(object).FullName?.Replace('+', '.');
+            }
+
+            if (type.IsGenericType)
+            {
+                var builder = ConcurrentStringBuilderPool.Get();
+                var argBuilder = ConcurrentStringBuilderPool.Get();
+
+                var arguments = type.GetGenericArguments();
+
+                foreach (var typeArg in arguments)
+                {
+                    // Let's make sure we get the argument list.
+                    var arg = MakeAccessibleSyntaxString(typeArg);
+
+                    if (argBuilder.Length > 0)
+                    {
+                        argBuilder.AppendFormat(", {0}", arg);
+                    }
+                    else
+                    {
+                        argBuilder.Append(arg);
+                    }
+                }
+
+                if (argBuilder.Length > 0)
+                {
+                    Debug.Assert(type.FullName != null, "type.FullName != null");
+                    builder.AppendFormat("{0}<{1}>", type.FullName.Split('`')[0],
+                        argBuilder);
+                }
+
+                var retType = builder.ToString();
+
+                ConcurrentStringBuilderPool.ReleaseStringBuilder(builder);
+                ConcurrentStringBuilderPool.ReleaseStringBuilder(argBuilder);
+                return retType.Replace('+', '.');
+            }
+
+            Debug.Assert(type.FullName != null, $"type.FullName != null | {type.Name}, {type.DeclaringType}");
+
+            var returnValue = type.FullName.Replace('+', '.');
+            return returnValue;
+        }
+
+
         private static void ResetQueuesAndCaches()
         {
             id = 0;
-            
+
             fieldProfileDefinitions.Clear();
             propertyProfileDefinitions.Clear();
             eventProfileDefinitions.Clear();
             methodProfileDefinitions.Clear();
-            
+
             signatureDefinitions.Clear();
             uniqueTypeDefinitions.Clear();
             uniqueMonitoredTypes.Clear();
-            
+
             errorBuffer.Clear();
 
             Stats = new StatCounter();
         }
-        
+
         #endregion
 
         #region --- Editor Misc ---

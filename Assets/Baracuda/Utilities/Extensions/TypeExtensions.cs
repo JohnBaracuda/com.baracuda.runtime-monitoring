@@ -11,12 +11,12 @@ namespace Baracuda.Utilities.Extensions
     public static class TypeExtensions
     {
         #region --- Type Data ---
-       
-        
+
+
         /*
-         *  Number Sets   
+         *  Number Sets
          */
-        
+
         private static readonly HashSet<Type> numericTypes = new HashSet<Type>
         {
             typeof(byte),
@@ -54,7 +54,7 @@ namespace Baracuda.Utilities.Extensions
         #endregion
 
         #region --- Type Checks ---
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNumeric(this Type type)
         {
@@ -78,7 +78,7 @@ namespace Baracuda.Utilities.Extensions
         {
             return type == typeof(int);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsInt64(this Type type)
         {
@@ -96,13 +96,13 @@ namespace Baracuda.Utilities.Extensions
         {
             return type == typeof(float);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsString(this Type type)
         {
             return type == typeof(string);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsStruct(this Type type)
         {
@@ -168,11 +168,11 @@ namespace Baracuda.Utilities.Extensions
                 return false;
             }
 
-            if (type.IsInterface && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            if (type.IsGenericType && type.IsInterface && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
                 return true;
             }
-            
+
             for (var i = 0; i < type.GetInterfaces().Length; i++)
             {
                 var interfaceType = type.GetInterfaces()[i];
@@ -184,7 +184,7 @@ namespace Baracuda.Utilities.Extensions
 
             return false;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object GetDefault(this Type type)
         {
@@ -194,11 +194,11 @@ namespace Baracuda.Utilities.Extensions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIDictionary(this Type type)
         {
-            if (type.IsInterface && type.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+            if (type.IsInterface && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>))
             {
                 return true;
             }
-            
+
             for (var i = 0; i < type.GetInterfaces().Length; i++)
             {
                 var interfaceType = type.GetInterfaces()[i];
@@ -215,13 +215,13 @@ namespace Baracuda.Utilities.Extensions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsGenericIList(this Type type)
         {
-            if (type.IsInterface && type.GetGenericTypeDefinition() == typeof(IList<>))
+            if (type.IsInterface && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>))
             {
                 return true;
             }
-            
+
             var interfaces = type.GetInterfaces();
-            
+
             for (var i = 0; i < interfaces.Length; i++)
             {
                 var @interface = interfaces[i];
@@ -230,17 +230,17 @@ namespace Baracuda.Utilities.Extensions
                     return true;
                 }
             }
-            
+
             return false;
         }
-        
+
         /// <summary>
-        /// Returns ture if the type and all of its declaring types are public. 
+        /// Returns ture if the type and all of its declaring types are public.
         /// </summary>
         public static bool IsAccessible(this Type type)
         {
             var baseTypes = type.GetDeclaringTypes(true);
-            
+
             for (var i = 0; i < baseTypes.Length; i++)
             {
                 var baseType = baseTypes[i];
@@ -252,13 +252,13 @@ namespace Baracuda.Utilities.Extensions
 
             return true;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasReturnValue(this MethodInfo methodInfo)
         {
             return methodInfo.ReturnType != typeof(void);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasReturnValueOrOutParameter(this MethodInfo methodInfo)
         {
@@ -280,9 +280,9 @@ namespace Baracuda.Utilities.Extensions
         }
 
         /*
-         *  Unity Types   
+         *  Unity Types
          */
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsVector(this Type type)
         {
@@ -302,9 +302,9 @@ namespace Baracuda.Utilities.Extensions
         }
 
         /*
-         *  Generics & Delegates   
+         *  Generics & Delegates
          */
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsDelegate(this Type type)
         {

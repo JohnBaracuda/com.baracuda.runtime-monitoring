@@ -161,7 +161,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             
             if(settings.FilterType)
             {
-                var readableString = MonitoredMemberType.ToReadableTypeString();
+                var readableString = MonitoredMemberType.HumanizedName();
                 tags.Add(readableString);
                 utility.AddTypeString(readableString);
             }

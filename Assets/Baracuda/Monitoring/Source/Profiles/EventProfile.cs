@@ -133,7 +133,7 @@ namespace Baracuda.Monitoring.Source.Profiles
                         sb.Append(i);
                         sb.Append(']');
                         sb.Append(' ');
-                        sb.Append(item.Method.DeclaringType?.ToReadableTypeString().ColorizeString(settings.ClassColor) ?? "NULL".ColorizeString(Color.red));
+                        sb.Append(item.Method.DeclaringType?.HumanizedName().ColorizeString(settings.ClassColor) ?? "NULL".ColorizeString(Color.red));
                         sb.Append(settings.AppendSymbol);
                         sb.Append(item.Method.Name.ColorizeString(settings.MethodColor));
                     

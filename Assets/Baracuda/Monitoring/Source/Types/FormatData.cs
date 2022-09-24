@@ -148,7 +148,7 @@ namespace Baracuda.Monitoring.Source.Types
             string MakeGroup()
             {
                 return profile.DeclaringType.IsGenericType
-                    ? profile.DeclaringType.ToReadableTypeString()
+                    ? profile.DeclaringType.HumanizedName()
                     : (settings.HumanizeNames
                         ? Humanize(profile.DeclaringType.Name)
                         : profile.DeclaringType.Name);
