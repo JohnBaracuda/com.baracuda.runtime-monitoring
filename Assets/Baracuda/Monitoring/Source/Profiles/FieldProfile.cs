@@ -16,11 +16,11 @@ namespace Baracuda.Monitoring.Profiles
 
         private readonly Func<TTarget, TValue> _getValueDelegate;
         private readonly Action<TTarget, TValue> _setValueDelegate;
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Factory ---
 
         /// <summary>
@@ -30,22 +30,22 @@ namespace Baracuda.Monitoring.Profiles
         internal override MonitorUnit CreateUnit(object target)
         {
             return new FieldUnit<TTarget, TValue>(
-                (TTarget)target,
+                (TTarget) target,
                 _getValueDelegate,
                 _setValueDelegate,
-                ValueProcessor((TTarget)target),
+                ValueProcessor((TTarget) target),
                 ValidationFunc,
                 ValidationEvent,
                 this);
         }
 
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Ctor ---
-        
-        private FieldProfile(FieldInfo fieldInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args) 
+
+        private FieldProfile(FieldInfo fieldInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args)
             : base(fieldInfo, attribute, typeof(TTarget), typeof(TValue), MemberType.Field, args)
         {
             _getValueDelegate = fieldInfo.CreateGetter<TTarget, TValue>();

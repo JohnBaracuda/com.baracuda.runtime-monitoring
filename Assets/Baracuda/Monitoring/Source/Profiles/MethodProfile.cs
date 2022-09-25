@@ -31,7 +31,7 @@ namespace Baracuda.Monitoring.Profiles
 
         internal override MonitorUnit CreateUnit(object target)
         {
-            return new MethodUnit<TTarget, TValue>((TTarget)target, _getValueDelegate, this);
+            return new MethodUnit<TTarget, TValue>((TTarget) target, _getValueDelegate, this);
         }
 
         //--------------------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ namespace Baracuda.Monitoring.Profiles
                 return target =>
                 {
                     sb.Clear();
-                    var result = (TValue)methodInfo.Invoke(target, parameter);
+                    var result = (TValue) methodInfo.Invoke(target, parameter);
                     sb.Append(valueProcessor(result));
                     foreach (var pair in parameterHandles)
                     {

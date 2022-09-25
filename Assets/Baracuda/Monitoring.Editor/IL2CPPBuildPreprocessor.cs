@@ -294,8 +294,8 @@ namespace Baracuda.Monitoring.Editor
             stringBuilder.Append(Stats.ToString(true));
             AppendComment(stringBuilder, new string('-', 118), 0);
             AppendLineBreak(stringBuilder);
-            AppendComment(stringBuilder, "If this file contains any errors please contact me and/or create an issue in the linked repository." , 0);
-            AppendComment(stringBuilder, "https://github.com/JohnBaracuda/Runtime-Monitoring" , 0);
+            AppendComment(stringBuilder, "If this file contains any errors please contact me and/or create an issue in the linked repository.", 0);
+            AppendComment(stringBuilder, "https://github.com/JohnBaracuda/Runtime-Monitoring", 0);
         }
 
         #endregion
@@ -425,9 +425,9 @@ namespace Baracuda.Monitoring.Editor
                 var declaring = fieldInfo.DeclaringType;
                 var monitored = fieldInfo.FieldType;
                 Stats.IncrementStat("Monitored Member");
-                Stats.IncrementStat($"Monitored Member {(fieldInfo.IsStatic? "Static" : "Instance")}");
+                Stats.IncrementStat($"Monitored Member {(fieldInfo.IsStatic ? "Static" : "Instance")}");
                 Stats.IncrementStat("Monitored Fields", "MemberInfo");
-                Stats.IncrementStat($"Monitored Fields {(fieldInfo.IsStatic? "Static" : "Instance")}", "MemberInfo");
+                Stats.IncrementStat($"Monitored Fields {(fieldInfo.IsStatic ? "Static" : "Instance")}", "MemberInfo");
                 CreateProfileTypeDefFor(template, declaring, monitored, fieldProfileDefinitions);
             }
             catch (Exception exception)
@@ -448,9 +448,9 @@ namespace Baracuda.Monitoring.Editor
                 var declaring = propertyInfo.DeclaringType;
                 var monitored = propertyInfo.PropertyType;
                 Stats.IncrementStat("Monitored Member");
-                Stats.IncrementStat($"Monitored Member {(propertyInfo.IsStatic()? "Static" : "Instance")}");
+                Stats.IncrementStat($"Monitored Member {(propertyInfo.IsStatic() ? "Static" : "Instance")}");
                 Stats.IncrementStat("Monitored Properties", "MemberInfo");
-                Stats.IncrementStat($"Monitored Properties {(propertyInfo.IsStatic()? "Static" : "Instance")}", "MemberInfo");
+                Stats.IncrementStat($"Monitored Properties {(propertyInfo.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
                 CreateProfileTypeDefFor(template, declaring, monitored, propertyProfileDefinitions);
             }
             catch (Exception exception)
@@ -471,9 +471,9 @@ namespace Baracuda.Monitoring.Editor
                 var declaring = eventInfo.DeclaringType;
                 var monitored = eventInfo.EventHandlerType;
                 Stats.IncrementStat("Monitored Member");
-                Stats.IncrementStat($"Monitored Member {(eventInfo.IsStatic()? "Static" : "Instance")}");
+                Stats.IncrementStat($"Monitored Member {(eventInfo.IsStatic() ? "Static" : "Instance")}");
                 Stats.IncrementStat("Monitored Events", "MemberInfo");
-                Stats.IncrementStat($"Monitored Events {(eventInfo.IsStatic()? "Static" : "Instance")}", "MemberInfo");
+                Stats.IncrementStat($"Monitored Events {(eventInfo.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
                 CreateProfileTypeDefFor(template, declaring, monitored, eventProfileDefinitions);
             }
             catch (Exception exception)
@@ -497,9 +497,9 @@ namespace Baracuda.Monitoring.Editor
                 }
 
                 Stats.IncrementStat("Monitored Member");
-                Stats.IncrementStat($"Monitored Member {(methodInfo.IsStatic? "Static" : "Instance")}");
+                Stats.IncrementStat($"Monitored Member {(methodInfo.IsStatic ? "Static" : "Instance")}");
                 Stats.IncrementStat("Monitored Methods", "MemberInfo");
-                Stats.IncrementStat($"Monitored Methods {(methodInfo.IsStatic? "Static" : "Instance")}", "MemberInfo");
+                Stats.IncrementStat($"Monitored Methods {(methodInfo.IsStatic ? "Static" : "Instance")}", "MemberInfo");
 
                 var template = typeof(MethodProfile<,>);
                 var declaring = methodInfo.DeclaringType;

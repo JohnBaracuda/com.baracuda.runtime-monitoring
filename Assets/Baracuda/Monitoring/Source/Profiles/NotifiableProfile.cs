@@ -13,7 +13,7 @@ namespace Baracuda.Monitoring.Profiles
         /// When true, the profile was provided with a custom update event and is not required to be evaluated every frame/tick.
         /// </summary>
         internal bool CustomUpdateEventAvailable { get; }
-        
+
         private readonly UpdateHandleDelegate<TTarget, TValue> _addUpdateDelegate; //preferred event type
         private readonly NotifyHandleDelegate<TTarget> _addNotifyDelegate; //event without passed TValue param
         private readonly UpdateHandleDelegate<TTarget, TValue> _removeUpdateDelegate; //preferred event type
@@ -55,10 +55,10 @@ namespace Baracuda.Monitoring.Profiles
 
             if (updateEventName != null)
             {
-                _addUpdateDelegate    = CreateUpdateHandlerDelegate<TTarget, TValue>(updateEventName, this, true);
-                _addNotifyDelegate    = CreateNotifyHandlerDelegate<TTarget>        (updateEventName, this, true);
+                _addUpdateDelegate = CreateUpdateHandlerDelegate<TTarget, TValue>(updateEventName, this, true);
+                _addNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>(updateEventName, this, true);
                 _removeUpdateDelegate = CreateUpdateHandlerDelegate<TTarget, TValue>(updateEventName, this, false);
-                _removeNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>        (updateEventName, this, false);
+                _removeNotifyDelegate = CreateNotifyHandlerDelegate<TTarget>(updateEventName, this, false);
 
                 if (_addUpdateDelegate != null || _addNotifyDelegate != null)
                 {
@@ -70,7 +70,7 @@ namespace Baracuda.Monitoring.Profiles
         }
 
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Try Subscribe ---
@@ -150,7 +150,7 @@ namespace Baracuda.Monitoring.Profiles
             return null;
         }
 
-        //--------------------------------------------------------------------------------------------------------------        
+        //--------------------------------------------------------------------------------------------------------------
 
         private static NotifyHandleDelegate<T> CreateNotifyHandlerDelegate<T>(string eventName,
             IMonitorProfile profile, bool createAddMethod)
@@ -189,7 +189,7 @@ namespace Baracuda.Monitoring.Profiles
 
             return null;
         }
-        
+
         #endregion
     }
 }

@@ -13,16 +13,16 @@ namespace Baracuda.Monitoring.Profiles
     public abstract class ValueProfile<TTarget, TValue> : NotifiableProfile<TTarget, TValue> where TTarget : class
     {
         #region --- Properties ---
-        
-        public bool SetAccessEnabled { get; } = false;
+
+        public bool SetAccessEnabled { get; }
         internal IsDirtyDelegate IsDirtyFunc { get; }
-        
+
         #endregion
-        
+
         #region --- Fields ---
-        
+
         public delegate bool IsDirtyDelegate(ref TValue lastValue, ref TValue newValue);
-        
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -34,13 +34,13 @@ namespace Baracuda.Monitoring.Profiles
         private readonly Func<TValue, string> _fallbackValueProcessorDelegate;
         protected MulticastDelegate ValidationFunc { get; }
         protected ValidationEvent ValidationEvent { get; }
-        
+
         private static readonly EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
-        
+
         protected Func<TValue, string> ValueProcessor(TTarget target)
         {
-            return _instanceValueProcessorDelegate != null 
-                    ? value => _instanceValueProcessorDelegate(target, value) 
+            return _instanceValueProcessorDelegate != null
+                    ? value => _instanceValueProcessorDelegate(target, value)
                     : _staticValueProcessorDelegate ?? _fallbackValueProcessorDelegate;
         }
 
@@ -52,20 +52,20 @@ namespace Baracuda.Monitoring.Profiles
             MemberInfo memberInfo,
             MonitorAttribute attribute,
             Type unitTargetType,
-            Type unitValueType, 
+            Type unitValueType,
             MemberType memberType,
-            MonitorProfileCtorArgs args) 
+            MonitorProfileCtorArgs args)
             : base(memberInfo, attribute, unitTargetType, unitValueType, memberType, args)
         {
             if (attribute is MonitorValueAttribute valueAttribute)
             {
                 SetAccessEnabled = valueAttribute.EnableSetAccess;
             }
-            
+
             IsDirtyFunc = CreateIsDirtyFunction(unitValueType);
 
             // Value Processor
-            
+
             var valueProcessorName = default(string);
 
             if (TryGetMetaAttribute<MValueProcessorAttribute>(out var valueProcessorAttribute) &&
@@ -78,8 +78,8 @@ namespace Baracuda.Monitoring.Profiles
             {
                 valueProcessorName = optionsAttribute.ValueProcessor;
             }
-            
-            
+
+
             if (valueProcessorName != null)
             {
                 var valueProcessorFactory = MonitoringSystems.Resolve<IValueProcessorFactory>();
@@ -90,20 +90,20 @@ namespace Baracuda.Monitoring.Profiles
                     MonitoringSystems.Resolve<IMonitoringLogger>().LogValueProcessNotFound(valueProcessorName, unitTargetType);
                 }
             }
-            
+
             if (_staticValueProcessorDelegate == null && _instanceValueProcessorDelegate == null)
             {
                 var valueProcessorFactory = MonitoringSystems.Resolve<IValueProcessorFactory>();
                 _fallbackValueProcessorDelegate = valueProcessorFactory.CreateProcessorForType<TValue>(FormatData);
             }
-            
+
             // Validator
-            
+
             if (TryGetMetaAttribute<MShowIfAttribute>(out var conditionalAttribute))
             {
                 ValidationFunc = (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateStaticValidator(conditionalAttribute, memberInfo)
                             ?? (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateStaticConditionalValidator<TValue>(conditionalAttribute, memberInfo)
-                            ?? (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateInstanceValidator<TTarget>(conditionalAttribute, memberInfo);
+                            ?? MonitoringSystems.Resolve<IValidatorFactory>().CreateInstanceValidator<TTarget>(conditionalAttribute, memberInfo);
 
                 ValidationEvent = MonitoringSystems.Resolve<IValidatorFactory>().CreateEventValidator(conditionalAttribute, memberInfo);
             }

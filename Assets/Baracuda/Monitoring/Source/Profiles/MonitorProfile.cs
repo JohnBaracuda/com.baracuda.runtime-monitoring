@@ -39,7 +39,7 @@ namespace Baracuda.Monitoring.Profiles
         public TAttribute GetMetaAttribute<TAttribute>() where TAttribute : MonitoringMetaAttribute
         {
             _metaAttributes.TryGetValue(typeof(TAttribute), out var metaAttribute);
-            return metaAttribute as TAttribute;;
+            return metaAttribute as TAttribute;
         }
 
         #endregion
