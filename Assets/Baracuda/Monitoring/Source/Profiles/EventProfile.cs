@@ -1,20 +1,19 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Units;
+using Baracuda.Monitoring.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Pooling;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Types;
-using Baracuda.Monitoring.Source.Units;
-using Baracuda.Utilities.Extensions;
-using Baracuda.Utilities.Pooling;
-using Baracuda.Utilities.Reflection;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Source.Profiles
+namespace Baracuda.Monitoring.Profiles
 {
     public sealed class EventProfile<TTarget, TDelegate> : MonitorProfile where TDelegate : Delegate where TTarget : class
     {

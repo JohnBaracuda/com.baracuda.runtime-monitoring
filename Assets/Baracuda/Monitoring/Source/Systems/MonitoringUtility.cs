@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Utilities.Pooling;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Utilities.Pooling;
-using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Source.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal class MonitoringUtility : IMonitoringUtility, IMonitoringUtilityInternal
     {

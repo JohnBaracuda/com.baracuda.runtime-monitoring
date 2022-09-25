@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Baracuda.Monitoring.Source.Types
+namespace Baracuda.Monitoring.Types
 {
     public enum MemberType
     {

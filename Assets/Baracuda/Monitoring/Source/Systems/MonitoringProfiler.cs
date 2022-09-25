@@ -1,5 +1,11 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,16 +13,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Profiles;
-using Baracuda.Monitoring.Source.Types;
-using Baracuda.Threading;
-using Baracuda.Utilities.Extensions;
-using Baracuda.Utilities.Reflection;
 using Debug = UnityEngine.Debug;
 
-namespace Baracuda.Monitoring.Source.Systems
+namespace Baracuda.Monitoring.Systems
 {
     /// <summary>
     /// Class responsible for creating <see cref="MonitorProfile"/>s for member found in custom assemblies that were

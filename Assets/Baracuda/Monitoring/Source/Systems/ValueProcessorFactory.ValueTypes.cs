@@ -1,19 +1,19 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Types;
 using System;
 using System.Text;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Types;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Source.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValueProcessorFactory
     {
         /*
-         * General   
+         * General
          */
-        
+
         private Func<TValue, string> ValueTypeProcessor<TValue>(IFormatData formatData)
         {
             var stringBuilder = new StringBuilder();
@@ -28,11 +28,11 @@ namespace Baracuda.Monitoring.Source.Systems
                 return stringBuilder.ToString();
             };
         }
-        
+
         /*
-         * Vector3 
+         * Vector3
          */
-        
+
         private Func<Vector3, string> Vector3Processor(IFormatData formatData)
         {
             var format = formatData.Format;
@@ -90,7 +90,7 @@ namespace Baracuda.Monitoring.Source.Systems
         }
 
         /*
-         * Vector2   
+         * Vector2
          */
 
         private Func<Vector2, string> Vector2Processor(IFormatData formatData)
@@ -136,9 +136,9 @@ namespace Baracuda.Monitoring.Source.Systems
                 };
             }
         }
-        
+
          /*
-         * Quaternion   
+         * Quaternion
          */
 
         private Func<Quaternion, string> QuaternionProcessor(IFormatData formatData)
@@ -202,11 +202,11 @@ namespace Baracuda.Monitoring.Source.Systems
                     return stringBuilder.ToString();
                 };
         }
-        
+
         /*
-         * Color   
+         * Color
          */
-        
+
         private Func<Color, string> ColorProcessor(IFormatData formatData)
         {
             var format = formatData.Format;
@@ -238,9 +238,9 @@ namespace Baracuda.Monitoring.Source.Systems
         }
 
         /*
-         * Color32   
+         * Color32
          */
-        
+
         private Func<Color32, string> Color32Processor(IFormatData formatData)
         {
             var format = formatData.Format;

@@ -2,7 +2,7 @@
 
 using Baracuda.Monitoring.API;
 
-namespace Baracuda.Monitoring.Source.Interfaces
+namespace Baracuda.Monitoring.Interfaces
 {
     internal interface IMonitoringUtilityInternal : IMonitoringSubsystem<IMonitoringUtilityInternal>
     {

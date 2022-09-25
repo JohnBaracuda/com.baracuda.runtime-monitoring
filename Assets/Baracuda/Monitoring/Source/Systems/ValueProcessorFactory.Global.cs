@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Types;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Types;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Source.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValueProcessorFactory
     {

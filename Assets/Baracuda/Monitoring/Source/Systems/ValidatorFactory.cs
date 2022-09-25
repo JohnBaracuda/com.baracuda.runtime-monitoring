@@ -1,11 +1,11 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
- 
+
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Types;
 using System;
 using System.Reflection;
-using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Types;
 
-namespace Baracuda.Monitoring.Source.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValidatorFactory : IValidatorFactory
     {

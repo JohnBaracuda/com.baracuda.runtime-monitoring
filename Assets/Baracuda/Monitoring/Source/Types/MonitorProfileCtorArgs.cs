@@ -1,9 +1,9 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using System.Reflection;
 using Baracuda.Monitoring.API;
+using System.Reflection;
 
-namespace Baracuda.Monitoring.Source.Types
+namespace Baracuda.Monitoring.Types
 {
     /// <summary>
     /// Object acts as a wrapper for additional arguments that need to be passed when constructing a unit profile.

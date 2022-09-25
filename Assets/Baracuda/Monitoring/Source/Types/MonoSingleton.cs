@@ -3,7 +3,7 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Source.Types
+namespace Baracuda.Monitoring.Types
 {
     /// <summary>
     /// Abstract class for making scene persistent MonoBehaviour singletons.

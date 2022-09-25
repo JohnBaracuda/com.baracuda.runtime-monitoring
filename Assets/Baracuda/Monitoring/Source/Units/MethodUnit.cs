@@ -1,13 +1,13 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Types;
 using System;
 using System.Runtime.CompilerServices;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Profiles;
-using Baracuda.Monitoring.Source.Types;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Source.Units
+namespace Baracuda.Monitoring.Units
 {
     public sealed class MethodUnit<TTarget, TValue> : MonitorUnit, IGettableValue<MethodResult<TValue>> where TTarget : class
     {

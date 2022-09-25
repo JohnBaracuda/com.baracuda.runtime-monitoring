@@ -1,15 +1,14 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Types;
-using Baracuda.Utilities.Extensions;
-using Baracuda.Utilities.Reflection;
 
-namespace Baracuda.Monitoring.Source.Profiles
+namespace Baracuda.Monitoring.Profiles
 {
     public abstract class ValueProfile<TTarget, TValue> : NotifiableProfile<TTarget, TValue> where TTarget : class
     {

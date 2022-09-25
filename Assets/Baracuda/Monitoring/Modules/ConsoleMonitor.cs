@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Utilities.Pooling;
 using System;
 using System.Collections.Generic;
-using Baracuda.Monitoring.Source.Types;
 using Baracuda.Threading;
-using Baracuda.Utilities.Pooling;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Modules

@@ -1,13 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Units;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Reflection;
-using Baracuda.Monitoring.Source.Types;
-using Baracuda.Monitoring.Source.Units;
-using Baracuda.Utilities.Extensions;
-using Baracuda.Utilities.Reflection;
 
-namespace Baracuda.Monitoring.Source.Profiles
+namespace Baracuda.Monitoring.Profiles
 {
     /// <typeparam name="TTarget">The Type of the properties target object</typeparam>
     /// <typeparam name="TValue">The Type of the properties return value</typeparam>

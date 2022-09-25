@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
 using System;
 using System.Linq;
 using System.Reflection;
-using Baracuda.Monitoring.API;
 #if ENABLE_IL2CPP
 using Baracuda.Utilities.Extensions;
 #endif
 
-namespace Baracuda.Monitoring.Source.Types
+namespace Baracuda.Monitoring.Types
 {
     public abstract class OutParameterHandle
     {

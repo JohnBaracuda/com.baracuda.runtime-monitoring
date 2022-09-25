@@ -18,7 +18,5 @@ namespace Baracuda.Monitoring
     [Preserve]
     public class MonitorAttribute : Attribute
     {
-        [Obsolete("Setting custom update intervals is no longer supported!")] 
-        public UpdateOptions Update { get; set; } = default;
     }
 }

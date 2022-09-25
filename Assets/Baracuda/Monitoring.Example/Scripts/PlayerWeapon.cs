@@ -3,7 +3,6 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Baracuda.Monitoring.Source.Types;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts

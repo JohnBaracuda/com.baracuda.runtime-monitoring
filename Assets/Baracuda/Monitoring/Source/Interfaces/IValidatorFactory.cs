@@ -1,11 +1,11 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Types;
 using System;
 using System.Reflection;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Types;
 
-namespace Baracuda.Monitoring.Source.Interfaces
+namespace Baracuda.Monitoring.Interfaces
 {
     public interface IValidatorFactory : IMonitoringSubsystem<IValidatorFactory>
     {

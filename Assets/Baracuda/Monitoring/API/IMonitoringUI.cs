@@ -42,7 +42,7 @@ namespace Baracuda.Monitoring.API
         /// Get the current <see cref="MonitoringUIController"/> as a concrete implementation of T.
         /// </summary>
         [Pure] TUIController GetActiveUIController<TUIController>() where TUIController : MonitoringUIController;
-        
+
         /// <summary>
         /// Create a MonitoringUIController instance if there is none already. Disable 'Auto Instantiate UI' in the
         /// Monitoring Settings and use this method for more control over the timing in which the MonitoringUIController
@@ -51,7 +51,7 @@ namespace Baracuda.Monitoring.API
         void CreateMonitoringUI();
 
         /// <summary>
-        /// ApplyFilter displayed units by their name, tags etc. 
+        /// ApplyFilter displayed units by their name, tags etc.
         /// </summary>
         void ApplyFilter(string filter);
 
@@ -59,14 +59,5 @@ namespace Baracuda.Monitoring.API
         /// Reset active filter.
         /// </summary>
         void ResetFilter();
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Oboslete ---
-
-        [Obsolete("Use ApplyFilter(string filter) instead!")]
-        void Filter(string filter);
-        
-        #endregion
     }
 }

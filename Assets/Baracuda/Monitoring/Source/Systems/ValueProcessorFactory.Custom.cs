@@ -1,20 +1,19 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Units;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Types;
-using Baracuda.Monitoring.Source.Units;
-using Baracuda.Utilities.Extensions;
-using Baracuda.Utilities.Reflection;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Source.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValueProcessorFactory
     {
@@ -144,7 +143,7 @@ namespace Baracuda.Monitoring.Source.Systems
                     {
                         // Signature validation 2.
                         // check that the signature of the processor method is compatible with the generic type definition
-                        // of the dictionaries KeyValuePair<TKey, TValue> 
+                        // of the dictionaries KeyValuePair<TKey, TValue>
                         var genericArgs = valueType.GetGenericArguments();
                         if (parameterInfos[0].ParameterType == genericArgs[0]
                             && parameterInfos[1].ParameterType == genericArgs[1])

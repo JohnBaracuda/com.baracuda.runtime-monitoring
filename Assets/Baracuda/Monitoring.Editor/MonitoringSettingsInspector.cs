@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Types;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;

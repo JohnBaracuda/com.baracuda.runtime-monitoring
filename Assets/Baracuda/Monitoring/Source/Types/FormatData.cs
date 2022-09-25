@@ -1,13 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using System.Runtime.CompilerServices;
 using Baracuda.Monitoring.API;
-using Baracuda.Utilities.Extensions;
-using Baracuda.Utilities.Pooling;
-using Baracuda.Utilities.Reflection;
+using Baracuda.Monitoring.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Pooling;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Source.Types
+namespace Baracuda.Monitoring.Types
 {
     internal class FormatData : IFormatData
     {
@@ -190,7 +189,7 @@ namespace Baracuda.Monitoring.Source.Types
 
             target = target.Replace('_', ' ');
 
-            var chars = ConcurrentListPool<char>.Get();
+            var chars = ListPool<char>.Get();
 
             for (var i = 0; i < target.Length; i++)
             {
@@ -216,7 +215,7 @@ namespace Baracuda.Monitoring.Source.Types
             }
 
             var array = chars.ToArray();
-            ConcurrentListPool<char>.Release(chars);
+            ListPool<char>.Release(chars);
             return ReduceWhitespace(new string(array));
 
             string ReduceWhitespace(string value)

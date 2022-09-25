@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using System;
 using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Interfaces;
+using Baracuda.Monitoring.Interfaces;
+using System;
 
-namespace Baracuda.Monitoring.Source.Types
+namespace Baracuda.Monitoring.Types
 {
     public class OutParameterHandleT<TValue> : OutParameterHandle
     {

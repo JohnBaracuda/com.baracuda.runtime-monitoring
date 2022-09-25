@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
 using System;
 using System.Threading;
-using Baracuda.Monitoring.API;
 
-namespace Baracuda.Monitoring.Source.Interfaces
+namespace Baracuda.Monitoring.Interfaces
 {
     internal interface IMonitoringLogger : IMonitoringSubsystem<IMonitoringLogger>
     {

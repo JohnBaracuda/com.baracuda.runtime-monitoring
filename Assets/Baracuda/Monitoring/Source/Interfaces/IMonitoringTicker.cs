@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using System;
 using Baracuda.Monitoring.API;
+using System;
 
-namespace Baracuda.Monitoring.Source.Interfaces
+namespace Baracuda.Monitoring.Interfaces
 {
     internal interface IMonitoringTicker : IMonitoringSubsystem<IMonitoringTicker>
     {

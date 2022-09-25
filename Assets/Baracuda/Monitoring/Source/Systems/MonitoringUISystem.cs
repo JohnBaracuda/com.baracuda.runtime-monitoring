@@ -1,15 +1,15 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Interfaces;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Baracuda.Monitoring.Source.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal class MonitoringUISystem : IMonitoringUI
     {

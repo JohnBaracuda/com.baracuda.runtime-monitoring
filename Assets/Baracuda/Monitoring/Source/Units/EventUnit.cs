@@ -1,11 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Profiles;
 using System;
 using System.Runtime.CompilerServices;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Profiles;
 
-namespace Baracuda.Monitoring.Source.Units
+namespace Baracuda.Monitoring.Units
 {
     public class EventUnit<TTarget, TDelegate> : MonitorUnit where TTarget : class where TDelegate : Delegate
     {

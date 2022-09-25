@@ -1,17 +1,17 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Units;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Profiles;
-using Baracuda.Monitoring.Source.Types;
-using Baracuda.Monitoring.Source.Units;
 
-namespace Baracuda.Monitoring.Source.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal class MonitoringSystemDummy : 
         IMonitoringManager,

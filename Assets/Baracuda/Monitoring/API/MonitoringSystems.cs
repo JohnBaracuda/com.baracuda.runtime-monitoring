@@ -1,13 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Systems;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Systems;
 using Baracuda.Threading;
-using UnityEngine;
 
 namespace Baracuda.Monitoring.API
 {
@@ -17,7 +16,7 @@ namespace Baracuda.Monitoring.API
     public static class MonitoringSystems
     {
         #region --- System Localization ---
-        
+
         private static readonly Dictionary<Type, object> systems = new Dictionary<Type, object>(8);
 
         [Pure]
@@ -55,9 +54,9 @@ namespace Baracuda.Monitoring.API
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
-        
-        #region --- System Installation --- 
-        
+
+        #region --- System Installation ---
+
         /// <summary>
         /// Install core systems.
         /// </summary>
@@ -71,26 +70,26 @@ namespace Baracuda.Monitoring.API
         }
 
         /*
-         * Install Systems   
+         * Install Systems
          */
-        
+
 #if !DISABLE_MONITORING
 
         private static void InstallCoreSystems()
         {
-            var manager = new Baracuda.Monitoring.Source.Systems.MonitoringManager();
+            var manager = new MonitoringManager();
             Register<IMonitoringManager>(manager);
             Register<IMonitoringManagerInternal>(manager);
-            
+
             var utility = new MonitoringUtility(manager);
             Register<IMonitoringUtility>(utility);
             Register<IMonitoringUtilityInternal>(utility);
-            
+
             var settings = MonitoringSettings.FindOrCreateSettingsAsset();
             Register<IMonitoringPlugin>(new MonitoringPluginData());
             Register<IMonitoringSettings>(settings);
             Register<IMonitoringLogger>(new MonitoringLogging(settings));
-            
+
 #if UNITY_EDITOR
             if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
             {
@@ -104,9 +103,9 @@ namespace Baracuda.Monitoring.API
             Register<IValidatorFactory>(new ValidatorFactory());
             Register<IMonitoringProfiler>(new MonitoringProfiler()).BeginProfiling(Dispatcher.RuntimeToken);
         }
-        
+
 #else // DISABLE_MONITORING
-        
+
         private static void InstallDummySystems()
         {
             Register<IMonitoringPlugin>(new MonitoringPluginData());
@@ -116,7 +115,7 @@ namespace Baracuda.Monitoring.API
             Register<IMonitoringManager>(dummy);
             Register<IMonitoringUI>(dummy);
             Register<IMonitoringUtility>(dummy);
-            
+
             Register<IMonitoringManagerInternal>(dummy);
             Register<IMonitoringUtilityInternal>(dummy);
             Register<IMonitoringLogger>(dummy);
@@ -128,7 +127,7 @@ namespace Baracuda.Monitoring.API
 #endif
 
 
-        
+
         #endregion
     }
 }

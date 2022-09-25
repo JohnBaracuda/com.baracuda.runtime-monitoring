@@ -1,8 +1,8 @@
 // Copyright (c) 2022 Jonathan Lang
- 
+
 using Baracuda.Monitoring.API;
 
-namespace Baracuda.Monitoring.Source.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal class MonitoringPluginData : IMonitoringPlugin
     {

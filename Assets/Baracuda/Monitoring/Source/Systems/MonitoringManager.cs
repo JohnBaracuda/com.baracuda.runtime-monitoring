@@ -1,5 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
- 
+
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Units;
+using Baracuda.Monitoring.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Pooling;
+using Baracuda.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -7,17 +14,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Profiles;
-using Baracuda.Monitoring.Source.Units;
-using Baracuda.Threading;
-using Baracuda.Utilities.Extensions;
-using Baracuda.Utilities.Pooling;
-using Baracuda.Utilities.Reflection;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Source.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal class MonitoringManager : IMonitoringManager, IMonitoringManagerInternal
     {
@@ -239,8 +238,8 @@ namespace Baracuda.Monitoring.Source.Systems
         {
             var validTypes = type.GetBaseTypes(true, true);
             // create a new array to cache the units instances that will be created. 
-            var units = ConcurrentListPool<MonitorUnit>.Get();
-            var guids = ConcurrentListPool<MemberInfo>.Get();
+            var units = ListPool<MonitorUnit>.Get();
+            var guids = ListPool<MemberInfo>.Get();
             
             for (var i = 0; i < validTypes.Length; i++)
             {
@@ -277,8 +276,8 @@ namespace Baracuda.Monitoring.Source.Systems
             {
                 _activeInstanceUnits.Add(target, units.ToArray());
             }
-            ConcurrentListPool<MemberInfo>.Release(guids);
-            ConcurrentListPool<MonitorUnit>.Release(units);
+            ListPool<MemberInfo>.Release(guids);
+            ListPool<MonitorUnit>.Release(units);
         }
 
         #endregion

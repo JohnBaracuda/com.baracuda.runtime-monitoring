@@ -1,24 +1,23 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Units;
+using Baracuda.Monitoring.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Pooling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Types;
-using Baracuda.Monitoring.Source.Units;
-using Baracuda.Utilities.Extensions;
-using Baracuda.Utilities.Pooling;
-using Baracuda.Utilities.Reflection;
-using static Baracuda.Monitoring.Source.Types.FormatData;
+using static Baracuda.Monitoring.Types.FormatData;
 
-namespace Baracuda.Monitoring.Source.Profiles
+namespace Baracuda.Monitoring.Profiles
 {
     public abstract class MonitorProfile : IMonitorProfile
     {
         #region --- Interface ---
-        
+
         public MonitorAttribute Attribute { get; }
         public MemberInfo MemberInfo { get; }
         public MemberType MemberType { get; }
@@ -30,13 +29,13 @@ namespace Baracuda.Monitoring.Source.Profiles
         public string[] Tags { get; }
         public string[] CustomTags { get; } = Array.Empty<string>();
         public IFormatData FormatData { get; }
-        
+
         public bool TryGetMetaAttribute<TAttribute>(out TAttribute attribute) where TAttribute : MonitoringMetaAttribute
         {
             attribute = GetMetaAttribute<TAttribute>();
             return attribute != null;
         }
-        
+
         public TAttribute GetMetaAttribute<TAttribute>() where TAttribute : MonitoringMetaAttribute
         {
             _metaAttributes.TryGetValue(typeof(TAttribute), out var metaAttribute);
@@ -46,12 +45,12 @@ namespace Baracuda.Monitoring.Source.Profiles
         #endregion
 
         #region --- Fields ---
-        
+
         private readonly Dictionary<Type, MonitoringMetaAttribute> _metaAttributes =
             new Dictionary<Type, MonitoringMetaAttribute>();
 
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Ctor ---
@@ -68,7 +67,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             MemberInfo = memberInfo;
             DeclaringType = declaringType;
             MonitoredMemberType = unitValueType;
-            MemberType = unityType; 
+            MemberType = unityType;
 
             var intFlag = (int) args.ReflectedMemberFlags;
             IsStatic = intFlag.HasFlagFast((int) BindingFlags.Static);
@@ -76,7 +75,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             var settings = args.Settings;
             var memberAttributeCollectionType = memberInfo.GetCustomAttribute<MAttributeCollection>(true)?.GetType();
             var classAttributeCollectionType = declaringType.GetCustomAttribute<MAttributeCollection>(true)?.GetType();
-            
+
             // Member
             foreach (var metaAttribute in memberInfo.GetCustomAttributes<MonitoringMetaAttribute>(true))
             {
@@ -115,7 +114,7 @@ namespace Baracuda.Monitoring.Source.Profiles
             }
 
             var utility = MonitoringSystems.Resolve<IMonitoringUtilityInternal>();
-            
+
             if (TryGetMetaAttribute<MFontNameAttribute>(out var fontAttribute))
             {
                 utility.AddFontHash(fontAttribute.FontHash);
@@ -129,22 +128,22 @@ namespace Baracuda.Monitoring.Source.Profiles
             {
                 DefaultEnabled = optionsAttribute.Enabled;
             }
-            
-            FormatData = CreateFormatData(this, settings);
-            
-            var tags = ConcurrentListPool<string>.Get();
 
-            if(settings.FilterLabel)
+            FormatData = CreateFormatData(this, settings);
+
+            var tags = ListPool<string>.Get();
+
+            if (settings.FilterLabel)
             {
                 tags.Add(FormatData.Label);
             }
-            
-            if(settings.FilterMemberType)
+
+            if (settings.FilterMemberType)
             {
                 tags.Add(MemberType.AsString());
             }
-            
-            if(settings.FilterStaticOrInstance)
+
+            if (settings.FilterStaticOrInstance)
             {
                 tags.Add(IsStatic ? "Static" : "Instance");
             }
@@ -153,22 +152,22 @@ namespace Baracuda.Monitoring.Source.Profiles
             {
                 tags.Add("Interface");
             }
-            
-            if(settings.FilterDeclaringType)
+
+            if (settings.FilterDeclaringType)
             {
                 tags.Add(DeclaringType.Name);
             }
-            
-            if(settings.FilterType)
+
+            if (settings.FilterType)
             {
                 var readableString = MonitoredMemberType.HumanizedName();
                 tags.Add(readableString);
                 utility.AddTypeString(readableString);
             }
-            
-            if(settings.FilterTags)
+
+            if (settings.FilterTags)
             {
-                var customTags = ConcurrentListPool<string>.Get();
+                var customTags = ListPool<string>.Get();
                 if (TryGetMetaAttribute<MOptionsAttribute>(out var optionsAttribute))
                 {
                     foreach (var tag in optionsAttribute.Tags)
@@ -197,10 +196,10 @@ namespace Baracuda.Monitoring.Source.Profiles
                     }
                 }
                 CustomTags = customTags.ToArray();
-                ConcurrentListPool<string>.Release(customTags);
+                ListPool<string>.Release(customTags);
             }
             Tags = tags.ToArray();
-            ConcurrentListPool<string>.Release(tags);
+            ListPool<string>.Release(tags);
         }
 
         #endregion
@@ -210,16 +209,16 @@ namespace Baracuda.Monitoring.Source.Profiles
         #region --- Factory ---
 
         /// <summary>
-        /// Creates a <see cref="MonitorUnit"/> with the <see cref="MonitorProfile"/>. 
+        /// Creates a <see cref="MonitorUnit"/> with the <see cref="MonitorProfile"/>.
         /// </summary>
         /// <param name="target">The target of the unit. Null if static</param>
         /// <returns></returns>
         internal abstract MonitorUnit CreateUnit(object target);
 
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Reflection Fields ---
 
         protected const BindingFlags STATIC_FLAGS
@@ -242,18 +241,7 @@ namespace Baracuda.Monitoring.Source.Profiles
 
         #region --- Validator ---
 
-        
-        
-        #endregion
 
-        #region --- Obsolete ---
-
-#pragma warning disable CS0618
-        public UpdateOptions UpdateOptions { get; } = default;
-        public MemberType UnitType => MemberType;
-        public Type UnitTargetType => DeclaringType;
-        public Type UnitValueType => MonitoredMemberType;
-#pragma warning restore CS0618
 
         #endregion
     }

@@ -10,11 +10,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Baracuda.Monitoring.API;
 using Baracuda.Monitoring.IL2CPP;
-using Baracuda.Monitoring.Source.Profiles;
-using Baracuda.Monitoring.Source.Types;
-using Baracuda.Utilities.Extensions;
-using Baracuda.Utilities.Pooling;
-using Baracuda.Utilities.Reflection;
+using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Pooling;
+using Baracuda.Monitoring.Utilities.Reflection;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -608,7 +608,7 @@ namespace Baracuda.Monitoring.Editor
 
         private static string CreateTypeDefinitionString(Type type)
         {
-            var stringBuilder = StringBuilderPool.Get();
+            var stringBuilder = new StringBuilder();
             stringBuilder.Append("\n    //");
             stringBuilder.Append(type.HumanizedName());
             stringBuilder.Append("\n    ");
@@ -619,7 +619,7 @@ namespace Baracuda.Monitoring.Editor
             stringBuilder.Append("AOT_GENERATED_TYPE_");
             stringBuilder.Append(id++);
             stringBuilder.Append(';');
-            return StringBuilderPool.Release(stringBuilder);
+            return stringBuilder.ToString();
         }
 
         #endregion
@@ -663,7 +663,7 @@ namespace Baracuda.Monitoring.Editor
 
             void ProcessList(Type valueType)
             {
-                var stringBuilder = StringBuilderPool.Get();
+                var stringBuilder = new StringBuilder();
                 stringBuilder.Append("\n        ");
                 stringBuilder.Append(aotBridgeClass);
                 stringBuilder.Append('.');
@@ -673,12 +673,12 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append(", ");
                 stringBuilder.Append(MakeAccessibleSyntaxString(valueType.GetGenericArguments()[0]));
                 stringBuilder.Append(">();");
-                signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
+                signatureDefinitions.Add(stringBuilder.ToString());
             }
 
             void ProcessValueTypeArray(Type valueType)
             {
-                var stringBuilder = StringBuilderPool.Get();
+                var stringBuilder = new StringBuilder();
                 stringBuilder.Append("\n        ");
                 stringBuilder.Append(aotBridgeClass);
                 stringBuilder.Append('.');
@@ -686,12 +686,12 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('<');
                 stringBuilder.Append(MakeAccessibleSyntaxString(valueType.GetElementType()));
                 stringBuilder.Append(">();");
-                signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
+                signatureDefinitions.Add(stringBuilder.ToString());
             }
 
             void ProcessArray(Type arrayType)
             {
-                var stringBuilder = StringBuilderPool.Get();
+                var stringBuilder = new StringBuilder();
                 stringBuilder.Append("\n        ");
                 stringBuilder.Append(aotBridgeClass);
                 stringBuilder.Append('.');
@@ -699,12 +699,12 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('<');
                 stringBuilder.Append(MakeAccessibleSyntaxString(arrayType.GetElementType()));
                 stringBuilder.Append(">();");
-                signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
+                signatureDefinitions.Add(stringBuilder.ToString());
             }
 
             void ProcessDictionary(Type dictionaryType)
             {
-                var stringBuilder = StringBuilderPool.Get();
+                var stringBuilder = new StringBuilder();
                 stringBuilder.Append("\n        ");
                 stringBuilder.Append(aotBridgeClass);
                 stringBuilder.Append('.');
@@ -714,12 +714,12 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append(',');
                 stringBuilder.Append(MakeAccessibleSyntaxString(dictionaryType.GetGenericArguments()[1]));
                 stringBuilder.Append(">();");
-                signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
+                signatureDefinitions.Add(stringBuilder.ToString());
             }
 
             void ProcessEnumerable(Type enumerableType)
             {
-                var stringBuilder = StringBuilderPool.Get();
+                var stringBuilder = new StringBuilder();
                 stringBuilder.Append("\n        ");
                 stringBuilder.Append(aotBridgeClass);
                 stringBuilder.Append('.');
@@ -727,7 +727,7 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append('<');
                 stringBuilder.Append(MakeAccessibleSyntaxString(enumerableType.GetGenericArguments()[0]));
                 stringBuilder.Append(">();");
-                signatureDefinitions.Add(StringBuilderPool.Release(stringBuilder));
+                signatureDefinitions.Add(stringBuilder.ToString());
             }
         }
 
@@ -807,8 +807,8 @@ namespace Baracuda.Monitoring.Editor
 
             if (type.IsGenericType)
             {
-                var builder = ConcurrentStringBuilderPool.Get();
-                var argBuilder = ConcurrentStringBuilderPool.Get();
+                var builder = new StringBuilder();
+                var argBuilder = new StringBuilder();
 
                 var arguments = type.GetGenericArguments();
 
@@ -835,9 +835,6 @@ namespace Baracuda.Monitoring.Editor
                 }
 
                 var retType = builder.ToString();
-
-                ConcurrentStringBuilderPool.ReleaseStringBuilder(builder);
-                ConcurrentStringBuilderPool.ReleaseStringBuilder(argBuilder);
                 return retType.Replace('+', '.');
             }
 

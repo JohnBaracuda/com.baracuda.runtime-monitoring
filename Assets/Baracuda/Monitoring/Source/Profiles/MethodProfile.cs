@@ -1,18 +1,17 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Units;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.Source.Interfaces;
-using Baracuda.Monitoring.Source.Types;
-using Baracuda.Monitoring.Source.Units;
-using Baracuda.Utilities.Extensions;
-using Baracuda.Utilities.Reflection;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Source.Profiles
+namespace Baracuda.Monitoring.Profiles
 {
     public sealed class MethodProfile<TTarget, TValue> : NotifiableProfile<TTarget, TValue> where TTarget : class
     {
