@@ -14,7 +14,7 @@ using static Baracuda.Monitoring.Types.FormatData;
 
 namespace Baracuda.Monitoring.Profiles
 {
-    public abstract class MonitorProfile : IMonitorProfile
+    internal abstract class MonitorProfile : IMonitorProfile
     {
         #region --- Interface ---
 
@@ -221,14 +221,14 @@ namespace Baracuda.Monitoring.Profiles
 
         #region --- Reflection Fields ---
 
-        protected const BindingFlags STATIC_FLAGS
+        protected const BindingFlags StaticFlags
             = BindingFlags.Default |
               BindingFlags.Static |
               BindingFlags.Public |
               BindingFlags.NonPublic |
               BindingFlags.DeclaredOnly;
 
-        protected const BindingFlags INSTANCE_FLAGS
+        protected const BindingFlags InstanceFlags
             = BindingFlags.Default |
               BindingFlags.Public |
               BindingFlags.NonPublic |

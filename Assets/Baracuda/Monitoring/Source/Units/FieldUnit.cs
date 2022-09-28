@@ -6,16 +6,16 @@ using System;
 
 namespace Baracuda.Monitoring.Units
 {
-    public sealed class FieldUnit<TTarget, TValue> : ValueUnit<TTarget, TValue> where TTarget : class
+    internal sealed class FieldUnit<TTarget, TValue> : ValueUnit<TTarget, TValue> where TTarget : class
     {
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Fields ---
 
         private readonly FieldProfile<TTarget, TValue> _fieldProfile;
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Ctr ---
@@ -27,7 +27,7 @@ namespace Baracuda.Monitoring.Units
             Func<TValue, string> valueProcessor,
             MulticastDelegate validationFunc,
             ValidationEvent validationEvent,
-            FieldProfile<TTarget, TValue> fieldProfile) 
+            FieldProfile<TTarget, TValue> fieldProfile)
             : base(target, getValue, setValue, valueProcessor, validationFunc, validationEvent, fieldProfile)
         {
             _fieldProfile = fieldProfile;

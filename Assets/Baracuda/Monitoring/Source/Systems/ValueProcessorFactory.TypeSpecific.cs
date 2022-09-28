@@ -63,7 +63,7 @@ namespace Baracuda.Monitoring.Systems
             // IEnumerable<bool>
             if (type.HasInterface<IEnumerable<bool>>())
             {
-                return (Func<TValue, string>) (Delegate) IEnumerableBooleanProcessor(formatData);
+                return (Func<TValue, string>) (Delegate) EnumerableBooleanProcessor(formatData);
             }
             
             if (type.IsArray)
@@ -107,7 +107,7 @@ namespace Baracuda.Monitoring.Systems
             
             if (type.IsIEnumerable(true))
             {
-                return (Func<TValue, string>) (Delegate) IEnumerableProcessor(formatData, type);
+                return (Func<TValue, string>) (Delegate) EnumerableProcessor(formatData, type);
             }
 
             if (type == typeof(Quaternion))

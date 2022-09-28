@@ -12,15 +12,15 @@ namespace Baracuda.Threading.Editor
         #region --- Fields ---
 
         [SerializeField][HideInInspector] 
-        internal int executionOrder = DEFAULT_EXECUTION_ORDER;
+        internal int executionOrder = DefaultExecutionOrder;
         
         [SerializeField][HideInInspector] 
-        internal int postExecutionOrder = DEFAULT_POST_EXECUTION_ORDER;
+        internal int postExecutionOrder = DefaultPostExecutionOrder;
        
         private static DispatcherExecutionOrder current;
         private const string DEFAULT_PATH = "Assets/Baracuda/Threading/Editor";
-        internal const int DEFAULT_EXECUTION_ORDER = -500;
-        internal const int DEFAULT_POST_EXECUTION_ORDER = 500;
+        internal const int DefaultExecutionOrder = -500;
+        internal const int DefaultPostExecutionOrder = 500;
 
         private void OnEnable()
         {
@@ -230,8 +230,8 @@ namespace Baracuda.Threading.Editor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Reset", GUILayout.MinWidth(120)))
             {
-                _target.executionOrder = DispatcherExecutionOrder.DEFAULT_EXECUTION_ORDER;
-                _target.postExecutionOrder = DispatcherExecutionOrder.DEFAULT_POST_EXECUTION_ORDER;
+                _target.executionOrder = DispatcherExecutionOrder.DefaultExecutionOrder;
+                _target.postExecutionOrder = DispatcherExecutionOrder.DefaultPostExecutionOrder;
             }
             if (GUILayout.Button("Save", GUILayout.MinWidth(120)))
             {

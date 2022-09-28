@@ -14,7 +14,7 @@ using System.Reflection.Emit;
 
 namespace Baracuda.Monitoring.Utilities.Extensions
 {
-    public static class ReflectionExtensions
+    internal static class ReflectionExtensions
     {
         #region --- Attribute Utilities ---
 

@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Profiles
 {
-    public sealed class MethodProfile<TTarget, TValue> : NotifiableProfile<TTarget, TValue> where TTarget : class
+    internal sealed class MethodProfile<TTarget, TValue> : NotifiableProfile<TTarget, TValue> where TTarget : class
     {
         private readonly Func<TTarget, MethodResult<TValue>> _getValueDelegate;
 
@@ -45,13 +45,11 @@ namespace Baracuda.Monitoring.Profiles
 
             if (methodInfo.ReturnType == typeof(void))
             {
-                var @void = new VoidValue().ConvertFast<VoidValue, TValue>();
-
                 return target =>
                 {
                     sb.Clear();
                     methodInfo.Invoke(target, parameter);
-                    sb.Append(valueProcessor(@void));
+                    sb.Append(valueProcessor(default));
                     foreach (var pair in parameterHandles)
                     {
                         sb.Append('\n');
@@ -59,7 +57,7 @@ namespace Baracuda.Monitoring.Profiles
                         var handle = pair.Value;
                         sb.Append(handle.GetValueAsString(parameter[key]));
                     }
-                    return new MethodResult<TValue>(@void, sb.ToString());
+                    return new MethodResult<TValue>(default, sb.ToString());
                 };
             }
             else

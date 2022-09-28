@@ -8,12 +8,8 @@ using System.Runtime.CompilerServices;
 
 namespace Baracuda.Monitoring.Utilities.Reflection
 {
-    public static class AssemblyProfiler
+    internal static class AssemblyProfiler
     {
-         /*
-         *  Assembly Filter Data   
-         */
-
         private static readonly string[] bannedAssemblyPrefixes = new string[]
         {
             "Newtonsoft",
@@ -36,10 +32,6 @@ namespace Baracuda.Monitoring.Utilities.Reflection
             "PPv2URPConverters"
         };
 
-        /*
-         *  Assembly Filter Process
-         */
-
         /// <summary>
         /// Method will initialize and filter all available assemblies only leaving custom assemblies.
         /// Precompiled unity and system assemblies as well as some other known assemblies will be excluded by default.
@@ -59,7 +51,7 @@ namespace Baracuda.Monitoring.Utilities.Reflection
             {
                 throw new ArgumentNullException(nameof(excludeNames));
             }
-            
+
             if (excludePrefixes == null)
             {
                 throw new ArgumentNullException(nameof(excludePrefixes));
@@ -67,11 +59,11 @@ namespace Baracuda.Monitoring.Utilities.Reflection
 
             var filteredAssemblies = new List<Assembly>(30);
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            
+
             for (var i = 0; i < assemblies.Length; i++)
             {
                 var assembly = assemblies[i];
-                
+
                 if (assembly.IsAssemblyValid(excludeNames, excludePrefixes))
                 {
                     filteredAssemblies.Add(assemblies[i]);
@@ -81,8 +73,7 @@ namespace Baracuda.Monitoring.Utilities.Reflection
             return filteredAssemblies.ToArray();
         }
 
-        private static bool IsAssemblyValid(this Assembly assembly, IReadOnlyList<string> excludeNames,
-            IReadOnlyList<string> excludePrefixes)
+        private static bool IsAssemblyValid(this Assembly assembly, IReadOnlyList<string> excludeNames, IReadOnlyList<string> excludePrefixes)
         {
             if (assembly.HasAttribute<DisableAssemblyReflectionAttribute>())
             {

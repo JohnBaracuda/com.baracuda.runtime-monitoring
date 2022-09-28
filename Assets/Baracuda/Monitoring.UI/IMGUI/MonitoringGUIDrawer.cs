@@ -198,11 +198,11 @@ namespace Baracuda.Monitoring.UI.IMGUI
         
         private readonly ref struct Context
         {
-            public readonly GUIStyle style;
+            public readonly GUIStyle Style;
 
             public Context(GUIStyle style)
             {
-                this.style = style;
+                this.Style = style;
             }
         }
         
@@ -301,7 +301,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 _content.text = displayString;
                 
                 var textRect = new Rect();
-                var textDimensions = ctx.style.CalcSize(_content);
+                var textDimensions = ctx.Style.CalcSize(_content);
                 
                 var elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
 
@@ -358,7 +358,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 _content.text = displayString;
                 
                 var textRect = new Rect();
-                var textDimensions = ctx.style.CalcSize(_content);
+                var textDimensions = ctx.Style.CalcSize(_content);
                 
                 var elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
 
@@ -433,7 +433,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 _content.text = displayString;
 
                 var textRect = new Rect();
-                var textDimensions = ctx.style.CalcSize(_content);
+                var textDimensions = ctx.Style.CalcSize(_content);
                 
                 var elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
 
@@ -491,7 +491,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
                 _content.text = displayString;
                 
                 var textRect = new Rect();
-                var textDimensions = ctx.style.CalcSize(_content);
+                var textDimensions = ctx.Style.CalcSize(_content);
                 
                 var elementRect = ElementRect(ref textRect, textDimensions, xPos, yPos);
 

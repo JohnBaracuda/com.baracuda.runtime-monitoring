@@ -10,18 +10,10 @@ namespace Baracuda.Monitoring.Profiles
 {
     /// <typeparam name="TTarget">The Type of the properties target object</typeparam>
     /// <typeparam name="TValue">The Type of the properties return value</typeparam>
-    public sealed class PropertyProfile<TTarget, TValue> : ValueProfile<TTarget, TValue> where TTarget : class
+    internal sealed class PropertyProfile<TTarget, TValue> : ValueProfile<TTarget, TValue> where TTarget : class
     {
-        #region --- Fields ---
-
         private readonly Func<TTarget, TValue> _getValueDelegate;
         private readonly Action<TTarget, TValue> _setValueDelegate;
-
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Factory ---
 
         /// <summary>
         /// Create a new <see cref="PropertyUnit{TTarget,TValue}"/> based on this profile.
@@ -38,12 +30,6 @@ namespace Baracuda.Monitoring.Profiles
                 ValidationEvent,
                 this);
         }
-
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Ctor ---
 
         private PropertyProfile(
             PropertyInfo propertyInfo,
@@ -80,8 +66,5 @@ namespace Baracuda.Monitoring.Profiles
                 methodInfo.Invoke(target, proxy);
             };
         }
-
-        #endregion
-
     }
 }

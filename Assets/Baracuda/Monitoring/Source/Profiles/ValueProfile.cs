@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace Baracuda.Monitoring.Profiles
 {
-    public abstract class ValueProfile<TTarget, TValue> : NotifiableProfile<TTarget, TValue> where TTarget : class
+    internal abstract class ValueProfile<TTarget, TValue> : NotifiableProfile<TTarget, TValue> where TTarget : class
     {
         #region --- Properties ---
 
@@ -48,6 +48,8 @@ namespace Baracuda.Monitoring.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
+        #region --- Ctor ---
+
         protected ValueProfile(
             MemberInfo memberInfo,
             MonitorAttribute attribute,
@@ -83,11 +85,14 @@ namespace Baracuda.Monitoring.Profiles
             if (valueProcessorName != null)
             {
                 var valueProcessorFactory = MonitoringSystems.Resolve<IValueProcessorFactory>();
-                _instanceValueProcessorDelegate = valueProcessorFactory.FindCustomInstanceProcessor<TTarget, TValue>(valueProcessorName, FormatData);
-                _staticValueProcessorDelegate = valueProcessorFactory.FindCustomStaticProcessor<TTarget, TValue>(valueProcessorName, FormatData);
+                _instanceValueProcessorDelegate =
+                    valueProcessorFactory.FindCustomInstanceProcessor<TTarget, TValue>(valueProcessorName, FormatData);
+                _staticValueProcessorDelegate =
+                    valueProcessorFactory.FindCustomStaticProcessor<TTarget, TValue>(valueProcessorName, FormatData);
                 if (_instanceValueProcessorDelegate == null && _staticValueProcessorDelegate == null)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogValueProcessNotFound(valueProcessorName, unitTargetType);
+                    MonitoringSystems.Resolve<IMonitoringLogger>()
+                        .LogValueProcessNotFound(valueProcessorName, unitTargetType);
                 }
             }
 
@@ -101,11 +106,15 @@ namespace Baracuda.Monitoring.Profiles
 
             if (TryGetMetaAttribute<MShowIfAttribute>(out var conditionalAttribute))
             {
-                ValidationFunc = (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateStaticValidator(conditionalAttribute, memberInfo)
-                            ?? (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>().CreateStaticConditionalValidator<TValue>(conditionalAttribute, memberInfo)
-                            ?? MonitoringSystems.Resolve<IValidatorFactory>().CreateInstanceValidator<TTarget>(conditionalAttribute, memberInfo);
+                ValidationFunc = (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>()
+                                     .CreateStaticValidator(conditionalAttribute, memberInfo)
+                                 ?? (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>()
+                                     .CreateStaticConditionalValidator<TValue>(conditionalAttribute, memberInfo)
+                                 ?? MonitoringSystems.Resolve<IValidatorFactory>()
+                                     .CreateInstanceValidator<TTarget>(conditionalAttribute, memberInfo);
 
-                ValidationEvent = MonitoringSystems.Resolve<IValidatorFactory>().CreateEventValidator(conditionalAttribute, memberInfo);
+                ValidationEvent = MonitoringSystems.Resolve<IValidatorFactory>()
+                    .CreateEventValidator(conditionalAttribute, memberInfo);
             }
         }
 
@@ -123,5 +132,7 @@ namespace Baracuda.Monitoring.Profiles
 
             return (ref TValue lastValue, ref TValue newValue) => true;
         }
+
+        #endregion
     }
 }

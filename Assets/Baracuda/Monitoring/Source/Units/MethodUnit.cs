@@ -9,10 +9,10 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Units
 {
-    public sealed class MethodUnit<TTarget, TValue> : MonitorUnit, IGettableValue<MethodResult<TValue>> where TTarget : class
+    internal sealed class MethodUnit<TTarget, TValue> : MonitorUnit, IGettableValue<MethodResult<TValue>> where TTarget : class
     {
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Fields ---
 
         private readonly MethodProfile<TTarget, TValue> _methodProfile;
@@ -22,18 +22,20 @@ namespace Baracuda.Monitoring.Units
         private readonly StringDelegate _compiledValueProcessor;
 
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
-        
+
+        #region --- Ctor ---
+
         public MethodUnit(
-            TTarget target, 
+            TTarget target,
             Func<TTarget, MethodResult<TValue>> getValue,
             MethodProfile<TTarget, TValue> profile) : base(target, profile)
         {
             _target = target;
             _methodProfile = profile;
             _getValue = getValue;
-            
+
             if (profile.CustomUpdateEventAvailable)
             {
                 if (!profile.TrySubscribeToUpdateEvent(target, Refresh, null))
@@ -45,9 +47,10 @@ namespace Baracuda.Monitoring.Units
             _compiledValueProcessor = () => _getValue(_target).ToString();
         }
 
+        #endregion
 
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Update ---
 
         public override void Refresh()
@@ -57,9 +60,9 @@ namespace Baracuda.Monitoring.Units
         }
 
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Get ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -67,13 +70,13 @@ namespace Baracuda.Monitoring.Units
         {
             return _compiledValueProcessor();
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public MethodResult<TValue> GetValue()
         {
             return _getValue(_target);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T GetValueAs<T>()
         {

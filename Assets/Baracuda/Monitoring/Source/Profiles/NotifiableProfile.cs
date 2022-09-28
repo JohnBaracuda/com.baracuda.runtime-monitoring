@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Baracuda.Monitoring.Profiles
 {
-    public abstract class NotifiableProfile<TTarget, TValue> : MonitorProfile
+    internal abstract class NotifiableProfile<TTarget, TValue> : MonitorProfile
     {
         /// <summary>
         /// When true, the profile was provided with a custom update event and is not required to be evaluated every frame/tick.
@@ -45,12 +45,6 @@ namespace Baracuda.Monitoring.Profiles
                      !string.IsNullOrWhiteSpace(optionsAttribute.UpdateEvent))
             {
                 updateEventName = optionsAttribute.UpdateEvent;
-            }
-            else if (attribute is MonitorValueAttribute valueAttribute)
-            {
-#pragma warning disable CS0618
-                updateEventName = valueAttribute.UpdateEvent;
-#pragma warning restore CS0618
             }
 
             if (updateEventName != null)
@@ -114,7 +108,7 @@ namespace Baracuda.Monitoring.Profiles
             string eventName, IMonitorProfile profile, bool createAddMethod)
         {
             // check instance events:
-            var instanceEvent = profile.DeclaringType.GetEvent(eventName, INSTANCE_FLAGS);
+            var instanceEvent = profile.DeclaringType.GetEvent(eventName, InstanceFlags);
             if (instanceEvent != null)
             {
                 var method = createAddMethod
@@ -132,7 +126,7 @@ namespace Baracuda.Monitoring.Profiles
 
 
             //------------------------
-            var staticEvent = profile.DeclaringType.GetEvent(eventName, STATIC_FLAGS);
+            var staticEvent = profile.DeclaringType.GetEvent(eventName, StaticFlags);
             if (staticEvent != null)
             {
                 var method = createAddMethod
@@ -156,7 +150,7 @@ namespace Baracuda.Monitoring.Profiles
             IMonitorProfile profile, bool createAddMethod)
         {
             // check instance events:
-            var instanceEvent = profile.DeclaringType.GetEvent(eventName, INSTANCE_FLAGS);
+            var instanceEvent = profile.DeclaringType.GetEvent(eventName, InstanceFlags);
             if (instanceEvent != null)
             {
                 var method = createAddMethod
@@ -173,7 +167,7 @@ namespace Baracuda.Monitoring.Profiles
 
 
             //------------------------
-            var staticEvent = profile.DeclaringType.GetEvent(eventName, STATIC_FLAGS);
+            var staticEvent = profile.DeclaringType.GetEvent(eventName, StaticFlags);
             if (staticEvent != null)
             {
                 var method = createAddMethod

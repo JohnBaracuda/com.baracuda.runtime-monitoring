@@ -15,7 +15,7 @@ namespace Baracuda.Monitoring.Systems
     {
         #region --- IEnumerable ---
 
-        private static Func<IEnumerable, string> IEnumerableProcessor(IFormatData formatData, Type unityValueType)
+        private static Func<IEnumerable, string> EnumerableProcessor(IFormatData formatData, Type unityValueType)
         {
             var name = formatData.Label;
             var nullString = $"{name}: {NULL}";
@@ -233,7 +233,7 @@ namespace Baracuda.Monitoring.Systems
             }
         }
 
-        private Func<IEnumerable<bool>, string> IEnumerableBooleanProcessor(IFormatData formatData)
+        private Func<IEnumerable<bool>, string> EnumerableBooleanProcessor(IFormatData formatData)
         {
             var name = formatData.Label;
             var nullString = $"{name}: {NULL} (IEnumerable<bool>)";

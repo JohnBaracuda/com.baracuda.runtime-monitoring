@@ -16,14 +16,14 @@ namespace Baracuda.Monitoring.Editor
         #region --- Data ---
 
         /*
-         * Private Fields 
+         * Private Fields
          */
-        
+
         private FoldoutHandler Foldout { get; set; }
 
 
         /*
-         * Serialized Properties   
+         * Serialized Properties
          */
 
 #pragma warning disable CS0649
@@ -33,15 +33,15 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _openDisplayOnLoad;
         private SerializedProperty _asyncProfiling;
         private SerializedProperty _monitoringUIController;
-        
-        private SerializedProperty _showRuntimeMonitoringObject; 
+
+        private SerializedProperty _showRuntimeMonitoringObject;
         private SerializedProperty _logBadImageFormatException;
         private SerializedProperty _logOperationCanceledException;
         private SerializedProperty _logThreadAbortException;
         private SerializedProperty _logUnknownExceptions;
         private SerializedProperty _logProcessorNotFoundException;
         private SerializedProperty _logInvalidProcessorSignatureException;
-        
+
         private SerializedProperty _addClassName;
         private SerializedProperty _appendSymbol;
         private SerializedProperty _humanizeNames;
@@ -60,13 +60,13 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _filterMemberType;
         private SerializedProperty _filterTags;
         private SerializedProperty _filterInterfaces;
-        
+
         private SerializedProperty _filterComparison;
         private SerializedProperty _filterAppendSymbol;
         private SerializedProperty _filterNegateSymbol;
         private SerializedProperty _filterAbsoluteSymbol;
         private SerializedProperty _filterTagsSymbol;
-        
+
         private SerializedProperty _trueColor;
         private SerializedProperty _falseColor;
         private SerializedProperty _xColor;
@@ -79,10 +79,10 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _targetObjectColor;
         private SerializedProperty _methodColor;
         private SerializedProperty _outParameterColor;
-        
+
         private SerializedProperty _bannedAssemblyPrefixes;
         private SerializedProperty _bannedAssemblyNames;
-        
+
         private SerializedProperty _scriptFileIL2CPP;
         private SerializedProperty _useIPreprocessBuildWithReport;
         private SerializedProperty _throwOnTypeGenerationError;
@@ -98,7 +98,7 @@ namespace Baracuda.Monitoring.Editor
             Foldout = new FoldoutHandler(nameof(MonitoringSettings));
             PopulateSerializedProperties();
             PopulateAvailableUIController();
-            
+
             AssetDatabase.importPackageCompleted -= ImportPackageCompleted;
             AssetDatabase.importPackageCompleted += ImportPackageCompleted;
         }
@@ -112,11 +112,11 @@ namespace Baracuda.Monitoring.Editor
         {
             PopulateAvailableUIController();
         }
-        
+
         private void ImportPackageCompleted(string packageName)
         {
             PopulateAvailableUIController();
-            
+
             if (!_availableUIController.Any())
             {
                 return;
@@ -126,11 +126,11 @@ namespace Baracuda.Monitoring.Editor
             {
                 return;
             }
-            
+
             for (var i = 0; i < _availableUIController.Count; i++)
             {
                 var controllerName = _availableUIController[i].name.Replace("MonitoringUIController_", "");
-                var package =  packageName.Replace("RuntimeMonitoring_", "");
+                var package = packageName.Replace("RuntimeMonitoring_", "");
                 if (package == controllerName)
                 {
                     _monitoringUIController.objectReferenceValue = _availableUIController[i];
@@ -157,7 +157,7 @@ namespace Baracuda.Monitoring.Editor
                 }
             }
         }
-        
+
         private SerializedProperty FindProperty(string member)
         {
             var parsedMemberName = (!string.IsNullOrWhiteSpace(member) && member[0] == '_') ? member.Remove(0, 1) : member;
@@ -181,7 +181,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.HelpBox("Some Settings may not update during runtime!", MessageType.Info);
                 EditorGUILayout.Space();
             }
-            
+
             if (Foldout["General"])
             {
                 EditorGUILayout.Space();
@@ -220,7 +220,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_filterTagsSymbol);
                 EditorGUILayout.Space();
             }
-            
+
             if (Foldout["Formatting"])
             {
                 EditorGUILayout.Space();
@@ -231,7 +231,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_variablePrefixes);
                 EditorGUILayout.Space();
             }
-          
+
             if (Foldout["Color"])
             {
                 EditorGUILayout.Space();
@@ -249,7 +249,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_outParameterColor);
                 EditorGUILayout.Space();
             }
-            
+
             if (Foldout["Debug"])
             {
                 EditorGUILayout.Space();
@@ -263,7 +263,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_logInvalidProcessorSignatureException);
                 EditorGUILayout.Space();
             }
-            
+
             if (Foldout["Assembly Settings"])
             {
                 EditorGUILayout.Space();
@@ -271,7 +271,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_bannedAssemblyNames);
                 EditorGUILayout.Space();
             }
-            
+
             if (Foldout["IL2CPP Settings"])
             {
                 EditorGUILayout.Space();
@@ -283,7 +283,7 @@ namespace Baracuda.Monitoring.Editor
                 DrawGenerateAotTypesButton();
                 EditorGUILayout.Space();
             }
-            
+
             if (Foldout["Documentation & Links"])
             {
                 EditorGUILayout.Space();
@@ -341,8 +341,8 @@ namespace Baracuda.Monitoring.Editor
             EditorGUILayout.PropertyField(_enableMonitoring);
 #endif
         }
-        
-             
+
+
         private void DrawAsyncProfiling()
         {
 #if UNITY_WEBGL
@@ -353,15 +353,15 @@ namespace Baracuda.Monitoring.Editor
             EditorGUILayout.PropertyField(_asyncProfiling);
 #endif
         }
-        
-        
+
+
         public override void OnInspectorGUI()
         {
             DrawCustomInspector();
             InspectorUtilities.DrawLine(false);
             InspectorUtilities.DrawCopyrightNotice();
         }
-        
+
         private static void DrawGenerateAotTypesButton()
         {
             EditorGUILayout.Space();
@@ -371,7 +371,7 @@ namespace Baracuda.Monitoring.Editor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Generate Code", GUILayout.Height(25), GUILayout.MinWidth(150)))
             {
-                IL2CPPBuildPreprocessor.GenerateIL2CPPAheadOfTimeTypes();
+                //IL2CPPBuildPreprocessor.GenerateIL2CPPAheadOfTimeTypes();
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -392,8 +392,8 @@ namespace Baracuda.Monitoring.Editor
             EditorGUILayout.PropertyField(property);
             return !isNull;
         }
-        
-        
+
+
         private void DrawInlinedUIControllerPrefab(Object targetObject)
         {
             InspectorUtilities.DrawLine();
@@ -460,9 +460,9 @@ namespace Baracuda.Monitoring.Editor
                 PopulateSerializedProperties();
             }
         }
-        
+
         private readonly List<MonitoringUIController> _availableUIController = new List<MonitoringUIController>(10);
-        
+
         private void PopulateAvailableUIController()
         {
             _availableUIController.Clear();
@@ -483,32 +483,32 @@ namespace Baracuda.Monitoring.Editor
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Package GUI ---
 
         private readonly GUIContent _showPackage =
             new GUIContent("Show Package", "Open and select the package in the project window");
 
-        private readonly GUIContent _importPackage = 
+        private readonly GUIContent _importPackage =
             new GUIContent("Import Package", "Import the package into your project. This will open an import dialogue.");
 
         private void DrawAdditionalPackages()
         {
             EditorGUILayout.Space();
             const int HORIZONTAL_THRESHOLD = 700;
-            var currentViewWidth = EditorGUIUtility.currentViewWidth -20;
+            var currentViewWidth = EditorGUIUtility.currentViewWidth - 20;
             var makeHorizontal = currentViewWidth > HORIZONTAL_THRESHOLD;
-            var verticalWidth = makeHorizontal? currentViewWidth / 3 : currentViewWidth;
-            
+            var verticalWidth = makeHorizontal ? currentViewWidth / 3 : currentViewWidth;
+
             if (makeHorizontal)
             {
                 GUILayout.BeginHorizontal();
             }
-            
+
             // IMGUI
             GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"), GUILayout.MaxWidth(verticalWidth));
             GUILayout.Label("IMGUI Package (default)", InspectorUtilities.TitleStyle());
-            
+
             if (GUILayout.Button(_showPackage))
             {
                 MoveToPackagePath("RuntimeMonitoring_IMGUI");
@@ -517,15 +517,15 @@ namespace Baracuda.Monitoring.Editor
             {
                 ImportPackage("RuntimeMonitoring_IMGUI");
             }
-            
+
             EditorGUILayout.Space();
             GUILayout.EndVertical();
-            
+
             // uGUI TextMeshPro
             EditorGUILayout.Space();
             GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"), GUILayout.MaxWidth(verticalWidth));
             GUILayout.Label("TextMeshPro Package", InspectorUtilities.TitleStyle());
-            
+
             if (GUILayout.Button(_showPackage))
             {
                 MoveToPackagePath("RuntimeMonitoring_TextMeshPro");
@@ -534,15 +534,15 @@ namespace Baracuda.Monitoring.Editor
             {
                 ImportPackage("RuntimeMonitoring_TextMeshPro");
             }
-            
+
             EditorGUILayout.Space();
             GUILayout.EndVertical();
-            
+
             // UIToolkit
             EditorGUILayout.Space();
             GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"), GUILayout.MaxWidth(verticalWidth));
             GUILayout.Label("UIToolkit (Unity 2021.1 Or Higher)", InspectorUtilities.TitleStyle());
-            
+
             if (GUILayout.Button(_showPackage))
             {
                 MoveToPackagePath("RuntimeMonitoring_UIToolkit");
@@ -554,16 +554,16 @@ namespace Baracuda.Monitoring.Editor
             }
             EditorGUILayout.Space();
             GUILayout.EndVertical();
-            
+
             if (makeHorizontal)
             {
                 GUILayout.EndHorizontal();
             }
             EditorGUILayout.Space();
         }
-        
+
         #endregion
-        
+
         #region --- Package Installation ---
 
         private static string GetPackagePath(string packageName)
@@ -573,7 +573,7 @@ namespace Baracuda.Monitoring.Editor
             var assetPath = AssetDatabase.GUIDToAssetPath(assetGuid);
             return assetPath;
         }
-        
+
         private static void MoveToPackagePath(string packageName)
         {
             var assetPath = GetPackagePath(packageName);

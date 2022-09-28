@@ -6,10 +6,10 @@ using System.Runtime.CompilerServices;
 
 namespace Baracuda.Monitoring.Units
 {
-    public class EventUnit<TTarget, TDelegate> : MonitorUnit where TTarget : class where TDelegate : Delegate
+    internal class EventUnit<TTarget, TDelegate> : MonitorUnit where TTarget : class where TDelegate : Delegate
     {
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Fields ---
 
         private readonly EventProfile<TTarget, TDelegate>.StateFormatDelegate _stateFormatter;
@@ -17,15 +17,15 @@ namespace Baracuda.Monitoring.Units
         private readonly TTarget _target;
 
         private readonly Delegate _eventHandler;
-        private int _invokeCounter = 0;
+        private int _invokeCounter;
 
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         internal EventUnit(
             TTarget target,
-            EventProfile<TTarget, TDelegate>.StateFormatDelegate stateFormatter, 
+            EventProfile<TTarget, TDelegate>.StateFormatDelegate stateFormatter,
             EventProfile<TTarget, TDelegate> eventProfile) : base(target, eventProfile)
         {
             _target = target;
@@ -34,9 +34,9 @@ namespace Baracuda.Monitoring.Units
             _eventHandler = eventProfile.CreateMatchingDelegate(OnEvent);
             eventProfile.SubscribeToEvent(target, _eventHandler);
         }
-        
+
         //--------------------------------------------------------------------------------------------------------------
-     
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string GetState()
         {

@@ -1,20 +1,14 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.IL2CPP;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
-using Baracuda.Monitoring.API;
-using Baracuda.Monitoring.IL2CPP;
-using Baracuda.Monitoring.Profiles;
-using Baracuda.Monitoring.Types;
-using Baracuda.Monitoring.Utilities.Extensions;
-using Baracuda.Monitoring.Utilities.Pooling;
-using Baracuda.Monitoring.Utilities.Reflection;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -25,6 +19,252 @@ using Assembly = System.Reflection.Assembly;
 
 namespace Baracuda.Monitoring.Editor
 {
+#if !DISABLE_MONITORING
+    internal class IL2CPPBuildPreprocessor : IPreprocessBuildWithReport
+    {
+        #region --- IPreprocessBuildWithReport ---
+
+        /// <summary>
+        ///   <para>Returns the relative callback order for callbacks.  Callbacks with lower values are called before ones with higher values.</para>
+        /// </summary>
+        public int callbackOrder => MonitoringSystems.Resolve<IMonitoringSettings>().PreprocessBuildCallbackOrder;
+
+        /// <summary>
+        ///   <para>Implement this function to receive a callback before the build is started.</para>
+        /// </summary>
+        /// <param name="report">A report containing information about the build, such as its target platform and output path.</param>
+        public void OnPreprocessBuild(BuildReport report)
+        {
+            if (!MonitoringSystems.Resolve<IMonitoringSettings>().UseIPreprocessBuildWithReport)
+            {
+                return;
+            }
+
+            var target = EditorUserBuildSettings.activeBuildTarget;
+            var group = BuildPipeline.GetBuildTargetGroup(target);
+            if (PlayerSettings.GetScriptingBackend(group) == ScriptingImplementation.IL2CPP)
+            {
+                OnPreprocessBuildInternal();
+            }
+        }
+
+        #endregion
+
+        #region --- Fields ---
+
+        private const BindingFlags STATIC_FLAGS = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+        private const BindingFlags INSTANCE_FLAGS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+
+        private readonly string preserveAttribute = $"[{typeof(PreserveAttribute).FullName}]";
+        private readonly string methodImpAttribute = $"[{typeof(MethodImplAttribute).FullName}({typeof(MethodImplOptions).FullName}.{MethodImplOptions.NoOptimization.ToString()})]";
+        private readonly string aotBridgeClass = typeof(IL2CPPTypeDefinitions).FullName;
+
+        private readonly string typeDefField = $"{nameof(IL2CPPTypeDefinitions)}.{nameof(IL2CPPTypeDefinitions.TypeDefField)}";
+        private readonly string typeDefProperty = $"{nameof(IL2CPPTypeDefinitions)}.{nameof(IL2CPPTypeDefinitions.TypeDefProperty)}";
+        private readonly string typeDefEvent = $"{nameof(IL2CPPTypeDefinitions)}.{nameof(IL2CPPTypeDefinitions.TypeDefEvent)}";
+        private readonly string typeDefMethod = $"{nameof(IL2CPPTypeDefinitions)}.{nameof(IL2CPPTypeDefinitions.TypeDefMethod)}";
+        private readonly string typeDefOutParameter = $"{nameof(IL2CPPTypeDefinitions)}.{nameof(IL2CPPTypeDefinitions.TypeDefOutParameter)}";
+
+        private readonly UnityEditor.Compilation.Assembly[] unityAssemblies;
+
+        private List<Exception> ExceptionBuffer { get; } = new List<Exception>();
+        private StatCounter Stats { get; } = new StatCounter();
+
+        private static readonly string[] bannedAssemblyPrefixes = new string[]
+        {
+            "Newtonsoft",
+            "netstandard",
+            "System",
+            "Unity",
+            "Microsoft",
+            "Mono.",
+            "mscorlib",
+            "NSubstitute",
+            "nunit.",
+            "JetBrains",
+            "GeNa."
+        };
+
+        private static readonly string[] bannedAssemblyNames = new string[]
+        {
+            "mcs",
+            "AssetStoreTools",
+            "PPv2URPConverters"
+        };
+
+        #endregion
+
+        private IL2CPPBuildPreprocessor()
+        {
+            unityAssemblies = CompilationPipeline.GetAssemblies();
+        }
+
+        private void OnPreprocessBuildInternal()
+        {
+            var textFile = MonitoringSystems.Resolve<IMonitoringSettings>().ScriptFileIL2CPP;
+            var filePath = AssetDatabase.GetAssetPath(textFile);
+
+            ProfileAssembliesAndCreateDefinitions();
+
+            Debug.Log($"Starting IL2CPP AOT type definition generation.\nFilePath: {filePath}");
+        }
+
+        private static void WriteContentToFile(string filePath, StringBuilder stringBuilder)
+        {
+            var directoryPath = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrWhiteSpace(directoryPath) && !Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            var stream = new FileStream(filePath, FileMode.OpenOrCreate);
+            stream.Dispose();
+            File.WriteAllText(filePath, stringBuilder.ToString());
+        }
+
+        #region --- Profile Assmelby ---
+
+        private void ProfileAssembliesAndCreateDefinitions()
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            foreach (var assembly in assemblies)
+            {
+                if (assembly.GetCustomAttribute<DisableMonitoringAttribute>() != null)
+                {
+                    continue;
+                }
+
+                var assemblyName = assembly.GetName().Name;
+
+                if (bannedAssemblyPrefixes.Any(assemblyName.StartsWith))
+                {
+                    continue;
+                }
+
+                if (bannedAssemblyNames.Any(assemblyName.Equals))
+                {
+                    continue;
+                }
+
+                if (assembly.IsEditorAssembly(unityAssemblies))
+                {
+                    continue;
+                }
+
+                ProfileAssembly(assembly);
+            }
+        }
+
+        private void ProfileAssembly(Assembly filteredAssembly)
+        {
+            foreach (var type in filteredAssembly.GetTypes())
+            {
+                ProfileType(type);
+            }
+        }
+
+        private void ProfileType(Type type)
+        {
+            // Static Fields
+            foreach (var fieldInfo in type.GetFields(STATIC_FLAGS))
+            {
+                if (fieldInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                }
+            }
+
+            // Instance Fields
+            foreach (var fieldInfo in type.GetFields(INSTANCE_FLAGS))
+            {
+                if (fieldInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                }
+            }
+
+            // Static Properties
+            foreach (var propertyInfo in type.GetProperties(STATIC_FLAGS))
+            {
+                if (propertyInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                }
+            }
+
+            // Instance Properties
+            foreach (var propertyInfo in type.GetProperties(INSTANCE_FLAGS))
+            {
+                if (propertyInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                }
+            }
+
+            // Static Events
+            foreach (var eventInfo in type.GetEvents(STATIC_FLAGS))
+            {
+                if (eventInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                }
+            }
+
+            // Instance Events
+            foreach (var eventInfo in type.GetEvents(INSTANCE_FLAGS))
+            {
+                if (eventInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                }
+            }
+
+            // Static Methods
+            foreach (var methodInfo in type.GetMethods(STATIC_FLAGS))
+            {
+                if (methodInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                }
+            }
+
+            // Instance Methods
+            foreach (var methodInfo in type.GetMethods(INSTANCE_FLAGS))
+            {
+                if (methodInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                }
+            }
+        }
+
+        #endregion
+
+        #region --- Profile Types ---
+
+        private void ProfileFieldInfo(FieldInfo fieldInfo)
+        {
+            try
+            {
+                var declaring = fieldInfo.DeclaringType;
+                var monitored = fieldInfo.FieldType;
+
+                Stats.IncrementStat("Monitored Member");
+                Stats.IncrementStat($"Monitored Member {(fieldInfo.IsStatic ? "Static" : "Instance")}");
+                Stats.IncrementStat("Monitored Fields", "MemberInfo");
+                Stats.IncrementStat($"Monitored Fields {(fieldInfo.IsStatic ? "Static" : "Instance")}", "MemberInfo");
+
+                if (declaring.IsAccessible())
+                {
+
+                }
+            }
+            catch (Exception exception)
+            {
+                ExceptionBuffer.Add(exception);
+            }
+        }
+
+        #endregion
+    }
+#endif
+
+    #region --- Old ---
+
+#if false
     public class IL2CPPBuildPreprocessor : IPreprocessBuildWithReport
     {
         #region --- Public API ---
@@ -73,15 +313,16 @@ namespace Baracuda.Monitoring.Editor
          * Const fields
          */
 
-        private const BindingFlags StaticFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+        private const BindingFlags STATIC_FLAGS = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
-        private const BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.Public |
+        private const BindingFlags INSTANCE_FLAGS = BindingFlags.Instance | BindingFlags.Public |
                                                     BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
 
         private static readonly string preserveAttribute = $"[{typeof(PreserveAttribute).FullName}]";
-        private static readonly string methodImpAttribute = $"[{typeof(MethodImplAttribute).FullName}({typeof(MethodImplOptions).FullName}.{MethodImplOptions.NoOptimization.ToString()})]";
-        private static readonly string aotBridgeClass = typeof(AOTBridge).FullName;
+        private static readonly string methodImpAttribute =
+ $"[{typeof(MethodImplAttribute).FullName}({typeof(MethodImplOptions).FullName}.{MethodImplOptions.NoOptimization.ToString()})]";
+        private static readonly string aotBridgeClass = typeof(IL2CPPTypeDefinitions).FullName;
 
         /*
          * Queues & Caches
@@ -343,7 +584,7 @@ namespace Baracuda.Monitoring.Editor
                 foreach (var type in filteredAssembly.GetTypes())
                 {
                     // Static Fields
-                    foreach (var fieldInfo in type.GetFields(StaticFlags))
+                    foreach (var fieldInfo in type.GetFields(STATIC_FLAGS))
                     {
                         if (fieldInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -351,7 +592,7 @@ namespace Baracuda.Monitoring.Editor
                         }
                     }
                     // Instance Fields
-                    foreach (var fieldInfo in type.GetFields(InstanceFlags))
+                    foreach (var fieldInfo in type.GetFields(INSTANCE_FLAGS))
                     {
                         if (fieldInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -360,7 +601,7 @@ namespace Baracuda.Monitoring.Editor
                     }
 
                     // Static Properties
-                    foreach (var propertyInfo in type.GetProperties(StaticFlags))
+                    foreach (var propertyInfo in type.GetProperties(STATIC_FLAGS))
                     {
                         if (propertyInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -368,7 +609,7 @@ namespace Baracuda.Monitoring.Editor
                         }
                     }
                     // Instance Properties
-                    foreach (var propertyInfo in type.GetProperties(InstanceFlags))
+                    foreach (var propertyInfo in type.GetProperties(INSTANCE_FLAGS))
                     {
                         if (propertyInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -377,7 +618,7 @@ namespace Baracuda.Monitoring.Editor
                     }
 
                     // Static Events
-                    foreach (var eventInfo in type.GetEvents(StaticFlags))
+                    foreach (var eventInfo in type.GetEvents(STATIC_FLAGS))
                     {
                         if (eventInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -385,7 +626,7 @@ namespace Baracuda.Monitoring.Editor
                         }
                     }
                     // Instance Events
-                    foreach (var eventInfo in type.GetEvents(InstanceFlags))
+                    foreach (var eventInfo in type.GetEvents(INSTANCE_FLAGS))
                     {
                         if (eventInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -394,7 +635,7 @@ namespace Baracuda.Monitoring.Editor
                     }
 
                     // Static Methods
-                    foreach (var methodInfo in type.GetMethods(StaticFlags))
+                    foreach (var methodInfo in type.GetMethods(STATIC_FLAGS))
                     {
                         if (methodInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -402,7 +643,7 @@ namespace Baracuda.Monitoring.Editor
                         }
                     }
                     // Instance Methods
-                    foreach (var methodInfo in type.GetMethods(InstanceFlags))
+                    foreach (var methodInfo in type.GetMethods(INSTANCE_FLAGS))
                     {
                         if (methodInfo.HasAttribute<MonitorAttribute>(true))
                         {
@@ -421,14 +662,14 @@ namespace Baracuda.Monitoring.Editor
         {
             try
             {
-                var template = typeof(FieldProfile<,>);
+                //var template = typeof(FieldProfile<,>);
                 var declaring = fieldInfo.DeclaringType;
                 var monitored = fieldInfo.FieldType;
                 Stats.IncrementStat("Monitored Member");
                 Stats.IncrementStat($"Monitored Member {(fieldInfo.IsStatic ? "Static" : "Instance")}");
                 Stats.IncrementStat("Monitored Fields", "MemberInfo");
                 Stats.IncrementStat($"Monitored Fields {(fieldInfo.IsStatic ? "Static" : "Instance")}", "MemberInfo");
-                CreateProfileTypeDefFor(template, declaring, monitored, fieldProfileDefinitions);
+                //CreateProfileTypeDefFor(template, declaring, monitored, fieldProfileDefinitions);
             }
             catch (Exception exception)
             {
@@ -444,14 +685,14 @@ namespace Baracuda.Monitoring.Editor
         {
             try
             {
-                var template = typeof(PropertyProfile<,>);
+                //var template = typeof(PropertyProfile<,>);
                 var declaring = propertyInfo.DeclaringType;
                 var monitored = propertyInfo.PropertyType;
                 Stats.IncrementStat("Monitored Member");
                 Stats.IncrementStat($"Monitored Member {(propertyInfo.IsStatic() ? "Static" : "Instance")}");
                 Stats.IncrementStat("Monitored Properties", "MemberInfo");
                 Stats.IncrementStat($"Monitored Properties {(propertyInfo.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
-                CreateProfileTypeDefFor(template, declaring, monitored, propertyProfileDefinitions);
+                //CreateProfileTypeDefFor(template, declaring, monitored, propertyProfileDefinitions);
             }
             catch (Exception exception)
             {
@@ -467,14 +708,14 @@ namespace Baracuda.Monitoring.Editor
         {
             try
             {
-                var template = typeof(EventProfile<,>);
+                //var template = typeof(EventProfile<,>);
                 var declaring = eventInfo.DeclaringType;
                 var monitored = eventInfo.EventHandlerType;
                 Stats.IncrementStat("Monitored Member");
                 Stats.IncrementStat($"Monitored Member {(eventInfo.IsStatic() ? "Static" : "Instance")}");
                 Stats.IncrementStat("Monitored Events", "MemberInfo");
                 Stats.IncrementStat($"Monitored Events {(eventInfo.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
-                CreateProfileTypeDefFor(template, declaring, monitored, eventProfileDefinitions);
+                //CreateProfileTypeDefFor(template, declaring, monitored, eventProfileDefinitions);
             }
             catch (Exception exception)
             {
@@ -501,10 +742,10 @@ namespace Baracuda.Monitoring.Editor
                 Stats.IncrementStat("Monitored Methods", "MemberInfo");
                 Stats.IncrementStat($"Monitored Methods {(methodInfo.IsStatic ? "Static" : "Instance")}", "MemberInfo");
 
-                var template = typeof(MethodProfile<,>);
+                //var template = typeof(MethodProfile<,>);
                 var declaring = methodInfo.DeclaringType;
                 var monitored = methodInfo.ReturnType;
-                CreateProfileTypeDefFor(template, declaring, monitored, methodProfileDefinitions);
+                //CreateProfileTypeDefFor(template, declaring, monitored, methodProfileDefinitions);
             }
             catch (Exception exception)
             {
@@ -747,11 +988,6 @@ namespace Baracuda.Monitoring.Editor
 
             var underlying = (type.IsByRef ? type.GetElementType() : type) ?? type;
 
-            if (underlying == typeof(void))
-            {
-                return typeof(VoidValue);
-            }
-
             if (underlying.IsReadonlyRefStruct())
             {
                 return null;
@@ -892,4 +1128,7 @@ namespace Baracuda.Monitoring.Editor
         }
         #endregion
     }
+#endif
+
+    #endregion
 }

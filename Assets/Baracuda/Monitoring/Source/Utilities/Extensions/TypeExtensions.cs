@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Utilities.Extensions
 {
-    public static class TypeExtensions
+    internal static class TypeExtensions
     {
         #region --- Type Data ---
 

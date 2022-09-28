@@ -1,12 +1,11 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using System.Runtime.InteropServices;
+
 namespace Baracuda.Monitoring.Types
 {
-    public struct VoidValue
+    [StructLayout(LayoutKind.Explicit, Size = 1)]
+    internal struct VoidValue
     {
-        public override string ToString()
-        {
-            return "void";
-        }
     }
 }

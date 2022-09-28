@@ -6,17 +6,7 @@ using System.Text;
 
 namespace Baracuda.Monitoring.Editor
 {
-    public interface IStatCounter
-    {
-        void SetStat(string stat, int value, string category = "General");
-        void ResetStat(string stat, string category = "Default");
-        void IncrementStat(string stat, int increment, string category = "General");
-        void IncrementStat(string stat, string category = "General");
-
-        string ToString(bool asComment);
-    }
-
-    public class StatCounter : IStatCounter
+    internal class StatCounter
     {
         private readonly Dictionary<string, SortedDictionary<string, int>> _storage =
             new Dictionary<string, SortedDictionary<string, int>>();
@@ -33,7 +23,7 @@ namespace Baracuda.Monitoring.Editor
                 _storage[category].Add(stat, value);
             }
         }
-        
+
         public void ResetStat(string stat, string category = "General")
         {
             EnsureCategoryExists(category);
@@ -51,7 +41,7 @@ namespace Baracuda.Monitoring.Editor
         {
             IncrementStat(stat, 1, category);
         }
-        
+
         public void IncrementStat(string stat, int increment, string category = "General")
         {
             EnsureCategoryExists(category);
@@ -102,10 +92,10 @@ namespace Baracuda.Monitoring.Editor
                     sb.Append(new string(' ', (max - statName.Length) + 4 - statValue.Length));
                     sb.Append(statValue);
                 }
-                
+
                 sb.Append('\n');
             }
-            
+
             return sb.ToString();
         }
     }

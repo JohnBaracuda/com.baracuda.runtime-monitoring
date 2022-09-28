@@ -10,18 +10,10 @@ namespace Baracuda.Monitoring.Profiles
 {
     /// <typeparam name="TTarget">The <see cref="Type"/> of the fields target object</typeparam>
     /// <typeparam name="TValue">The <see cref="Type"/> of the return value of the field</typeparam>
-    public sealed class FieldProfile<TTarget, TValue> : ValueProfile<TTarget, TValue> where TTarget : class
+    internal sealed class FieldProfile<TTarget, TValue> : ValueProfile<TTarget, TValue> where TTarget : class
     {
-        #region --- Fields ---
-
         private readonly Func<TTarget, TValue> _getValueDelegate;
         private readonly Action<TTarget, TValue> _setValueDelegate;
-
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Factory ---
 
         /// <summary>
         /// Create a new <see cref="FieldUnit{TTarget,TValue}"/> based on this profile.
@@ -39,12 +31,6 @@ namespace Baracuda.Monitoring.Profiles
                 this);
         }
 
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Ctor ---
-
         private FieldProfile(FieldInfo fieldInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args)
             : base(fieldInfo, attribute, typeof(TTarget), typeof(TValue), MemberType.Field, args)
         {
@@ -53,7 +39,5 @@ namespace Baracuda.Monitoring.Profiles
                 ? fieldInfo.CreateSetter<TTarget, TValue>()
                 : null;
         }
-
-        #endregion
     }
 }

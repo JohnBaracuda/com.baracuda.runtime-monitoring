@@ -17,26 +17,26 @@ namespace Baracuda.Monitoring.Units
     /// </summary>
     /// <typeparam name="TTarget"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public abstract class ValueUnit<TTarget, TValue> : MonitorUnit, ISettableValue<TValue>, IGettableValue<TValue> where TTarget : class
+    internal abstract class ValueUnit<TTarget, TValue> : MonitorUnit, ISettableValue<TValue>, IGettableValue<TValue> where TTarget : class
     {
         #region --- Fields ---
-        
+
         protected readonly StringDelegate CompiledValueProcessor;
-        
+
         private readonly TTarget _target;
-        private readonly Func<TTarget, TValue> _getValue;       
+        private readonly Func<TTarget, TValue> _getValue;
         private readonly Action<TTarget, TValue> _setValue;
 
         private readonly Action _validationTick;
         private readonly Func<bool> _validateFunc;
         private readonly ValidationEvent _validationEvent;
 
-        private readonly ValueProfile<TTarget,TValue>.IsDirtyDelegate _checkIsDirty;
+        private readonly ValueProfile<TTarget, TValue>.IsDirtyDelegate _checkIsDirty;
 
         private TValue _lastValue = default;
 
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Ctor ---
@@ -52,11 +52,11 @@ namespace Baracuda.Monitoring.Units
             _target = target;
             _getValue = getValue;
             _setValue = setValue;
-            
+
             CompiledValueProcessor = CompileValueProcessor(valueProcessor);
 
             _checkIsDirty = profile.IsDirtyFunc;
-            
+
             if (profile.CustomUpdateEventAvailable)
             {
                 if (!profile.TrySubscribeToUpdateEvent(target, Refresh, SetValue))
@@ -70,43 +70,43 @@ namespace Baracuda.Monitoring.Units
                 _validationEvent = validationEvent;
                 _validationEvent.AddMethod(SetEnabled);
             }
-            
+
             // Prefer event based validation
             else if (validationFunc != null)
             {
                 switch (validationFunc)
                 {
-                    case Func<TTarget, bool> instanceValidator:  
+                    case Func<TTarget, bool> instanceValidator:
                         _validateFunc = () => instanceValidator(_target);
                         break;
-                    
+
                     case Func<bool> simpleValidator:
                         _validateFunc = simpleValidator;
                         break;
-                    
-                    case Func<TValue, bool> conditionalValidator: 
+
+                    case Func<TValue, bool> conditionalValidator:
                         _validateFunc = () => conditionalValidator(GetValue());
                         break;
                 }
-                
+
                 _validationTick = () => Enabled = _validateFunc();
                 MonitoringSystems.Resolve<IMonitoringTicker>().AddValidationTicker(_validationTick);
             }
         }
 
         #endregion
-                
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Value Processor ---
-        
+
         private StringDelegate CompileValueProcessor(Func<TValue, string> func)
         {
-            return () => func(_getValue(_target)) ?? NULL;
+            return () => func(_getValue(_target)) ?? Null;
         }
 
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Update ---
@@ -114,7 +114,7 @@ namespace Baracuda.Monitoring.Units
         public override void Refresh()
         {
             var current = GetValue();
-            
+
             if (_checkIsDirty(ref current, ref _lastValue))
             {
                 var state = GetState();
@@ -132,11 +132,11 @@ namespace Baracuda.Monitoring.Units
         {
             Enabled = enabled;
         }
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Get ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -144,13 +144,13 @@ namespace Baracuda.Monitoring.Units
         {
             return CompiledValueProcessor();
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TValue GetValue()
         {
             return _getValue(_target);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T GetValueAs<T>()
         {
@@ -164,12 +164,12 @@ namespace Baracuda.Monitoring.Units
         }
 
         #endregion
-        
+
         #region --- Set ---
-   
+
         public void SetValue(TValue value)
         {
-            _setValue?.Invoke(_target, value);            
+            _setValue?.Invoke(_target, value);
             _lastValue = value;
             var state = GetState();
             RaiseValueChanged(state);
@@ -191,9 +191,9 @@ namespace Baracuda.Monitoring.Units
             var state = GetState();
             RaiseValueChanged(state);
         }
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- IDisosable ---
@@ -201,11 +201,11 @@ namespace Baracuda.Monitoring.Units
         public override void Dispose()
         {
             base.Dispose();
-            
-            ((ValueProfile<TTarget, TValue>)Profile).TryUnsubscribeFromUpdateEvent(_target, Refresh, SetValue);
-            
+
+            ((ValueProfile<TTarget, TValue>) Profile).TryUnsubscribeFromUpdateEvent(_target, Refresh, SetValue);
+
             _validationEvent?.RemoveMethod(SetEnabled);
-            
+
             if (_validationTick != null)
             {
                 MonitoringSystems.Resolve<IMonitoringTicker>().RemoveValidationTicker(_validationTick);

@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Baracuda.Monitoring.Interfaces
 {
-    public interface IValidatorFactory : IMonitoringSubsystem<IValidatorFactory>
+    internal interface IValidatorFactory : IMonitoringSubsystem<IValidatorFactory>
     {
         Func<bool> CreateStaticValidator(MShowIfAttribute attribute, MemberInfo memberInfo);
         Func<TTarget, bool> CreateInstanceValidator<TTarget>(MShowIfAttribute attribute, MemberInfo memberInfo);

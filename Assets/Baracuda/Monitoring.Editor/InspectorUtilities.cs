@@ -45,11 +45,11 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.Space();
             }
 
-            const int thickness = 1;
-            const int padding = 1;
-            var rect = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
-            rect.height = thickness;
-            rect.y += padding * .5f;
+            const int THICKNESS = 1;
+            const int PADDING = 1;
+            var rect = EditorGUILayout.GetControlRect(GUILayout.Height(PADDING + THICKNESS));
+            rect.height = THICKNESS;
+            rect.y += PADDING * .5f;
             rect.x -= 2;
             rect.width += 4;
             EditorGUI.DrawRect(rect, new Color(.1f, .1f, .1f, .9f));

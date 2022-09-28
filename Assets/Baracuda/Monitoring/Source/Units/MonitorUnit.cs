@@ -12,7 +12,7 @@ namespace Baracuda.Monitoring.Units
     /// <summary>
     /// Object wrapping and handling the monitoring of a monitored member.
     /// </summary>
-    public abstract class MonitorUnit : IDisposable, IMonitorUnit, ITickReceiver
+    internal abstract class MonitorUnit : IDisposable, IMonitorUnit
     {
         #region --- Delegates ---
 
@@ -85,7 +85,7 @@ namespace Baracuda.Monitoring.Units
 
         #region --- Fields ---
 
-        protected const string NULL = "<color=red>NULL</color>";
+        protected const string Null = "<color=red>NULL</color>";
         private static int backingID;
         private bool _isActive = false;
         private readonly IMonitoringTicker _ticker;
