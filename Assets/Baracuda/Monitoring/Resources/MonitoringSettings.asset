@@ -16,7 +16,7 @@ MonoBehaviour:
   autoInstantiateUI: 1
   asyncProfiling: 1
   openDisplayOnLoad: 1
-  monitoringUIController: {fileID: 843339411990045885, guid: a346941e8ff76a34f944fc2850d23a6e,
+  monitoringUIController: {fileID: 5494832875220723481, guid: 66c099bdd3d5f694484563c43d722f4f,
     type: 3}
   showRuntimeMonitoringObject: 0
   logBadImageFormatException: 0
@@ -62,8 +62,8 @@ MonoBehaviour:
   - Assembly-Plugin
   - DOTween
   bannedAssemblyNames: []
-  scriptFileIL2CPP: {fileID: 11500000, guid: 021dac3b4a2d167478f116f18f99ae61, type: 3}
+  scriptFileIL2CPP: {fileID: 11500000, guid: f1741fb181efda34aaf7d86f22875d84, type: 3}
   useIPreprocessBuildWithReport: 1
   throwOnTypeGenerationError: 1
   preprocessBuildCallbackOrder: 0
-  logTypeGenerationStats: 1
+  logTypeGenerationStats: 0

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace Baracuda.Monitoring.Types
 {
     [StructLayout(LayoutKind.Explicit, Size = 1)]
-    internal struct VoidValue
+    internal struct __Void
     {
     }
 }

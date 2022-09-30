@@ -1,14 +1,13 @@
 ﻿using System;
-using UnityEngine;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {
 #pragma warning disable CS0414
-    
+
     public class PlayerState : MonitoredBehaviour
     {
         public static event Action OnPlayerDeath;
-        
+
         private void Start()
         {
             GameManager.Current.GameStateChanged += OnGameStateChanged;

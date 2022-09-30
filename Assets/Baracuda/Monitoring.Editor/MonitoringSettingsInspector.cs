@@ -371,7 +371,7 @@ namespace Baracuda.Monitoring.Editor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Generate Code", GUILayout.Height(25), GUILayout.MinWidth(150)))
             {
-                //IL2CPPBuildPreprocessor.GenerateIL2CPPAheadOfTimeTypes();
+                IL2CPPBuildPreprocessor.GenerateIL2CPPAheadOfTimeTypes();
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();

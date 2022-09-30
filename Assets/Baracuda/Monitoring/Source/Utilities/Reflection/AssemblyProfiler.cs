@@ -14,22 +14,35 @@ namespace Baracuda.Monitoring.Utilities.Reflection
         {
             "Newtonsoft",
             "netstandard",
-            "System",
-            "Unity",
             "Microsoft",
             "Mono.",
             "mscorlib",
             "NSubstitute",
             "nunit.",
             "JetBrains",
-            "GeNa."
+            "GeNa.",
+            "System",
+            "Unity"
         };
 
         private static readonly string[] bannedAssemblyNames = new string[]
         {
             "mcs",
             "AssetStoreTools",
-            "PPv2URPConverters"
+            "PPv2URPConverters",
+            "UnityEngine",
+            "UnityEditor",
+            "pdf",
+            "Unity.SerializationLogic",
+            "Unity.Legacy.NRefactory",
+            "Unity.CompilationPipeline.Common",
+            "Unity.CecilTools",
+            "Unity.Cecil.Rocks",
+            "Unity.Cecil.Pdb",
+            "Unity.Cecil.Mdb",
+            "Unity.Cecil",
+            "ExCSS.Unity",
+            "System"
         };
 
         /// <summary>

@@ -477,7 +477,7 @@ namespace Baracuda.Monitoring.Systems
                 }
                 
                 // create a generic type definition.
-                var genericType = typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType, methodInfo.ReturnType.NotVoid(typeof(VoidValue)));
+                var genericType = typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType, methodInfo.ReturnType.NotVoid(typeof(__Void)));
 
 
                 // additional MonitorProfile arguments
@@ -913,7 +913,7 @@ namespace Baracuda.Monitoring.Systems
                 }
 
                 var genericType =
-                    typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType, methodInfo.ReturnType.NotVoid(typeof(VoidValue)));
+                    typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType, methodInfo.ReturnType.NotVoid(typeof(__Void)));
 
                 // additional MonitorProfile arguments
                 var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);

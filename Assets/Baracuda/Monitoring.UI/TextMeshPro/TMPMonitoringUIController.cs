@@ -17,8 +17,8 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         #region --- Inspector ---
 
         [Header("Pooling")]
-        [SerializeField][Min(1)] private int initialElementPoolSize = 100;
-        [SerializeField][Min(1)] private int initialGroupPoolSize = 100;
+        [SerializeField] [Min(1)] private int initialElementPoolSize = 100;
+        [SerializeField] [Min(1)] private int initialGroupPoolSize = 100;
 
         [Header("Style")]
         [SerializeField] private float elementSpacing = 0;
@@ -26,19 +26,19 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         [SerializeField] private int marginLeft;
         [SerializeField] private int marginBottom;
         [SerializeField] private int marginRight;
-        
+
         [Header("FontName")]
         [SerializeField] private TMP_FontAsset defaultFont;
         [SerializeField] private TMP_FontAsset[] availableFonts;
-        
+
         #endregion
 
         #region --- Fields ---
 
         private Stack<MonitoringUIElement> _uiElementPool;
         private Stack<MonitoringUIGroup> _uiGroupPool;
-        
-        
+
+
         private Transform _transform;
         private UIControllerComponents _components;
         private Canvas _canvas;
@@ -55,7 +55,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         {
             return _loadedFonts.TryGetValue(fontHash, out var fontAsset) ? fontAsset : defaultFont;
         }
-        
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -67,20 +67,20 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             base.Awake();
             _transform = transform;
             _components = GetComponent<UIControllerComponents>();
-            
+
             // Pools
             _uiElementPool = new Stack<MonitoringUIElement>(initialElementPoolSize);
             _uiGroupPool = new Stack<MonitoringUIGroup>(initialGroupPoolSize);
-            
+
             _canvas = GetComponent<Canvas>();
-            
+
             InitializeElementPool();
             InitializeGroupPool();
-            
+
             ApplyStyleSettings();
 
             var utility = MonitoringSystems.Resolve<IMonitoringUtility>();
-            
+
             for (var i = 0; i < availableFonts.Length; i++)
             {
                 var fontAsset = availableFonts[i];
@@ -108,7 +108,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         {
             return _uiGroupPool.Count > 0 ? _uiGroupPool.Pop() : CreateEmptyGroup();
         }
-        
+
         internal void ReleaseElementToPool(MonitoringUIElement element)
         {
             element.SetParent(_transform);
@@ -148,25 +148,25 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
                 _uiGroupPool.Push(group);
             }
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MonitoringUIElement CreateEmptyElement()
         {
             return Instantiate(_components.elementPrefab, transform);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MonitoringUIGroup CreateEmptyGroup()
         {
             return Instantiate(_components.groupPrefab, transform);
         }
-        
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Visibility ---
-        
+
         public override bool IsVisible()
         {
             return gameObject.activeInHierarchy;
@@ -179,7 +179,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             // Calling Canvas.ForceUpdateCanvas does not do this.
             _canvas.sortingOrder = _canvas.sortingOrder;
         }
-        
+
 
         protected override void HideMonitoringUI()
         {
@@ -189,9 +189,9 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
         #endregion
 
         #region --- Unit Creation / Disposing ---
-        
+
         /*
-         * Unit creation   
+         * Unit creation
          */
 
         protected override void OnUnitCreated(IMonitorUnit unit)
@@ -199,19 +199,19 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             var section = GetSection(unit.Profile.FormatData.Position);
             section.AddChild(unit);
         }
-        
+
         protected override void OnUnitDisposed(IMonitorUnit unit)
         {
             var section = GetSection(unit.Profile.FormatData.Position);
             section.RemoveChild(unit);
         }
-        
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Misc ---
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MonitoringUISection GetSection(UIPosition uiPosition)
         {
@@ -229,11 +229,11 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
                     throw new ArgumentOutOfRangeException();
             }
         }
-        
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Styling ---
 
 #if UNITY_EDITOR
@@ -242,7 +242,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
             ApplyStyleSettings();
         }
 #endif
-        
+
         private void ApplyStyleSettings()
         {
             try
@@ -260,7 +260,7 @@ namespace Baracuda.Monitoring.UI.TextMeshPro
                 // ignored
             }
         }
-        
+
         #endregion
     }
 }

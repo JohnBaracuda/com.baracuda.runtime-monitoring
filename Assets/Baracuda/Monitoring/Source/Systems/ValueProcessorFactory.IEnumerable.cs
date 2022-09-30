@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Baracuda.Monitoring.Systems
 {
@@ -115,7 +117,7 @@ namespace Baracuda.Monitoring.Systems
                     };
             }
         }
-        
+
         #endregion
 
         #region --- Generic IEnumerable ---
@@ -135,13 +137,13 @@ namespace Baracuda.Monitoring.Systems
 
             // Unity objects might not be properly initialized in builds leading to a false result when performing a null check.
 #if UNITY_EDITOR
-            if (type.IsSubclassOrAssignable(typeof(UnityEngine.Object)))
+            if (typeof(Object).IsAssignableFrom(type))
             {
                 return formatData.ShowIndexer
                     ? (Func<IEnumerable<T>, string>) ((value) =>
                     {
                         // ReSharper disable once SuspiciousTypeConversion.Global
-                        if ((UnityEngine.Object) value == null)
+                        if ((Object) value == null)
                         {
                             return nullString;
                         }
@@ -287,7 +289,7 @@ namespace Baracuda.Monitoring.Systems
                     return stringBuilder.ToString();
                 };
         }
-        
+
         #endregion
     }
 }

@@ -12,31 +12,8 @@ using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.IL2CPP
 {
-    public class TypeDefDictionary<TKey, TValue>
-    {
-        private static void __Def()
-        {
-        }
-    }
-
-    public class TypeDef<T>
-    {
-        private static void __Def()
-        {
-            IL2CPPTypeDefinitions.TypeDefOutParameter<T>();
-        }
-    }
-
-    public class IL2CPPTypeDef : Attribute
-    {
-        public IL2CPPTypeDef(Type definition)
-        {
-        }
-    }
-
     public static class IL2CPPTypeDefinitions
     {
-        [IL2CPPTypeDef(typeof(TypeDefDictionary<int, int>))]
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void TypeDefStructTypeArray<T>() where T : struct
@@ -74,41 +51,70 @@ namespace Baracuda.Monitoring.IL2CPP
 
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
+        public static void TypeDefList<TElement>()
+        {
+            ValueProcessorFactory.AOTList<List<TElement>, TElement>();
+            ValueProcessorFactory.AOTList<IList<TElement>, TElement>();
+        }
+
+        [Preserve]
+        [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void TypeDefField<TDeclaring, TMonitored>() where TDeclaring : class
         {
-            DeclareThrow((FieldUnit<TDeclaring, TMonitored>) null);
-            DeclareThrow((FieldProfile<TDeclaring, TMonitored>) null);
+            var unit = Activator.CreateInstance<FieldUnit<TDeclaring, TMonitored>>();
+            var profile = Activator.CreateInstance<FieldProfile<TDeclaring, TMonitored>>();
+            DeclareThrow(unit);
+            DeclareThrow(profile);
         }
 
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void TypeDefProperty<TDeclaring, TMonitored>() where TDeclaring : class
         {
-            DeclareThrow((PropertyUnit<TDeclaring, TMonitored>) null);
-            DeclareThrow((PropertyProfile<TDeclaring, TMonitored>) null);
+            var unit = Activator.CreateInstance<PropertyUnit<TDeclaring, TMonitored>>();
+            var profile = Activator.CreateInstance<PropertyProfile<TDeclaring, TMonitored>>();
+            DeclareThrow(unit);
+            DeclareThrow(profile);
         }
 
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void TypeDefEvent<TDeclaring, TMonitored>() where TDeclaring : class where TMonitored : Delegate
         {
-            DeclareThrow((EventUnit<TDeclaring, TMonitored>) null);
-            DeclareThrow((EventProfile<TDeclaring, TMonitored>) null);
+            var unit = Activator.CreateInstance<EventUnit<TDeclaring, TMonitored>>();
+            var profile = Activator.CreateInstance<EventProfile<TDeclaring, TMonitored>>();
+            DeclareThrow(unit);
+            DeclareThrow(profile);
+        }
+
+        // Method
+
+        [Preserve]
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public static void TypeDefMethod<TDeclaring>() where TDeclaring : class
+        {
+            var unit = Activator.CreateInstance<MethodUnit<TDeclaring, __Void>>();
+            var profile = Activator.CreateInstance<MethodProfile<TDeclaring, __Void>>();
+            DeclareThrow(unit);
+            DeclareThrow(profile);
         }
 
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
-        public static void TypeDefMethod<TDeclaring, TMonitored>() where TDeclaring : class where TMonitored : Delegate
+        public static void TypeDefMethod<TDeclaring, TMonitored>() where TDeclaring : class
         {
-            DeclareThrow((MethodUnit<TDeclaring, TMonitored>) null);
-            DeclareThrow((MethodProfile<TDeclaring, TMonitored>) null);
+            var unit = Activator.CreateInstance<MethodUnit<TDeclaring, TMonitored>>();
+            var profile = Activator.CreateInstance<MethodProfile<TDeclaring, TMonitored>>();
+            DeclareThrow(unit);
+            DeclareThrow(profile);
         }
 
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void TypeDefOutParameter<T>()
         {
-            DeclareThrow((OutParameterHandleT<T>) null);
+            var handle = Activator.CreateInstance<OutParameterHandleT<T>>();
+            DeclareThrow(handle);
         }
 
         [Preserve]

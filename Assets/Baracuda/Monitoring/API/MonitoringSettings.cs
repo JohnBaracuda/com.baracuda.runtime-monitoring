@@ -4,7 +4,6 @@ using Baracuda.Monitoring.Types;
 using System;
 using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.API
@@ -275,9 +274,20 @@ namespace Baracuda.Monitoring.API
 
         public TextAsset ScriptFileIL2CPP => scriptFileIL2CPP
             ? scriptFileIL2CPP
-            : throw new NullReferenceException(
-                "AOT Script file is null! Please create an empty .cs file and assign it in the Monitoring settings!" +
-                "\n Window: <b>Tools => Runtime Monitoring => Settings => IL2CPP Settings => Script File IL2CPP</b>");
+            : CreateScriptFileIL2CPP();
+
+        private TextAsset CreateScriptFileIL2CPP()
+        {
+#if UNITY_EDITOR
+            var textAsset = new TextAsset();
+            var path = "Assets/TYPE_DEFINITIONS_FOR_IL2CPP.cs";
+            UnityEditor.AssetDatabase.CreateAsset(textAsset, path);
+            scriptFileIL2CPP = UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(path);
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
+            return scriptFileIL2CPP;
+        }
+
         public bool UseIPreprocessBuildWithReport => useIPreprocessBuildWithReport;
         public bool ThrowOnTypeGenerationError => throwOnTypeGenerationError;
         public int PreprocessBuildCallbackOrder => preprocessBuildCallbackOrder;

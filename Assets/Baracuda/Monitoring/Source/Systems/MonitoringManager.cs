@@ -36,7 +36,7 @@ namespace Baracuda.Monitoring.Systems
         }
 
         /*
-         * Events   
+         * Events
          */
 
         public event ProfilingCompletedListener ProfilingCompleted
@@ -56,9 +56,9 @@ namespace Baracuda.Monitoring.Systems
         public event Action<IMonitorUnit> UnitCreated;
 
         public event Action<IMonitorUnit> UnitDisposed;
-        
+
         /*
-         * Target Object Registration   
+         * Target Object Registration
          */
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -74,47 +74,47 @@ namespace Baracuda.Monitoring.Systems
         }
 
         /*
-         * Getter   
-         */        
-        
-        [Pure] 
+         * Getter
+         */
+
+        [Pure]
         public IReadOnlyList<IMonitorUnit> GetStaticUnits() => _staticUnitCache;
-        
+
         [Pure]
         public IReadOnlyList<IMonitorUnit> GetInstanceUnits() => _instanceUnitCache;
-        
-        [Pure] 
+
+        [Pure]
         public IReadOnlyList<IMonitorUnit> GetAllMonitoringUnits() => _monitoringUnitCache;
-        
+
 
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Private Fields ---
-        
+
         private Dictionary<Type, List<MonitorProfile>> _instanceMonitorProfiles = new Dictionary<Type, List<MonitorProfile>>();
-        
+
         private readonly List<MonitorUnit> _staticUnitCache = new List<MonitorUnit>(100);
         private readonly List<MonitorUnit> _instanceUnitCache = new List<MonitorUnit>(100);
         private readonly List<MonitorUnit> _monitoringUnitCache = new List<MonitorUnit>(200);
-        
+
         private readonly Dictionary<object, MonitorUnit[]> _activeInstanceUnits = new Dictionary<object, MonitorUnit[]>();
-        
+
         private readonly List<object> _registeredTargets = new List<object>(300);
         private bool _initialInstanceUnitsCreated = false;
 
         private volatile bool _isInitialized = false;
         private ProfilingCompletedListener _profilingCompleted;
-        
+
 #if DEBUG
         private readonly HashSet<object> _registeredObjects = new HashSet<object>();
 #endif
-        
+
         #endregion
-        
+
         #region --- Raise Events ---
-        
+
         private void RaiseUnitCreated(IMonitorUnit monitorUnit)
         {
             if (!Dispatcher.IsMainThread())
@@ -134,15 +134,15 @@ namespace Baracuda.Monitoring.Systems
             }
             UnitDisposed?.Invoke(monitorUnit);
         }
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         /*
-         * Conditional Compilation   
+         * Conditional Compilation
          */
- 
+
         #region --- Target Registration ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -166,7 +166,7 @@ namespace Baracuda.Monitoring.Systems
                 CreateInstanceUnits(target, target.GetType());
             }
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UnregisterTargetInternal<T>(T target) where T : class
         {
@@ -183,18 +183,18 @@ namespace Baracuda.Monitoring.Systems
         }
 
         #endregion
-        
+
         #region --- Complete Profiling ---
 
         public async Task CompleteProfilingAsync(
             List<MonitorProfile> staticProfiles,
-            Dictionary<Type, List<MonitorProfile>> instanceProfiles, 
+            Dictionary<Type, List<MonitorProfile>> instanceProfiles,
             CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
-            
+
             _instanceMonitorProfiles = instanceProfiles;
-            
+
             CreateStaticUnits(staticProfiles.ToArray());
 
             if (Dispatcher.IsMainThread())
@@ -208,23 +208,23 @@ namespace Baracuda.Monitoring.Systems
                 await Dispatcher.InvokeAsync(ProfilingCompletedInternal, ct);
             }
         }
-       
-                
+
+
         private void ProfilingCompletedInternal()
         {
             Dispatcher.GuardAgainstIsNotMainThread(nameof(ProfilingCompletedInternal));
-            
+
             IsInitialized = true;
             _profilingCompleted?.Invoke(_staticUnitCache, _instanceUnitCache);
             _profilingCompleted = null;
         }
-        
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Instantiate: Instance Units ---
-        
+
         private void CreateInitialInstanceUnits()
         {
             for (var i = 0; i < _registeredTargets.Count; i++)
@@ -237,13 +237,13 @@ namespace Baracuda.Monitoring.Systems
         private void CreateInstanceUnits(object target, Type type)
         {
             var validTypes = type.GetBaseTypes(true, true);
-            // create a new array to cache the units instances that will be created. 
+            // create a new array to cache the units instances that will be created.
             var units = ListPool<MonitorUnit>.Get();
             var guids = ListPool<MemberInfo>.Get();
-            
+
             for (var i = 0; i < validTypes.Length; i++)
             {
-                if(validTypes[i].IsGenericType)
+                if (validTypes[i].IsGenericType)
                 {
                     continue;
                 }
@@ -256,7 +256,7 @@ namespace Baracuda.Monitoring.Systems
                 // loop through the profiles and create a new unit for each profile.
                 for (var j = 0; j < profiles.Count; j++)
                 {
-                    if(guids.Contains(profiles[j].MemberInfo))
+                    if (guids.Contains(profiles[j].MemberInfo))
                     {
                         continue;
                     }
@@ -271,7 +271,7 @@ namespace Baracuda.Monitoring.Systems
             }
 
             // cache the created units in a dictionary that allows access by the units target.
-            // this dictionary will be used to dispose the units if the target gets destroyed 
+            // this dictionary will be used to dispose the units if the target gets destroyed
             if (units.Count > 0 && !_activeInstanceUnits.ContainsKey(target))
             {
                 _activeInstanceUnits.Add(target, units.ToArray());
@@ -299,14 +299,14 @@ namespace Baracuda.Monitoring.Systems
                 _monitoringUnitCache.Remove(unit);
                 RaiseUnitDisposed(unit);
             }
-                
+
             _activeInstanceUnits.Remove(target);
         }
 
         #endregion
-        
+
         #region --- Instantiate: Static Units ---
-        
+
         private void CreateStaticUnits(MonitorProfile[] staticProfiles)
         {
             for (var i = 0; i < staticProfiles.Length; i++)
@@ -314,7 +314,7 @@ namespace Baracuda.Monitoring.Systems
                 CreateStaticUnit(staticProfiles[i]);
             }
         }
-        
+
         private void CreateStaticUnit(MonitorProfile staticProfile)
         {
             var staticUnit = staticProfile.CreateUnit(null);
