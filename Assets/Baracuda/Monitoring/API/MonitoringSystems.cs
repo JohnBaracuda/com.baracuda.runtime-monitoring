@@ -1,22 +1,17 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
-using Baracuda.Monitoring.Systems;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using Baracuda.Threading;
 
-namespace Baracuda.Monitoring.API
+namespace Baracuda.Monitoring
 {
     /// <summary>
     ///     Class manages references for individual monitoring systems.
     /// </summary>
     public static class MonitoringSystems
     {
-        #region --- System Localization ---
-
         private static readonly Dictionary<Type, object> systems = new Dictionary<Type, object>(8);
 
         [Pure]
@@ -50,84 +45,5 @@ namespace Baracuda.Monitoring.API
             {
             }
         }
-
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- System Installation ---
-
-        /// <summary>
-        /// Install core systems.
-        /// </summary>
-        static MonitoringSystems()
-        {
-#if !DISABLE_MONITORING
-            InstallCoreSystems();
-#else
-            InstallDummySystems();
-#endif
-        }
-
-        /*
-         * Install Systems
-         */
-
-#if !DISABLE_MONITORING
-
-        private static void InstallCoreSystems()
-        {
-            var manager = new MonitoringManager();
-            Register<IMonitoringManager>(manager);
-            Register<IMonitoringManagerInternal>(manager);
-
-            var utility = new MonitoringUtility(manager);
-            Register<IMonitoringUtility>(utility);
-            Register<IMonitoringUtilityInternal>(utility);
-
-            var settings = MonitoringSettings.FindOrCreateSettingsAsset();
-            Register<IMonitoringPlugin>(new MonitoringPluginData());
-            Register<IMonitoringSettings>(settings);
-            Register<IMonitoringLogger>(new MonitoringLogging(settings));
-
-#if UNITY_EDITOR
-            if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
-            {
-                return;
-            }
-#endif
-            var ticker = new MonitoringTicker(manager);
-            Register<IMonitoringTicker>(ticker);
-            Register<IMonitoringUI>(new MonitoringUISystem(manager, settings, ticker));
-            Register<IValueProcessorFactory>(new ValueProcessorFactory(settings));
-            Register<IValidatorFactory>(new ValidatorFactory());
-            Register<IMonitoringProfiler>(new MonitoringProfiler()).BeginProfiling(Dispatcher.RuntimeToken);
-        }
-
-#else // DISABLE_MONITORING
-
-        private static void InstallDummySystems()
-        {
-            Register<IMonitoringPlugin>(new MonitoringPluginData());
-            var settings = MonitoringSettings.FindOrCreateSettingsAsset();
-            var dummy = new MonitoringSystemDummy();
-            Register<IMonitoringSettings>(settings);
-            Register<IMonitoringManager>(dummy);
-            Register<IMonitoringUI>(dummy);
-            Register<IMonitoringUtility>(dummy);
-
-            Register<IMonitoringManagerInternal>(dummy);
-            Register<IMonitoringUtilityInternal>(dummy);
-            Register<IMonitoringLogger>(dummy);
-            Register<IMonitoringTicker>(dummy);
-            Register<IValueProcessorFactory>(dummy);
-            Register<IValidatorFactory>(dummy);
-            Register<IMonitoringProfiler>(dummy);
-        }
-#endif
-
-
-
-        #endregion
     }
 }

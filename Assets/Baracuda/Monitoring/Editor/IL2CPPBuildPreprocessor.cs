@@ -1,0 +1,1624 @@
+﻿// Copyright (c) 2022 Jonathan Lang
+
+using Baracuda.Monitoring.IL2CPP;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
+using UnityEditor;
+using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
+using UnityEditor.Compilation;
+using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.Scripting;
+using Assembly = System.Reflection.Assembly;
+
+namespace Baracuda.Monitoring.Editor
+{
+#if !DISABLE_MONITORING
+    internal class IL2CPPBuildPreprocessor : IPreprocessBuildWithReport
+    {
+        #region --- IPreprocessBuildWithReport ---
+
+        /// <summary>
+        ///   <para>Returns the relative callback order for callbacks.  Callbacks with lower values are called before ones with higher values.</para>
+        /// </summary>
+        public int callbackOrder => MonitoringSystems.Resolve<IMonitoringSettings>().PreprocessBuildCallbackOrder;
+
+        /// <summary>
+        ///   <para>Implement this function to receive a callback before the build is started.</para>
+        /// </summary>
+        /// <param name="report">A report containing information about the build, such as its target platform and output path.</param>
+        public void OnPreprocessBuild(BuildReport report)
+        {
+            if (!MonitoringSystems.Resolve<IMonitoringSettings>().UseIPreprocessBuildWithReport)
+            {
+                return;
+            }
+
+            var target = EditorUserBuildSettings.activeBuildTarget;
+            var group = BuildPipeline.GetBuildTargetGroup(target);
+            if (PlayerSettings.GetScriptingBackend(group) == ScriptingImplementation.IL2CPP)
+            {
+                OnPreprocessBuildInternal();
+            }
+        }
+
+        #endregion
+
+        #region --- Fields ---
+
+        private const BindingFlags STATIC_FLAGS = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.FlattenHierarchy;
+        private const BindingFlags INSTANCE_FLAGS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+
+        private readonly string preserveAttribute = $"[{typeof(PreserveAttribute).FullName}]";
+        private readonly string methodImpAttribute = $"[{typeof(MethodImplAttribute).FullName}({typeof(MethodImplOptions).FullName}.{MethodImplOptions.NoOptimization.ToString()})]";
+
+        private readonly string typeDefField = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefField)}";
+        private readonly string typeDefProperty = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefProperty)}";
+        private readonly string typeDefEvent = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefEvent)}";
+        private readonly string typeDefMethod = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefMethod)}";
+        private readonly string typeDefOutParameter = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefOutParameter)}";
+
+        private readonly bool throwExceptions = false;
+
+        private readonly UnityEditor.Compilation.Assembly[] unityAssemblies;
+
+        private List<Exception> ExceptionBuffer { get; } = new List<Exception>();
+        private List<string> TypeDefFieldBuffer { get; } = new List<string>();
+        private List<string> TypeDefPropertyBuffer { get; } = new List<string>();
+        private List<string> TypeDefEventBuffer { get; } = new List<string>();
+        private List<string> TypeDefMethodBuffer { get; } = new List<string>();
+        private List<string> TypeDefOutParameterBuffer { get; } = new List<string>();
+
+        private StatCounter Stats { get; } = new StatCounter();
+
+        private readonly Assembly[] assemblies;
+
+        private static readonly string[] bannedAssemblyPrefixes = new string[]
+        {
+            "Newtonsoft",
+            "netstandard",
+            "System",
+            "Unity",
+            "Microsoft",
+            "Mono.",
+            "mscorlib",
+            "NSubstitute",
+            "nunit.",
+            "JetBrains",
+            "GeNa."
+        };
+
+        private static readonly string[] bannedAssemblyNames = new string[]
+        {
+            "mcs",
+            "AssetStoreTools",
+            "PPv2URPConverters"
+        };
+
+        #endregion
+
+        public IL2CPPBuildPreprocessor()
+        {
+            unityAssemblies = CompilationPipeline.GetAssemblies();
+            assemblies = GetFilteredAssemblies();
+            throwExceptions = MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError;
+        }
+
+        private void OnPreprocessBuildInternal()
+        {
+            var textFile = MonitoringSystems.Resolve<IMonitoringSettings>().ScriptFileIL2CPP;
+            var filePath = AssetDatabase.GetAssetPath(textFile);
+
+            for (var i = 0; i < assemblies.Length; i++)
+            {
+                ProfileAssembly(assemblies[i]);
+            }
+
+            var stringBuilder = new StringBuilder(short.MaxValue);
+
+            AppendHeaderText(stringBuilder);
+            AppendIfDefBegin(stringBuilder);
+            AppendOpenClass(stringBuilder);
+
+            AppendTypeDefinitions(stringBuilder);
+
+            AppendCloseClass(stringBuilder);
+            AppendIfDefEnd(stringBuilder);
+
+            AppendStats(stringBuilder);
+
+            WriteContentToFile(filePath, stringBuilder);
+
+            Debug.Log($"Starting IL2CPP AOT type definition generation.\nFilePath: {filePath}");
+
+            foreach (var exception in ExceptionBuffer)
+            {
+                Debug.LogException(exception);
+            }
+        }
+
+        internal static void GenerateIL2CPPAheadOfTimeTypes()
+        {
+            new IL2CPPBuildPreprocessor().OnPreprocessBuildInternal();
+        }
+
+        private void WriteContentToFile(string filePath, StringBuilder stringBuilder)
+        {
+            var directoryPath = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrWhiteSpace(directoryPath) && !Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            var stream = new FileStream(filePath, FileMode.OpenOrCreate);
+            stream.Dispose();
+            File.WriteAllText(filePath, stringBuilder.ToString());
+        }
+
+        #region --- Profile Assmelby ---
+
+        private Assembly[] GetFilteredAssemblies()
+        {
+            var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var assemblyBuffer = new List<Assembly>(64);
+
+            foreach (var assembly in allAssemblies)
+            {
+                if (assembly.GetCustomAttribute<DisableMonitoringAttribute>() != null)
+                {
+                    continue;
+                }
+
+                var assemblyName = assembly.GetName().Name;
+
+                if (bannedAssemblyPrefixes.Any(assemblyName.StartsWith))
+                {
+                    continue;
+                }
+
+                if (bannedAssemblyNames.Any(assemblyName.Equals))
+                {
+                    continue;
+                }
+
+                if (assembly.IsEditorAssembly(unityAssemblies))
+                {
+                    continue;
+                }
+
+                assemblyBuffer.Add(assembly);
+            }
+
+            return assemblyBuffer.ToArray();
+        }
+
+        #endregion
+
+        #region --- Profiling ---
+
+         private void ProfileAssembly(Assembly filteredAssembly)
+        {
+            foreach (var type in filteredAssembly.GetTypes())
+            {
+                ProfileType(type);
+            }
+        }
+
+        private void ProfileType(Type type)
+        {
+            // Static Fields
+            foreach (var fieldInfo in type.GetFields(STATIC_FLAGS))
+            {
+                if (fieldInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                    ProfileFieldInfo(fieldInfo);
+                }
+            }
+
+            // Instance Fields
+            foreach (var fieldInfo in type.GetFields(INSTANCE_FLAGS))
+            {
+                if (fieldInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                    ProfileFieldInfo(fieldInfo);
+                }
+            }
+
+            // Static Properties
+            foreach (var propertyInfo in type.GetProperties(STATIC_FLAGS))
+            {
+                if (propertyInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                    ProfilePropertyInfo(propertyInfo);
+                }
+            }
+
+            // Instance Properties
+            foreach (var propertyInfo in type.GetProperties(INSTANCE_FLAGS))
+            {
+                if (propertyInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                    ProfilePropertyInfo(propertyInfo);
+                }
+            }
+
+            // Static Events
+            foreach (var eventInfo in type.GetEvents(STATIC_FLAGS))
+            {
+                if (eventInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                    ProfileEventInfo(eventInfo);
+                }
+            }
+
+            // Instance Events
+            foreach (var eventInfo in type.GetEvents(INSTANCE_FLAGS))
+            {
+                if (eventInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                    ProfileEventInfo(eventInfo);
+                }
+            }
+
+            // Static Methods
+            foreach (var methodInfo in type.GetMethods(STATIC_FLAGS))
+            {
+                if (methodInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                    ProfileMethodInfo(methodInfo);
+                }
+            }
+
+            // Instance Methods
+            foreach (var methodInfo in type.GetMethods(INSTANCE_FLAGS))
+            {
+                if (methodInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
+                {
+                    ProfileMethodInfo(methodInfo);
+                }
+            }
+        }
+
+        #endregion
+
+        #region --- Profile Types ---
+
+        private void ProfileFieldInfo(FieldInfo fieldInfo)
+        {
+            try
+            {
+                Assert.IsNotNull(fieldInfo.DeclaringType);
+
+                var declaring = fieldInfo.DeclaringType.IsValueType ? typeof(ValueType) : fieldInfo.DeclaringType;
+                var monitored = fieldInfo.FieldType.GetUnderlying();
+
+                if (declaring.IsGenericTypeDefinition)
+                {
+                    var subTypes = declaring.GetAllTypesImplementingOpenGenericType(assemblies);
+
+                    foreach (var subType in subTypes)
+                    {
+                        var subField = fieldInfo.IsStatic
+                            ? subType.GetField(fieldInfo.Name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy)
+                            : subType.GetField(fieldInfo.Name);
+                        ProfileFieldInfo(subField);
+                    }
+                    return;
+                }
+
+                var usableDeclaring = (declaring.IsAccessible() && !declaring.IsStatic())
+                    ? declaring
+                    : declaring.GetReplacement();
+
+                var usableMonitored = (monitored.IsAccessible() && !monitored.IsStatic())
+                    ? monitored
+                    : monitored.GetReplacement();
+
+                var typeDef = $"{typeDefField}<{usableDeclaring.ToTypeDefString()}, {usableMonitored.ToTypeDefString()}>();";
+
+                Stats.IncrementStat("Monitored Member");
+                Stats.IncrementStat($"Monitored Member {(fieldInfo.IsStatic ? "Static" : "Instance")}");
+                Stats.IncrementStat("Monitored Fields", "MemberInfo");
+                Stats.IncrementStat($"Monitored Fields {(fieldInfo.IsStatic ? "Static" : "Instance")}", "MemberInfo");
+                Stats.IncrementStat($"Monitored {monitored.HumanizedName()}", "Monitored Types");
+
+                TypeDefFieldBuffer.AddUnique(typeDef);
+            }
+            catch (Exception exception)
+            {
+                if (throwExceptions)
+                {
+                    throw;
+                }
+                ExceptionBuffer.Add(exception);
+            }
+        }
+
+        private void ProfilePropertyInfo(PropertyInfo propertyInfo)
+        {
+            try
+            {
+                Assert.IsNotNull(propertyInfo.DeclaringType);
+
+                var declaring = propertyInfo.DeclaringType.IsValueType ? typeof(ValueType) : propertyInfo.DeclaringType;
+                var monitored = propertyInfo.PropertyType.GetUnderlying();;
+
+                if (declaring.IsGenericTypeDefinition)
+                {
+                    var subTypes = declaring.GetAllTypesImplementingOpenGenericType(assemblies);
+
+                    foreach (var subType in subTypes)
+                    {
+                        var subProperty = propertyInfo.IsStatic()
+                            ? subType.GetProperty(propertyInfo.Name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy)
+                            : subType.GetProperty(propertyInfo.Name);
+                        ProfilePropertyInfo(subProperty);
+                    }
+                    return;
+                }
+
+                var usableDeclaring = (declaring.IsAccessible() && !declaring.IsStatic())
+                    ? declaring
+                    : declaring.GetReplacement();
+
+                var usableMonitored = (monitored.IsAccessible() && !monitored.IsStatic())
+                    ? monitored
+                    : monitored.GetReplacement();
+
+                var typeDef = $"{typeDefProperty}<{usableDeclaring.ToTypeDefString()}, {usableMonitored.ToTypeDefString()}>();";
+
+                Stats.IncrementStat("Monitored Member");
+                Stats.IncrementStat($"Monitored Member {(propertyInfo.IsStatic() ? "Static" : "Instance")}");
+                Stats.IncrementStat("Monitored Properties", "MemberInfo");
+                Stats.IncrementStat($"Monitored Properties {(propertyInfo.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
+                Stats.IncrementStat($"Monitored {monitored.HumanizedName()}", "Monitored Types");
+                TypeDefPropertyBuffer.AddUnique(typeDef);
+            }
+            catch (Exception exception)
+            {
+                if (throwExceptions)
+                {
+                    throw;
+                }
+                ExceptionBuffer.Add(exception);
+            }
+        }
+
+        private void ProfileEventInfo(EventInfo eventInfo)
+        {
+            try
+            {
+                Assert.IsNotNull(eventInfo.DeclaringType);
+
+                var declaring = eventInfo.DeclaringType.IsValueType ? typeof(ValueType) : eventInfo.DeclaringType;
+                var monitored = eventInfo.EventHandlerType.GetUnderlying();
+
+                if (declaring.IsGenericTypeDefinition)
+                {
+                    var subTypes = declaring.GetAllTypesImplementingOpenGenericType(assemblies);
+
+                    foreach (var subType in subTypes)
+                    {
+                        var subEvent = eventInfo.IsStatic()
+                            ? subType.GetEvent(eventInfo.Name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy)
+                            : subType.GetEvent(eventInfo.Name);
+                        ProfileEventInfo(subEvent);
+                    }
+                    return;
+                }
+
+                var usableDeclaring = (declaring.IsAccessible() && !declaring.IsStatic())
+                    ? declaring
+                    : declaring.GetReplacement();
+
+                var usableMonitored = (monitored.IsAccessible() && !monitored.IsStatic())
+                    ? monitored
+                    : monitored.GetReplacement();
+
+                var typeDef = $"{typeDefEvent}<{usableDeclaring.ToTypeDefString()}, {usableMonitored.ToTypeDefString()}>();";
+
+                Stats.IncrementStat("Monitored Member");
+                Stats.IncrementStat($"Monitored Member {(eventInfo.IsStatic() ? "Static" : "Instance")}");
+                Stats.IncrementStat("Monitored Events", "MemberInfo");
+                Stats.IncrementStat($"Monitored Events {(eventInfo.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
+                Stats.IncrementStat($"Monitored {monitored.HumanizedName()}", "Monitored Types");
+
+                TypeDefEventBuffer.AddUnique(typeDef);
+            }
+            catch (Exception exception)
+            {
+                if (throwExceptions)
+                {
+                    throw;
+                }
+                ExceptionBuffer.Add(exception);
+            }
+        }
+
+        private void ProfileMethodInfo(MethodInfo methodInfo)
+        {
+            try
+            {
+                Assert.IsNotNull(methodInfo.DeclaringType);
+
+                var declaring = methodInfo.DeclaringType.IsValueType ? typeof(ValueType) : methodInfo.DeclaringType;
+                var monitored = methodInfo.ReturnType.GetUnderlying();;
+
+                if (declaring.IsGenericTypeDefinition)
+                {
+                    var subTypes = declaring.GetAllTypesImplementingOpenGenericType(assemblies);
+
+                    foreach (var subType in subTypes)
+                    {
+                        var subMethod = methodInfo.IsStatic
+                            ? subType.GetMethod(methodInfo.Name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy)
+                            : subType.GetMethod(methodInfo.Name);
+                        ProfileMethodInfo(subMethod);
+                    }
+                    return;
+                }
+
+                if (monitored != typeof(void))
+                {
+                    TypeDefWithReturnValue(methodInfo, declaring, monitored);
+                }
+                else
+                {
+                    TypeDefVoid(methodInfo, declaring);
+                }
+
+                foreach (var parameterInfo in methodInfo.GetParameters())
+                {
+                    ProfileParameterInfo(parameterInfo);
+                }
+            }
+            catch (Exception exception)
+            {
+                if (throwExceptions)
+                {
+                    throw;
+                }
+                ExceptionBuffer.Add(exception);
+            }
+
+            void TypeDefVoid(MethodInfo method, Type declaring)
+            {
+                var usableDeclaring = (declaring.IsAccessible() && !declaring.IsStatic())
+                    ? declaring
+                    : declaring.GetReplacement();
+
+                var typeDef = $"{typeDefMethod}<{usableDeclaring.ToTypeDefString()}>();";
+
+                Stats.IncrementStat("Monitored Member");
+                Stats.IncrementStat($"Monitored Member {(method.IsStatic ? "Static" : "Instance")}");
+                Stats.IncrementStat("Monitored Methods", "MemberInfo");
+                Stats.IncrementStat($"Monitored Methods {(method.IsStatic ? "Static" : "Instance")}", "MemberInfo");
+                Stats.IncrementStat($"Monitored void", "Monitored Types");
+
+                TypeDefMethodBuffer.AddUnique(typeDef);
+            }
+
+            void TypeDefWithReturnValue(MethodInfo method, Type type, Type monitored)
+            {
+                var usableDeclaring = (type.IsAccessible() && !type.IsStatic())
+                    ? type
+                    : type.GetReplacement();
+
+                var usableMonitored = (monitored.IsAccessible() && !monitored.IsStatic())
+                    ? monitored
+                    : monitored.GetReplacement();
+
+                var typeDef = $"{typeDefMethod}<{usableDeclaring.ToTypeDefString()}, {usableMonitored.ToTypeDefString()}>();";
+
+                Stats.IncrementStat("Monitored Member");
+                Stats.IncrementStat($"Monitored Member {(method.IsStatic ? "Static" : "Instance")}");
+                Stats.IncrementStat("Monitored Methods", "MemberInfo");
+                Stats.IncrementStat($"Monitored Methods {(method.IsStatic ? "Static" : "Instance")}", "MemberInfo");
+                Stats.IncrementStat($"Monitored {monitored.HumanizedName()}", "Monitored Types");
+
+                TypeDefMethodBuffer.AddUnique(typeDef);
+            }
+        }
+
+        private void ProfileParameterInfo(ParameterInfo parameterInfo)
+        {
+            try
+            {
+                if (!parameterInfo.IsOut)
+                {
+                    return;
+                }
+
+                var type = parameterInfo.ParameterType.GetUnderlying();
+
+                var usableType = type.IsAccessible() && !type.IsStatic() && !type.IsReadonlyRefStruct()
+                    ? type
+                    : type.GetReplacement();
+
+                var typeDef = $"{typeDefOutParameter}<{usableType.ToTypeDefString()}>();";
+
+                Stats.IncrementStat("Monitored Member");
+                Stats.IncrementStat($"Monitored Member {(usableType.IsStatic() ? "Static" : "Instance")}");
+                Stats.IncrementStat("Monitored Out Parameter", "MemberInfo");
+                Stats.IncrementStat($"Monitored Out Parameter {(usableType.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
+                Stats.IncrementStat($"Monitored {type.HumanizedName()}", "Monitored Types");
+
+                TypeDefOutParameterBuffer.AddUnique(typeDef);
+            }
+            catch (Exception exception)
+            {
+                if (throwExceptions)
+                {
+                    throw;
+                }
+                ExceptionBuffer.Add(exception);
+            }
+        }
+
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Append Definitions ---
+
+        private void AppendTypeDefinitions(StringBuilder stringBuilder)
+        {
+            AppendComment(stringBuilder, "Value Processor Method Definitions");
+            AppendLineBreak(stringBuilder);
+
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append(preserveAttribute);
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append(methodImpAttribute);
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append("private static void AOT()");
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append("{");
+
+            TypeDefFieldBuffer.Sort();
+            TypeDefPropertyBuffer.Sort();
+            TypeDefEventBuffer.Sort();
+            TypeDefMethodBuffer.Sort();
+
+            AppendComment(stringBuilder, " Field type definitions", 8);
+            for (var i = 0; i < TypeDefFieldBuffer.Count; i++)
+            {
+                var definition = TypeDefFieldBuffer[i];
+                stringBuilder.Append('\n');
+                stringBuilder.Append(new string(' ', 8));
+                stringBuilder.Append(definition);
+            }
+
+            stringBuilder.Append('\n');
+            AppendComment(stringBuilder, " Property type definitions", 8);
+            for (var i = 0; i < TypeDefPropertyBuffer.Count; i++)
+            {
+                var definition = TypeDefPropertyBuffer[i];
+                stringBuilder.Append('\n');
+                stringBuilder.Append(new string(' ', 8));
+                stringBuilder.Append(definition);
+            }
+
+            stringBuilder.Append('\n');
+            AppendComment(stringBuilder, " Event type definitions", 8);
+            for (var i = 0; i < TypeDefEventBuffer.Count; i++)
+            {
+                var definition = TypeDefEventBuffer[i];
+                stringBuilder.Append('\n');
+                stringBuilder.Append(new string(' ', 8));
+                stringBuilder.Append(definition);
+            }
+
+            stringBuilder.Append('\n');
+            AppendComment(stringBuilder, " Method type definitions", 8);
+            for (var i = 0; i < TypeDefMethodBuffer.Count; i++)
+            {
+                var definition = TypeDefMethodBuffer[i];
+                stringBuilder.Append('\n');
+                stringBuilder.Append(new string(' ', 8));
+                stringBuilder.Append(definition);
+            }
+
+            stringBuilder.Append('\n');
+            AppendComment(stringBuilder, " Out Parameter type definitions", 8);
+            for (var i = 0; i < TypeDefOutParameterBuffer.Count; i++)
+            {
+                var definition = TypeDefOutParameterBuffer[i];
+                stringBuilder.Append('\n');
+                stringBuilder.Append(new string(' ', 8));
+                stringBuilder.Append(definition);
+            }
+
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append("}");
+        }
+
+        #endregion
+
+        #region --- Append Meta ---
+
+        private void AppendHeaderText(StringBuilder stringBuilder)
+        {
+            AppendCopyrightNote(stringBuilder);
+            stringBuilder.Append('\n');
+            AppendAutogeneratedMessage(stringBuilder);
+
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//Runtime Monitoring");
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//File generated: ");
+            stringBuilder.Append(DateTime.Now.ToString("u"));
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//Please dont change the contents of this file. Otherwise IL2CPP runtime may not work with runtime monitoring!");
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//Ensure that this file is located in Assembly-CSharp. Otherwise this file may not compile.");
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//If this file contains any errors please contact me and/or create an issue in the linked repository.");
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//https://github.com/JohnBaracuda/Runtime-Monitoring");
+            stringBuilder.Append('\n');
+        }
+
+        private void AppendCopyrightNote(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append("// Copyright (c) 2022 Jonathan Lang\n");
+        }
+
+        private void AppendAutogeneratedMessage(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append("//---------- ----------------------------- ----------\n");
+            stringBuilder.Append("//---------- !!! AUTOGENERATED CONTENT !!! ----------\n");
+            stringBuilder.Append("//---------- ----------------------------- ----------\n");
+        }
+
+        private void AppendIfDefBegin(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append('\n');
+            stringBuilder.Append("#if ENABLE_IL2CPP && !DISABLE_MONITORING");
+            stringBuilder.Append('\n');
+        }
+
+        private void AppendIfDefEnd(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append('\n');
+            stringBuilder.Append("#endif //ENABLE_IL2CPP && !DISABLE_MONITORING");
+            stringBuilder.Append('\n');
+        }
+
+        private void AppendOpenClass(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append('\n');
+            stringBuilder.Append("internal class IL2CPP_AOT");
+            stringBuilder.Append('\n');
+            stringBuilder.Append('{');
+        }
+
+        private void AppendCloseClass(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append('\n');
+            stringBuilder.Append('}');
+            stringBuilder.Append('\n');
+        }
+
+        #endregion
+
+        #region --- Append Stats ---
+
+        private void AppendStats(StringBuilder stringBuilder)
+        {
+            AppendComment(stringBuilder, new string('-', 118), 0);
+            AppendLineBreak(stringBuilder, 2);
+            stringBuilder.Append(Stats.ToString(true));
+            AppendComment(stringBuilder, new string('-', 118), 0);
+            AppendLineBreak(stringBuilder);
+            AppendComment(stringBuilder, "If this file contains any errors please contact me and/or create an issue in the linked repository.", 0);
+            AppendComment(stringBuilder, "https://github.com/JohnBaracuda/Runtime-Monitoring", 0);
+        }
+
+        #endregion
+
+        #region --- Append Misc ---
+
+        private void AppendLineBreak(StringBuilder stringBuilder, int breaks = 1)
+        {
+            for (var i = 0; i < breaks; i++)
+            {
+                stringBuilder.Append('\n');
+            }
+        }
+
+        private void AppendComment(StringBuilder stringBuilder, string comment, int indent = 4)
+        {
+            stringBuilder.Append('\n');
+            stringBuilder.Append(new string(' ', indent));
+            stringBuilder.Append("//");
+            stringBuilder.Append(comment);
+        }
+
+        private void AppendLine(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append("    //");
+            stringBuilder.Append(new string('-', 114));
+            stringBuilder.Append('\n');
+        }
+
+        #endregion
+    }
+#endif
+
+    #region --- Old ---
+
+#if false
+    public class IL2CPPBuildPreprocessor : IPreprocessBuildWithReport
+    {
+        #region --- Public API ---
+
+        /// <summary>
+        /// Call this method to manually generate AOT types fort IL2CPP scripting backend.
+        /// You can set the filepath of the target script file in the monitoring settings.
+        /// </summary>
+        public static void GenerateIL2CPPAheadOfTimeTypes()
+        {
+#if !DISABLE_MONITORING
+            OnPreprocessBuildInternal();
+#endif
+        }
+
+        #endregion
+
+        #region --- Interface ---
+
+        public int callbackOrder => MonitoringSystems.Resolve<IMonitoringSettings>().PreprocessBuildCallbackOrder;
+
+        public void OnPreprocessBuild(BuildReport report)
+        {
+#if !DISABLE_MONITORING
+            if (!MonitoringSystems.Resolve<IMonitoringSettings>().UseIPreprocessBuildWithReport)
+            {
+                return;
+            }
+
+            var target = EditorUserBuildSettings.activeBuildTarget;
+            var group = BuildPipeline.GetBuildTargetGroup(target);
+            if (PlayerSettings.GetScriptingBackend(group) == ScriptingImplementation.IL2CPP)
+            {
+                OnPreprocessBuildInternal();
+            }
+#endif
+        }
+
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Fields ---
+
+        /*
+         * Const fields
+         */
+
+        private const BindingFlags STATIC_FLAGS = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
+        private const BindingFlags INSTANCE_FLAGS = BindingFlags.Instance | BindingFlags.Public |
+                                                    BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+
+
+        private static readonly string preserveAttribute = $"[{typeof(PreserveAttribute).FullName}]";
+        private static readonly string methodImpAttribute =
+ $"[{typeof(MethodImplAttribute).FullName}({typeof(MethodImplOptions).FullName}.{MethodImplOptions.NoOptimization.ToString()})]";
+        private static readonly string aotBridgeClass = typeof(IL2CPPTypeDefinitions).FullName;
+
+        /*
+         * Queues & Caches
+         */
+
+        private static readonly List<string> fieldProfileDefinitions = new List<string>();
+        private static readonly List<string> propertyProfileDefinitions = new List<string>();
+        private static readonly List<string> eventProfileDefinitions = new List<string>();
+        private static readonly List<string> methodProfileDefinitions = new List<string>();
+
+        private static readonly HashSet<Type> uniqueTypeDefinitions = new HashSet<Type>();
+        private static readonly HashSet<Type> uniqueMonitoredTypes = new HashSet<Type>();
+        private static readonly List<string> signatureDefinitions = new List<string>();
+
+        private static readonly List<string> errorBuffer = new List<string>();
+
+        private static int id;
+
+        private static IStatCounter Stats { get; set; }
+
+        #endregion
+
+        #region --- Preprocess Internal ---
+
+        private static void OnPreprocessBuildInternal()
+        {
+            ResetQueuesAndCaches();
+            unityAssemblies = CompilationPipeline.GetAssemblies();
+
+            var textFile = MonitoringSystems.Resolve<IMonitoringSettings>().ScriptFileIL2CPP;
+            var filePath = AssetDatabase.GetAssetPath(textFile);
+
+            Debug.Log($"Starting IL2CPP AOT type definition generation.\nFilePath: {filePath}");
+
+            ProfileAssembliesAndCreateDefinitions();
+
+            var stringBuilder = new StringBuilder(short.MaxValue);
+
+            AppendHeaderText(stringBuilder);
+            AppendIfDefBegin(stringBuilder);
+            AppendOpenClass(stringBuilder);
+
+            AppendProfileDefinitions(stringBuilder, fieldProfileDefinitions, "Field Profiles");
+            AppendProfileDefinitions(stringBuilder, propertyProfileDefinitions, "Property Profiles");
+            AppendProfileDefinitions(stringBuilder, eventProfileDefinitions, "Event Profiles");
+            AppendProfileDefinitions(stringBuilder, methodProfileDefinitions, "Method Profiles");
+
+            AppendMethodDefinitions(stringBuilder);
+
+            AppendCloseClass(stringBuilder);
+            AppendIfDefEnd(stringBuilder);
+
+            AppendStats(stringBuilder);
+
+            Debug.Log($"Writing type definitions to file.\nFilePath: {filePath}");
+
+            WriteContentToFile(filePath, stringBuilder);
+
+            if (errorBuffer.Any())
+            {
+                foreach (var errorMessage in errorBuffer)
+                {
+                    Debug.LogWarning(errorMessage);
+                }
+            }
+
+            AssetDatabase.Refresh();
+            Debug.Log("Successfully completed IL2CPP AOT type definition generation");
+
+            if (MonitoringSystems.Resolve<IMonitoringSettings>().LogTypeGenerationStats)
+            {
+                Debug.Log(Stats.ToString(false));
+            }
+
+            ResetQueuesAndCaches();
+        }
+
+        private static void WriteContentToFile(string filePath, StringBuilder stringBuilder)
+        {
+            var directoryPath = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrWhiteSpace(directoryPath) && !Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            var stream = new FileStream(filePath, FileMode.OpenOrCreate);
+            stream.Dispose();
+            File.WriteAllText(filePath, stringBuilder.ToString());
+        }
+
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Append Definitions ---
+
+        private static void AppendProfileDefinitions(StringBuilder stringBuilder, IReadOnlyList<string> definitions, string title)
+        {
+            AppendComment(stringBuilder, title);
+            for (var i = 0; i < definitions.Count; i++)
+            {
+                var definition = definitions[i];
+                stringBuilder.Append("\n    ");
+                stringBuilder.Append(definition);
+            }
+            AppendLineBreak(stringBuilder);
+            AppendLineBreak(stringBuilder);
+            AppendLine(stringBuilder);
+        }
+
+        private static void AppendMethodDefinitions(StringBuilder stringBuilder)
+        {
+            AppendComment(stringBuilder, "Value Processor Method Definitions");
+            AppendLineBreak(stringBuilder);
+
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append(preserveAttribute);
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append(methodImpAttribute);
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append("private static void AOT()");
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append("{");
+
+            for (var i = 0; i < signatureDefinitions.Count; i++)
+            {
+                var definition = signatureDefinitions[i];
+                stringBuilder.Append(definition);
+            }
+
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append("}");
+        }
+
+        #endregion
+
+        #region --- Append Meta ---
+
+        private static void AppendHeaderText(StringBuilder stringBuilder)
+        {
+            AppendCopyrightNote(stringBuilder);
+            stringBuilder.Append('\n');
+            AppendAutogeneratedMessage(stringBuilder);
+
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//Runtime Monitoring");
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//File generated: ");
+            stringBuilder.Append(DateTime.Now.ToString("u"));
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//Please dont change the contents of this file. Otherwise IL2CPP runtime may not work with runtime monitoring!");
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//Ensure that this file is located in Assembly-CSharp. Otherwise this file may not compile.");
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//If this file contains any errors please contact me and/or create an issue in the linked repository.");
+            stringBuilder.Append('\n');
+            stringBuilder.Append("//https://github.com/JohnBaracuda/Runtime-Monitoring");
+            stringBuilder.Append('\n');
+        }
+
+        private static void AppendCopyrightNote(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append("// Copyright (c) 2022 Jonathan Lang\n");
+        }
+
+        private static void AppendAutogeneratedMessage(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append("//---------- ----------------------------- ----------\n");
+            stringBuilder.Append("//---------- !!! AUTOGENERATED CONTENT !!! ----------\n");
+            stringBuilder.Append("//---------- ----------------------------- ----------\n");
+        }
+
+        private static void AppendIfDefBegin(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append('\n');
+            stringBuilder.Append("#if ENABLE_IL2CPP && !DISABLE_MONITORING");
+            stringBuilder.Append('\n');
+        }
+
+        private static void AppendIfDefEnd(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append('\n');
+            stringBuilder.Append("#endif //ENABLE_IL2CPP && !DISABLE_MONITORING");
+            stringBuilder.Append('\n');
+        }
+
+        private static void AppendOpenClass(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append('\n');
+            stringBuilder.Append("internal class IL2CPP_AOT");
+            stringBuilder.Append('\n');
+            stringBuilder.Append('{');
+        }
+
+        private static void AppendCloseClass(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append('\n');
+            stringBuilder.Append('}');
+            stringBuilder.Append('\n');
+        }
+
+        #endregion
+
+        #region --- Append Stats ---
+
+        private static void AppendStats(StringBuilder stringBuilder)
+        {
+            AppendComment(stringBuilder, new string('-', 118), 0);
+            AppendLineBreak(stringBuilder, 2);
+            stringBuilder.Append(Stats.ToString(true));
+            AppendComment(stringBuilder, new string('-', 118), 0);
+            AppendLineBreak(stringBuilder);
+            AppendComment(stringBuilder, "If this file contains any errors please contact me and/or create an issue in the linked repository.", 0);
+            AppendComment(stringBuilder, "https://github.com/JohnBaracuda/Runtime-Monitoring", 0);
+        }
+
+        #endregion
+
+        #region --- Append Misc ---
+
+        private static void AppendLineBreak(StringBuilder stringBuilder, int breaks = 1)
+        {
+            for (var i = 0; i < breaks; i++)
+            {
+                stringBuilder.Append('\n');
+            }
+        }
+
+        private static void AppendComment(StringBuilder stringBuilder, string comment, int indent = 4)
+        {
+            stringBuilder.Append('\n');
+            stringBuilder.Append(new string(' ', indent));
+            stringBuilder.Append("//");
+            stringBuilder.Append(comment);
+        }
+
+        private static void AppendLine(StringBuilder stringBuilder)
+        {
+            stringBuilder.Append("    //");
+            stringBuilder.Append(new string('-', 114));
+            stringBuilder.Append('\n');
+        }
+
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Profiling ---
+
+        private static void ProfileAssembliesAndCreateDefinitions()
+        {
+            foreach (var filteredAssembly in AssemblyProfiler.GetFilteredAssemblies())
+            {
+                if (IsEditorAssembly(filteredAssembly))
+                {
+                    continue;
+                }
+
+                foreach (var type in filteredAssembly.GetTypes())
+                {
+                    // Static Fields
+                    foreach (var fieldInfo in type.GetFields(STATIC_FLAGS))
+                    {
+                        if (fieldInfo.HasAttribute<MonitorAttribute>(true))
+                        {
+                            ProfileFieldInfo(fieldInfo);
+                        }
+                    }
+                    // Instance Fields
+                    foreach (var fieldInfo in type.GetFields(INSTANCE_FLAGS))
+                    {
+                        if (fieldInfo.HasAttribute<MonitorAttribute>(true))
+                        {
+                            ProfileFieldInfo(fieldInfo);
+                        }
+                    }
+
+                    // Static Properties
+                    foreach (var propertyInfo in type.GetProperties(STATIC_FLAGS))
+                    {
+                        if (propertyInfo.HasAttribute<MonitorAttribute>(true))
+                        {
+                            ProfilePropertyInfo(propertyInfo);
+                        }
+                    }
+                    // Instance Properties
+                    foreach (var propertyInfo in type.GetProperties(INSTANCE_FLAGS))
+                    {
+                        if (propertyInfo.HasAttribute<MonitorAttribute>(true))
+                        {
+                            ProfilePropertyInfo(propertyInfo);
+                        }
+                    }
+
+                    // Static Events
+                    foreach (var eventInfo in type.GetEvents(STATIC_FLAGS))
+                    {
+                        if (eventInfo.HasAttribute<MonitorAttribute>(true))
+                        {
+                            ProfileEventInfo(eventInfo);
+                        }
+                    }
+                    // Instance Events
+                    foreach (var eventInfo in type.GetEvents(INSTANCE_FLAGS))
+                    {
+                        if (eventInfo.HasAttribute<MonitorAttribute>(true))
+                        {
+                            ProfileEventInfo(eventInfo);
+                        }
+                    }
+
+                    // Static Methods
+                    foreach (var methodInfo in type.GetMethods(STATIC_FLAGS))
+                    {
+                        if (methodInfo.HasAttribute<MonitorAttribute>(true))
+                        {
+                            ProfileMethodInfo(methodInfo);
+                        }
+                    }
+                    // Instance Methods
+                    foreach (var methodInfo in type.GetMethods(INSTANCE_FLAGS))
+                    {
+                        if (methodInfo.HasAttribute<MonitorAttribute>(true))
+                        {
+                            ProfileMethodInfo(methodInfo);
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region --- Profile MemberInfor ---
+
+        private static void ProfileFieldInfo(FieldInfo fieldInfo)
+        {
+            try
+            {
+                //var template = typeof(FieldProfile<,>);
+                var declaring = fieldInfo.DeclaringType;
+                var monitored = fieldInfo.FieldType;
+                Stats.IncrementStat("Monitored Member");
+                Stats.IncrementStat($"Monitored Member {(fieldInfo.IsStatic ? "Static" : "Instance")}");
+                Stats.IncrementStat("Monitored Fields", "MemberInfo");
+                Stats.IncrementStat($"Monitored Fields {(fieldInfo.IsStatic ? "Static" : "Instance")}", "MemberInfo");
+                //CreateProfileTypeDefFor(template, declaring, monitored, fieldProfileDefinitions);
+            }
+            catch (Exception exception)
+            {
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
+                {
+                    throw;
+                }
+                errorBuffer.Add(exception.Message);
+            }
+        }
+
+        private static void ProfilePropertyInfo(PropertyInfo propertyInfo)
+        {
+            try
+            {
+                //var template = typeof(PropertyProfile<,>);
+                var declaring = propertyInfo.DeclaringType;
+                var monitored = propertyInfo.PropertyType;
+                Stats.IncrementStat("Monitored Member");
+                Stats.IncrementStat($"Monitored Member {(propertyInfo.IsStatic() ? "Static" : "Instance")}");
+                Stats.IncrementStat("Monitored Properties", "MemberInfo");
+                Stats.IncrementStat($"Monitored Properties {(propertyInfo.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
+                //CreateProfileTypeDefFor(template, declaring, monitored, propertyProfileDefinitions);
+            }
+            catch (Exception exception)
+            {
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
+                {
+                    throw;
+                }
+                errorBuffer.Add(exception.Message);
+            }
+        }
+
+        private static void ProfileEventInfo(EventInfo eventInfo)
+        {
+            try
+            {
+                //var template = typeof(EventProfile<,>);
+                var declaring = eventInfo.DeclaringType;
+                var monitored = eventInfo.EventHandlerType;
+                Stats.IncrementStat("Monitored Member");
+                Stats.IncrementStat($"Monitored Member {(eventInfo.IsStatic() ? "Static" : "Instance")}");
+                Stats.IncrementStat("Monitored Events", "MemberInfo");
+                Stats.IncrementStat($"Monitored Events {(eventInfo.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
+                //CreateProfileTypeDefFor(template, declaring, monitored, eventProfileDefinitions);
+            }
+            catch (Exception exception)
+            {
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
+                {
+                    throw;
+                }
+                errorBuffer.Add(exception.Message);
+            }
+        }
+
+        private static void ProfileMethodInfo(MethodInfo methodInfo)
+        {
+            try
+            {
+                if (!methodInfo.HasReturnValueOrOutParameter())
+                {
+                    Debug.LogWarning($"Monitored Method {methodInfo.DeclaringType?.Name}.{methodInfo.Name} needs a return value or out parameter!");
+                    return;
+                }
+
+                Stats.IncrementStat("Monitored Member");
+                Stats.IncrementStat($"Monitored Member {(methodInfo.IsStatic ? "Static" : "Instance")}");
+                Stats.IncrementStat("Monitored Methods", "MemberInfo");
+                Stats.IncrementStat($"Monitored Methods {(methodInfo.IsStatic ? "Static" : "Instance")}", "MemberInfo");
+
+                //var template = typeof(MethodProfile<,>);
+                var declaring = methodInfo.DeclaringType;
+                var monitored = methodInfo.ReturnType;
+                //CreateProfileTypeDefFor(template, declaring, monitored, methodProfileDefinitions);
+            }
+            catch (Exception exception)
+            {
+                if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
+                {
+                    throw;
+                }
+                errorBuffer.Add(exception.Message);
+            }
+
+            foreach (var parameterInfo in methodInfo.GetParameters().Where(info => info.IsOut))
+            {
+                try
+                {
+                    Stats.IncrementStat("Monitored Out Parameter", "Out Parameter");
+                    Stats.IncrementStat($"Monitored Out Parameter {parameterInfo.ParameterType.HumanizedName()}", "Out Parameter");
+                    TryCreateOutParameterHandleDefinition(parameterInfo.ParameterType);
+                }
+                catch (Exception exception)
+                {
+                    if (MonitoringSystems.Resolve<IMonitoringSettings>().ThrowOnTypeGenerationError)
+                    {
+                        throw;
+                    }
+                    errorBuffer.Add(exception.Message);
+                }
+            }
+        }
+
+        #endregion
+
+        #region --- Type Definitions ---
+
+        /*
+         * Out Param Type Def
+         */
+
+        private static void TryCreateOutParameterHandleDefinition(Type type)
+        {
+            var underlying = MakeViableType(type);
+            if (underlying == null)
+            {
+                return;
+            }
+            var concreteType = typeof(OutParameterHandleT<>).MakeGenericType(underlying);
+
+            if (TryCreateUniqueTypeDefString(concreteType, out var str))
+            {
+                methodProfileDefinitions.Add(str);
+            }
+        }
+
+
+        /*
+         * Profile Type Def
+         */
+
+        private static void CreateProfileTypeDefFor(Type template, Type declaringType, Type monitoredType, in ICollection<string> definitionList)
+        {
+            if (monitoredType.IsGenericParameter)
+            {
+                return;
+            }
+
+            var declaring = MakeViableType(declaringType);
+            var monitored = MakeViableType(monitoredType);
+
+            if (declaring == null || monitored == null)
+            {
+                return;
+            }
+
+
+            CreateMethodSig(monitored);
+            Stats.IncrementStat($"Monitored {monitored.HumanizedName()}", "Monitored Types");
+
+            var definition = template.MakeGenericType(declaring, monitored);
+
+            if (TryCreateUniqueTypeDefString(definition, out var str))
+            {
+                definitionList.Add(str);
+            }
+        }
+
+        /*
+         * Create Definition String
+         */
+
+        private static bool TryCreateUniqueTypeDefString(Type type, out string defString)
+        {
+            if (uniqueTypeDefinitions.Contains(type))
+            {
+                defString = null;
+                return false;
+            }
+
+            uniqueTypeDefinitions.Add(type);
+            defString = CreateTypeDefinitionString(type);
+            return true;
+        }
+
+        private static string CreateTypeDefinitionString(Type type)
+        {
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append("\n    //");
+            stringBuilder.Append(type.HumanizedName());
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append(preserveAttribute);
+            stringBuilder.Append("\n    ");
+            stringBuilder.Append(MakeAccessibleSyntaxString(type));
+            stringBuilder.Append(' ');
+            stringBuilder.Append("AOT_GENERATED_TYPE_");
+            stringBuilder.Append(id++);
+            stringBuilder.Append(';');
+            return stringBuilder.ToString();
+        }
+
+        #endregion
+
+        #region --- Method Signature ---
+
+        private static void CreateMethodSig(Type type)
+        {
+            var viableType = MakeViableType(type);
+            if (viableType == null)
+            {
+                return;
+            }
+            if (uniqueMonitoredTypes.Contains(viableType))
+            {
+                return;
+            }
+
+            uniqueMonitoredTypes.Add(viableType);
+
+            if (viableType.IsValueTypeArray())
+            {
+                ProcessValueTypeArray(type);
+            }
+            if (viableType.IsArray)
+            {
+                ProcessArray(type);
+            }
+            if (viableType.IsGenericIDictionary())
+            {
+                ProcessDictionary(type);
+            }
+            if (viableType.IsGenericIEnumerable(true))
+            {
+                ProcessEnumerable(type);
+            }
+            if (viableType.IsGenericIList())
+            {
+                ProcessList(type);
+            }
+
+            void ProcessList(Type valueType)
+            {
+                var stringBuilder = new StringBuilder();
+                stringBuilder.Append("\n        ");
+                stringBuilder.Append(aotBridgeClass);
+                stringBuilder.Append('.');
+                stringBuilder.Append("AOTList");
+                stringBuilder.Append('<');
+                stringBuilder.Append(MakeAccessibleSyntaxString(valueType));
+                stringBuilder.Append(", ");
+                stringBuilder.Append(MakeAccessibleSyntaxString(valueType.GetGenericArguments()[0]));
+                stringBuilder.Append(">();");
+                signatureDefinitions.Add(stringBuilder.ToString());
+            }
+
+            void ProcessValueTypeArray(Type valueType)
+            {
+                var stringBuilder = new StringBuilder();
+                stringBuilder.Append("\n        ");
+                stringBuilder.Append(aotBridgeClass);
+                stringBuilder.Append('.');
+                stringBuilder.Append("AOTValueTypeArray");
+                stringBuilder.Append('<');
+                stringBuilder.Append(MakeAccessibleSyntaxString(valueType.GetElementType()));
+                stringBuilder.Append(">();");
+                signatureDefinitions.Add(stringBuilder.ToString());
+            }
+
+            void ProcessArray(Type arrayType)
+            {
+                var stringBuilder = new StringBuilder();
+                stringBuilder.Append("\n        ");
+                stringBuilder.Append(aotBridgeClass);
+                stringBuilder.Append('.');
+                stringBuilder.Append("AOTReferenceTypeArray");
+                stringBuilder.Append('<');
+                stringBuilder.Append(MakeAccessibleSyntaxString(arrayType.GetElementType()));
+                stringBuilder.Append(">();");
+                signatureDefinitions.Add(stringBuilder.ToString());
+            }
+
+            void ProcessDictionary(Type dictionaryType)
+            {
+                var stringBuilder = new StringBuilder();
+                stringBuilder.Append("\n        ");
+                stringBuilder.Append(aotBridgeClass);
+                stringBuilder.Append('.');
+                stringBuilder.Append("AOTDictionary");
+                stringBuilder.Append('<');
+                stringBuilder.Append(MakeAccessibleSyntaxString(dictionaryType.GetGenericArguments()[0]));
+                stringBuilder.Append(',');
+                stringBuilder.Append(MakeAccessibleSyntaxString(dictionaryType.GetGenericArguments()[1]));
+                stringBuilder.Append(">();");
+                signatureDefinitions.Add(stringBuilder.ToString());
+            }
+
+            void ProcessEnumerable(Type enumerableType)
+            {
+                var stringBuilder = new StringBuilder();
+                stringBuilder.Append("\n        ");
+                stringBuilder.Append(aotBridgeClass);
+                stringBuilder.Append('.');
+                stringBuilder.Append("AOTEnumerable");
+                stringBuilder.Append('<');
+                stringBuilder.Append(MakeAccessibleSyntaxString(enumerableType.GetGenericArguments()[0]));
+                stringBuilder.Append(">();");
+                signatureDefinitions.Add(stringBuilder.ToString());
+            }
+        }
+
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region --- Misc ---
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Type MakeViableType(Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            var underlying = (type.IsByRef ? type.GetElementType() : type) ?? type;
+
+            if (underlying.IsReadonlyRefStruct())
+            {
+                return null;
+            }
+
+            if (underlying.IsAccessible())
+            {
+                return underlying;
+            }
+
+            if (underlying.IsClass)
+            {
+                return typeof(object);
+            }
+
+            if (underlying.IsEnum)
+            {
+                switch (Marshal.SizeOf(Enum.GetUnderlyingType(type)))
+                {
+                    case 1:
+                        return typeof(Enum8);
+                    case 2:
+                        return typeof(Enum16);
+                    case 4:
+                        return typeof(Enum32);
+                    case 8:
+                        return typeof(Enum64);
+                }
+            }
+
+            var error =
+                $"[MONITORING] Error: {type.HumanizedName()} is not accessible! ({type.FullName?.Replace('+', '.')})" +
+                $"\nCannot generate AOT code for unmanaged internal/private types! " +
+                $"Please make sure that {type.HumanizedName()} and all of its declaring types are either public or use a managed type instead of struct!";
+
+            errorBuffer.Add(error);
+
+            return null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string MakeAccessibleSyntaxString(Type type)
+        {
+            if (type.IsStatic())
+            {
+                return typeof(object).FullName?.Replace('+', '.');
+            }
+
+            if (!type.IsAccessible())
+            {
+                return typeof(object).FullName?.Replace('+', '.');
+            }
+
+            if (type.IsGenericType)
+            {
+                var builder = new StringBuilder();
+                var argBuilder = new StringBuilder();
+
+                var arguments = type.GetGenericArguments();
+
+                foreach (var typeArg in arguments)
+                {
+                    // Let's make sure we get the argument list.
+                    var arg = MakeAccessibleSyntaxString(typeArg);
+
+                    if (argBuilder.Length > 0)
+                    {
+                        argBuilder.AppendFormat(", {0}", arg);
+                    }
+                    else
+                    {
+                        argBuilder.Append(arg);
+                    }
+                }
+
+                if (argBuilder.Length > 0)
+                {
+                    Debug.Assert(type.FullName != null, "type.FullName != null");
+                    builder.AppendFormat("{0}<{1}>", type.FullName.Split('`')[0],
+                        argBuilder);
+                }
+
+                var retType = builder.ToString();
+                return retType.Replace('+', '.');
+            }
+
+            Debug.Assert(type.FullName != null, $"type.FullName != null | {type.Name}, {type.DeclaringType}");
+
+            var returnValue = type.FullName.Replace('+', '.');
+            return returnValue;
+        }
+
+
+        private static void ResetQueuesAndCaches()
+        {
+            id = 0;
+
+            fieldProfileDefinitions.Clear();
+            propertyProfileDefinitions.Clear();
+            eventProfileDefinitions.Clear();
+            methodProfileDefinitions.Clear();
+
+            signatureDefinitions.Clear();
+            uniqueTypeDefinitions.Clear();
+            uniqueMonitoredTypes.Clear();
+
+            errorBuffer.Clear();
+
+            Stats = new StatCounter();
+        }
+
+        #endregion
+
+        #region --- Editor Misc ---
+
+        private static UnityEditor.Compilation.Assembly[] unityAssemblies;
+
+        public static bool IsEditorAssembly(Assembly assembly)
+        {
+            var editorAssemblies = unityAssemblies;
+
+            for (var i = 0; i < editorAssemblies.Length; i++)
+            {
+                var unityAssembly = editorAssemblies[i];
+
+                if (unityAssembly.name != assembly.GetName().Name)
+                {
+                    continue;
+                }
+                var intFlag = (int) unityAssembly.flags;
+                if (unchecked((uint) intFlag & (uint) AssemblyFlags.EditorAssembly) > 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        #endregion
+    }
+#endif
+
+    #endregion
+}

@@ -1,0 +1,22 @@
+{
+    "name": "Assembly-Baracuda-Monitoring-Core",
+    "references": [
+        "GUID:ca92f98736a979747b5de3a34d731a59",
+        "GUID:f093583519d77944d97558bde9cc880f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "Select...",
+            "expression": "",
+            "define": "!DISABLE_MONITORING"
+        }
+    ],
+    "noEngineReferences": false
+}

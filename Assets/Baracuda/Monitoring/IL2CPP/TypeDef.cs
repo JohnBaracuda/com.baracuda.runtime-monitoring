@@ -5,6 +5,7 @@ using UnityEngine.Scripting;
 
 namespace Baracuda.Monitoring.IL2CPP
 {
+    [Preserve]
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public class TypeDef : Attribute
     {

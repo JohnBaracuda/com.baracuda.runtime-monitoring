@@ -1,0 +1,15 @@
+{
+    "name": "Assembly-Baracuda-Monitoring-IL2CPP",
+    "references": [
+        "GUID:df2b86dd8c8ce564aa9a3e096319f18b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
