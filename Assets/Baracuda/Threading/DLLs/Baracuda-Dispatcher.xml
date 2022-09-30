@@ -1,0 +1,1444 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Baracuda-Dispatcher</name>
+    </assembly>
+    <members>
+        <member name="T:Baracuda.Threading.Coroutines.BehaviourDisabledException">
+            <summary>
+            Exception is thrown inside a <see cref="T:UnityEngine.Coroutine"/> that is handled by the
+            <see cref="T:Baracuda.Threading.Coroutines.ExceptionSensitiveCoroutineHandler"/> class if the coroutines target behaviour is disabled
+            while it is still running.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Coroutines.ExceptionSensitiveCoroutineHandler.StartCoroutineExceptionSensitive(UnityEngine.MonoBehaviour,System.Collections.IEnumerator,System.Func{System.Exception,System.Boolean},System.Func{System.Boolean},System.Threading.CancellationToken)">
+            <summary>
+            Run an iterator function that might throw an exception. Call the callback with the exception
+            if it does or null if it finishes without throwing an exception.
+            </summary>
+            <param name="target"></param>
+            <param name="enumerator">Iterator function to run</param>
+            <param name="error">Callback invoked when the iterator has thrown an exception.</param>
+            <param name="completed">Callback invoked when the iterator has finished.</param>
+            <param name="ct"></param>
+            <returns>An enumerator that runs the given enumerator</returns>
+        </member>
+        <member name="M:Baracuda.Threading.Coroutines.ExceptionSensitiveCoroutineHandler.StartCoroutineExceptionSensitive(UnityEngine.MonoBehaviour,System.Collections.IEnumerator,System.Func{System.Exception,System.Boolean},System.Func{System.Boolean},System.Threading.CancellationToken,Baracuda.Threading.Coroutines.IDisableCallback)">
+            <summary>
+            Run an iterator function that might throw an exception. Call the callback with the exception
+            if it does or null if it finishes without throwing an exception.
+            </summary>
+            <param name="target"></param>
+            <param name="enumerator">Iterator function to run</param>
+            <param name="error">Callback invoked when the iterator has thrown an exception.</param>
+            <param name="completed">Callback invoked when the iterator has finished.</param>
+            <param name="ct"></param>
+            <param name="callback"></param>
+            <returns>An enumerator that runs the given enumerator</returns>
+        </member>
+        <member name="M:Baracuda.Threading.Coroutines.ExceptionSensitiveCoroutineHandler.StartCoroutineExceptionSensitive(UnityEngine.MonoBehaviour,System.Collections.IEnumerator,System.Action{System.Exception},System.Action,System.Threading.CancellationToken,Baracuda.Threading.Coroutines.IDisableCallback)">
+            <summary>
+            Run an iterator function that might throw an exception. Call the callback with the exception
+            if it does or null if it finishes without throwing an exception.
+            </summary>
+            <param name="target"></param>
+            <param name="enumerator">Iterator function to run</param>
+            <param name="error">Callback invoked when the iterator has thrown an exception.</param>
+            <param name="completed">Callback invoked when the iterator has finished.</param>
+            <param name="ct"></param>
+            <param name="callback"></param>
+            <returns>An enumerator that runs the given enumerator</returns>
+        </member>
+        <member name="T:Baracuda.Threading.Coroutines.IDisableCallback">
+            <summary>
+            You can implement this interface in a MonoBehaviour that is passed as a target when dispatching and awaiting a
+            coroutine. This interface is then used by the dispatcher to receive a callback if the target behaviour was disabled while
+            the coroutine is still running, so it is important that the onDisable event is invoked if the target behaviour is disabled (OnDisable).
+            If you are not passing a target MonoBehaviour when dispatching a Coroutine (which I would advise),
+            the dispatcher itself will act as the target for the coroutine which already implements this interface and should
+            not be disabled during runtime anyway.
+            </summary>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#IDisableCallback">Documentation</a></footer>
+        </member>
+        <member name="E:Baracuda.Threading.Coroutines.IDisableCallback.Disabled">
+            <summary>
+            Event should be invoked when the target behaviour is disabled or destroyed.
+            </summary>
+        </member>
+        <member name="T:Baracuda.Threading.Dispatcher">
+            <summary>
+            Class for dispatching the execution of a<br/>
+            <see cref="T:System.Delegate"/>, <see cref="T:System.Collections.IEnumerator"/> or <see cref="T:System.Threading.Tasks.Task"/>
+            from a background thread to the main thread.
+            </summary>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.IsMainThread">
+             <summary>
+             Returns true if called from the main thread and false if not.
+             </summary>
+             <returns></returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#miscellaneous">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.GuardAgainstIsNotMainThread(System.String)">
+            <summary>
+            Throws an InvalidOperationException if not called from the main thread.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Validate">
+             <summary>
+             Ensure that a <see cref="T:Baracuda.Threading.Dispatcher"/> instance exists.
+             </summary>
+             <returns></returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#miscellaneous">Documentation</a></footer>
+        </member>
+        <member name="P:Baracuda.Threading.Dispatcher.CurrentCycle">
+             <summary>
+             Get the <see cref="T:Baracuda.Threading.ExecutionCycle"/> definition of the currently executed update cycle.
+             </summary>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#cycle">Documentation</a></footer>
+        </member>
+        <member name="P:Baracuda.Threading.Dispatcher.RuntimeToken">
+            <summary>
+            Return a <see cref="T:System.Threading.CancellationToken"/> that is valid for the duration of the applications runtime.
+            This means until OnApplicationQuit is called in a build
+            or until the play state is changed in the editor.
+            </summary>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#runtimeToken">Documentation</a></footer>
+        </member>
+        <member name="P:Baracuda.Threading.Dispatcher.EnableFixedUpdate">
+            <summary>
+            Enable / Disable execution of dispatched work during FixedUpdate
+            </summary>
+        </member>
+        <member name="P:Baracuda.Threading.Dispatcher.EnableUpdate">
+            <summary>
+            Enable / Disable execution of dispatched work during Update
+            </summary>
+        </member>
+        <member name="P:Baracuda.Threading.Dispatcher.EnableLateUpdate">
+            <summary>
+            Enable / Disable execution of dispatched work during LateUpdate
+            </summary>
+        </member>
+        <member name="P:Baracuda.Threading.Dispatcher.EnableEditorUpdate">
+            <summary>
+            Enable / Disable execution of dispatched work during editor update<b/>
+            This property is editor only!
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Action)">
+            <summary>
+            Dispatch the execution of an <see cref="T:System.Action"/> to the main thread.
+            Actions are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            Use <see cref="M:Baracuda.Threading.Dispatcher.Invoke(System.Action,Baracuda.Threading.ExecutionCycle)"/>
+            for more control over the cycle in which the dispatched <see cref="T:System.Action"/> is executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Action,Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and determine the exact cycle,
+            during which the passed action will be executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Action"/> is executed.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync(System.Action)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that when awaited on the calling thread, returns after the <see cref="T:System.Action"/>
+            was executed on the main thread.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> that will be invoked.</param>
+            <returns>Task that will complete on the calling thread after the passed action has been executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync(System.Action,Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that when awaited on the calling thread, returns after the <see cref="T:System.Action"/>
+            was executed on the main thread.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> that will be invoked.</param>
+            <param name="cycle">The execution cycle during which the <see cref="T:System.Action"/> will be invoked.</param>
+            <returns>Task that will complete on the calling thread after the passed action has been executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync(System.Action,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that when awaited on the calling thread, returns after the <see cref="T:System.Action"/>
+            was executed on the main thread.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> that will be invoked.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"></param>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <returns>Task that will complete on the calling thread after the passed action has been executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-async-cancel">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync(System.Action,Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that when awaited on the calling thread, returns after the <see cref="T:System.Action"/>
+            was executed on the main thread.
+            </summary>
+            <param name="action"> <see cref="T:System.Action"/> that will be invoked.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:System.Action"/> is executed.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"> optional parameter that determines if an <see cref="T:System.OperationCanceledException"/>
+            is thrown if the Task is cancelled prematurely.</param>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <returns>Task that will complete on the calling thread after the passed action has been executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-async-cancel">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync``1(System.Func{``0})">
+            <summary>
+            Dispatch a <see cref="T:System.Func`1"/> that wil executed on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>,
+            that when awaited on the calling thread, returns the result of the passed <see cref="T:System.Func`1"/>
+            after it was executed on the main thread.
+            </summary>
+            <param name="func"><see cref="T:System.Func`1"/> delegate that will be executed on the main thread.</param>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <returns>Task that will complete on the calling thread after the delegate was executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#func">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync``1(System.Func{``0},Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch a <see cref="T:System.Func`1"/> that wil executed on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>,
+            that when awaited on the calling thread, returns the result of the passed <see cref="T:System.Func`1"/>
+            after it was executed on the main thread.
+            </summary>
+            <param name="func"><see cref="T:System.Func`1"/> delegate that will be executed on the main thread.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Func`1"/> is executed.</param>
+            <returns>Task that will complete on the calling thread after the delegate was executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#func">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync``1(System.Func{``0},System.Threading.CancellationToken)">
+            <summary>
+            Dispatch a <see cref="T:System.Func`1"/> that wil executed on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>,
+            that when awaited on the calling thread, returns the result of the passed <see cref="T:System.Func`1"/>
+            after it was executed on the main thread.
+            </summary>
+            <param name="func"><see cref="T:System.Func`1"/> delegate that will be executed on the main thread.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <returns>Task that will complete on the calling thread after the delegate was executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#func-cancel">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync``1(System.Func{``0},Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch a <see cref="T:System.Func`1"/> that wil executed on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>,
+            that when awaited on the calling thread, returns the result of the passed <see cref="T:System.Func`1"/>
+            after it was executed on the main thread.
+            </summary>
+            <param name="func"><see cref="T:System.Func`1"/> delegate that will be executed on the main thread.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Func`1"/> is executed.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <returns>Task that will complete on the calling thread after the delegate was executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#func-cancel">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Collections.IEnumerator)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <exception cref="T:System.InvalidCastException"></exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <exception cref="T:System.InvalidCastException"></exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Collections.IEnumerator,UnityEngine.MonoBehaviour)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <exception cref="T:System.InvalidCastException"></exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,UnityEngine.MonoBehaviour)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <exception cref="T:System.InvalidCastException"></exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Collections.IEnumerator,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <exception cref="T:System.InvalidCastException"></exception>
+            <param name="ct"> optional cancellation token that can be passed to abort the coroutine prematurely.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the coroutine prematurely.</param>
+            <exception cref="T:System.InvalidCastException"></exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Collections.IEnumerator,UnityEngine.MonoBehaviour,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the coroutine prematurely.</param>
+            <exception cref="T:System.InvalidCastException"></exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,UnityEngine.MonoBehaviour,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the coroutine prematurely.</param>
+            <exception cref="T:System.InvalidCastException"></exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitStart(System.Collections.IEnumerator)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitStart(System.Collections.IEnumerator,UnityEngine.MonoBehaviour)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitStart(System.Collections.IEnumerator,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async-cancel">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitStart(System.Collections.IEnumerator,UnityEngine.MonoBehaviour,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async-cancel">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitStart(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitStart(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,UnityEngine.MonoBehaviour)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitStart(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async-cancel">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitStart(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,UnityEngine.MonoBehaviour,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async-cancel">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitCompletion(System.Collections.IEnumerator,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that is executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread and return a <see cref="T:System.Threading.Tasks.Task"/>, that can be awaited and returns
+            after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitCompletion(System.Collections.IEnumerator,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="ct"></param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitCompletion(System.Collections.IEnumerator,UnityEngine.MonoBehaviour,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitCompletion(System.Collections.IEnumerator,UnityEngine.MonoBehaviour,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="ct"></param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitCompletion(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"></param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitCompletion(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"></param>
+            <param name="ct"></param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitCompletion(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,UnityEngine.MonoBehaviour,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"></param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsyncAwaitCompletion(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,UnityEngine.MonoBehaviour,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"></param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="ct">Optional cancellation token</param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.CancelCoroutine(UnityEngine.Coroutine)">
+            <summary>
+            Stop a coroutine that is running on the Dispatcher.
+            </summary>
+            <param name="coroutine">The coroutine that should be cancelled</param>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.CancelCoroutineAsync(UnityEngine.Coroutine)">
+            <summary>
+            Stop a coroutine that is running on the Dispatcher and return a Task that when awaited will yield after
+            the coroutine was successfully stopped on the main thread.
+            </summary>
+            <param name="coroutine">The coroutine that should be cancelled</param>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.CancelCoroutineAsync(UnityEngine.Coroutine,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Stop a coroutine that is running on the Dispatcher and return a Task that when awaited will yield after
+            the coroutine was successfully stopped on the main thread.
+            </summary>
+            <param name="coroutine">The coroutine that should be cancelled</param>
+            <param name="ct">Optional cancellation token</param>
+            <param name="throwOnCancellation">Determines if an exception should be thrown on cancellation</param>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.StartCoroutineInternal(System.Collections.IEnumerator,Baracuda.Threading.Tasks.TaskCompletionSource,System.Threading.CancellationToken,System.Boolean,UnityEngine.MonoBehaviour)">
+            <summary>
+            Start an internal coroutine with cancellation support and exception handling.
+            </summary>z
+        </member>
+        <member name="E:Baracuda.Threading.Dispatcher.Disabled">
+            <summary>
+            Event is be invoked when the target behaviour is disabled or destroyed.
+            </summary>
+        </member>
+        <member name="P:Baracuda.Threading.Dispatcher.Current">
+            <summary>
+            Get the current instance of <see cref="T:Baracuda.Threading.Dispatcher"/>. If no instance can be found a new object is created.<br/>
+            This property is only allowed to be accessed from the main thread!
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.GetOrCreateDispatcherInstance">
+            <summary>
+            Promises to return a valid dispatcher instance.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:Baracuda.Threading.Dispatcher._throw">
+            <summary>
+            flag to determine if an invalid operation exception should be thrown when destroying the GameObject.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> dispatched task.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Func{System.Threading.Tasks.Task},Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> dispatched task.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task"/> is executed.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> dispatched task.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"> </param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.Invoke(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> dispatched task.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task"/> is executed.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"> </param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync(System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that can be awaited.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> dispatched task.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync(System.Func{System.Threading.Tasks.Task},Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that can be awaited.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> dispatched task.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task"/> is executed.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that can be awaited.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> dispatched task.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"> </param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that can be awaited.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> dispatched task.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task"/> is executed.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"> </param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync``1(System.Func{System.Threading.Tasks.Task{``0}})">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Func`1"/> to the main thread, which yields a <see cref="T:System.Threading.Tasks.Task`1"/>
+            that will then be executed on the main thread. This call returns a <see cref="T:System.Threading.Tasks.Task`1"/> that when awaited
+            will yield the result of the <see cref="T:System.Threading.Tasks.Task`1"/> executed on the main thread.
+            The passed delegate is by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Func`1"/> dispatched function that yields a <see cref="T:System.Threading.Tasks.Task`1"/> .</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#taskTResult">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync``1(System.Func{System.Threading.Tasks.Task{``0}},Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Func`1"/> to the main thread, which yields a <see cref="T:System.Threading.Tasks.Task`1"/>
+            that will then be executed on the main thread. This call returns a <see cref="T:System.Threading.Tasks.Task`1"/> that when awaited
+            will yield the result of the <see cref="T:System.Threading.Tasks.Task`1"/> executed on the main thread.
+            The passed delegate is by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Func`1"/> dispatched function that yields a <see cref="T:System.Threading.Tasks.Task`1"/> .</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task`1"/> is executed.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#taskTResult">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Func`1"/> to the main thread, which yields a <see cref="T:System.Threading.Tasks.Task`1"/>
+            that will then be executed on the main thread. This call returns a <see cref="T:System.Threading.Tasks.Task`1"/> that when awaited
+            will yield the result of the <see cref="T:System.Threading.Tasks.Task`1"/> executed on the main thread.
+            The passed delegate is by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Func`1"/> dispatched function that yields a <see cref="T:System.Threading.Tasks.Task`1"/> .</param>
+            <param name="ct"></param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#taskTResult">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.Dispatcher.InvokeAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Func`1"/> to the main thread, which yields a <see cref="T:System.Threading.Tasks.Task`1"/>
+            that will then be executed on the main thread. This call returns a <see cref="T:System.Threading.Tasks.Task`1"/> that when awaited
+            will yield the result of the <see cref="T:System.Threading.Tasks.Task`1"/> executed on the main thread.
+            The passed delegate is by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Func`1"/> dispatched function that yields a <see cref="T:System.Threading.Tasks.Task`1"/> .</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task`1"/> is executed.</param>
+            <param name="ct"></param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#taskTResult">Documentation</a></footer>
+        </member>
+        <member name="T:Baracuda.Threading.DispatchExtensions">
+            <summary>
+            Class containing multiple extension methods for dispatching the execution of a<br/>
+            <see cref="T:System.Delegate"/>, <see cref="T:System.Collections.IEnumerator"/> or <see cref="T:System.Threading.Tasks.Task"/>
+            from a background thread to the main thread.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch(System.Action)">
+            <summary>
+            Dispatch the execution of an <see cref="T:System.Action"/> to the main thread.
+            Actions are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or Tick cycle.<br/>
+            Use <see cref="M:Baracuda.Threading.Dispatcher.Invoke(System.Action,Baracuda.Threading.ExecutionCycle)"/>
+            for more control over the cycle in which the dispatched <see cref="T:System.Action"/> is executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch``1(System.Action{``0},``0)">
+            <summary>
+            Dispatch the execution of an <see cref="T:System.Action"/> to the main thread.
+            Actions are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or Tick cycle.<br/>
+            Use <see cref="M:Baracuda.Threading.Dispatcher.Invoke(System.Action,Baracuda.Threading.ExecutionCycle)"/>
+            for more control over the cycle in which the dispatched <see cref="T:System.Action"/> is executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <param name="arg">first argument</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch``2(System.Action{``0,``1},``0,``1)">
+            <summary>
+            Dispatch the execution of an <see cref="T:System.Action"/> to the main thread.
+            Actions are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or Tick cycle.<br/>
+            Use <see cref="M:Baracuda.Threading.Dispatcher.Invoke(System.Action,Baracuda.Threading.ExecutionCycle)"/>
+            for more control over the cycle in which the dispatched <see cref="T:System.Action"/> is executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <param name="arg1">first argument</param>
+            <param name="arg2">second argument</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch``3(System.Action{``0,``1,``2},``0,``1,``2)">
+            <summary>
+            Dispatch the execution of an <see cref="T:System.Action"/> to the main thread.
+            Actions are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or Tick cycle.<br/>
+            Use <see cref="M:Baracuda.Threading.Dispatcher.Invoke(System.Action,Baracuda.Threading.ExecutionCycle)"/>
+            for more control over the cycle in which the dispatched <see cref="T:System.Action"/> is executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <param name="arg1">first argument</param>
+            <param name="arg2">second argument</param>
+            <param name="arg3">third argument</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch``4(System.Action{``0,``1,``2,``3},``0,``1,``2,``3)">
+            <summary>
+            Dispatch the execution of an <see cref="T:System.Action"/> to the main thread.
+            Actions are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or Tick cycle.<br/>
+            Use <see cref="M:Baracuda.Threading.Dispatcher.Invoke(System.Action,Baracuda.Threading.ExecutionCycle)"/>
+            for more control over the cycle in which the dispatched <see cref="T:System.Action"/> is executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <param name="arg1">first argument</param>
+            <param name="arg2">second argument</param>
+            <param name="arg3">third argument</param>
+            <param name="arg4">fourth argument</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch(System.Action,Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and determine the exact cycle,
+            during which the passed action will be executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Action"/> is executed.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch``1(System.Action{``0},``0,Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and determine the exact cycle,
+            during which the passed action will be executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Action"/> is executed.</param>
+            <param name="arg">first argument</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch``2(System.Action{``0,``1},``0,``1,Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and determine the exact cycle,
+            during which the passed action will be executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Action"/> is executed.</param>
+            <param name="arg1">first argument</param>
+            <param name="arg2">second argument</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch``3(System.Action{``0,``1,``2},``0,``1,``2,Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and determine the exact cycle,
+            during which the passed action will be executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Action"/> is executed.</param>
+            <param name="arg1">first argument</param>
+            <param name="arg2">second argument</param>
+            <param name="arg3">third argument</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch``4(System.Action{``0,``1,``2,``3},``0,``1,``2,``3,Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and determine the exact cycle,
+            during which the passed action will be executed.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> dispatched action.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Action"/> is executed.</param>
+            <param name="arg1">first argument</param>
+            <param name="arg2">second argument</param>
+            <param name="arg3">third argument</param>
+            <param name="arg4">fourth argument</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync(System.Action,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that when awaited on the calling thread, returns after the <see cref="T:System.Action"/>
+            was executed on the main thread.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> that will be invoked.</param>
+            <param name="nullCheck">When enabled a null check is performed before dispatching the action and return
+            a completed task if the action is null.</param>
+            <returns>Task that will complete on the calling thread after the passed action has been executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync(System.Action,Baracuda.Threading.ExecutionCycle,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that when awaited on the calling thread, returns after the <see cref="T:System.Action"/>
+            was executed on the main thread.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> that will be invoked.</param>
+            <param name="cycle">The execution cycle during which the <see cref="T:System.Action"/> will be invoked.</param>
+            <returns>Task that will complete on the calling thread after the passed action has been executed.</returns>
+            <param name="nullCheck">When enabled a null check is performed before dispatching the action and return
+            a completed task if the action is null.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync(System.Action,System.Threading.CancellationToken,System.Boolean,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that when awaited on the calling thread, returns after the <see cref="T:System.Action"/>
+            was executed on the main thread.
+            </summary>
+            <param name="action"><see cref="T:System.Action"/> that will be invoked.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"></param>
+            <param name="nullCheck">When enabled a null check is performed before dispatching the action and return
+            a completed task if the action is null.</param>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <returns>Task that will complete on the calling thread after the passed action has been executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync(System.Action,Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken,System.Boolean,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Action"/> that will be executed on the main thread and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that when awaited on the calling thread, returns after the <see cref="T:System.Action"/>
+            was executed on the main thread.
+            </summary>
+            <param name="action"> <see cref="T:System.Action"/> that will be invoked.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:System.Action"/> is executed.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"> optional parameter that determines if an <see cref="T:System.OperationCanceledException"/>
+            is thrown if the Task is cancelled prematurely.</param>
+            <param name="nullCheck">When enabled a null check is performed before dispatching the action and return
+            a completed task if the action is null.</param>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <returns>Task that will complete on the calling thread after the passed action has been executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#actions-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync``1(System.Func{``0})">
+            <summary>
+            Dispatch a <see cref="T:System.Func`1"/> that wil executed on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>,
+            that when awaited on the calling thread, returns the result of the passed <see cref="T:System.Func`1"/>
+            after it was executed on the main thread.
+            </summary>
+            <param name="func"><see cref="T:System.Func`1"/> delegate that will be executed on the main thread.</param>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <returns>Task that will complete on the calling thread after the delegate was executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#func-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync``1(System.Func{``0},Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch a <see cref="T:System.Func`1"/> that wil executed on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>,
+            that when awaited on the calling thread, returns the result of the passed <see cref="T:System.Func`1"/>
+            after it was executed on the main thread.
+            </summary>
+            <param name="func"><see cref="T:System.Func`1"/> delegate that will be executed on the main thread.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Func`1"/> is executed.</param>
+            <returns>Task that will complete on the calling thread after the delegate was executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#func-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync``1(System.Func{``0},System.Threading.CancellationToken)">
+            <summary>
+            Dispatch a <see cref="T:System.Func`1"/> that wil executed on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>,
+            that when awaited on the calling thread, returns the result of the passed <see cref="T:System.Func`1"/>
+            after it was executed on the main thread.
+            </summary>
+            <param name="func"><see cref="T:System.Func`1"/> delegate that will be executed on the main thread.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <returns>Task that will complete on the calling thread after the delegate was executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#func-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync``1(System.Func{``0},Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch a <see cref="T:System.Func`1"/> that wil executed on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>,
+            that when awaited on the calling thread, returns the result of the passed <see cref="T:System.Func`1"/>
+            after it was executed on the main thread.
+            </summary>
+            <param name="func"><see cref="T:System.Func`1"/> delegate that will be executed on the main thread.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Func`1"/> is executed.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <returns>Task that will complete on the calling thread after the delegate was executed.</returns>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#func-ext">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch(System.Collections.IEnumerator)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch(System.Collections.IEnumerator,UnityEngine.MonoBehaviour)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,UnityEngine.MonoBehaviour)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/> on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitStart(System.Collections.IEnumerator)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-start">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitStart(System.Collections.IEnumerator,UnityEngine.MonoBehaviour)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-start">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitStart(System.Collections.IEnumerator,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-start">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitStart(System.Collections.IEnumerator,UnityEngine.MonoBehaviour,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-start">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitStart(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-start">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitStart(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,UnityEngine.MonoBehaviour)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-start">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitStart(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-start">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitStart(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,UnityEngine.MonoBehaviour,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task`1"/>, that when awaited on the calling thread, returns
+            the <see cref="T:UnityEngine.Coroutine"/> after it was started on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"> the execution cycle during which the passed <see cref="T:UnityEngine.Coroutine"/> is started.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <exception cref="T:System.OperationCanceledException"> exception is thrown if the task is cancelled prematurely.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-start">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitCompletion(System.Collections.IEnumerator,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that is executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread and return a <see cref="T:System.Threading.Tasks.Task"/>, that can be awaited and returns
+            after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutine-completion">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitCompletion(System.Collections.IEnumerator,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="ct"></param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutine-completion">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitCompletion(System.Collections.IEnumerator,UnityEngine.MonoBehaviour,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutines-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitCompletion(System.Collections.IEnumerator,UnityEngine.MonoBehaviour,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="ct"></param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutine-completion">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitCompletion(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"></param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutine-completion">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitCompletion(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"></param>
+            <param name="ct"></param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutine-completion">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitCompletion(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,UnityEngine.MonoBehaviour,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"></param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutine-completion">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsyncAwaitCompletion(System.Collections.IEnumerator,Baracuda.Threading.ExecutionCycle,UnityEngine.MonoBehaviour,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch an <see cref="T:System.Collections.IEnumerator"/> that will be started and executed as a <see cref="T:UnityEngine.Coroutine"/>
+            on the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>, that when awaited on the calling thread, returns
+            the after the <see cref="T:UnityEngine.Coroutine"/> has completed on the main thread.
+            </summary>
+            <param name="enumerator"><see cref="T:System.Collections.IEnumerator"/> that is started as a <see cref="T:UnityEngine.Coroutine"/>.</param>
+            <param name="cycle"></param>
+            <param name="target"> the target <see cref="T:UnityEngine.MonoBehaviour"/> on which the coroutine will run.</param>
+            <param name="ct"></param>
+            <param name="throwExceptions"></param>
+            <exception cref="T:System.InvalidOperationException"> exception is thrown if an <see cref="T:System.Collections.IEnumerator"/> is dispatched during edit mode.</exception>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#coroutine-completion">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch(System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> dispatched task.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch(System.Func{System.Threading.Tasks.Task},Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> function that returns the dispatched task.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task"/> is executed.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> function that returns the dispatched task.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"> </param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.Dispatch(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> function that returns the dispatched task.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task"/> is executed.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"> </param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync(System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that can be awaited.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> dispatched task.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync(System.Func{System.Threading.Tasks.Task},Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that can be awaited.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> function that returns the dispatched task.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task"/> is executed.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that can be awaited.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> function that returns the dispatched task.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"> </param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Threading.Tasks.Task"/> to the main thread; and return a <see cref="T:System.Threading.Tasks.Task"/>,
+            that can be awaited.
+            Tasks are by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Threading.Tasks.Task"/> function that returns the dispatched task.</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task"/> is executed.</param>
+            <param name="ct"> optional cancellation token that can be passed to abort the task prematurely.</param>
+            <param name="throwOnCancellation"> </param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task-async">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync``1(System.Func{System.Threading.Tasks.Task{``0}})">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Func`1"/> to the main thread, which yields a <see cref="T:System.Threading.Tasks.Task`1"/>
+            that will then be executed on the main thread. This call returns a <see cref="T:System.Threading.Tasks.Task`1"/> that when awaited
+            will yield the result of the <see cref="T:System.Threading.Tasks.Task`1"/> executed on the main thread.
+            The passed delegate is by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Func`1"/> dispatched function that yields a <see cref="T:System.Threading.Tasks.Task`1"/> .</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task-TResult">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync``1(System.Func{System.Threading.Tasks.Task{``0}},Baracuda.Threading.ExecutionCycle)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Func`1"/> to the main thread, which yields a <see cref="T:System.Threading.Tasks.Task`1"/>
+            that will then be executed on the main thread. This call returns a <see cref="T:System.Threading.Tasks.Task`1"/> that when awaited
+            will yield the result of the <see cref="T:System.Threading.Tasks.Task`1"/> executed on the main thread.
+            The passed delegate is by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Func`1"/> dispatched function that yields a <see cref="T:System.Threading.Tasks.Task`1"/> .</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task`1"/> is executed.</param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task-TResult">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Func`1"/> to the main thread, which yields a <see cref="T:System.Threading.Tasks.Task`1"/>
+            that will then be executed on the main thread. This call returns a <see cref="T:System.Threading.Tasks.Task`1"/> that when awaited
+            will yield the result of the <see cref="T:System.Threading.Tasks.Task`1"/> executed on the main thread.
+            The passed delegate is by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Func`1"/> dispatched function that yields a <see cref="T:System.Threading.Tasks.Task`1"/> .</param>
+            <param name="ct"></param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task-TResult">Documentation</a></footer>
+        </member>
+        <member name="M:Baracuda.Threading.DispatchExtensions.DispatchAsync``1(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}},Baracuda.Threading.ExecutionCycle,System.Threading.CancellationToken)">
+            <summary>
+            Dispatch the execution of a <see cref="T:System.Func`1"/> to the main thread, which yields a <see cref="T:System.Threading.Tasks.Task`1"/>
+            that will then be executed on the main thread. This call returns a <see cref="T:System.Threading.Tasks.Task`1"/> that when awaited
+            will yield the result of the <see cref="T:System.Threading.Tasks.Task`1"/> executed on the main thread.
+            The passed delegate is by default executed during the next available<br/>
+            Update, FixedUpdate, LateUpdate or TickUpdate cycle.<br/>
+            </summary>
+            <param name="function"><see cref="T:System.Func`1"/> dispatched function that yields a <see cref="T:System.Threading.Tasks.Task`1"/> .</param>
+            <param name="cycle">The execution cycle during which the passed <see cref="T:System.Threading.Tasks.Task`1"/> is executed.</param>
+            <param name="ct"></param>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#task-TResult">Documentation</a></footer>
+        </member>
+        <member name="T:Baracuda.Threading.Tasks.TaskCompletionSource">
+            <summary>
+            Non generic wrapper for a <see cref="T:System.Threading.Tasks.TaskCompletionSource`1"/> that represents a Task that returns no value.
+            </summary>
+        </member>
+        <member name="T:Baracuda.Threading.Tasks.TaskExtensions">
+            <summary>
+            Class contains extension methods for Tasks
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.Timeout(System.Threading.Tasks.Task,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Set a timout for the completion of the target <see cref="T:System.Threading.Tasks.Task"/>. A <exception cref="T:System.TimeoutException"></exception>
+            is thrown if the target task does not complete within the set timeframe.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.Timeout(System.Threading.Tasks.Task,System.TimeSpan,System.Threading.CancellationToken)">
+            <summary>
+            Set a timout for the completion of the target <see cref="T:System.Threading.Tasks.Task"/>. A <exception cref="T:System.TimeoutException"></exception>
+            is thrown if the target task does not complete within the set timeframe.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.TimeoutInternalTaskAsync(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Set a timout for the completion of the target <see cref="T:System.Threading.Tasks.Task"/>. A <exception cref="T:System.TimeoutException"></exception>
+            is thrown if the target task does not complete within the set timeframe.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.TimeoutAsync(System.Threading.Tasks.Task,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Set a timout for the completion of the target <see cref="T:System.Threading.Tasks.Task"/>. A <exception cref="T:System.TimeoutException"></exception>
+            is thrown if the target task does not complete within the set timeframe.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.TimeoutAsync(System.Threading.Tasks.Task,System.TimeSpan,System.Threading.CancellationToken)">
+            <summary>
+            Set a timout for the completion of the target <see cref="T:System.Threading.Tasks.Task"/>. A <exception cref="T:System.TimeoutException"></exception>
+            is thrown if the target task does not complete within the set timeframe.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.TimeoutAsync``1(System.Threading.Tasks.Task{``0},System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Set a timout for the completion of the target <see cref="T:System.Threading.Tasks.Task"/>. A <exception cref="T:System.TimeoutException"></exception>
+            is thrown if the target task does not complete within the set timeframe.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.TimeoutAsync``1(System.Threading.Tasks.Task{``0},System.TimeSpan,System.Threading.CancellationToken)">
+            <summary>
+            Set a timout for the completion of the target <see cref="T:System.Threading.Tasks.Task"/>. A <exception cref="T:System.TimeoutException"></exception>
+            is thrown if the target task does not complete within the set timeframe.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.IgnoreExceptionAsync``1(System.Threading.Tasks.Task)">
+            <summary>
+            Ignore any <see cref="T:System.Exception"/> of type Exception that might occur during the execution of the
+            target <see cref="T:System.Threading.Tasks.Task"/> <paramref name="task"/>
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.IgnoreExceptionsAsync(System.Threading.Tasks.Task)">
+            <summary>
+            Ignore every <see cref="T:System.Exception"/> that might occur during the execution of the
+            target <see cref="T:System.Threading.Tasks.Task"/> <paramref name="task"/>
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.IgnoreExceptionAsync``2(System.Threading.Tasks.Task{``1},``1)">
+            <summary>
+            Ignore any <see cref="T:System.Exception"/> of type Exception that might occur during the execution of the
+            target <see cref="T:System.Threading.Tasks.Task"/> <paramref name="task"/>. You can set the default value returned by this
+            <see cref="T:System.Threading.Tasks.Task`1"/> if an exception occurs.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.IgnoreExceptionsAsync``1(System.Threading.Tasks.Task{``0},``0)">
+            <summary>
+            Ignore every <see cref="T:System.Exception"/> that might occur during the execution of the
+            target <see cref="T:System.Threading.Tasks.Task"/> <paramref name="task"/>. You can set the default value returned by this
+            <see cref="T:System.Threading.Tasks.Task`1"/> if an exception occurs.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.IgnoreTimeoutException(System.Threading.Tasks.Task)">
+            <summary>
+            Ignore any <see cref="T:System.TimeoutException"/> that might occur during the execution of the
+            target <see cref="T:System.Threading.Tasks.Task"/> <paramref name="task"/>
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.IgnoreOperationCanceledException(System.Threading.Tasks.Task)">
+            <summary>
+            Ignore any <see cref="T:System.OperationCanceledException"/> that might occur during the execution of the
+            target <see cref="T:System.Threading.Tasks.Task"/> <paramref name="task"/>
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.IgnoreThreadAbortException(System.Threading.Tasks.Task)">
+            <summary>
+            Ignore any <see cref="T:System.Threading.ThreadAbortException"/> that might occur during the execution of the
+            target <see cref="T:System.Threading.Tasks.Task"/> <paramref name="task"/>
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.IgnoreTimeoutExceptionAsync``1(System.Threading.Tasks.Task{``0},``0)">
+            <summary>
+            Ignore any <see cref="T:System.TimeoutException"/> that might occur during the execution of the
+            target <see cref="T:System.Threading.Tasks.Task"/> <paramref name="task"/>. You can set the default value returned by this
+            <see cref="T:System.Threading.Tasks.Task`1"/> if an exception occurs.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.IgnoreOperationCanceledExceptionAsync``1(System.Threading.Tasks.Task{``0},``0)">
+            <summary>
+            Ignore any <see cref="T:System.OperationCanceledException"/> that might occur during the execution of the
+            target <see cref="T:System.Threading.Tasks.Task"/> <paramref name="task"/>. You can set the default value returned by this
+            <see cref="T:System.Threading.Tasks.Task`1"/> if an exception occurs.
+            </summary>
+        </member>
+        <member name="M:Baracuda.Threading.Tasks.TaskExtensions.IgnoreThreadAbortExceptionAsync``1(System.Threading.Tasks.Task{``0},``0)">
+            <summary>
+            Ignore any <see cref="T:System.Threading.ThreadAbortException"/> that might occur during the execution of the
+            target <see cref="T:System.Threading.Tasks.Task"/> <paramref name="task"/>. You can set the default value returned by this
+            <see cref="T:System.Threading.Tasks.Task`1"/> if an exception occurs.
+            </summary>
+        </member>
+        <member name="T:Baracuda.Threading.ExecutionCycle">
+            <summary>
+            Enum representing the main update cycles in which a <see cref="T:System.Delegate"/>
+            can be invoked.
+            </summary>
+            <footer><a href="https://johnbaracuda.com/dispatcher.html#cycle">Documentation</a></footer>
+        </member>
+        <member name="F:Baracuda.Threading.ExecutionCycle.Update">
+            <summary>
+            <see cref="T:System.Delegate"/> is executed at the beginning of the next Update call.
+            </summary>
+        </member>
+        <member name="F:Baracuda.Threading.ExecutionCycle.LateUpdate">
+            <summary>
+            <see cref="T:System.Delegate"/> is executed at the beginning of the next LateUpdate call.
+            </summary>
+        </member>
+        <member name="F:Baracuda.Threading.ExecutionCycle.FixedUpdate">
+            <summary>
+            <see cref="T:System.Delegate"/> is executed at the beginning of the next FixedUpdate call.
+            </summary>
+        </member>
+        <member name="F:Baracuda.Threading.ExecutionCycle.EditorUpdate">
+            <summary>
+            <see cref="T:System.Delegate"/> is executed at the beginning of the next editor update call.
+            </summary>
+            <footer><a href="https://docs.unity3d.com/ScriptReference/EditorApplication-update.html">Documentation</a></footer>
+        </member>
+    </members>
+</doc>
