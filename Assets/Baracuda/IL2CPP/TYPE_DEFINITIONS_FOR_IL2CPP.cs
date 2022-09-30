@@ -5,7 +5,7 @@
 //---------- ----------------------------- ----------
 
 //Runtime Monitoring
-//File generated: 2022-09-30 15:37:43Z
+//File generated: 2022-09-30 17:46:04Z
 //Please dont change the contents of this file. Otherwise IL2CPP runtime may not work with runtime monitoring!
 //Ensure that this file is located in Assembly-CSharp. Otherwise this file may not compile.
 //If this file contains any errors please contact me and/or create an issue in the linked repository.
@@ -30,6 +30,7 @@ internal class IL2CPP_AOT
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefField<Baracuda.Monitoring.Example.Scripts.ShootingTarget, System.Single>();
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefField<Baracuda.Monitoring.Modules.FPSMonitor, System.Single>();
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefField<Baracuda.Monitoring.Modules.SystemMonitor, System.String>();
+        Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefField<System.ValueType, System.Int32>();
 
         // Property type definitions
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefProperty<Baracuda.Monitoring.Example.Scripts.GameManager, Baracuda.Monitoring.Example.Scripts.GameState>();
@@ -37,11 +38,14 @@ internal class IL2CPP_AOT
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefProperty<Baracuda.Monitoring.Modules.ConsoleMonitor, System.Collections.Generic.Queue<System.String>>();
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefProperty<Baracuda.Monitoring.Modules.ConsoleMonitor, System.String>();
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefProperty<Baracuda.Monitoring.Modules.FPSMonitor, System.Int32>();
+        Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefProperty<System.ValueType, System.Int32>();
 
         // Event type definitions
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefEvent<Baracuda.Monitoring.Example.Scripts.GameManager, System.Action<Baracuda.Monitoring.Example.Scripts.GameState>>();
+        Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefEvent<System.ValueType, System.Action<System.Int32>>();
 
         // Method type definitions
+        Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefMethod<System.ValueType, System.Int32>();
 
         // Out Parameter type definitions
     }
@@ -55,25 +59,32 @@ internal class IL2CPP_AOT
 
 //General
 
-//Monitored Member:               37
+//Monitored Member:               41
 //Monitored Member Instance:      37
+//Monitored Member Static:         4
 
 //MemberInfo
 
-//Monitored Events:                1
+//Monitored Events:                2
 //Monitored Events Instance:       1
-//Monitored Fields:               30
+//Monitored Events Static:         1
+//Monitored Fields:               31
 //Monitored Fields Instance:      30
-//Monitored Properties:            6
+//Monitored Fields Static:         1
+//Monitored Methods:               1
+//Monitored Methods Static:        1
+//Monitored Properties:            7
 //Monitored Properties Instance:   6
+//Monitored Properties Static:     1
 
 //Monitored Types
 
 //Monitored Action<GameState>:     1
+//Monitored Action<int>:           1
 //Monitored bool:                  3
 //Monitored float:                 4
 //Monitored GameState:             1
-//Monitored int:                   5
+//Monitored int:                   8
 //Monitored Queue<string>:         1
 //Monitored string:               21
 //Monitored Vector3:               1

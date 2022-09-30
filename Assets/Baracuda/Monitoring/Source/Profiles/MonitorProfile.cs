@@ -65,7 +65,7 @@ namespace Baracuda.Monitoring.Profiles
         {
             Attribute = attribute;
             MemberInfo = memberInfo;
-            DeclaringType = declaringType;
+            DeclaringType = args.DeclaringStruct ?? declaringType;
             MonitoredMemberType = unitValueType;
             MemberType = unityType;
 

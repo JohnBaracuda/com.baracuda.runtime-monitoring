@@ -830,11 +830,15 @@ namespace Baracuda.Monitoring.Systems
                     return;
                 }
 
+                var declaredInValueType = fieldInfo.DeclaringType.IsValueType;
+                var declaringType = declaredInValueType ? typeof(ValueType) : fieldInfo.DeclaringType;
+                var declaredStrut = declaredInValueType ? fieldInfo.DeclaringType : null;
+
                 // create a generic type definition.
-                var genericType = typeof(FieldProfile<,>).MakeGenericType(fieldInfo.DeclaringType, fieldInfo.FieldType);
+                var genericType = typeof(FieldProfile<,>).MakeGenericType(declaringType, fieldInfo.FieldType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings, declaredStrut);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile = (MonitorProfile) CreateInstance(genericType, fieldInfo, attribute, args);
@@ -856,11 +860,6 @@ namespace Baracuda.Monitoring.Systems
             {
                 Debug.Assert(propertyInfo.DeclaringType != null, "propertyInfo.DeclaringType != null");
 
-                if (propertyInfo.DeclaringType.IsValueType)
-                {
-
-                }
-
                 // we cannot construct an object based on a generic type definition without having a concrete
                 // subtype as a template which is the reason why we are storing this profile in a special list and
                 // instantiate it for each subtype we find.
@@ -870,12 +869,14 @@ namespace Baracuda.Monitoring.Systems
                     return;
                 }
 
-                var validDeclaring = propertyInfo.DeclaringType.IsValueType ? typeof(object) : propertyInfo.DeclaringType;
+                var declaredInValueType = propertyInfo.DeclaringType.IsValueType;
+                var declaringType = declaredInValueType ? typeof(ValueType) : propertyInfo.DeclaringType;
+                var declaredStrut = declaredInValueType ? propertyInfo.DeclaringType : null;
 
-                var genericType = typeof(PropertyProfile<,>).MakeGenericType(validDeclaring, propertyInfo.GetMethod.ReturnType);
+                var genericType = typeof(PropertyProfile<,>).MakeGenericType(declaringType, propertyInfo.GetMethod.ReturnType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings, declaredStrut);
 
                 var profile = (MonitorProfile) CreateInstance(genericType, propertyInfo, attribute, args);
 
@@ -904,11 +905,15 @@ namespace Baracuda.Monitoring.Systems
                     return;
                 }
 
+                var declaredInValueType = eventInfo.DeclaringType.IsValueType;
+                var declaringType = declaredInValueType ? typeof(ValueType) : eventInfo.DeclaringType;
+                var declaredStrut = declaredInValueType ? eventInfo.DeclaringType : null;
+
                 var genericType =
-                    typeof(EventProfile<,>).MakeGenericType(eventInfo.DeclaringType, eventInfo.EventHandlerType);
+                    typeof(EventProfile<,>).MakeGenericType(declaringType, eventInfo.EventHandlerType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings, declaredStrut);
 
                 var profile = (MonitorProfile) CreateInstance(genericType, eventInfo, attribute, args);
                 _staticProfiles.Add(profile);
@@ -942,11 +947,15 @@ namespace Baracuda.Monitoring.Systems
                     return;
                 }
 
+                var declaredInValueType = methodInfo.DeclaringType.IsValueType;
+                var declaringType = declaredInValueType ? typeof(ValueType) : methodInfo.DeclaringType;
+                var declaredStrut = declaredInValueType ? methodInfo.DeclaringType : null;
+
                 var genericType =
-                    typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType, methodInfo.ReturnType.NotVoid(typeof(__Void)));
+                    typeof(MethodProfile<,>).MakeGenericType(declaringType, methodInfo.ReturnType.NotVoid(typeof(__Void)));
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings, declaredStrut);
 
                 var profile = (MonitorProfile) CreateInstance(genericType, methodInfo, attribute, args);
                 _staticProfiles.Add(profile);

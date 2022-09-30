@@ -294,8 +294,10 @@ namespace Baracuda.Monitoring.Editor
         {
             try
             {
-                var declaring = fieldInfo.DeclaringType ?? typeof(object);
-                var monitored = fieldInfo.FieldType.GetUnderlying();;
+                Assert.IsNotNull(fieldInfo.DeclaringType);
+
+                var declaring = fieldInfo.DeclaringType.IsValueType ? typeof(ValueType) : fieldInfo.DeclaringType;
+                var monitored = fieldInfo.FieldType.GetUnderlying();
 
                 if (declaring.IsGenericTypeDefinition)
                 {
@@ -343,7 +345,9 @@ namespace Baracuda.Monitoring.Editor
         {
             try
             {
-                var declaring = propertyInfo.DeclaringType ?? typeof(object);
+                Assert.IsNotNull(propertyInfo.DeclaringType);
+
+                var declaring = propertyInfo.DeclaringType.IsValueType ? typeof(ValueType) : propertyInfo.DeclaringType;
                 var monitored = propertyInfo.PropertyType.GetUnderlying();;
 
                 if (declaring.IsGenericTypeDefinition)
@@ -391,8 +395,10 @@ namespace Baracuda.Monitoring.Editor
         {
             try
             {
-                var declaring = eventInfo.DeclaringType ?? typeof(object);
-                var monitored = eventInfo.EventHandlerType.GetUnderlying();;
+                Assert.IsNotNull(eventInfo.DeclaringType);
+
+                var declaring = eventInfo.DeclaringType.IsValueType ? typeof(ValueType) : eventInfo.DeclaringType;
+                var monitored = eventInfo.EventHandlerType.GetUnderlying();
 
                 if (declaring.IsGenericTypeDefinition)
                 {
@@ -440,7 +446,9 @@ namespace Baracuda.Monitoring.Editor
         {
             try
             {
-                var declaring = methodInfo.DeclaringType ?? typeof(object);
+                Assert.IsNotNull(methodInfo.DeclaringType);
+
+                var declaring = methodInfo.DeclaringType.IsValueType ? typeof(ValueType) : methodInfo.DeclaringType;
                 var monitored = methodInfo.ReturnType.GetUnderlying();;
 
                 if (declaring.IsGenericTypeDefinition)
