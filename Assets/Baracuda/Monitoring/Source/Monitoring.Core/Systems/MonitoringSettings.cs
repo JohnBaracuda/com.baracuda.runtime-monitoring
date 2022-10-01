@@ -5,6 +5,7 @@ using Baracuda.Monitoring.Utilities;
 using System;
 using System.IO;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Core.Systems
@@ -145,6 +146,123 @@ namespace Baracuda.Monitoring.Core.Systems
         [Tooltip("Assemblies with matching names are ignored when creating a monitoring profile during initialization. Note that Unity, System and other core assemblies will always be ignored.")]
         private string[] bannedAssemblyNames = new string[]
         {
+            "mscorlib",
+            "UnityEngine",
+            "UnityEngine.AIModule",
+            "UnityEngine.ARModule",
+            "UnityEngine.AccessibilityModule",
+            "UnityEngine.AndroidJNIModule",
+            "UnityEngine.AnimationModule",
+            "UnityEngine.AssetBundleModule",
+            "UnityEngine.AudioModule",
+            "UnityEngine.ClothModule",
+            "UnityEngine.ClusterInputModule",
+            "UnityEngine.ClusterRendererModule",
+            "UnityEngine.CoreModule",
+            "UnityEngine.CrashReportingModule",
+            "UnityEngine.DSPGraphModule",
+            "UnityEngine.DirectorModule",
+            "UnityEngine.GIModule",
+            "UnityEngine.GameCenterModule",
+            "UnityEngine.GridModule",
+            "UnityEngine.HotReloadModule",
+            "UnityEngine.IMGUIModule",
+            "UnityEngine.ImageConversionModule",
+            "UnityEngine.InputModule",
+            "UnityEngine.InputLegacyModule",
+            "UnityEngine.JSONSerializeModule",
+            "UnityEngine.LocalizationModule",
+            "UnityEngine.NVIDIAModule",
+            "UnityEngine.ParticleSystemModule",
+            "UnityEngine.PerformanceReportingModule",
+            "UnityEngine.PhysicsModule",
+            "UnityEngine.Physics2DModule",
+            "UnityEngine.ProfilerModule",
+            "UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule",
+            "UnityEngine.ScreenCaptureModule",
+            "UnityEngine.SharedInternalsModule",
+            "UnityEngine.SpriteMaskModule",
+            "UnityEngine.SpriteShapeModule",
+            "UnityEngine.StreamingModule",
+            "UnityEngine.SubstanceModule",
+            "UnityEngine.SubsystemsModule",
+            "UnityEngine.TLSModule",
+            "UnityEngine.TerrainModule",
+            "UnityEngine.TerrainPhysicsModule",
+            "UnityEngine.TextCoreFontEngineModule",
+            "UnityEngine.TextCoreTextEngineModule",
+            "UnityEngine.TextRenderingModule",
+            "UnityEngine.TilemapModule",
+            "UnityEngine.UIModule",
+            "UnityEngine.UIElementsModule",
+            "UnityEngine.UIElementsNativeModule",
+            "UnityEngine.UNETModule",
+            "UnityEngine.UmbraModule",
+            "UnityEngine.UnityAnalyticsModule",
+            "UnityEngine.UnityConnectModule",
+            "UnityEngine.UnityCurlModule",
+            "UnityEngine.UnityTestProtocolModule",
+            "UnityEngine.UnityWebRequestModule",
+            "UnityEngine.UnityWebRequestAssetBundleModule",
+            "UnityEngine.UnityWebRequestAudioModule",
+            "UnityEngine.UnityWebRequestTextureModule",
+            "UnityEngine.UnityWebRequestWWWModule",
+            "UnityEngine.VFXModule",
+            "UnityEngine.VRModule",
+            "UnityEngine.VehiclesModule",
+            "UnityEngine.VideoModule",
+            "UnityEngine.VirtualTexturingModule",
+            "UnityEngine.WindModule",
+            "UnityEngine.XRModule",
+            "UnityEditor",
+            "UnityEditor.CoreModule",
+            "UnityEditor.DeviceSimulatorModule",
+            "UnityEditor.DiagnosticsModule",
+            "UnityEditor.GraphViewModule",
+            "UnityEditor.PackageManagerUIModule",
+            "UnityEditor.QuickSearchModule",
+            "UnityEditor.SceneTemplateModule",
+            "UnityEditor.TextCoreFontEngineModule",
+            "UnityEditor.TextCoreTextEngineModule",
+            "UnityEditor.UIBuilderModule",
+            "UnityEditor.UIElementsModule",
+            "UnityEditor.UIElementsSamplesModule",
+            "UnityEditor.UIServiceModule",
+            "UnityEditor.UnityConnectModule",
+            "System.Core",
+            "System",
+            "System.Configuration",
+            "System.Xml",
+            "Bee.BeeDriver",
+            "netstandard",
+            "UnityEditor.Graphs",
+            "UnityEditor.WebGL.Extensions",
+            "UnityEditor.WindowsStandalone.Extensions",
+            "UnityEditor.UWP.Extensions",
+            "Assembly-CSharp",
+            "Unity.VSCode.Editor",
+            "Unity.TextMeshPro.Editor",
+            "Unity.VisualStudio.Editor",
+            "Unity.Sysroot.Linux_x86_64",
+            "UnityEngine.TestRunner",
+            "Unity.Toolchain.Win-x86_64-Linux-x86_64",
+            "Unity.Timeline.Editor",
+            "Unity.Timeline",
+            "Unity.TextMeshPro",
+            "UnityEditor.TestRunner",
+            "UnityEditor.UI",
+            "Unity.Rider.Editor",
+            "UnityEngine.UI",
+            "Unity.SysrootPackage.Editor",
+            "AssetStoreTools",
+            "Baracuda-Dispatcher",
+            "nunit.framework",
+            "System.Xml.Linq",
+            "PlayerBuildProgramLibrary.Data",
+            "WebGLPlayerBuildProgram.Data",
+            "ExCSS.Unity",
+            "Unity.Cecil",
+            "JetBrains.Rider.Unity.Editor.Plugin.Net46.Repacked",
         };
 
         #endregion
@@ -377,11 +495,17 @@ namespace Baracuda.Monitoring.Core.Systems
         private TextAsset CreateScriptFileIL2CPP()
         {
 #if UNITY_EDITOR
-            var textAsset = new TextAsset();
-            var path = "Assets/TYPE_DEFINITIONS_FOR_IL2CPP.cs";
-            UnityEditor.AssetDatabase.CreateAsset(textAsset, path);
-            scriptFileIL2CPP = UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(path);
-            UnityEditor.EditorUtility.SetDirty(this);
+            try
+            {
+                var path = "Assets/Baracuda/Generated/TYPE_DEFINITIONS_FOR_IL2CPP.cs";
+                var textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
+                scriptFileIL2CPP = textAsset;
+                EditorUtility.SetDirty(this);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+            }
 #endif
             return scriptFileIL2CPP;
         }

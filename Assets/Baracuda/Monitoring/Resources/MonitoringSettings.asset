@@ -16,7 +16,7 @@ MonoBehaviour:
   autoInstantiateUI: 1
   asyncProfiling: 1
   openDisplayOnLoad: 1
-  monitoringUIController: {fileID: 843339411990045885, guid: a346941e8ff76a34f944fc2850d23a6e, type: 3}
+  monitoringUIController: {fileID: 5494832875220723481, guid: 66c099bdd3d5f694484563c43d722f4f, type: 3}
   showRuntimeMonitoringObject: 0
   logBadImageFormatException: 0
   logOperationCanceledException: 0
@@ -60,8 +60,125 @@ MonoBehaviour:
   bannedAssemblyPrefixes:
   - Assembly-Plugin
   - DOTween
-  bannedAssemblyNames: []
-  scriptFileIL2CPP: {fileID: 11500000, guid: f1741fb181efda34aaf7d86f22875d84, type: 3}
+  bannedAssemblyNames:
+  - mscorlib
+  - UnityEngine
+  - UnityEngine.AIModule
+  - UnityEngine.ARModule
+  - UnityEngine.AccessibilityModule
+  - UnityEngine.AndroidJNIModule
+  - UnityEngine.AnimationModule
+  - UnityEngine.AssetBundleModule
+  - UnityEngine.AudioModule
+  - UnityEngine.ClothModule
+  - UnityEngine.ClusterInputModule
+  - UnityEngine.ClusterRendererModule
+  - UnityEngine.CoreModule
+  - UnityEngine.CrashReportingModule
+  - UnityEngine.DSPGraphModule
+  - UnityEngine.DirectorModule
+  - UnityEngine.GIModule
+  - UnityEngine.GameCenterModule
+  - UnityEngine.GridModule
+  - UnityEngine.HotReloadModule
+  - UnityEngine.IMGUIModule
+  - UnityEngine.ImageConversionModule
+  - UnityEngine.InputModule
+  - UnityEngine.InputLegacyModule
+  - UnityEngine.JSONSerializeModule
+  - UnityEngine.LocalizationModule
+  - UnityEngine.NVIDIAModule
+  - UnityEngine.ParticleSystemModule
+  - UnityEngine.PerformanceReportingModule
+  - UnityEngine.PhysicsModule
+  - UnityEngine.Physics2DModule
+  - UnityEngine.ProfilerModule
+  - UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule
+  - UnityEngine.ScreenCaptureModule
+  - UnityEngine.SharedInternalsModule
+  - UnityEngine.SpriteMaskModule
+  - UnityEngine.SpriteShapeModule
+  - UnityEngine.StreamingModule
+  - UnityEngine.SubstanceModule
+  - UnityEngine.SubsystemsModule
+  - UnityEngine.TLSModule
+  - UnityEngine.TerrainModule
+  - UnityEngine.TerrainPhysicsModule
+  - UnityEngine.TextCoreFontEngineModule
+  - UnityEngine.TextCoreTextEngineModule
+  - UnityEngine.TextRenderingModule
+  - UnityEngine.TilemapModule
+  - UnityEngine.UIModule
+  - UnityEngine.UIElementsModule
+  - UnityEngine.UIElementsNativeModule
+  - UnityEngine.UNETModule
+  - UnityEngine.UmbraModule
+  - UnityEngine.UnityAnalyticsModule
+  - UnityEngine.UnityConnectModule
+  - UnityEngine.UnityCurlModule
+  - UnityEngine.UnityTestProtocolModule
+  - UnityEngine.UnityWebRequestModule
+  - UnityEngine.UnityWebRequestAssetBundleModule
+  - UnityEngine.UnityWebRequestAudioModule
+  - UnityEngine.UnityWebRequestTextureModule
+  - UnityEngine.UnityWebRequestWWWModule
+  - UnityEngine.VFXModule
+  - UnityEngine.VRModule
+  - UnityEngine.VehiclesModule
+  - UnityEngine.VideoModule
+  - UnityEngine.VirtualTexturingModule
+  - UnityEngine.WindModule
+  - UnityEngine.XRModule
+  - UnityEditor
+  - UnityEditor.CoreModule
+  - UnityEditor.DeviceSimulatorModule
+  - UnityEditor.DiagnosticsModule
+  - UnityEditor.GraphViewModule
+  - UnityEditor.PackageManagerUIModule
+  - UnityEditor.QuickSearchModule
+  - UnityEditor.SceneTemplateModule
+  - UnityEditor.TextCoreFontEngineModule
+  - UnityEditor.TextCoreTextEngineModule
+  - UnityEditor.UIBuilderModule
+  - UnityEditor.UIElementsModule
+  - UnityEditor.UIElementsSamplesModule
+  - UnityEditor.UIServiceModule
+  - UnityEditor.UnityConnectModule
+  - System.Core
+  - System
+  - System.Configuration
+  - System.Xml
+  - Bee.BeeDriver
+  - netstandard
+  - UnityEditor.Graphs
+  - UnityEditor.WebGL.Extensions
+  - UnityEditor.WindowsStandalone.Extensions
+  - UnityEditor.UWP.Extensions
+  - Assembly-CSharp
+  - Unity.VSCode.Editor
+  - Unity.TextMeshPro.Editor
+  - Unity.VisualStudio.Editor
+  - Unity.Sysroot.Linux_x86_64
+  - UnityEngine.TestRunner
+  - Unity.Toolchain.Win-x86_64-Linux-x86_64
+  - Unity.Timeline.Editor
+  - Unity.Timeline
+  - Unity.TextMeshPro
+  - UnityEditor.TestRunner
+  - UnityEditor.UI
+  - Unity.Rider.Editor
+  - UnityEngine.UI
+  - Unity.SysrootPackage.Editor
+  - AssetStoreTools
+  - Baracuda-Dispatcher
+  - nunit.framework
+  - System.Xml.Linq
+  - PlayerBuildProgramLibrary.Data
+  - WebGLPlayerBuildProgram.Data
+  - ExCSS.Unity
+  - Unity.Cecil
+  - JetBrains.Rider.Unity.Editor.Plugin.Net46.Repacked
+  scriptFileIL2CPP: {fileID: 11500000, guid: d64ac08e6ecf3a143b0bfeb3dfeeef41, type: 3}
   useIPreprocessBuildWithReport: 1
   throwOnTypeGenerationError: 1
   preprocessBuildCallbackOrder: 0
