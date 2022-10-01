@@ -16,7 +16,8 @@ MonoBehaviour:
   autoInstantiateUI: 1
   asyncProfiling: 1
   openDisplayOnLoad: 1
-  monitoringUIController: {fileID: 0}
+  monitoringUIController: {fileID: 843339411990045885, guid: a346941e8ff76a34f944fc2850d23a6e,
+    type: 3}
   showRuntimeMonitoringObject: 0
   logBadImageFormatException: 0
   logOperationCanceledException: 0
@@ -178,7 +179,7 @@ MonoBehaviour:
   - ExCSS.Unity
   - Unity.Cecil
   - JetBrains.Rider.Unity.Editor.Plugin.Net46.Repacked
-  scriptFileIL2CPP: {fileID: 0}
+  scriptFileIL2CPP: {fileID: 11500000, guid: d64ac08e6ecf3a143b0bfeb3dfeeef41, type: 3}
   useIPreprocessBuildWithReport: 1
   throwOnTypeGenerationError: 1
   preprocessBuildCallbackOrder: 0
