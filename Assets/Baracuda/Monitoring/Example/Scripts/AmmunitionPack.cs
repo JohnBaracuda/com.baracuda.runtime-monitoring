@@ -1,4 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
+
+using Baracuda.Monitoring.Types;
 using System.Collections;
 using UnityEngine;
 

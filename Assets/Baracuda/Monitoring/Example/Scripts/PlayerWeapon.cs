@@ -1,5 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Attributes;
+using Baracuda.Monitoring.Types;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -13,10 +15,10 @@ namespace Baracuda.Monitoring.Example.Scripts
         #region --- Fields ---
 
         /*
-         *  Inspector Fields   
+         *  Inspector Fields
          */
 
-        [Header("Primary")] 
+        [Header("Primary")]
         [SerializeField] private float damage = 100f;
         [SerializeField] private bool fullAutomatic = true;
         [SerializeField] private float shotsPerSecond = 7.5f;
@@ -28,14 +30,14 @@ namespace Baracuda.Monitoring.Example.Scripts
         [SerializeField] private Transform projectileSpawnPosition;
         [SerializeField] private ProjectilePool projectilePool;
 
-        [Header("Field Of View")] 
+        [Header("Field Of View")]
         [SerializeField] private float defaultFOV = 90f;
 
         [SerializeField] private float zoomFOV = 40f;
         [SerializeField] private float fovSharpness = 10f;
 
         /*
-         *  Private Fields   
+         *  Private Fields
          */
 
         // [Monitor]
@@ -47,7 +49,7 @@ namespace Baracuda.Monitoring.Example.Scripts
 
         public event Action<int> OnAmmoChanged;
 
-        
+
         private float _lastFireTime;
         private float _targetFOV;
         private IPlayerInput _input;
@@ -57,17 +59,17 @@ namespace Baracuda.Monitoring.Example.Scripts
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Weapon Logic ---
- 
+
         /*
-         * Value Processor   
+         * Value Processor
          */
-        
+
         [Monitor]
         [MValueProcessor(nameof(CurrentAmmunitionProcessor))]
         private int _currentAmmunition;
-        
+
         private string CurrentAmmunitionProcessor(int current)
         {
             var sb = new StringBuilder();
@@ -89,7 +91,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         }
 
         /*
-         *  Logic   
+         *  Logic
          */
 
         [MethodImpl(MethodImplOptions.NoOptimization)]
@@ -107,11 +109,11 @@ namespace Baracuda.Monitoring.Example.Scripts
         {
             var deltaTime = Time.deltaTime;
             PreformRaycast();
-            
+
             _targetFOV = _input.SecondaryFirePressed ? zoomFOV : defaultFOV;
             _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView, _targetFOV, fovSharpness * deltaTime);
             var time = Time.time;
-            
+
             if (_input.PrimaryFirePressed && (fullAutomatic || _canFireSemiAutomatic) && _currentAmmunition > 0 && time - _lastFireTime > 1 / shotsPerSecond)
             {
                 _canFireSemiAutomatic = false;
@@ -124,10 +126,10 @@ namespace Baracuda.Monitoring.Example.Scripts
                     projectile.Setup(
                         position: projectileSpawnPosition.position,
                         rotation: projectileSpawnPosition.rotation,
-                        damage: damage, 
+                        damage: damage,
                         force: projectileSpawnPosition.forward * bulletForce,
                         spread: bulletSpread);
-                    
+
                     if (_currentAmmunition <= 0)
                     {
                         break;
@@ -159,7 +161,7 @@ namespace Baracuda.Monitoring.Example.Scripts
             _currentAmmunition = ammunition;
             OnAmmoChanged?.Invoke(_currentAmmunition);
         }
-        
+
         #endregion
     }
 }

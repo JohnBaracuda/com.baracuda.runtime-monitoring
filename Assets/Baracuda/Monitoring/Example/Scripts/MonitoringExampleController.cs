@@ -1,5 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.IL2CPP;
+using Baracuda.Monitoring.Interfaces;
 using System.Collections.Generic;
 using Baracuda.Monitoring.Modules;
 using UnityEngine;

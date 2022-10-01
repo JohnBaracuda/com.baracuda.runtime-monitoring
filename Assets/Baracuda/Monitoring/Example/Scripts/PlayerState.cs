@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Baracuda.Monitoring.Types;
+using System;
 
 namespace Baracuda.Monitoring.Example.Scripts
 {

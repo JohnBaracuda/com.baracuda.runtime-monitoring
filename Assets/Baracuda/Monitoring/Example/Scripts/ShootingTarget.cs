@@ -1,5 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Attributes;
+using Baracuda.Monitoring.Types;
 using System.Collections;
 using System.Globalization;
 using UnityEngine;
@@ -15,31 +17,31 @@ namespace Baracuda.Monitoring.Example.Scripts
         [SerializeField] private float health = 200;
         [SerializeField] private float recoverCooldownMin = 1f;
         [SerializeField] private float recoverCooldownMax = 4f;
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
-        
+
         #region --- Fields ---
-        
+
         private bool _isAlive = true;
         [Monitor] [MShowIf(Condition.NotZero)]
         private float _currentHealth;
         [Monitor] [MShowIf(Condition.NotZero)]
         private float _cooldown = 0f;
         private Animator _animator;
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Animator ---
-        
+
         private static readonly int knockdown = Animator.StringToHash("knockdown");
         private static readonly int recover = Animator.StringToHash("recover");
-        
+
         #endregion
-        
+
         #region --- Setup ---
 
         private void Start()
@@ -77,7 +79,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         }
 
         #endregion
-        
+
         #region --- Damage Handling ---
 
         public void TakeDamage(float damage)
@@ -98,11 +100,11 @@ namespace Baracuda.Monitoring.Example.Scripts
         private IEnumerator CooldownCoroutine()
         {
             _isAlive = false;
-            
+
             _animator.ResetTrigger(recover);
             _animator.SetTrigger(knockdown);
             _cooldown = Random.Range(recoverCooldownMin, recoverCooldownMax);
-            
+
             Debug.Log($"{name} destroyed! starting {_cooldown.ToString(CultureInfo.InvariantCulture)}s cooldown.");
             while (_cooldown > 0)
             {
@@ -112,8 +114,8 @@ namespace Baracuda.Monitoring.Example.Scripts
 
             Reset();
         }
-        
+
         #endregion
-        
+
     }
 }

@@ -1,11 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Attributes;
+using Baracuda.Monitoring.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Baracuda.Monitoring.API;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UIElements;
@@ -21,11 +22,11 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
         private static IMonitoringSettings Settings =>
             settings != null ? settings : settings = MonitoringSystems.Resolve<IMonitoringSettings>();
-        
+
         private static IMonitoringSettings settings;
         private VisualElement _parent;
         private static readonly StringBuilder stringBuilder = new StringBuilder(64);
-        
+
         private readonly Comparison<VisualElement> _comparison = (lhs, rhs) =>
             {
                 if (lhs is IOrder mLhs && rhs is IOrder mRhs)
@@ -44,7 +45,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
         public IMonitorUnit Unit { get; }
         public string[] Tags { get; }
         public int Order { get; }
-        
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -52,7 +53,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
         #region --- UI Element Creation ---
 
         /// <summary>
-        /// Creating a new Monitor Unit UI Element 
+        /// Creating a new Monitor Unit UI Element
         /// </summary>
         internal MonitoringUIElement(VisualElement rootVisualElement, IMonitorUnit monitorUnit, IStyleProvider provider)
         {
@@ -98,9 +99,9 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
             }
 
             var font = formatData.FontHash != 0 ? provider.GetFont(formatData.FontHash) : provider.DefaultFont;
-            
+
             style.unityFontDefinition = new StyleFontDefinition(font);
-            
+
             if (monitorUnit.Profile.IsStatic)
             {
                 SetupStaticUnit(rootVisualElement, profile, provider);
@@ -170,12 +171,12 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
                     _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
                     _parent.Add(this);
-                    
+
                     if (_parent is OrderedVisualElement orderParent && profile.FormatData.GroupOrder != 0)
                     {
                         orderParent.Order = profile.FormatData.GroupOrder;
                     }
-                    
+
                     if (profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute))
                     {
                         _parent.style.backgroundColor = new StyleColor(groupColorAttribute.ColorValue);
@@ -225,12 +226,12 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 
                     _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
                     _parent.Add(this);
-                    
+
                     if (_parent is OrderedVisualElement orderParent && profile.FormatData.GroupOrder != 0)
                     {
                         orderParent.Order = profile.FormatData.GroupOrder;
                     }
-                    
+
                     if (profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute))
                     {
                         _parent.style.backgroundColor = new StyleColor(groupColorAttribute.ColorValue);
@@ -245,7 +246,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                 root.Sort(_comparison);
             }
         }
-        
+
         private void SetupStaticUnit(VisualElement rootVisualElement, IMonitorProfile profile, IStyleProvider provider)
         {
             for (var i = 0; i < provider.StaticUnitStyles.Length; i++)
@@ -265,7 +266,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                     style.unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleRight);
                     break;
             }
-            
+
 
             if (profile.FormatData.AllowGrouping)
             {
@@ -297,7 +298,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                     rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(_parent);
                     namedGroups.Add(profile.FormatData.Group, _parent);
                 }
-                
+
                 _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
                 _parent.Add(this);
 
@@ -305,12 +306,12 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
                 {
                     orderParent.Order = profile.FormatData.GroupOrder;
                 }
-                
+
                 if (profile.TryGetMetaAttribute<MGroupColorAttribute>(out var groupColorAttribute))
                 {
                     _parent.style.backgroundColor = new StyleColor(groupColorAttribute.ColorValue);
                 }
-                
+
                 _parent.Sort(_comparison);
             }
             else
@@ -324,7 +325,7 @@ namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
-        
+
         private void OnDisposing()
         {
             Unit.ValueUpdated -= UpdateGUI;

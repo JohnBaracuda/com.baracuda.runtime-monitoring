@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Types;
 using System;
 using UnityEngine;
 
@@ -12,14 +13,14 @@ namespace Baracuda.Monitoring.Example.Scripts
     {
         #region --- Inspector ---
 
-        [Header("Monitoring")] 
+        [Header("Monitoring")]
         [SerializeField] private KeyCode toggleFilterKey = KeyCode.F5;
         [SerializeField] private KeyCode toggleMonitoringKey = KeyCode.F3;
 
-        [Header("Input Mode")] 
+        [Header("Input Mode")]
         [SerializeField] private InputMode inputMode = InputMode.Character;
 
-        [Header("Movement")] 
+        [Header("Movement")]
         [SerializeField] private KeyCode jumpKey = KeyCode.Space;
         [SerializeField] private KeyCode primaryFireKey = KeyCode.Mouse0;
         [SerializeField] private KeyCode secondaryFireKey = KeyCode.Mouse1;

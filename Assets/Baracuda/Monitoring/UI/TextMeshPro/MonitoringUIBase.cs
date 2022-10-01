@@ -1,11 +1,12 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Attributes;
 using System;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.UI.TextMeshPro
 {
-    
+
     [DisableMonitoring]
     [RequireComponent(typeof(RectTransform))]
     internal abstract class MonitoringUIBase : MonoBehaviour

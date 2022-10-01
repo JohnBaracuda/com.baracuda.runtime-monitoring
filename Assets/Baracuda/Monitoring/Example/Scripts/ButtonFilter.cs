@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Baracuda.Monitoring.Interfaces;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;

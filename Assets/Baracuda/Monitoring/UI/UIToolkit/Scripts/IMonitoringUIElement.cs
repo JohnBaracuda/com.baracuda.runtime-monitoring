@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.API;
+using Baracuda.Monitoring.Interfaces;
 
 namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
 {
