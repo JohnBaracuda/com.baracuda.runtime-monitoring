@@ -1,8 +1,7 @@
 {
     "name": "Assembly-Baracuda-Monitoring.IMGUI",
-    "rootNamespace": "",
     "references": [
-        "GUID:b8158a8cd24af784784c2d81c4d4a8bf"
+        "GUID:ca92f98736a979747b5de3a34d731a59"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
