@@ -5,7 +5,7 @@
 //---------- ----------------------------- ----------
 
 //Runtime Monitoring
-//File generated: 2022-09-30 20:36:41Z
+//File generated: 2022-10-01 16:35:08Z
 //Please dont change the contents of this file. Otherwise IL2CPP runtime may not work with runtime monitoring!
 //Ensure that this file is located in Assembly-CSharp. Otherwise this file may not compile.
 //If this file contains any errors please contact me and/or create an issue in the linked repository.
@@ -37,6 +37,7 @@ internal class IL2CPP_AOT
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefProperty<Baracuda.Monitoring.Modules.ConsoleMonitor, System.Collections.Generic.Queue<System.String>>();
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefProperty<Baracuda.Monitoring.Modules.ConsoleMonitor, System.String>();
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefProperty<Baracuda.Monitoring.Modules.FPSMonitor, System.Int32>();
+        Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefProperty<System.ValueType, System.Int32>();
 
         // Event type definitions
         Baracuda.Monitoring.IL2CPP.IL2CPPTypeDefinitions.TypeDefEvent<Baracuda.Monitoring.Example.Scripts.GameManager, System.Action<Baracuda.Monitoring.Example.Scripts.GameState>>();
@@ -55,8 +56,8 @@ internal class IL2CPP_AOT
 
 //General
 
-//Monitored Member:               37
-//Monitored Member Instance:      37
+//Monitored Member:               38
+//Monitored Member Instance:      38
 
 //MemberInfo
 
@@ -64,8 +65,8 @@ internal class IL2CPP_AOT
 //Monitored Events Instance:       1
 //Monitored Fields:               30
 //Monitored Fields Instance:      30
-//Monitored Properties:            6
-//Monitored Properties Instance:   6
+//Monitored Properties:            7
+//Monitored Properties Instance:   7
 
 //Monitored Types
 
@@ -73,7 +74,7 @@ internal class IL2CPP_AOT
 //Monitored bool:                  3
 //Monitored float:                 4
 //Monitored GameState:             1
-//Monitored int:                   5
+//Monitored int:                   6
 //Monitored Queue<string>:         1
 //Monitored string:               21
 //Monitored Vector3:               1

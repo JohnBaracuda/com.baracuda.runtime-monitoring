@@ -9,15 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 129134658, guid: fe199bccf2919604688927fe0d706f9f, type: 3}
+  m_Script: {fileID: 0}
   m_Name: MonitoringSettings
   m_EditorClassIdentifier: 
   enableMonitoring: 1
   autoInstantiateUI: 1
   asyncProfiling: 1
   openDisplayOnLoad: 1
-  monitoringUIController: {fileID: 843339411990045885, guid: a346941e8ff76a34f944fc2850d23a6e,
-    type: 3}
+  monitoringUIController: {fileID: 0}
   showRuntimeMonitoringObject: 0
   logBadImageFormatException: 0
   logOperationCanceledException: 0
@@ -62,7 +61,7 @@ MonoBehaviour:
   - Assembly-Plugin
   - DOTween
   bannedAssemblyNames: []
-  scriptFileIL2CPP: {fileID: 11500000, guid: f1741fb181efda34aaf7d86f22875d84, type: 3}
+  scriptFileIL2CPP: {fileID: 0}
   useIPreprocessBuildWithReport: 1
   throwOnTypeGenerationError: 1
   preprocessBuildCallbackOrder: 0

@@ -8,6 +8,8 @@ namespace Baracuda.Monitoring.Example.Scripts
 {
     public class MonitoringExampleController : MonoBehaviour
     {
+        [TypeDef(typeof(MonitoredStruct<int>))]
+
         [Header("Input")]
         [SerializeField] private LegacyPlayerInput playerInput;
 
