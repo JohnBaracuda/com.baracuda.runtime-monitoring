@@ -1,4 +1,4 @@
-## ⚠️ ATTENTION: Threre are some Issues on main that need to be addressed before it is considered stable again. Please only use Version **2.1.5** Until main is stable again.
+## ⚠️ ATTENTION: Threre are some Issues on main that need to be addressed before it is considered stable again. Please only use Version **2.1.5** and switch to the "Stable" branch when using Runtime Monitoring.
 
 
 Runtime Monitoring
