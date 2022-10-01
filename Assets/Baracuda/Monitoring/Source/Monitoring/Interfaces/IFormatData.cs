@@ -1,9 +1,8 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Interfaces
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Interface grants access to various formatting options for a monitored member.

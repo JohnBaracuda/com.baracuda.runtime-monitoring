@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Mark a Field or Property to be monitored at runtime.

@@ -1,10 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring;
 using System.Collections;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Example.Scripts
+namespace Baracuda.Example.Scripts
 {
     public class AmmunitionPack : MonitoredBehaviour
     {

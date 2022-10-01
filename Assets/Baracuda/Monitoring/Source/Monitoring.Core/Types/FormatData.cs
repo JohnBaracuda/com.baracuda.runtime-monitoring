@@ -1,9 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Core.Utilities.Extensions;
 using Baracuda.Monitoring.Core.Utilities.Pooling;
-using Baracuda.Monitoring.Interfaces;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 

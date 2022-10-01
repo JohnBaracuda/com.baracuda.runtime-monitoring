@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Baracuda.Monitoring.Example.Scripts
+namespace Baracuda.Example.Scripts
 {
     public class DeathCameraController : MonoBehaviour
     {

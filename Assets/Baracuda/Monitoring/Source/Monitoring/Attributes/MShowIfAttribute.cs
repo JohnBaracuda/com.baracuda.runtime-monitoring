@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// The monitored member will only be displayed if the given value of the passed member returns true.<br/>

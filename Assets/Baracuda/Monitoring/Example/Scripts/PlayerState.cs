@@ -1,7 +1,7 @@
-﻿using Baracuda.Monitoring.Types;
+﻿using Baracuda.Monitoring;
 using System;
 
-namespace Baracuda.Monitoring.Example.Scripts
+namespace Baracuda.Example.Scripts
 {
 #pragma warning disable CS0414
 

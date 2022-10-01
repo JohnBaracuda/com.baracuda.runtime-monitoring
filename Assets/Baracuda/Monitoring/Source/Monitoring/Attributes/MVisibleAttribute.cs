@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Set the default visible state for the monitored member.

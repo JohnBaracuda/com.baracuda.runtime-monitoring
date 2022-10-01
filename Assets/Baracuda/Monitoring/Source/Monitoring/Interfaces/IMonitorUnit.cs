@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Baracuda.Monitoring.Interfaces
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Access internal handler of a monitored member.

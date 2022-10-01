@@ -1,8 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Interfaces;
-using Baracuda.Monitoring.Utilities;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;

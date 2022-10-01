@@ -1,13 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
-using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Example.Scripts
+namespace Baracuda.Example.Scripts
 {
     [MTag("PlayerState")]
     public class PlayerWeapon : MonitoredBehaviour

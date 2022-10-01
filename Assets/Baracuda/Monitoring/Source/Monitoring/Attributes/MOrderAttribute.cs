@@ -3,7 +3,7 @@
 using System;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Set a elements order in its UI group.

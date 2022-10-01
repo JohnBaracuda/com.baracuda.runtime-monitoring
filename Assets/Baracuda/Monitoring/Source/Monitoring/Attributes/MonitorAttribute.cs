@@ -1,10 +1,9 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Types;
 using System;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Mark a Field, Property or Event to be monitored at runtime.

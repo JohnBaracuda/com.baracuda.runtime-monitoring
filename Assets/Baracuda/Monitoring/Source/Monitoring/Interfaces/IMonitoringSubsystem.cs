@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-namespace Baracuda.Monitoring.Interfaces
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Base interface for monitoring systems.

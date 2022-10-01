@@ -3,7 +3,7 @@
 using System;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Pass the name of an event that is invoked when the monitored value is updated. Use to reduce the evaluation of the

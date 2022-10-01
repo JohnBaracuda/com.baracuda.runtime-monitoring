@@ -1,6 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Utilities;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Modules

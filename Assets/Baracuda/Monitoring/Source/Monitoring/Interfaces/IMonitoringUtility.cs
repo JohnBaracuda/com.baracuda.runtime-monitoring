@@ -3,7 +3,7 @@
 using JetBrains.Annotations;
 using System.Collections.Generic;
 
-namespace Baracuda.Monitoring.Interfaces
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Access to various monitoring utility methods.

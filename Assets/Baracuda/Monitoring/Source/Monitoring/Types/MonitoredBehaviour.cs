@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Types
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Base class for monitored MonoBehaviours.

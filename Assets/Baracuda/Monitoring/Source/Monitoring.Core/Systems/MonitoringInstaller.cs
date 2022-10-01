@@ -1,5 +1,4 @@
 ﻿using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Interfaces;
 using Baracuda.Threading;
 using UnityEngine;
 

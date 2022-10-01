@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Types
+namespace Baracuda.Monitoring
 {
     /// <inheritdoc />
     public abstract class MonitoredSingleton<T> : MonoSingleton<T> where T : MonoBehaviour

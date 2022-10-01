@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Baracuda.Monitoring.UI.TextMeshPro
+namespace Baracuda.UI.TextMeshPro
 {
     [ExecuteAlways]
     internal class UIControllerComponents : MonoBehaviour

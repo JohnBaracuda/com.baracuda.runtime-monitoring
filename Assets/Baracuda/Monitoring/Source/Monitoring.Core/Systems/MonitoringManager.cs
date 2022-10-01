@@ -5,8 +5,6 @@ using Baracuda.Monitoring.Core.Profiles;
 using Baracuda.Monitoring.Core.Units;
 using Baracuda.Monitoring.Core.Utilities.Extensions;
 using Baracuda.Monitoring.Core.Utilities.Pooling;
-using Baracuda.Monitoring.Interfaces;
-using Baracuda.Monitoring.Types;
 using Baracuda.Threading;
 using System;
 using System.Collections.Generic;

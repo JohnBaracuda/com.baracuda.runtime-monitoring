@@ -3,7 +3,7 @@
 using System;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Pass the name of a custom font style that will be used fot the target member.

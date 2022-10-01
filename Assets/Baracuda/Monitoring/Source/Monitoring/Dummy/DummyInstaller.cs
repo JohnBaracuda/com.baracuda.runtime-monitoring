@@ -1,6 +1,4 @@
-﻿using Baracuda.Monitoring.Interfaces;
-
-namespace Baracuda.Monitoring.Dummy
+﻿namespace Baracuda.Monitoring.Dummy
 {
 #pragma warning disable
     internal static class DummyInstaller

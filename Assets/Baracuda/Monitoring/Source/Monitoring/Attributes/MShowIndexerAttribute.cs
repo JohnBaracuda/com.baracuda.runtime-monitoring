@@ -3,7 +3,7 @@
 using System;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// If the member is a collection, determine if the index of individual elements should be displayed or not.

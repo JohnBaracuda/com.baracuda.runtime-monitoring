@@ -1,10 +1,9 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Types;
 using System;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Mark a C# event to be monitored at runtime.

@@ -1,10 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring;
 using System;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Example.Scripts
+namespace Baracuda.Example.Scripts
 {
     /// <summary>
     /// Class providing input based on the old input system.

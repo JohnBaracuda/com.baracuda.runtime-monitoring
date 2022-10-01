@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Base type for attributes to set custom color values.

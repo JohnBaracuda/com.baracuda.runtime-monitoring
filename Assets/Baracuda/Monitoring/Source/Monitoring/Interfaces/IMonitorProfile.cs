@@ -1,11 +1,9 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
-using Baracuda.Monitoring.Utilities;
 using System;
 using System.Reflection;
 
-namespace Baracuda.Monitoring.Interfaces
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Interface provides access to data describing the profile of a monitored member.

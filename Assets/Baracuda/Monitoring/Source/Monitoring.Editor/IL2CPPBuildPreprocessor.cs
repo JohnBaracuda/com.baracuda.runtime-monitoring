@@ -2,7 +2,6 @@
 
 #if ENABLE_IL2CPP || UNITY_EDITOR
 
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Core.IL2CPP;
 using System;
 using System.Collections.Generic;

@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
+using Baracuda.Monitoring;
 using System;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.UI.TextMeshPro
+namespace Baracuda.UI.TextMeshPro
 {
 
     [DisableMonitoring]

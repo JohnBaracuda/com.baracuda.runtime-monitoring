@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
-namespace Baracuda.Monitoring.Utilities
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Level of logging applied to certain error / exception types.

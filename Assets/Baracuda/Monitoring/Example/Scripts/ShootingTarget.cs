@@ -1,13 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
-using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring;
 using System.Collections;
 using System.Globalization;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Baracuda.Monitoring.Example.Scripts
+namespace Baracuda.Example.Scripts
 {
     [MGroupOrder(-100)]
     public class ShootingTarget : MonitoredBehaviour

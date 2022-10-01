@@ -2,7 +2,6 @@
 
 using Baracuda.Monitoring.Core.Interfaces;
 using Baracuda.Monitoring.Core.Profiles;
-using Baracuda.Monitoring.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

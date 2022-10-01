@@ -1,10 +1,8 @@
-﻿using Baracuda.Monitoring.Interfaces;
-using System;
+﻿using Baracuda.Monitoring;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Baracuda.Monitoring.Example.Scripts
+namespace Baracuda.Example.Scripts
 {
     [RequireComponent(typeof(Button))]
     public class ButtonFilter : MonoBehaviour
@@ -22,7 +20,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         }
         private string _filter;
         private IMonitoringUI _monitoringUI;
-        
+
         private void Awake()
         {
             _monitoringUI = MonitoringSystems.Resolve<IMonitoringUI>();

@@ -2,7 +2,7 @@
 
 using System.Runtime.CompilerServices;
 
-namespace Baracuda.Monitoring.Utilities
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Contains monitoring extensions

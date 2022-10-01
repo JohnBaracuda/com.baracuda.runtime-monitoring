@@ -3,7 +3,6 @@
 using Baracuda.Monitoring.Core.Interfaces;
 using Baracuda.Monitoring.Core.Profiles;
 using Baracuda.Monitoring.Core.Utilities.Extensions;
-using Baracuda.Monitoring.Interfaces;
 using System;
 using System.Runtime.CompilerServices;
 

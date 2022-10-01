@@ -1,7 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
-using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -9,7 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Baracuda.Monitoring.UI.TextMeshPro
+namespace Baracuda.UI.TextMeshPro
 {
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(UIControllerComponents))]

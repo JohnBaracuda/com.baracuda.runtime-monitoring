@@ -1,12 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring;
 using Baracuda.Monitoring.IL2CPP;
-using Baracuda.Monitoring.Interfaces;
-using System.Collections.Generic;
 using Baracuda.Monitoring.Modules;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Example.Scripts
+namespace Baracuda.Example.Scripts
 {
     public class MonitoringExampleController : MonoBehaviour
     {

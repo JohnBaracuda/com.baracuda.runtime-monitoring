@@ -1,8 +1,9 @@
 // Copyright (c) 2022 Jonathan Lang
+
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Example.Scripts
+namespace Baracuda.Example.Scripts
 {
     public class ProjectilePool : MonoBehaviour
     {

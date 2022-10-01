@@ -1,13 +1,11 @@
 // Copyright (c) 2022 Jonathan Lang
 #define UNITY_ASSERTIONS
 
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Core.Interfaces;
 using Baracuda.Monitoring.Core.Profiles;
 using Baracuda.Monitoring.Core.Types;
 using Baracuda.Monitoring.Core.Utilities.Extensions;
 using Baracuda.Monitoring.Core.Utilities.Reflection;
-using Baracuda.Monitoring.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

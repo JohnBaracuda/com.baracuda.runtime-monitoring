@@ -1,19 +1,18 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
-using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring;
 using System.Collections;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Example.Scripts
+namespace Baracuda.Example.Scripts
 {
     [MTag("PlayerState")]
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : MonitoredBehaviour
     {
         #region --- Inspector ---
-        
-        [Header("Movement Settings")] 
+
+        [Header("Movement Settings")]
         [SerializeField] private float movementSpeed = 16.5f;
         [SerializeField] private float jumpForce = 8f;
         [SerializeField] private float gravityForce = 20f;
@@ -21,7 +20,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         [SerializeField] private float airMovementSharpness = 1f;
         [SerializeField] private float inputSharpness = 10f;
         [SerializeField] private int jumps = 3;
-        
+
         [Header("Dash")]
         [SerializeField] [Range(0, 100f)] private float dashForce = 22f;
         [SerializeField] [Range(0, 1f)] private float dashDuration = 0.03f;
@@ -30,25 +29,25 @@ namespace Baracuda.Monitoring.Example.Scripts
         [SerializeField] [Range(0, .5f)] private float minTimeBetweenDash = .2f;
         [SerializeField] [Range(0, 3f)] private float dashRechargeGrounded = 2f;
         [SerializeField] [Range(0, 3f)] private float dashRechargeAirborne = .5f;
-        
-        [Header("Ground Check")] 
+
+        [Header("Ground Check")]
         [SerializeField] private LayerMask groundMask;
         [SerializeField] private float groundCheckRadius = .4f;
 
-        [Header("Spawn")] 
+        [Header("Spawn")]
         [SerializeField] private float killHeight = -50f;
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Properties ---
-        
+
         [Monitor]
         private Vector3 Position => transform.position;
-        
+
         #endregion
-        
+
         #region --- Fields ---
 
         // Components & other references
@@ -58,11 +57,11 @@ namespace Baracuda.Monitoring.Example.Scripts
         private IPlayerInput _input;
         private Vector3 _spawnPosition;
         private Quaternion _spawnRotation;
-        
+
         // Input
         private Vector2 _processedInputDir;
         private float _rotationX = 0;
-        
+
         // Movement
         private Vector3 _velocity = Vector3.zero;
         [Monitor]
@@ -72,7 +71,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         private float _lastJumpTime;
         [Monitor]
         private int _jumpsLeft;
-        
+
         // Dash
         [Monitor]
         private float _dashEnergy;
@@ -86,9 +85,9 @@ namespace Baracuda.Monitoring.Example.Scripts
         private static int hitCount;
         private float _lastGroundedTime;
         private readonly Collider[] _raycastHits = new Collider[4];
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Setup ---
@@ -142,13 +141,13 @@ namespace Baracuda.Monitoring.Example.Scripts
                 GetComponent<PlayerState>().Die();
             }
         }
-        
+
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Movement ---
-        
+
         /// <summary>
         /// Quick and dirty method performing movement calculations.
         /// </summary>
@@ -161,11 +160,11 @@ namespace Baracuda.Monitoring.Example.Scripts
             var yInput = _input.Horizontal;
 
             var rawInputDir = new Vector2(xInput, yInput);
-            
+
             _processedInputDir = Vector2.Lerp(_processedInputDir,
                 rawInputDir.normalized,
                 deltaTime * inputSharpness);
-            
+
             var yMotion = _velocity.y;
             var directionVector = _transform.forward * _processedInputDir.x + _transform.right * _processedInputDir.y;
             var movementVelocity = directionVector * movementSpeed;
@@ -203,8 +202,8 @@ namespace Baracuda.Monitoring.Example.Scripts
             }
 
             _characterController.Move(_velocity * deltaTime);
-            
-            
+
+
             // Dash logic
             if (CanDash(time, groundCheck, rawInputDir))
             {
@@ -214,15 +213,15 @@ namespace Baracuda.Monitoring.Example.Scripts
             {
                 PerformDash(deltaTime, time, directionVector);
             }
-            
+
             // Camera rotation
             _rotationX += -_input.MouseY * _camera.fieldOfView * mouseSensitivity  * .001f;
             _rotationX = Mathf.Clamp(_rotationX, -90f, 90f);
             _camera.transform.localRotation = Quaternion.Euler(_rotationX, 0, 0);
-            
+
             var yRotation = _input.MouseX * _camera.fieldOfView * mouseSensitivity * .001f;
             transform.rotation *= Quaternion.Euler(0, yRotation, 0);
-            
+
             // other...
             if (_lastGroundCheck == GroundStatus.NoGround && groundCheck != GroundStatus.NoGround)
             {
@@ -231,8 +230,8 @@ namespace Baracuda.Monitoring.Example.Scripts
             }
 
             _dashEnergy = Mathf.Clamp(
-                _dashEnergy + 
-                (isGrounded? dashRechargeGrounded : dashRechargeAirborne) 
+                _dashEnergy +
+                (isGrounded? dashRechargeGrounded : dashRechargeAirborne)
                 * deltaTime, 0, dashAmount);
 
             _isFalling = _isJumping && _velocity.y < 0f;
@@ -240,23 +239,23 @@ namespace Baracuda.Monitoring.Example.Scripts
             _lastGroundedTime = groundCheck != GroundStatus.NoGround ? time : _lastGroundedTime;
         }
 
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Dash ---
-        
+
         private bool CanDash(float time, GroundStatus groundCheck, Vector2 rawInputDir)
         {
             return _input.DashPressed
-                   && !_isDashing 
-                   && time - _lastDashTime > minTimeBetweenDash 
+                   && !_isDashing
+                   && time - _lastDashTime > minTimeBetweenDash
                    && _dashEnergy >= 1
                    && groundCheck == GroundStatus.NoGround
                    && rawInputDir.normalized.magnitude > .5f;
         }
-        
+
         private void BeginDash(float time)
         {
             _dashEnergy -= 1;
@@ -264,12 +263,12 @@ namespace Baracuda.Monitoring.Example.Scripts
             _isDashing = true;
             _dashStartTime = time;
         }
-        
+
         private void PerformDash(float deltaTime, float time, Vector3 directionVector)
         {
             var currentDashTimer = time - _dashStartTime;
             var progression = (time - _dashStartTime) / dashDuration;
-            
+
             var dashVector = directionVector *
                              dashForce *
                              dashCurve.Evaluate(progression) *
@@ -283,9 +282,9 @@ namespace Baracuda.Monitoring.Example.Scripts
                 _isDashing = false;
             }
         }
-        
+
         #endregion
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region --- Ground Check ---

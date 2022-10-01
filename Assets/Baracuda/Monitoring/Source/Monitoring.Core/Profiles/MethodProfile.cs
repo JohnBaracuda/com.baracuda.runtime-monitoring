@@ -1,12 +1,9 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Core.Interfaces;
 using Baracuda.Monitoring.Core.Types;
 using Baracuda.Monitoring.Core.Units;
 using Baracuda.Monitoring.Core.Utilities.Extensions;
-using Baracuda.Monitoring.Interfaces;
-using Baracuda.Monitoring.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

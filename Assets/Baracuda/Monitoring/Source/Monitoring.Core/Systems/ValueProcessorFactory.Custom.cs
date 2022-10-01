@@ -4,7 +4,6 @@ using Baracuda.Monitoring.Core.Interfaces;
 using Baracuda.Monitoring.Core.Types;
 using Baracuda.Monitoring.Core.Units;
 using Baracuda.Monitoring.Core.Utilities.Extensions;
-using Baracuda.Monitoring.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

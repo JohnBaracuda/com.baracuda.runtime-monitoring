@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Baracuda.Monitoring.Attributes
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Use to override local RichText settings.

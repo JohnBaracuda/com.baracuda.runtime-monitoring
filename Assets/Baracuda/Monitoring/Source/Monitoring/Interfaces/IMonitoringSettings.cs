@@ -1,10 +1,9 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Utilities;
 using System;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Interfaces
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Interface to access settings of for the monitoring system.

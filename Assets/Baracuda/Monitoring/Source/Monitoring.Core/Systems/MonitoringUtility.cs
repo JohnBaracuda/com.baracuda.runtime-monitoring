@@ -2,7 +2,6 @@
 
 using Baracuda.Monitoring.Core.Interfaces;
 using Baracuda.Monitoring.Core.Utilities.Pooling;
-using Baracuda.Monitoring.Interfaces;
 using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -20,16 +19,16 @@ namespace Baracuda.Monitoring.Core.Systems
         {
             _monitoringManager = monitoringManager;
         }
-        
+
         //--------------------------------------------------------------------------------------------------------------
 
         private readonly HashSet<int> _fontHashSet = new HashSet<int>();
-        
+
         public bool IsFontHashUsed(int fontHash)
         {
             return _fontHashSet.Contains(fontHash);
         }
-        
+
         public void AddFontHash(int fontHash)
         {
             _fontHashSet.Add(fontHash);
@@ -46,7 +45,7 @@ namespace Baracuda.Monitoring.Core.Systems
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        
+
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IMonitorUnit[] GetMonitorUnitsForTarget(object target)
@@ -77,7 +76,7 @@ namespace Baracuda.Monitoring.Core.Systems
         {
             return _tags;
         }
-        
+
         public IReadOnlyCollection<string> GetAllTypeStrings()
         {
             return _typeStrings;

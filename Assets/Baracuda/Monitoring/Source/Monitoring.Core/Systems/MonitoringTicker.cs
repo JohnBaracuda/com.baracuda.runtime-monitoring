@@ -2,8 +2,6 @@
 
 using Baracuda.Monitoring.Core.Interfaces;
 using Baracuda.Monitoring.Core.Types;
-using Baracuda.Monitoring.Interfaces;
-using Baracuda.Monitoring.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;

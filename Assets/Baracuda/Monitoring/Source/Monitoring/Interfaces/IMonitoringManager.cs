@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 
-namespace Baracuda.Monitoring.Interfaces
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Delegate for profiling completed listener

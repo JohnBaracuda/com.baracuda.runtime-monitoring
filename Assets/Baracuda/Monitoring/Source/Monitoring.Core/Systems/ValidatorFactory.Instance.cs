@@ -1,6 +1,5 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
 using Baracuda.Monitoring.Core.Utilities.Extensions;
 using System;
 using System.Reflection;

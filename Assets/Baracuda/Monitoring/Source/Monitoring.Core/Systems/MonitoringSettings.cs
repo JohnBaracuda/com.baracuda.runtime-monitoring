@@ -1,7 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
-using Baracuda.Monitoring.Utilities;
 using System;
 using System.IO;
 using System.Linq;

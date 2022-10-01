@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
-namespace Baracuda.Monitoring.Utilities
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Enum contains all member types that can be monitored.

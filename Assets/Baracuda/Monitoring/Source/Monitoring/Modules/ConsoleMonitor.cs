@@ -1,6 +1,5 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
 using System;
 using System.Collections.Generic;
 using Baracuda.Threading;

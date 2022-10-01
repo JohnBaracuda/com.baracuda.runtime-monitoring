@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
-namespace Baracuda.Monitoring.Interfaces
+namespace Baracuda.Monitoring
 {
     /// <summary>
     /// Interface to get the value of a monitored field, property or method.
