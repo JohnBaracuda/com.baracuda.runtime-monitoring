@@ -2,8 +2,6 @@
 
 namespace Baracuda.Monitoring.IL2CPP
 {
-    #region --- Enum Types ---
-
     /// <summary>
     /// Concrete 8 bit enum type definition used for IL2CPP AOT compilation.
     /// </summary>
@@ -31,6 +29,4 @@ namespace Baracuda.Monitoring.IL2CPP
     public enum Enum64 : long
     {
     }
-
-    #endregion
 }

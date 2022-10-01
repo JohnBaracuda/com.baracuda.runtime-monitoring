@@ -11,36 +11,36 @@ namespace Baracuda.Monitoring.Example.Scripts
         [Header("Input")]
         [SerializeField] private LegacyPlayerInput playerInput;
 
-        [Header("UI")] 
+        [Header("UI")]
         [SerializeField] private GameObject uiParent;
 
-        [Header("Automation")] 
+        [Header("Automation")]
         [SerializeField] private Transform tagButtonContainer;
         [SerializeField] private Transform typeStringButtonContainer;
         [SerializeField] private ButtonFilter buttonPrefab;
-    
+
         private void Awake()
         {
             playerInput.InputModeChanged += OnToggleFilter;
             playerInput.ToggleMonitoring += OnToggleMonitoring;
             playerInput.ClearConsole += ConsoleMonitor.Clear;
-            
-            MonitoringSystems.Resolve<IMonitoringManager>().ProfilingCompleted += OnProfilingCompleted;
+
+            MonitoringSystems.MonitoringManager.ProfilingCompleted += OnProfilingCompleted;
         }
 
         private void OnProfilingCompleted(IReadOnlyList<IMonitorUnit> monitorUnits, IReadOnlyList<IMonitorUnit> readOnlyList)
         {
-            var monitoringSettings = MonitoringSystems.Resolve<IMonitoringSettings>();
-            var utils = MonitoringSystems.Resolve<IMonitoringUtility>();
-            
+            var monitoringSettings = MonitoringSystems.MonitoringSettings;
+            var utils = MonitoringSystems.MonitoringUtility;
+
             foreach (var customTag in utils.GetAllTags())
             {
-                Instantiate(buttonPrefab, tagButtonContainer).Filter = monitoringSettings.FilterTagsSymbol + customTag;
+                Instantiate(buttonPrefab, tagButtonContainer).Filter = $"{monitoringSettings.FilterTagsSymbol}{customTag}";
             }
-            
+
             foreach (var typeString in utils.GetAllTypeStrings())
             {
-                Instantiate(buttonPrefab, typeStringButtonContainer).Filter =  typeString;
+                Instantiate(buttonPrefab, typeStringButtonContainer).Filter = typeString;
             }
         }
 
@@ -53,7 +53,7 @@ namespace Baracuda.Monitoring.Example.Scripts
         {
             uiParent.SetActive(inputMode == InputMode.UserInterface);
         }
-    
+
         public void OnInputChanged(string input)
         {
             if (string.IsNullOrWhiteSpace(input))

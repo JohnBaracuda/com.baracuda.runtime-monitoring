@@ -9,13 +9,13 @@ namespace Baracuda.Monitoring
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void RegisterMonitor<T>(this T target) where T : class
         {
-            MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(target);
+            MonitoringSystems.MonitoringManager.RegisterTarget(target);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void UnregisterMonitor<T>(this T target) where T : class
         {
-            MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(target);
+            MonitoringSystems.MonitoringManager.UnregisterTarget(target);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2022 Jonathan Lang
+
+using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -14,27 +16,24 @@ namespace Baracuda.Monitoring.IL2CPP
         }
     }
 
+    [Preserve]
     public class MonitoredDictionary<TKey, TValue>
     {
+#if !DISABLE_MONITORING
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
         private static void TypeDefinitions()
         {
             IL2CPPTypeDefinitions.TypeDefDictionary<TKey, TValue>();
-
             IL2CPPTypeDefinitions.TypeDefField<object, TKey>();
             IL2CPPTypeDefinitions.TypeDefProperty<object, TKey>();
             IL2CPPTypeDefinitions.TypeDefEvent<object, Action<TKey>>();
             IL2CPPTypeDefinitions.TypeDefMethod<object, TKey>();
             IL2CPPTypeDefinitions.TypeDefOutParameter<TKey>();
-
             IL2CPPTypeDefinitions.TypeDefArray<TKey>();
             IL2CPPTypeDefinitions.TypeDefEnumerable<TKey>();
             IL2CPPTypeDefinitions.TypeDefList<TKey>();
-
-            // Common Dictionaries
             IL2CPPTypeDefinitions.TypeDefDictionary<TKey, TKey>();
-
             IL2CPPTypeDefinitions.TypeDefDictionary<object, TKey>();
             IL2CPPTypeDefinitions.TypeDefDictionary<string, TKey>();
             IL2CPPTypeDefinitions.TypeDefDictionary<sbyte, TKey>();
@@ -66,7 +65,6 @@ namespace Baracuda.Monitoring.IL2CPP
             IL2CPPTypeDefinitions.TypeDefDictionary<Enum16, TKey>();
             IL2CPPTypeDefinitions.TypeDefDictionary<Enum32, TKey>();
             IL2CPPTypeDefinitions.TypeDefDictionary<Enum64, TKey>();
-
             IL2CPPTypeDefinitions.TypeDefDictionary<TKey, object>();
             IL2CPPTypeDefinitions.TypeDefDictionary<TKey, string>();
             IL2CPPTypeDefinitions.TypeDefDictionary<TKey, sbyte>();
@@ -98,22 +96,15 @@ namespace Baracuda.Monitoring.IL2CPP
             IL2CPPTypeDefinitions.TypeDefDictionary<TKey, Enum16>();
             IL2CPPTypeDefinitions.TypeDefDictionary<TKey, Enum32>();
             IL2CPPTypeDefinitions.TypeDefDictionary<TKey, Enum32>();
-
-            //
-
             IL2CPPTypeDefinitions.TypeDefField<object, TValue>();
             IL2CPPTypeDefinitions.TypeDefProperty<object, TValue>();
             IL2CPPTypeDefinitions.TypeDefEvent<object, Action<TValue>>();
             IL2CPPTypeDefinitions.TypeDefMethod<object, TValue>();
             IL2CPPTypeDefinitions.TypeDefOutParameter<TValue>();
-
             IL2CPPTypeDefinitions.TypeDefArray<TValue>();
             IL2CPPTypeDefinitions.TypeDefEnumerable<TValue>();
             IL2CPPTypeDefinitions.TypeDefList<TValue>();
-
-            // Common Dictionaries
             IL2CPPTypeDefinitions.TypeDefDictionary<TValue, TValue>();
-
             IL2CPPTypeDefinitions.TypeDefDictionary<object, TValue>();
             IL2CPPTypeDefinitions.TypeDefDictionary<string, TValue>();
             IL2CPPTypeDefinitions.TypeDefDictionary<sbyte, TValue>();
@@ -145,7 +136,6 @@ namespace Baracuda.Monitoring.IL2CPP
             IL2CPPTypeDefinitions.TypeDefDictionary<Enum16, TValue>();
             IL2CPPTypeDefinitions.TypeDefDictionary<Enum32, TValue>();
             IL2CPPTypeDefinitions.TypeDefDictionary<Enum64, TValue>();
-
             IL2CPPTypeDefinitions.TypeDefDictionary<TValue, object>();
             IL2CPPTypeDefinitions.TypeDefDictionary<TValue, string>();
             IL2CPPTypeDefinitions.TypeDefDictionary<TValue, sbyte>();
@@ -178,10 +168,13 @@ namespace Baracuda.Monitoring.IL2CPP
             IL2CPPTypeDefinitions.TypeDefDictionary<TValue, Enum32>();
             IL2CPPTypeDefinitions.TypeDefDictionary<TValue, Enum32>();
         }
+#endif
     }
 
+    [Preserve]
     public class MonitoredStruct<T> where T : struct
     {
+#if !DISABLE_MONITORING
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
         private static void TypeDefinitions()
@@ -191,15 +184,11 @@ namespace Baracuda.Monitoring.IL2CPP
             IL2CPPTypeDefinitions.TypeDefEvent<object, Action<T>>();
             IL2CPPTypeDefinitions.TypeDefMethod<object, T>();
             IL2CPPTypeDefinitions.TypeDefOutParameter<T>();
-
             IL2CPPTypeDefinitions.TypeDefStructTypeArray<T>();
             IL2CPPTypeDefinitions.TypeDefArray<T>();
             IL2CPPTypeDefinitions.TypeDefEnumerable<T>();
             IL2CPPTypeDefinitions.TypeDefList<T>();
-
-            // Common Dictionaries
             IL2CPPTypeDefinitions.TypeDefDictionary<T, T>();
-
             IL2CPPTypeDefinitions.TypeDefDictionary<object, T>();
             IL2CPPTypeDefinitions.TypeDefDictionary<string, T>();
             IL2CPPTypeDefinitions.TypeDefDictionary<sbyte, T>();
@@ -231,7 +220,6 @@ namespace Baracuda.Monitoring.IL2CPP
             IL2CPPTypeDefinitions.TypeDefDictionary<Enum16, T>();
             IL2CPPTypeDefinitions.TypeDefDictionary<Enum32, T>();
             IL2CPPTypeDefinitions.TypeDefDictionary<Enum64, T>();
-
             IL2CPPTypeDefinitions.TypeDefDictionary<T, object>();
             IL2CPPTypeDefinitions.TypeDefDictionary<T, string>();
             IL2CPPTypeDefinitions.TypeDefDictionary<T, sbyte>();
@@ -264,5 +252,6 @@ namespace Baracuda.Monitoring.IL2CPP
             IL2CPPTypeDefinitions.TypeDefDictionary<T, Enum32>();
             IL2CPPTypeDefinitions.TypeDefDictionary<T, Enum32>();
         }
+#endif
     }
 }

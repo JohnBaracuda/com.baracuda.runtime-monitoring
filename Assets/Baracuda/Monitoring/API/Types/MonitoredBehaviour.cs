@@ -8,12 +8,12 @@ namespace Baracuda.Monitoring
     {
         protected virtual void Awake()
         {
-            MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(this);
+            MonitoringSystems.MonitoringManager.RegisterTarget(this);
         }
 
         protected virtual void OnDestroy()
         {
-            MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(this);
+            MonitoringSystems.MonitoringManager.UnregisterTarget(this);
         }
     }
 }

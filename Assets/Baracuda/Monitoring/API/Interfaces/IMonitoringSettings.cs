@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring
 {
+    /// <summary>
+    /// Interface to access settings of for the monitoring system.
+    /// </summary>
     public interface IMonitoringSettings : IMonitoringSubsystem<IMonitoringSettings>
     {
         bool EnableMonitoring { get; }
@@ -40,15 +43,14 @@ namespace Baracuda.Monitoring
         bool UseIPreprocessBuildWithReport { get; }
         bool ThrowOnTypeGenerationError { get; }
         int PreprocessBuildCallbackOrder { get; }
-        bool LogTypeGenerationStats { get; }
         MonitoringUIController UIController { get; }
         Color OutParamColor { get; }
         bool FilterLabel { get; }
         bool FilterStaticOrInstance { get; }
-        bool FilterType  { get; }
+        bool FilterType { get; }
         bool FilterDeclaringType { get; }
-        bool FilterMemberType  { get; }
-        bool FilterTags  { get; }
+        bool FilterMemberType { get; }
+        bool FilterTags { get; }
         bool FilterInterfaces { get; }
         StringComparison FilterComparison { get; }
         char FilterAppendSymbol { get; }

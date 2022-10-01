@@ -168,8 +168,6 @@ namespace Baracuda.Monitoring.Systems
         [Tooltip("The IPreprocessBuildWithReport.callbackOrder of the AOT generation object.")]
         [SerializeField] private int preprocessBuildCallbackOrder = 0;
 
-        [SerializeField] private bool logTypeGenerationStats = true;
-
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
@@ -289,7 +287,6 @@ namespace Baracuda.Monitoring.Systems
         public bool UseIPreprocessBuildWithReport => useIPreprocessBuildWithReport;
         public bool ThrowOnTypeGenerationError => throwOnTypeGenerationError;
         public int PreprocessBuildCallbackOrder => preprocessBuildCallbackOrder;
-        public bool LogTypeGenerationStats => logTypeGenerationStats;
 
         #endregion
 
