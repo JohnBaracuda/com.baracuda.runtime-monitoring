@@ -12,7 +12,6 @@ using UnityEngine;
 namespace Baracuda.Monitoring.UI.IMGUI
 {
     /// <summary>
-    /// Disclaimer!!!
     /// This class is showing the base for a GUI based monitoring UI Controller.
     /// I recommend using either the TextMesh Pro based uGUI solution or the UIToolkit solution instead.
     /// </summary>
@@ -28,7 +27,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
 
         [Header("Scaling")]
         [SerializeField] private bool customScale = true;
-        [SerializeField] [Range(0,10)] private float scale = 1;
+        [SerializeField] [Range(0, 10)] private float scale = 1;
 
         [Header("Coloring")]
         [SerializeField] private Color backgroundColor = Color.black;
@@ -50,6 +49,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
         private readonly GUIContent _content = new GUIContent();
 
         private float _calculatedScale;
+        private bool _draw = true;
 
         private static float lastLowerLeftHeight;
         private static float lastLowerRightHeight;
@@ -250,15 +250,13 @@ namespace Baracuda.Monitoring.UI.IMGUI
         private void UpdateScale()
         {
 #if UNITY_EDITOR
-            _calculatedScale = customScale? Mathf.Max(scale, .001f) : UnityEditor.EditorGUIUtility.pixelsPerPoint;
+            _calculatedScale = customScale ? Mathf.Max(scale, .001f) : UnityEditor.EditorGUIUtility.pixelsPerPoint;
 #else
             _calculatedScale = Mathf.Max(scale, .001f);
 #endif
         }
 
         #endregion
-
-        private bool _draw = true;
 
         #region --- GUI ---
 
@@ -338,7 +336,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
             }
         }
 
-        private void DrawLowerLeft(Context ctx,  ScreenData screenData)
+        private void DrawLowerLeft(Context ctx, ScreenData screenData)
         {
             var xPos = windowMargin.left;
             var yPos = screenData.Height - windowMargin.bot;
@@ -413,7 +411,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
          * Draw Right
          */
 
-        private void DrawUpperRight(Context ctx,  ScreenData screenData)
+        private void DrawUpperRight(Context ctx, ScreenData screenData)
         {
             var xPos = screenData.Width;
             var yPos = windowMargin.top;
@@ -471,7 +469,7 @@ namespace Baracuda.Monitoring.UI.IMGUI
             }
         }
 
-        private void DrawLowerRight(Context ctx,  ScreenData screenData)
+        private void DrawLowerRight(Context ctx, ScreenData screenData)
         {
             var xPos = screenData.Width;
             var yPos = screenData.Height - windowMargin.bot;
