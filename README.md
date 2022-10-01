@@ -1,6 +1,6 @@
 Runtime Monitoring
 ===
-**Note** when updating **Major** versions of Runtime Monitoring, don't forget to remove the old version from the project before importing the new one! :)
+> Note ⚠️ When updating **Major** versions of Runtime Monitoring, don't forget to remove the old version from the project before importing the new one! :)
 
 Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property, event or method and get its value or state displayed automatically in a customizable and extendable UI.
 
