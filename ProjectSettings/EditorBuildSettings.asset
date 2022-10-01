@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Baracuda/Monitoring.Example/Scenes/MonitoringExampleScene.unity
+    path: Assets/Baracuda/Monitoring/Example/Scenes/MonitoringExampleScene.unity
     guid: e68fc78992792ec4d85d87636c354415
   m_configObjects: {}

@@ -41,22 +41,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 447313251140650317}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fe10e48d1a14180af7c0801692a25ba, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ba2352dcdf8cb24f80f888b6eb3dbc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 0
-  showOperatingSystem: 1
-  showOperatingSystemFamily: 0
-  showDeviceType: 1
-  showDeviceModel: 0
-  showDeviceName: 0
-  showProcessorType: 1
-  showProcessorFrequency: 0
-  showProcessorCount: 0
-  showSystemMemory: 1
-  showGraphicsDeviceName: 1
-  showGraphicsDeviceType: 1
-  showGraphicsMemorySize: 1
-  showGraphicsMultiThreaded: 0
-  showBatteryLevel: 0
-  showBatteryStatus: 0

@@ -1,0 +1,21 @@
+﻿// Copyright (c) 2022 Jonathan Lang
+
+using Baracuda.Monitoring.Interfaces;
+using System;
+
+namespace Baracuda.Monitoring.Core.Interfaces
+{
+    internal interface IMonitoringTicker : IMonitoringSubsystem<IMonitoringTicker>
+    {
+        /// <summary>
+        /// Toggle validation tick.
+        /// </summary>
+        bool ValidationTickEnabled { get; set; }
+        
+        void AddUpdateTicker(IMonitorUnit unit);
+        void RemoveUpdateTicker(IMonitorUnit unit);
+        
+        void AddValidationTicker(Action tickAction);
+        void RemoveValidationTicker(Action tickAction);
+    }
+}

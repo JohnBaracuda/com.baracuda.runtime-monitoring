@@ -1,0 +1,25 @@
+{
+    "name": "Assembly-Baracuda-Monitoring.TextMeshPro",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:b8158a8cd24af784784c2d81c4d4a8bf"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "TEXTMESHPRO_PRESENT"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.textmeshpro",
+            "expression": "1.0.0",
+            "define": "TEXTMESHPRO_PRESENT"
+        }
+    ],
+    "noEngineReferences": false
+}
