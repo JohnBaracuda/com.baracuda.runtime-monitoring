@@ -69,23 +69,3 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
-*.log
-ProjectSettings/RiderScriptEditorPersistedState.asset
-*.DotSettings
-*.log
-ProjectSettings/RiderScriptEditorPersistedState.asset
-Assets/Baracuda/IL2CPP/IL2CPP_AOT.cs
-Assets/AssetStoreTools.meta
-Assets/AssetStoreTools/AS_Checklist.asset
-Assets/AssetStoreTools/AS_Checklist.asset.meta
-Assets/AssetStoreTools/Editor.meta
-Assets/AssetStoreTools/Editor/AssetStoreTools.dll
-Assets/AssetStoreTools/Editor/AssetStoreTools.dll.meta
-ProjectSettings/RiderScriptEditorPersistedState.asset
-Assets/TextMeshPro
-Assets/TextMesh*
-Assets/Baracuda/IL2CPP.meta
-Assets/Baracuda/IL2CPP/IL2CPP_AOT.cs.meta
-Assets/TextMeshPro.meta
-Assets/Temp*
-Assets/Temp.meta
