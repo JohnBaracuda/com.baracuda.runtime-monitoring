@@ -15,5 +15,6 @@ namespace Baracuda.Monitoring
     [Preserve]
     public class MonitorAttribute : Attribute
     {
+        public Type IL2CPPTypeDef { get; set; }
     }
 }
