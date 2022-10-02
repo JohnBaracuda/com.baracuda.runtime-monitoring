@@ -10,11 +10,6 @@ namespace Baracuda.Monitoring.Core.Utilities.Extensions
 {
     internal static class TypeExtensions
     {
-        #region --- Type Data ---
-
-        /*
-         *  Number Sets
-         */
 
         private static readonly HashSet<Type> numericTypes = new HashSet<Type>
         {
@@ -31,45 +26,10 @@ namespace Baracuda.Monitoring.Core.Utilities.Extensions
             typeof(decimal),
         };
 
-        private static readonly HashSet<Type> integerTypes = new HashSet<Type>
-        {
-            typeof(byte),
-            typeof(sbyte),
-            typeof(short),
-            typeof(ushort),
-            typeof(int),
-            typeof(uint),
-            typeof(long),
-            typeof(ulong),
-        };
-
-        private static readonly HashSet<Type> decimalTypes = new HashSet<Type>
-        {
-            typeof(float),
-            typeof(double),
-            typeof(decimal),
-        };
-
-        #endregion
-
-        #region --- Type Checks ---
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNumeric(this Type type)
         {
             return numericTypes.Contains(type) || numericTypes.Contains(Nullable.GetUnderlyingType(type));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsFloatingPoint(this Type type)
-        {
-            return decimalTypes.Contains(type) || decimalTypes.Contains(Nullable.GetUnderlyingType(type));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsInteger(this Type type)
-        {
-            return integerTypes.Contains(type) || integerTypes.Contains(Nullable.GetUnderlyingType(type));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -103,40 +63,9 @@ namespace Baracuda.Monitoring.Core.Utilities.Extensions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsStruct(this Type type)
-        {
-            return type.IsValueType && !type.IsEnum && !type.IsPrimitive;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsReadonlyRefStruct(this Type type)
-        {
-            return type.IsValueType &&
-                   type.GetCustomAttributes(true).Any(obj => obj.GetType().Name == "IsByRefLikeAttribute");
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsStatic(this Type type)
         {
             return type.IsAbstract && type.IsSealed;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsList(this Type type)
-        {
-            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsDictionary(this Type type)
-        {
-            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsStack(this Type type)
-        {
-            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Stack<>);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -145,18 +74,6 @@ namespace Baracuda.Monitoring.Core.Utilities.Extensions
             return excludeStrings
                 ? type.GetInterface(nameof(IEnumerable)) != null && !type.IsString()
                 : type.GetInterface(nameof(IEnumerable)) != null;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsValueTypeArray(this Type type)
-        {
-            return type.IsArray && type.IsElementValueType();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsElementValueType(this Type type)
-        {
-            return type.GetElementType()?.IsValueType ?? false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -233,25 +150,6 @@ namespace Baracuda.Monitoring.Core.Utilities.Extensions
             return false;
         }
 
-        /// <summary>
-        /// Returns ture if the type and all of its declaring types are public.
-        /// </summary>
-        public static bool IsAccessible(this Type type)
-        {
-            var baseTypes = type.GetDeclaringTypes(true);
-
-            for (var i = 0; i < baseTypes.Length; i++)
-            {
-                var baseType = baseTypes[i];
-                if (!baseType.IsPublic && !baseType.IsNestedPublic)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool HasReturnValue(this MethodInfo methodInfo)
         {
@@ -276,38 +174,6 @@ namespace Baracuda.Monitoring.Core.Utilities.Extensions
         public static Type NotVoid(this Type type, Type replacement)
         {
             return type == typeof(void) ? replacement : type;
-        }
-
-        /*
-         *  Unity Types
-         */
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsVector(this Type type)
-        {
-            return (type == typeof(Vector2) || type == typeof(Vector3) || type == typeof(Vector4));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsVectorInt(this Type type)
-        {
-            return (type == typeof(Vector2Int) || type == typeof(Vector3Int));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsColor(this Type type)
-        {
-            return (type == typeof(Color) || type == typeof(Color32));
-        }
-
-        /*
-         *  Generics & Delegates
-         */
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsDelegate(this Type type)
-        {
-            return typeof(Delegate).IsAssignableFrom(type.BaseType);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -361,7 +227,5 @@ namespace Baracuda.Monitoring.Core.Utilities.Extensions
 
             return false;
         }
-
-        #endregion
     }
 }

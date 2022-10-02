@@ -99,29 +99,27 @@ namespace Baracuda.Monitoring
 
         #region --- Installation ---
 
+        private static bool installationCompleted;
+
 #if UNITY_EDITOR
         static MonitoringSystems()
         {
-            if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
-            {
-                return;
-            }
-
-            var settings = MonitoringSettings.FindOrCreateSettingsAsset();
-            if (settings.EnableMonitoring)
-            {
-                InstallCoreSystems(settings);
-            }
-            else
-            {
-                InstallDummySystems();
-            }
+            InstallMonitoringSystems();
         }
 #endif
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void InitializeOnLoad()
         {
+            InstallMonitoringSystems();
+        }
+
+        private static void InstallMonitoringSystems()
+        {
+            if (installationCompleted)
+            {
+                return;
+            }
             var settings = MonitoringSettings.FindOrCreateSettingsAsset();
             if (settings.EnableMonitoring)
             {
@@ -131,6 +129,8 @@ namespace Baracuda.Monitoring
             {
                 InstallDummySystems();
             }
+
+            installationCompleted = true;
         }
 
         private static void InstallDummySystems()

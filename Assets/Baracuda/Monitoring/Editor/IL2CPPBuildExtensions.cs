@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using UnityEditor;
 using UnityEditor.Compilation;
 using UnityEngine;
 using Assembly = System.Reflection.Assembly;
@@ -25,7 +26,7 @@ namespace Baracuda.Monitoring.Editor
 
         public static Type AsObjectPointer(this Type type)
         {
-            return type.IsClass ? typeof(object) : type;
+            return type.IsClass || type.IsInterface ? typeof(object) : type;
         }
 
         public static Type AsDelegatePointer(this Type type)
@@ -230,17 +231,33 @@ namespace Baracuda.Monitoring.Editor
             return true;
         }
 
+        public static string GetDescription(this FieldInfo info)
+        {
+            return $"{info.DeclaringType?.FullName}::{info.Name} ({info.FieldType.ToTypeDefString()})";
+        }
+        public static string GetDescription(this PropertyInfo info)
+        {
+            return $"{info.DeclaringType?.FullName}::{info.Name} ({info.PropertyType.ToTypeDefString()})";
+        }
+        public static string GetDescription(this EventInfo info)
+        {
+            return $"{info.DeclaringType?.FullName}::{info.Name} ({info.EventHandlerType.ToTypeDefString()})";
+        }
+        public static string GetDescription(this MethodInfo info)
+        {
+            return $"{info.DeclaringType?.FullName}::{info.Name} ({info.ReturnType.ToTypeDefString()})";
+        }
+        public static string GetDescription(this ParameterInfo info)
+        {
+            return $"{info.Member.DeclaringType}::{info.Member.Name}::{info.Name} ({info.ParameterType.ToTypeDefString()})";
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ToTypeDefString(this Type type)
         {
             if (type.IsStatic())
             {
                 return typeof(object).FullName?.Replace('+', '.');
-            }
-
-            if (!type.IsAccessible())
-            {
-
             }
 
             if (type.IsGenericType || type.IsGenericTypeDefinition)

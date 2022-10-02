@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.baracuda.runtimemonitoring": {
+      "version": "file:RuntimeMonitoring",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.[company-name].some-package": "1.0.0",
+        "com.[company-name].other-package": "2.0.0"
+      }
+    },
     "com.unity.asset-store-tools": {
       "version": "file:com.unity.asset-store-tools",
       "depth": 0,

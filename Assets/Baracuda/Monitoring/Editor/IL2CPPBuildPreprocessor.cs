@@ -1,7 +1,5 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-#if ENABLE_IL2CPP || UNITY_EDITOR
-
 using Baracuda.Monitoring.Core.IL2CPP;
 using System;
 using System.Collections.Generic;
@@ -71,18 +69,44 @@ namespace Baracuda.Monitoring.Editor
         private readonly string typeDefEnumerable = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefEnumerable)}";
         private readonly string typeDefList = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefList)}";
 
-
         private readonly bool throwExceptions = false;
 
         private readonly UnityEditor.Compilation.Assembly[] unityAssemblies;
 
         private List<Exception> ExceptionBuffer { get; } = new List<Exception>();
-        private List<string> TypeDefFieldBuffer { get; } = new List<string>();
-        private List<string> TypeDefPropertyBuffer { get; } = new List<string>();
-        private List<string> TypeDefEventBuffer { get; } = new List<string>();
-        private List<string> TypeDefMethodBuffer { get; } = new List<string>();
-        private List<string> TypeDefOutParameterBuffer { get; } = new List<string>();
-        private List<string> TypeDefCollectionBuffer { get; } = new List<string>();
+        private TypeBuffer TypeDefFieldBuffer { get; } = new TypeBuffer(" --- [Field Definitions] ---");
+        private TypeBuffer TypeDefPropertyBuffer { get; } = new TypeBuffer(" --- [Property Definitions] ---");
+        private TypeBuffer TypeDefEventBuffer { get; } = new TypeBuffer(" --- [Event Definitions] ---");
+        private TypeBuffer TypeDefMethodBuffer { get; } = new TypeBuffer(" --- [Method Definitions] ---");
+        private TypeBuffer TypeDefOutParameterBuffer { get; } = new TypeBuffer(" --- [Out Parameter Definitions] ---");
+        private TypeBuffer TypeDefCollectionBuffer { get; } = new TypeBuffer(" --- [Collection Definitions] ---");
+
+        private class TypeBuffer
+        {
+            public TypeBuffer(string name)
+            {
+                Name = name;
+            }
+
+            public readonly string Name;
+
+            public readonly List<string> Definitions = new List<string>();
+            public List<string> GetComments(string typeDef) => _definitions[typeDef];
+
+            private readonly Dictionary<string, List<string>> _definitions = new Dictionary<string, List<string>>();
+            public void Add(string typeDef, string comment)
+            {
+                if (_definitions.TryGetValue(typeDef, out var commentsList))
+                {
+                    commentsList.AddUnique($" {comment}");
+                }
+                else
+                {
+                    Definitions.Add(typeDef);
+                    _definitions.Add(typeDef, new List<string> {$" {comment}"});
+                }
+            }
+        }
 
         private StatCounter Stats { get; } = new StatCounter();
 
@@ -111,6 +135,8 @@ namespace Baracuda.Monitoring.Editor
         };
 
         #endregion
+
+        #region --- Setup ---
 
         public IL2CPPBuildPreprocessor()
         {
@@ -171,6 +197,8 @@ namespace Baracuda.Monitoring.Editor
             stream.Dispose();
             File.WriteAllText(filePath, stringBuilder.ToString());
         }
+
+        #endregion
 
         #region --- Profile Assmelby ---
 
@@ -341,7 +369,7 @@ namespace Baracuda.Monitoring.Editor
                 Stats.IncrementStat($"Monitored Fields {(fieldInfo.IsStatic ? "Static" : "Instance")}", "MemberInfo");
                 Stats.IncrementStat($"Monitored {monitored.HumanizedName()}", "Monitored Types");
 
-                TypeDefFieldBuffer.AddUnique(typeDef);
+                TypeDefFieldBuffer.Add(typeDef, fieldInfo.GetDescription());
             }
             catch (Exception exception)
             {
@@ -393,7 +421,7 @@ namespace Baracuda.Monitoring.Editor
                 Stats.IncrementStat("Monitored Properties", "MemberInfo");
                 Stats.IncrementStat($"Monitored Properties {(propertyInfo.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
                 Stats.IncrementStat($"Monitored {monitored.HumanizedName()}", "Monitored Types");
-                TypeDefPropertyBuffer.AddUnique(typeDef);
+                TypeDefPropertyBuffer.Add(typeDef, propertyInfo.GetDescription());
             }
             catch (Exception exception)
             {
@@ -446,7 +474,7 @@ namespace Baracuda.Monitoring.Editor
                 Stats.IncrementStat($"Monitored Events {(eventInfo.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
                 Stats.IncrementStat($"Monitored {monitored.HumanizedName()}", "Monitored Types");
 
-                TypeDefEventBuffer.AddUnique(typeDef);
+                TypeDefEventBuffer.Add(typeDef, eventInfo.GetDescription());
             }
             catch (Exception exception)
             {
@@ -520,7 +548,7 @@ namespace Baracuda.Monitoring.Editor
                 Stats.IncrementStat($"Monitored Methods {(method.IsStatic ? "Static" : "Instance")}", "MemberInfo");
                 Stats.IncrementStat($"Monitored void", "Monitored Types");
 
-                TypeDefMethodBuffer.AddUnique(typeDef);
+                TypeDefMethodBuffer.Add(typeDef, method.GetDescription());
             }
 
             void TypeDefWithReturnValue(MethodInfo method, Type type, Type monitored)
@@ -541,7 +569,7 @@ namespace Baracuda.Monitoring.Editor
                 Stats.IncrementStat($"Monitored Methods {(method.IsStatic ? "Static" : "Instance")}", "MemberInfo");
                 Stats.IncrementStat($"Monitored {monitored.HumanizedName()}", "Monitored Types");
 
-                TypeDefMethodBuffer.AddUnique(typeDef);
+                TypeDefMethodBuffer.Add(typeDef, method.GetDescription());
             }
         }
 
@@ -570,7 +598,7 @@ namespace Baracuda.Monitoring.Editor
                 Stats.IncrementStat($"Monitored Out Parameter {(usableType.IsStatic() ? "Static" : "Instance")}", "MemberInfo");
                 Stats.IncrementStat($"Monitored {type.HumanizedName()}", "Monitored Types");
 
-                TypeDefOutParameterBuffer.AddUnique(typeDef);
+                TypeDefOutParameterBuffer.Add(typeDef, parameterInfo.GetDescription());
             }
             catch (Exception exception)
             {
@@ -622,11 +650,11 @@ namespace Baracuda.Monitoring.Editor
                 if (usableType.IsAccessible())
                 {
                     var typeDef = $"{typeDefList}<{usableType.ToTypeDefString()}>();";
-                    TypeDefCollectionBuffer.AddUnique(typeDef);
+                    TypeDefCollectionBuffer.Add(typeDef, listType.ToTypeDefString());
                 }
                 else
                 {
-                    Debug.LogWarning($"[Monitoring] The monitored type {usableType.ToTypeDefString()} is not accessible! \n" +
+                    Debug.LogWarning($"[Monitoring] The monitored type {listType.ToTypeDefString()} is not accessible! \n" +
                                      $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
                 }
             }
@@ -637,11 +665,11 @@ namespace Baracuda.Monitoring.Editor
                 if (usableType.IsAccessible())
                 {
                     var typeDef = $"{typeDefStructArray}<{usableType.ToTypeDefString()}>();";
-                    TypeDefCollectionBuffer.AddUnique(typeDef);
+                    TypeDefCollectionBuffer.Add(typeDef, arrayType.ToTypeDefString());
                 }
                 else
                 {
-                    Debug.LogWarning($"[Monitoring] The monitored type {usableType.ToTypeDefString()} is not accessible! \n" +
+                    Debug.LogWarning($"[Monitoring] The monitored type {arrayType.ToTypeDefString()} is not accessible! \n" +
                                      $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
                 }
             }
@@ -652,11 +680,11 @@ namespace Baracuda.Monitoring.Editor
                 if (usableType.IsAccessible())
                 {
                     var typeDef = $"{typeDefArray}<{usableType.ToTypeDefString()}>();";
-                    TypeDefCollectionBuffer.AddUnique(typeDef);
+                    TypeDefCollectionBuffer.Add(typeDef, arrayType.ToTypeDefString());
                 }
                 else
                 {
-                    Debug.LogWarning($"[Monitoring] The monitored type {usableType.ToTypeDefString()} is not accessible! \n" +
+                    Debug.LogWarning($"[Monitoring] The monitored type {arrayType.ToTypeDefString()} is not accessible! \n" +
                                      $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
                 }
             }
@@ -668,20 +696,20 @@ namespace Baracuda.Monitoring.Editor
                 if (!usableKeyType.IsAccessible())
                 {
                     Debug.LogWarning(
-                        $"[Monitoring] The monitored type {usableKeyType.ToTypeDefString()} is not accessible! \n" +
+                        $"[Monitoring] The monitored type {dictionaryType.ToTypeDefString()} is not accessible! \n" +
                         $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
                     return;
                 }
                 if (!usableValueType.IsAccessible())
                 {
                     Debug.LogWarning(
-                        $"[Monitoring] The monitored type {usableValueType.ToTypeDefString()} is not accessible! \n" +
+                        $"[Monitoring] The monitored type {dictionaryType.ToTypeDefString()} is not accessible! \n" +
                         $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
                     return;
                 }
                 var typeDef =
                     $"{typeDefDictionary}<{usableKeyType.ToTypeDefString()}, {usableValueType.ToTypeDefString()}>();";
-                TypeDefCollectionBuffer.AddUnique(typeDef);
+                TypeDefCollectionBuffer.Add(typeDef, dictionaryType.ToTypeDefString());
             }
 
             void ProcessEnumerable(Type enumerableType)
@@ -690,11 +718,11 @@ namespace Baracuda.Monitoring.Editor
                 if (usableType.IsAccessible())
                 {
                     var typeDef = $"{typeDefEnumerable}<{usableType.ToTypeDefString()}>();";
-                    TypeDefCollectionBuffer.AddUnique(typeDef);
+                    TypeDefCollectionBuffer.Add(typeDef, enumerableType.ToTypeDefString());
                 }
                 else
                 {
-                    Debug.LogWarning($"[Monitoring] The monitored type {usableType.ToTypeDefString()} is not accessible! \n" +
+                    Debug.LogWarning($"[Monitoring] The monitored type {enumerableType.ToTypeDefString()} is not accessible! \n" +
                                      $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
                 }
             }
@@ -720,73 +748,42 @@ namespace Baracuda.Monitoring.Editor
             stringBuilder.Append("\n    ");
             stringBuilder.Append("{");
 
-            TypeDefFieldBuffer.Sort();
-            TypeDefPropertyBuffer.Sort();
-            TypeDefEventBuffer.Sort();
-            TypeDefMethodBuffer.Sort();
+            TypeDefFieldBuffer.Definitions.Sort();
+            TypeDefPropertyBuffer.Definitions.Sort();
+            TypeDefEventBuffer.Definitions.Sort();
+            TypeDefMethodBuffer.Definitions.Sort();
+            TypeDefOutParameterBuffer.Definitions.Sort();
+            TypeDefCollectionBuffer.Definitions.Sort();
 
-            AppendComment(stringBuilder, " Field type definitions", 8);
-            for (var i = 0; i < TypeDefFieldBuffer.Count; i++)
+            AppendBuffer(stringBuilder, TypeDefFieldBuffer);
+            AppendBuffer(stringBuilder, TypeDefPropertyBuffer);
+            AppendBuffer(stringBuilder, TypeDefEventBuffer);
+            AppendBuffer(stringBuilder, TypeDefMethodBuffer);
+            AppendBuffer(stringBuilder, TypeDefOutParameterBuffer);
+            AppendBuffer(stringBuilder, TypeDefCollectionBuffer);
+            stringBuilder.Append("    }");
+        }
+
+        private void AppendBuffer(StringBuilder stringBuilder, TypeBuffer buffer)
+        {
+            if (buffer.Definitions.Any())
             {
-                var definition = TypeDefFieldBuffer[i];
+                AppendComment(stringBuilder, buffer.Name, 8);
+                var definitions = buffer.Definitions;
+                for (var i = 0; i < definitions.Count; i++)
+                {
+                    var definition = definitions[i];
+                    stringBuilder.Append('\n');
+                    foreach (var comment in buffer.GetComments(definition))
+                    {
+                        AppendComment(stringBuilder, comment, 8);
+                    }
+                    stringBuilder.Append('\n');
+                    stringBuilder.Append(new string(' ', 8));
+                    stringBuilder.Append(definition);
+                }
                 stringBuilder.Append('\n');
-                stringBuilder.Append(new string(' ', 8));
-                stringBuilder.Append(definition);
             }
-
-            stringBuilder.Append('\n');
-            AppendComment(stringBuilder, " Property type definitions", 8);
-            for (var i = 0; i < TypeDefPropertyBuffer.Count; i++)
-            {
-                var definition = TypeDefPropertyBuffer[i];
-                stringBuilder.Append('\n');
-                stringBuilder.Append(new string(' ', 8));
-                stringBuilder.Append(definition);
-            }
-
-            stringBuilder.Append('\n');
-            AppendComment(stringBuilder, " Event type definitions", 8);
-            for (var i = 0; i < TypeDefEventBuffer.Count; i++)
-            {
-                var definition = TypeDefEventBuffer[i];
-                stringBuilder.Append('\n');
-                stringBuilder.Append(new string(' ', 8));
-                stringBuilder.Append(definition);
-            }
-
-            stringBuilder.Append('\n');
-            AppendComment(stringBuilder, " Method type definitions", 8);
-            for (var i = 0; i < TypeDefMethodBuffer.Count; i++)
-            {
-                var definition = TypeDefMethodBuffer[i];
-                stringBuilder.Append('\n');
-                stringBuilder.Append(new string(' ', 8));
-                stringBuilder.Append(definition);
-            }
-
-            stringBuilder.Append('\n');
-            AppendComment(stringBuilder, " Out Parameter type definitions", 8);
-            for (var i = 0; i < TypeDefOutParameterBuffer.Count; i++)
-            {
-                var definition = TypeDefOutParameterBuffer[i];
-                stringBuilder.Append('\n');
-                stringBuilder.Append(new string(' ', 8));
-                stringBuilder.Append(definition);
-            }
-
-            stringBuilder.Append('\n');
-            AppendComment(stringBuilder, " Collections & IEnumerable", 8);
-            for (var i = 0; i < TypeDefCollectionBuffer.Count; i++)
-            {
-                var definition = TypeDefCollectionBuffer[i];
-                stringBuilder.Append('\n');
-                stringBuilder.Append(new string(' ', 8));
-                stringBuilder.Append(definition);
-            }
-
-
-            stringBuilder.Append("\n    ");
-            stringBuilder.Append("}");
         }
 
         #endregion
@@ -901,4 +898,3 @@ namespace Baracuda.Monitoring.Editor
         #endregion
     }
 }
-#endif
