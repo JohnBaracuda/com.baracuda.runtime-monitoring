@@ -237,7 +237,6 @@ namespace Baracuda.Monitoring.Core.Systems
             "UnityEditor.WebGL.Extensions",
             "UnityEditor.WindowsStandalone.Extensions",
             "UnityEditor.UWP.Extensions",
-            "Assembly-CSharp",
             "Unity.VSCode.Editor",
             "Unity.TextMeshPro.Editor",
             "Unity.VisualStudio.Editor",

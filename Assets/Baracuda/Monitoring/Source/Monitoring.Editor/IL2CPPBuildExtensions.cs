@@ -23,6 +23,16 @@ namespace Baracuda.Monitoring.Editor
             return (type.IsByRef ? type.GetElementType() : type) ?? type;
         }
 
+        public static Type AsObjectPointer(this Type type)
+        {
+            return type.IsClass ? typeof(object) : type;
+        }
+
+        public static Type AsDelegatePointer(this Type type)
+        {
+            return typeof(Delegate).IsAssignableFrom(type) ? typeof(Delegate) : type;
+        }
+
         public static Type GetReplacement(this Type inaccessible)
         {
             if (!inaccessible.IsEnum)
@@ -88,6 +98,93 @@ namespace Baracuda.Monitoring.Editor
                 return;
             }
             list.Add(item);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsValueTypeArray(this Type type)
+        {
+            return type.IsArray && type.IsElementValueType();
+        }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsElementValueType(this Type type)
+        {
+            return type.GetElementType()?.IsValueType ?? false;
+        }
+
+        public static bool IsGenericIDictionary(this Type type)
+        {
+            if (type.IsInterface && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+            {
+                return true;
+            }
+
+            for (var i = 0; i < type.GetInterfaces().Length; i++)
+            {
+                var interfaceType = type.GetInterfaces()[i];
+                if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsGenericIList(this Type type)
+        {
+            if (type.IsArray)
+            {
+                return false;
+            }
+
+            if (type.IsInterface && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>))
+            {
+                return true;
+            }
+
+            var interfaces = type.GetInterfaces();
+
+            for (var i = 0; i < interfaces.Length; i++)
+            {
+                var @interface = interfaces[i];
+                if (@interface.IsGenericType && @interface.GetGenericTypeDefinition() == typeof(IList<>))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsGenericIEnumerable(this Type type)
+        {
+            if (type.IsArray)
+            {
+                return false;
+            }
+
+            if (type == typeof(string))
+            {
+                return false;
+            }
+
+            if (type.IsGenericType && typeof(IEnumerable<>).IsAssignableFrom(type.GetGenericTypeDefinition()))
+            {
+                return true;
+            }
+
+            for (var i = 0; i < type.GetInterfaces().Length; i++)
+            {
+                var interfaceType = type.GetInterfaces()[i];
+                if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static bool IsStatic(this EventInfo eventInfo)

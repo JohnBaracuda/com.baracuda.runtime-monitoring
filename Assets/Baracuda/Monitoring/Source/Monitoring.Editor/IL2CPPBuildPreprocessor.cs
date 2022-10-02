@@ -65,6 +65,13 @@ namespace Baracuda.Monitoring.Editor
         private readonly string typeDefMethod = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefMethod)}";
         private readonly string typeDefOutParameter = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefOutParameter)}";
 
+        private readonly string typeDefStructArray = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefStructTypeArray)}";
+        private readonly string typeDefArray = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefArray)}";
+        private readonly string typeDefDictionary = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefDictionary)}";
+        private readonly string typeDefEnumerable = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefEnumerable)}";
+        private readonly string typeDefList = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefList)}";
+
+
         private readonly bool throwExceptions = false;
 
         private readonly UnityEditor.Compilation.Assembly[] unityAssemblies;
@@ -75,6 +82,7 @@ namespace Baracuda.Monitoring.Editor
         private List<string> TypeDefEventBuffer { get; } = new List<string>();
         private List<string> TypeDefMethodBuffer { get; } = new List<string>();
         private List<string> TypeDefOutParameterBuffer { get; } = new List<string>();
+        private List<string> TypeDefCollectionBuffer { get; } = new List<string>();
 
         private StatCounter Stats { get; } = new StatCounter();
 
@@ -301,6 +309,8 @@ namespace Baracuda.Monitoring.Editor
                 var declaring = fieldInfo.DeclaringType.IsValueType ? typeof(ValueType) : fieldInfo.DeclaringType;
                 var monitored = fieldInfo.FieldType.GetUnderlying();
 
+                CheckCollectionType(monitored);
+
                 if (declaring.IsGenericTypeDefinition)
                 {
                     var subTypes = declaring.GetAllTypesImplementingOpenGenericType(assemblies);
@@ -316,11 +326,11 @@ namespace Baracuda.Monitoring.Editor
                 }
 
                 var usableDeclaring = (declaring.IsAccessible() && !declaring.IsStatic())
-                    ? declaring
+                    ? declaring.AsObjectPointer()
                     : declaring.GetReplacement();
 
                 var usableMonitored = (monitored.IsAccessible() && !monitored.IsStatic())
-                    ? monitored
+                    ? monitored.AsObjectPointer()
                     : monitored.GetReplacement();
 
                 var typeDef = $"{typeDefField}<{usableDeclaring.ToTypeDefString()}, {usableMonitored.ToTypeDefString()}>();";
@@ -350,7 +360,9 @@ namespace Baracuda.Monitoring.Editor
                 Assert.IsNotNull(propertyInfo.DeclaringType);
 
                 var declaring = propertyInfo.DeclaringType.IsValueType ? typeof(ValueType) : propertyInfo.DeclaringType;
-                var monitored = propertyInfo.PropertyType.GetUnderlying();;
+                var monitored = propertyInfo.PropertyType.GetUnderlying();
+
+                CheckCollectionType(monitored);
 
                 if (declaring.IsGenericTypeDefinition)
                 {
@@ -367,11 +379,11 @@ namespace Baracuda.Monitoring.Editor
                 }
 
                 var usableDeclaring = (declaring.IsAccessible() && !declaring.IsStatic())
-                    ? declaring
+                    ? declaring.AsObjectPointer()
                     : declaring.GetReplacement();
 
                 var usableMonitored = (monitored.IsAccessible() && !monitored.IsStatic())
-                    ? monitored
+                    ? monitored.AsObjectPointer()
                     : monitored.GetReplacement();
 
                 var typeDef = $"{typeDefProperty}<{usableDeclaring.ToTypeDefString()}, {usableMonitored.ToTypeDefString()}>();";
@@ -402,6 +414,8 @@ namespace Baracuda.Monitoring.Editor
                 var declaring = eventInfo.DeclaringType.IsValueType ? typeof(ValueType) : eventInfo.DeclaringType;
                 var monitored = eventInfo.EventHandlerType.GetUnderlying();
 
+                CheckCollectionType(monitored);
+
                 if (declaring.IsGenericTypeDefinition)
                 {
                     var subTypes = declaring.GetAllTypesImplementingOpenGenericType(assemblies);
@@ -417,11 +431,11 @@ namespace Baracuda.Monitoring.Editor
                 }
 
                 var usableDeclaring = (declaring.IsAccessible() && !declaring.IsStatic())
-                    ? declaring
+                    ? declaring.AsObjectPointer()
                     : declaring.GetReplacement();
 
                 var usableMonitored = (monitored.IsAccessible() && !monitored.IsStatic())
-                    ? monitored
+                    ? monitored.AsDelegatePointer()
                     : monitored.GetReplacement();
 
                 var typeDef = $"{typeDefEvent}<{usableDeclaring.ToTypeDefString()}, {usableMonitored.ToTypeDefString()}>();";
@@ -452,6 +466,8 @@ namespace Baracuda.Monitoring.Editor
 
                 var declaring = methodInfo.DeclaringType.IsValueType ? typeof(ValueType) : methodInfo.DeclaringType;
                 var monitored = methodInfo.ReturnType.GetUnderlying();;
+
+                CheckCollectionType(monitored);
 
                 if (declaring.IsGenericTypeDefinition)
                 {
@@ -493,7 +509,7 @@ namespace Baracuda.Monitoring.Editor
             void TypeDefVoid(MethodInfo method, Type declaring)
             {
                 var usableDeclaring = (declaring.IsAccessible() && !declaring.IsStatic())
-                    ? declaring
+                    ? declaring.AsObjectPointer()
                     : declaring.GetReplacement();
 
                 var typeDef = $"{typeDefMethod}<{usableDeclaring.ToTypeDefString()}>();";
@@ -510,11 +526,11 @@ namespace Baracuda.Monitoring.Editor
             void TypeDefWithReturnValue(MethodInfo method, Type type, Type monitored)
             {
                 var usableDeclaring = (type.IsAccessible() && !type.IsStatic())
-                    ? type
+                    ? type.AsObjectPointer()
                     : type.GetReplacement();
 
                 var usableMonitored = (monitored.IsAccessible() && !monitored.IsStatic())
-                    ? monitored
+                    ? monitored.AsObjectPointer()
                     : monitored.GetReplacement();
 
                 var typeDef = $"{typeDefMethod}<{usableDeclaring.ToTypeDefString()}, {usableMonitored.ToTypeDefString()}>();";
@@ -541,8 +557,10 @@ namespace Baracuda.Monitoring.Editor
                 var type = parameterInfo.ParameterType.GetUnderlying();
 
                 var usableType = type.IsAccessible() && !type.IsStatic() && !type.IsReadonlyRefStruct()
-                    ? type
+                    ? type.AsObjectPointer()
                     : type.GetReplacement();
+
+                CheckCollectionType(usableType);
 
                 var typeDef = $"{typeDefOutParameter}<{usableType.ToTypeDefString()}>();";
 
@@ -561,6 +579,124 @@ namespace Baracuda.Monitoring.Editor
                     throw;
                 }
                 ExceptionBuffer.Add(exception);
+            }
+        }
+
+        #endregion
+
+        #region --- Profile Collections ---
+
+        private void CheckCollectionType(Type type)
+        {
+            try
+            {
+                if (type.IsValueTypeArray())
+                {
+                    ProcessStructArray(type);
+                }
+                if (type.IsArray)
+                {
+                    ProcessArray(type);
+                }
+                if (type.IsGenericIDictionary())
+                {
+                    ProcessDictionary(type);
+                }
+                if (type.IsGenericIList())
+                {
+                    ProcessList(type);
+                }
+                if (type.IsGenericIEnumerable())
+                {
+                    ProcessEnumerable(type);
+                }
+            }
+            catch (Exception exception)
+            {
+                ExceptionBuffer.Add(exception);
+            }
+
+            void ProcessList(Type listType)
+            {
+                var usableType = listType.GetGenericArguments()[0].AsObjectPointer();
+                if (usableType.IsAccessible())
+                {
+                    var typeDef = $"{typeDefList}<{usableType.ToTypeDefString()}>();";
+                    TypeDefCollectionBuffer.AddUnique(typeDef);
+                }
+                else
+                {
+                    Debug.LogWarning($"[Monitoring] The monitored type {usableType.ToTypeDefString()} is not accessible! \n" +
+                                     $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
+                }
+            }
+
+            void ProcessStructArray(Type arrayType)
+            {
+                var usableType = arrayType.GetElementType();
+                if (usableType.IsAccessible())
+                {
+                    var typeDef = $"{typeDefStructArray}<{usableType.ToTypeDefString()}>();";
+                    TypeDefCollectionBuffer.AddUnique(typeDef);
+                }
+                else
+                {
+                    Debug.LogWarning($"[Monitoring] The monitored type {usableType.ToTypeDefString()} is not accessible! \n" +
+                                     $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
+                }
+            }
+
+            void ProcessArray(Type arrayType)
+            {
+                var usableType = arrayType.GetElementType().AsObjectPointer();
+                if (usableType.IsAccessible())
+                {
+                    var typeDef = $"{typeDefArray}<{usableType.ToTypeDefString()}>();";
+                    TypeDefCollectionBuffer.AddUnique(typeDef);
+                }
+                else
+                {
+                    Debug.LogWarning($"[Monitoring] The monitored type {usableType.ToTypeDefString()} is not accessible! \n" +
+                                     $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
+                }
+            }
+
+            void ProcessDictionary(Type dictionaryType)
+            {
+                var usableKeyType = dictionaryType.GetGenericArguments()[0].AsObjectPointer();
+                var usableValueType = dictionaryType.GetGenericArguments()[1].AsObjectPointer();
+                if (!usableKeyType.IsAccessible())
+                {
+                    Debug.LogWarning(
+                        $"[Monitoring] The monitored type {usableKeyType.ToTypeDefString()} is not accessible! \n" +
+                        $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
+                    return;
+                }
+                if (!usableValueType.IsAccessible())
+                {
+                    Debug.LogWarning(
+                        $"[Monitoring] The monitored type {usableValueType.ToTypeDefString()} is not accessible! \n" +
+                        $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
+                    return;
+                }
+                var typeDef =
+                    $"{typeDefDictionary}<{usableKeyType.ToTypeDefString()}, {usableValueType.ToTypeDefString()}>();";
+                TypeDefCollectionBuffer.AddUnique(typeDef);
+            }
+
+            void ProcessEnumerable(Type enumerableType)
+            {
+                var usableType = enumerableType.GetGenericArguments()[0].AsObjectPointer();
+                if (usableType.IsAccessible())
+                {
+                    var typeDef = $"{typeDefEnumerable}<{usableType.ToTypeDefString()}>();";
+                    TypeDefCollectionBuffer.AddUnique(typeDef);
+                }
+                else
+                {
+                    Debug.LogWarning($"[Monitoring] The monitored type {usableType.ToTypeDefString()} is not accessible! \n" +
+                                     $"Make sure to use the TypeDefAttribute to create an internal type definition for IL2CPP.");
+                }
             }
         }
 
@@ -638,6 +774,17 @@ namespace Baracuda.Monitoring.Editor
                 stringBuilder.Append(definition);
             }
 
+            stringBuilder.Append('\n');
+            AppendComment(stringBuilder, " Collections & IEnumerable", 8);
+            for (var i = 0; i < TypeDefCollectionBuffer.Count; i++)
+            {
+                var definition = TypeDefCollectionBuffer[i];
+                stringBuilder.Append('\n');
+                stringBuilder.Append(new string(' ', 8));
+                stringBuilder.Append(definition);
+            }
+
+
             stringBuilder.Append("\n    ");
             stringBuilder.Append("}");
         }
@@ -683,7 +830,7 @@ namespace Baracuda.Monitoring.Editor
         private void AppendIfDefBegin(StringBuilder stringBuilder)
         {
             stringBuilder.Append('\n');
-            stringBuilder.Append("#if ENABLE_IL2CPP && !DISABLE_MONITORING");
+            stringBuilder.Append("#if ENABLE_IL2CPP && !DISABLE_MONITORING || UNITY_EDITOR");
             stringBuilder.Append('\n');
         }
 
