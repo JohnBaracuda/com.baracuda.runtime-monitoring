@@ -1,0 +1,47 @@
+{
+  "name": "com.baracuda.runtime-monitoring",
+  "version": "4.0.0",
+  "displayName": "Runtime Monitoring",
+  "description": "Note: when updating Major versions of Runtime Monitoring from the Package Manager, don't forget to remove the old version from the project before importing the new one! :)\n\nRuntime Monitoring is an easy way for you to debug the state of your C# classes and objects during runtime.",
+  "unity": "2019.4",
+  "documentationUrl": "https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring",
+  "changelogUrl": "https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring/blob/main/LICENSE.md",
+  "keywords": [
+    "monitoring",
+    "debugging",
+    "debug",
+    "UI",
+    "source",
+    "utility",
+    "helper"
+  ],
+  "samples": [
+    {
+      "displayName": "Example Scene",
+      "description": "Contains an example scene with a FPS controller.",
+      "path": "Samples~/Examples"
+    },
+    {
+      "displayName": "IMGUI",
+      "description": "Contains assets to base monitoring display on IMGUI.",
+      "path": "Samples~/IMGUI"
+    },
+    {
+      "displayName": "Text Mesh Pro",
+      "description": "Contains assets to base monitoring display on Text Mesh Pro.",
+      "path": "Samples~/TextMeshPro"
+    },
+    {
+      "displayName": "UI Toolkit",
+      "description": "Contains assets to base monitoring display on UI Toolkit.",
+      "path": "Samples~/UIToolkit"
+    }
+  ],
+  "author": {
+    "name": "John Baracuda",
+    "email": "johnbaracudagames@gmail.com",
+    "url": "https://johnbaracuda.com/"
+  },
+  "type": "tool"
+}
