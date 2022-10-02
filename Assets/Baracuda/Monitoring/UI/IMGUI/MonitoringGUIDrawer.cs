@@ -1,6 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
-namespace Baracuda.UI.IMGUI
+namespace Baracuda.Monitoring.IMGUI
 {
     /// <summary>
     /// This class is showing the base for a GUI based monitoring UI Controller.

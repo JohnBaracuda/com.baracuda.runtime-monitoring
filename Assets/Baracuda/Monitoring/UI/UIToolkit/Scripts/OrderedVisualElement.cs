@@ -2,7 +2,7 @@
 
 using UnityEngine.UIElements;
 
-namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
+namespace Baracuda.Monitoring.UIToolkit
 {
     internal class OrderedVisualElement : VisualElement, IOrder
     {

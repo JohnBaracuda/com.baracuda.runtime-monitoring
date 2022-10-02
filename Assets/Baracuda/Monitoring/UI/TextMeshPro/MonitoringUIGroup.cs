@@ -1,13 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring;
 using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Baracuda.UI.TextMeshPro
+namespace Baracuda.Monitoring.TextMeshPro
 {
     [RequireComponent(typeof(RectTransform))]
     internal class MonitoringUIGroup : MonitoringUIBase

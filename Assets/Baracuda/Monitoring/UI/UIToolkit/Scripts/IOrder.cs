@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
+namespace Baracuda.Monitoring.UIToolkit
 {
     internal interface IOrder
     {

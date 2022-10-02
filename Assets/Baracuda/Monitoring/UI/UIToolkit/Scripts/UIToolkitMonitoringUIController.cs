@@ -1,11 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
+namespace Baracuda.Monitoring.UIToolkit
 {
     [RequireComponent(typeof(UIDocument))]
     internal class UIToolkitMonitoringUIController : MonitoringUIController, IStyleProvider

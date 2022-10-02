@@ -1,8 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
-
-namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
+namespace Baracuda.Monitoring.UIToolkit
 {
     public interface IMonitoringUIElement
     {

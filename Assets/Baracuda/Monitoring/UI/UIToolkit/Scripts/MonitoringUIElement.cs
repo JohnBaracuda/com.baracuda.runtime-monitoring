@@ -1,7 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Attributes;
-using Baracuda.Monitoring.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +9,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
-namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
+namespace Baracuda.Monitoring.UIToolkit
 {
     public class MonitoringUIElement : Label, IMonitoringUIElement, IOrder
     {

@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Baracuda.Monitoring.UI.UIToolkit.Scripts
+namespace Baracuda.Monitoring.UIToolkit
 {
     internal interface IStyleProvider
     {

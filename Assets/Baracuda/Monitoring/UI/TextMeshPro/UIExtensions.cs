@@ -1,11 +1,10 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring;
 using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 
-namespace Baracuda.UI.TextMeshPro
+namespace Baracuda.Monitoring.TextMeshPro
 {
     internal static class UIExtensions
     {
