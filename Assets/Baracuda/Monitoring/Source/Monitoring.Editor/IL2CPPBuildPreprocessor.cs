@@ -830,7 +830,7 @@ namespace Baracuda.Monitoring.Editor
         private void AppendIfDefBegin(StringBuilder stringBuilder)
         {
             stringBuilder.Append('\n');
-            stringBuilder.Append("#if ENABLE_IL2CPP && !DISABLE_MONITORING || UNITY_EDITOR");
+            stringBuilder.Append("#if ENABLE_IL2CPP && !DISABLE_MONITORING");
             stringBuilder.Append('\n');
         }
 

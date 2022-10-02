@@ -6,23 +6,6 @@ using System.Collections.Generic;
 
 namespace Baracuda.Monitoring
 {
-    public interface IMonitoringRegistry
-    {
-        /*
-         * Target Object Registration
-         */
-
-        /// <summary>
-        /// Register an object that is monitored during runtime.
-        /// </summary>
-        void RegisterTarget<T>(T target) where T : class;
-
-        /// <summary>
-        /// Unregister an object that is monitored during runtime.
-        /// </summary>
-        void UnregisterTarget<T>(T target) where T : class;
-    }
-
     /// <summary>
     /// Delegate for profiling completed listener
     /// </summary>
@@ -31,7 +14,7 @@ namespace Baracuda.Monitoring
     /// <summary>
     /// Core interface for accessing Runtime Monitoring functionality.
     /// </summary>
-    public interface IMonitoringManager : IMonitoringSubsystem<IMonitoringManager>, IMonitoringRegistry
+    public interface IMonitoringManager : IMonitoringSubsystem<IMonitoringManager>
     {
         /// <summary>
         /// Value indicated whether or not monitoring profiling has completed and monitoring is fully initialized.
@@ -54,6 +37,20 @@ namespace Baracuda.Monitoring
         /// Event is called when a <see cref="IMonitorUnit"/> was disposed.
         /// </summary>
         event Action<IMonitorUnit> UnitDisposed;
+
+        /*
+         * Target Object Registration
+         */
+
+        /// <summary>
+        /// Register an object that is monitored during runtime.
+        /// </summary>
+        void RegisterTarget<T>(T target) where T : class;
+
+        /// <summary>
+        /// Unregister an object that is monitored during runtime.
+        /// </summary>
+        void UnregisterTarget<T>(T target) where T : class;
 
         /*
          * Getter
