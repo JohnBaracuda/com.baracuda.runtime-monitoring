@@ -1,19 +1,17 @@
 {
   "dependencies": {
-    "com.baracuda.runtimemonitoring": {
-      "version": "file:RuntimeMonitoring",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.[company-name].some-package": "1.0.0",
-        "com.[company-name].other-package": "2.0.0"
-      }
-    },
-    "com.unity.asset-store-tools": {
-      "version": "file:com.unity.asset-store-tools",
+    "com.baracuda.runtime-monitoring": {
+      "version": "file:com.baracuda.runtime-monitoring",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
+    },
+    "com.baracuda.thread-dispatcher": {
+      "version": "https://github.com/JohnBaracuda/com.baracuda.thread-dispatcher.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "9ccc79958d43064f26f0f7e67148ca7f4cd5ae15"
     },
     "com.unity.ext.nunit": {
       "version": "1.0.6",
