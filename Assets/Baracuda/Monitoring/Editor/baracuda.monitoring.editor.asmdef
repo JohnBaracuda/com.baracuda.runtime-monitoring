@@ -1,0 +1,17 @@
+{
+    "name": "baracuda.monitoring.editor",
+    "references": [
+        "GUID:ca92f98736a979747b5de3a34d731a59"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
