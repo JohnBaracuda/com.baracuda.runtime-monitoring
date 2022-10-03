@@ -1,9 +1,12 @@
 # Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-
-## [3.0.0]
+## [3.0.0] - 2022-10-03
 
 ### Changed
 - Changed the project strucute and layout to make it comply with UPM package conventions.
@@ -23,33 +26,33 @@
 - Removed .unitpackages for UI assets. The same assets can now be imported via the samples section in the package manager window.
 
 
-## [2.1.5]
+## [2.1.5] - 2022-09-24
 
 ### Fixed
 - Fixed some IL2CPP type generation issues caused by potentially inaccessbile type generations beeing generated.
 - Fixed some potential runtime exceptions caused by missing generic type checks.
 
 
-## [2.1.4]
+## [2.1.4] - 2022-08-20
 
 ### Fixed
 - Fixed ExecutionEngineException (missing AOT code) that occurred in IL2CPP builds for custom IList{T} value processors.
 - Improved value processor warning messages.
 
 
-## [2.1.3]
+## [2.1.3] - 2022-08-20
 
 ### Fixed
 - Fixed an IL2CPP build issue caused by a missing namespace.
 
 
-## [2.1.2]
+## [2.1.2] - 2022-08-16
 
 ### Changed
 - Refactored internal classes and removed unused code.
 
 
-## [2.1.1]
+## [2.1.1] - 2022-08-14
 
 ### Changed
 - Deprecated Assembly-Baracuda-Pooling.
@@ -66,7 +69,7 @@
 - Fixed an issue caused by unsafe code usage.
 
 
-## [2.1.0]
+## [2.1.0] - 2022-08-05
 
 ### Changed
 - Reworked the systems core structure. Systems are now managed and communicate using a Service Locator Pattern.
@@ -96,9 +99,3 @@
 - Fixed an issue that was caused when monitoring constant fields.
 - Fixed coditonal compilation using DISABLE_MONITORING
 - Fixed WebGL runtime issues caused by WebGL initialization order.
-
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).

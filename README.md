@@ -79,16 +79,18 @@ Threre are multiple options to chose from. If you like runtime monitoring, consi
    - open <kbd>Edit/Project Settings/Package Manager</kbd>
    - add a new Scoped Registry:    
    
-    • Name: OpenUPM 
-    • URL:  https://package.openupm.com/ 
+    • Name: OpenUPM
+    • URL:  https://package.openupm.com
     • Scope(s): com.baracuda
     
    - click <kbd>Save</kbd>
    - open <kbd>Window/Package Manager</kbd>
    - click <kbd>+</kbd>
    - click <kbd>Add package from git URL</kbd>
-   - paste `https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring.git`
-   - click <kbd>Add</kbd>
+   - paste and <kbd>Add</kbd>  `https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring.git`
+   - click <kbd>Add package by name...</kbd>
+   - paste and <kbd>Add</kbd>  `com.baracuda.runtime-monitoring`
+   - this will automatically install `com.baracuda.thread-dispatcher` as a dependecy
    - take a look at [Setup](#customized-setup) to see what comes next
 </details>
 
