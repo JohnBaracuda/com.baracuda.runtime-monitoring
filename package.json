@@ -23,7 +23,7 @@
     {
       "displayName": "Example Scene",
       "description": "Contains an example scene with a FPS controller.",
-      "path": "Samples~/Examples"
+      "path": "Samples~/Example"
     },
     {
       "displayName": "IMGUI",
