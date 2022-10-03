@@ -1,0 +1,24 @@
+{
+    "name": "baracuda.monitoring.textmeshpro",
+    "references": [
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:ca92f98736a979747b5de3a34d731a59"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "TEXTMESHPRO_PRESENT"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.textmeshpro",
+            "expression": "1.0.0",
+            "define": "TEXTMESHPRO_PRESENT"
+        }
+    ],
+    "noEngineReferences": false
+}

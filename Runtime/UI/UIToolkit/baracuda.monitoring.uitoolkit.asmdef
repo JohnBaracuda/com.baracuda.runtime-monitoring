@@ -1,0 +1,17 @@
+{
+    "name": "baracuda.monitoring.uitoolkit",
+    "references": [
+        "GUID:ca92f98736a979747b5de3a34d731a59"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_2021_1_OR_NEWER"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

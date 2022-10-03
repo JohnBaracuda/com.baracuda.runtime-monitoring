@@ -83,7 +83,7 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _bannedAssemblyPrefixes;
         private SerializedProperty _bannedAssemblyNames;
 
-        private SerializedProperty _scriptFileIL2CPP;
+        private SerializedProperty _typeDefinitionsForIL2CPP;
         private SerializedProperty _generateTypeDefinitionsOnBuild;
         private SerializedProperty _preprocessBuildCallbackOrder;
 
@@ -265,7 +265,12 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_generateTypeDefinitionsOnBuild);
                 if (_generateTypeDefinitionsOnBuild.boolValue)
                 {
-                    DrawRequired(_scriptFileIL2CPP);
+                    if (_typeDefinitionsForIL2CPP.objectReferenceValue == null)
+                    {
+                        EditorGUILayout.HelpBox("If you don't select a TextAsset as your IL2CPP type definition script file, a new .cs file is generated at\n" +
+                                                "Assets/Baracuda/IL2CPP when an IL2CPP build is triggered. This might change in future releases so be aware of old files.", MessageType.Warning);
+                    }
+                    EditorGUILayout.PropertyField(_typeDefinitionsForIL2CPP);
                     EditorGUILayout.PropertyField(_preprocessBuildCallbackOrder);
                     DrawGenerateAotTypesButton();
                 }

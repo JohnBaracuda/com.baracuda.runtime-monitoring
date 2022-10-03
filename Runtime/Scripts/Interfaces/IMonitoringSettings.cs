@@ -170,13 +170,13 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Reference to the .cs file that will be used to automatically create types for IL2CPP AOT generation, needed in IL2CPP runtime.
         /// </summary>
-        TextAsset ScriptFileIL2CPP { get; }
+        TextAsset TypeDefinitionsForIL2CPP { get; }
 
         /// <summary>
         /// When enabled, this object will listen to an IPreprocessBuildWithReport callback
         /// </summary>
         bool UseIPreprocessBuildWithReport { get; }
-        
+
         /// <summary>
         /// The IPreprocessBuildWithReport.callbackOrder of the AOT generation object.
         /// </summary>

@@ -144,9 +144,7 @@ namespace Baracuda.Monitoring.Editor
 
         private void OnPreprocessBuildInternal()
         {
-            var textFile = MonitoringSystems.Settings.ScriptFileIL2CPP;
-            var filePath = AssetDatabase.GetAssetPath(textFile);
-            Debug.Log($"[Monitoring] Generating Type Definitions for IL2CPP at:\n{filePath}");
+            Debug.Log($"[Monitoring] Generating Type Definitions for IL2CPP");
 
             for (var i = 0; i < assemblies.Length; i++)
             {
@@ -166,10 +164,10 @@ namespace Baracuda.Monitoring.Editor
 
             AppendStats(stringBuilder);
 
-            WriteContentToFile(filePath, stringBuilder);
+            WriteContentToFile(stringBuilder);
 
             Debug.Log($"[Monitoring] Completed Type Definitions for IL2CPP at with [{ExceptionBuffer.Count}] Exceptions!");
-            Debug.Log($"[Monitoring] {Stats}");
+            Debug.Log($"[Monitoring] {Stats.ToString(false)}");
 
             if (ExceptionBuffer.Any())
             {
@@ -187,17 +185,16 @@ namespace Baracuda.Monitoring.Editor
             new IL2CPPBuildPreprocessor().OnPreprocessBuildInternal();
         }
 
-        private void WriteContentToFile(string filePath, StringBuilder stringBuilder)
+        private void WriteContentToFile(StringBuilder stringBuilder)
         {
-            var directoryPath = Path.GetDirectoryName(filePath);
-            if (!string.IsNullOrWhiteSpace(directoryPath) && !Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
+            var textFile = MonitoringSystems.Settings.TypeDefinitionsForIL2CPP;
+            var filePath = textFile
+                ? AssetDatabase.GetAssetPath(textFile)
+                : Application.dataPath + "/Baracuda/IL2CPP/TYPE_DEFINITIONS_FOR_IL2CPP.cs";
 
-            var stream = new FileStream(filePath, FileMode.OpenOrCreate);
-            stream.Dispose();
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath) ?? string.Empty);
             File.WriteAllText(filePath, stringBuilder.ToString());
+            AssetDatabase.Refresh();
         }
 
         #endregion

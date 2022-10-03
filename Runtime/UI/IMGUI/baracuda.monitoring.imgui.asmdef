@@ -1,0 +1,15 @@
+{
+    "name": "baracuda.monitoring.imgui",
+    "references": [
+        "GUID:ca92f98736a979747b5de3a34d731a59"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

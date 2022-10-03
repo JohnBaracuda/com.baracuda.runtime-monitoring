@@ -3,7 +3,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Core.Systems
@@ -269,8 +268,11 @@ namespace Baracuda.Monitoring.Core.Systems
         [Tooltip("When enabled, this object will listen to an IPreprocessBuildWithReport callback")]
         [SerializeField] private bool generateTypeDefinitionsOnBuild = true;
 
-        [Tooltip("Reference to the .cs file that will be used to automatically create types for IL2CPP AOT generation, needed in IL2CPP runtime.")]
-        [SerializeField] private TextAsset scriptFileIL2CPP = null;
+        [Tooltip("Reference to the .cs file that will be used to automatically create type definitions for IL2CPP. This file should be located in Assembly-CSharp")]
+        [SerializeField] private TextAsset typeDefinitionsForIL2CPP = null;
+
+        [Tooltip("The relative file path in your Assets folder in which an IL2CPP file is generated if none is selected.")]
+        [SerializeField] private string fallbackFilePathForIL2CPP = "Script/Generated";
 
         [Tooltip("The IPreprocessBuildWithReport.callbackOrder of the AOT generation object.")]
         [SerializeField] private int preprocessBuildCallbackOrder = 0;
@@ -482,27 +484,7 @@ namespace Baracuda.Monitoring.Core.Systems
          */
 
         /// <inheritdoc />
-        public TextAsset ScriptFileIL2CPP => scriptFileIL2CPP
-            ? scriptFileIL2CPP
-            : CreateScriptFileIL2CPP();
-
-        private TextAsset CreateScriptFileIL2CPP()
-        {
-#if UNITY_EDITOR
-            try
-            {
-                var path = "Assets/Baracuda/Generated/TYPE_DEFINITIONS_FOR_IL2CPP.cs";
-                var textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
-                scriptFileIL2CPP = textAsset;
-                EditorUtility.SetDirty(this);
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-            }
-#endif
-            return scriptFileIL2CPP;
-        }
+        public TextAsset TypeDefinitionsForIL2CPP => typeDefinitionsForIL2CPP;
 
         /// <inheritdoc />
         public bool UseIPreprocessBuildWithReport => generateTypeDefinitionsOnBuild;

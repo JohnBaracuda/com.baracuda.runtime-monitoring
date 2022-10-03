@@ -234,7 +234,7 @@ namespace Baracuda.Monitoring.Dummy
         public Color MethodColor { get; } = Color.magenta;
         public string[] BannedAssemblyPrefixes { get; } = Array.Empty<string>();
         public string[] BannedAssemblyNames { get; } = Array.Empty<string>();
-        public TextAsset ScriptFileIL2CPP { get; } = default;
+        public TextAsset TypeDefinitionsForIL2CPP { get; } = default;
         public bool UseIPreprocessBuildWithReport { get; } = false;
         public bool ThrowOnTypeGenerationError { get; } = false;
         public int PreprocessBuildCallbackOrder { get; } = 0;
