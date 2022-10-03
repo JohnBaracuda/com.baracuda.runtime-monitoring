@@ -27,18 +27,18 @@
     },
     {
       "displayName": "IMGUI",
-      "description": "Contains assets to base monitoring display on IMGUI.",
-      "path": "Samples~/IMGUI"
+      "description": "Import IMGUI based UI Assets.",
+      "path": "Samples~/IMGUI Assets"
     },
     {
       "displayName": "Text Mesh Pro",
-      "description": "Contains assets to base monitoring display on Text Mesh Pro.",
-      "path": "Samples~/TextMeshPro"
+      "description": "Import TextMeshPro based UI Assets.",
+      "path": "Samples~/TextMeshPro Assets"
     },
     {
       "displayName": "UI Toolkit",
-      "description": "Contains assets to base monitoring display on UI Toolkit.",
-      "path": "Samples~/UIToolkit"
+      "description": "Import UIToolkit based UI Assets.",
+      "path": "Samples~/UIToolkit Assets"
     }
   ],
   "author": {
