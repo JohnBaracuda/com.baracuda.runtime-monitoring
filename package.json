@@ -17,7 +17,7 @@
     "helper"
   ],
   "dependencies": {
-    "com.baracuda.thread-dispatcher": "https://github.com/JohnBaracuda/com.baracuda.thread-dispatcher.git"
+    "com.baracuda.thread-dispatcher": "4.0.0"
   },
   "samples": [
     {
