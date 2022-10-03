@@ -3,11 +3,32 @@
 ## [Unreleased]
 
 
+## [3.0.0]
+
+### Changed
+- Changed the project strucute and layout to make it comply with UPM package conventions.
+- Restructured the repository to make it compatible with UPM.
+- Reworked IL2CPP type defintion generation.
+
+### Added
+- Static struct member can now be monitored.
+- Added multiple assemblies to be ignored during profiling by default. (List is part of the settings file)
+- Added package manager dependencies for com.baracuda.thread-dispatcher
+
+### Fixed
+- Fixed an IL2CPP type defintion issue caused by missing support for generic monitored types. 
+
+### Removed
+- Removed obsolete scripts, API and assemblies. 
+- Removed .unitpackages for UI assets. The same assets can now be imported via the samples section in the package manager window.
+
+
 ## [2.1.5]
 
-### ### Fixed
-Fixed some IL2CPP type generation issues caused by potentially inaccessbile type generations beeing generated.
-Fixed some potential runtime exceptions caused by missing generic type checks.
+### Fixed
+- Fixed some IL2CPP type generation issues caused by potentially inaccessbile type generations beeing generated.
+- Fixed some potential runtime exceptions caused by missing generic type checks.
+
 
 ## [2.1.4]
 
@@ -15,15 +36,18 @@ Fixed some potential runtime exceptions caused by missing generic type checks.
 - Fixed ExecutionEngineException (missing AOT code) that occurred in IL2CPP builds for custom IList{T} value processors.
 - Improved value processor warning messages.
 
+
 ## [2.1.3]
 
 ### Fixed
 - Fixed an IL2CPP build issue caused by a missing namespace.
 
+
 ## [2.1.2]
 
 ### Changed
 - Refactored internal classes and removed unused code.
+
 
 ## [2.1.1]
 
@@ -40,6 +64,7 @@ Fixed some potential runtime exceptions caused by missing generic type checks.
 ### Fixed
 - Fixed the scale of some TMP UI elements
 - Fixed an issue caused by unsafe code usage.
+
 
 ## [2.1.0]
 

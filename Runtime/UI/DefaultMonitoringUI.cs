@@ -26,7 +26,7 @@ namespace Baracuda.Monitoring.UI
             };
             UnityEditor.EditorGUILayout.LabelField(TEXT, style);
             UnityEditor.EditorGUILayout.Space();
-            GUI.enabled = !Event.current.control;
+            GUI.enabled = Event.current.control;
             base.OnInspectorGUI();
             GUI.enabled = true;
         }
