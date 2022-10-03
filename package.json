@@ -26,19 +26,19 @@
       "path": "Samples~/Example"
     },
     {
-      "displayName": "IMGUI",
+      "displayName": "IMGUI Resources",
       "description": "Import IMGUI based UI Assets.",
-      "path": "Samples~/IMGUI Assets"
+      "path": "Samples~/IMGUI"
     },
     {
-      "displayName": "Text Mesh Pro",
+      "displayName": "Text Mesh Pro Resources",
       "description": "Import TextMeshPro based UI Assets.",
-      "path": "Samples~/TextMeshPro Assets"
+      "path": "Samples~/TextMeshPro"
     },
     {
-      "displayName": "UI Toolkit",
+      "displayName": "UI Toolkit Resources",
       "description": "Import UIToolkit based UI Assets.",
-      "path": "Samples~/UIToolkit Assets"
+      "path": "Samples~/UIToolkit"
     }
   ],
   "author": {
