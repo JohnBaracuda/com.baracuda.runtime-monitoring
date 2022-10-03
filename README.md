@@ -1,11 +1,10 @@
-## ⚠️ ATTENTION: Threre are some Issues on main that need to be addressed before it is considered stable again. Please only use Version **2.1.5** and switch to the "Stable" branch when using Runtime Monitoring.
-
 
 Runtime Monitoring
 ===
-> Note ⚠️ When updating **Major** versions of Runtime Monitoring, don't forget to remove the old version from the project before importing the new one! :)
-
 Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property, event or method and get its value or state displayed automatically in a customizable and extendable UI.
+#### ⚠️ Attention!
+> Runtime Monitoring has recently undergone some **Major** structural changes. Therefore parts of this documentation may not be up to date. Please be aware of this and stay tuned for updates. Also, don't forget to remove old versions from your project if you're updating Runtime Monitoring! :)
+
 
 &nbsp;
 
@@ -18,9 +17,10 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 &nbsp;
 ## Table of Contents
 
-- [Getting started](#getting-started)
- 	- [Import & Update](#import-and-update)
-	- [Setup](#setup)
+- [Basics](#getting-started)
+ 	- [Installation & Updates](#installation-and-updates)
+	- [Getting Started](#getting-started)
+	- [Customized Setup](#customized-setup)
 	- [License](#license)
 	- [Technical Information](#technical-information)
 	- [Feature List](#features)
@@ -54,6 +54,50 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 
 
 
+&nbsp;
+## Installation and Updates
+
+#### ⚠️ Important for version updates!
+> Don't forget to remove the old version from the project before importing the new one when updating Runtime Monitoring! This is especially important when updating to version 3.0.0.
+
+Threre are multiple options to chose from. If you like runtime monitoring, consider leaving a good review on the Asset Store regardless of which installation method you chose.
+
+<details>
+    <summary>Option 1. Install via Git URL (recommended)</summary>
+
+   - open <kbd>Window/Package Manager</kbd>
+   - click <kbd>+</kbd>
+   - click <kbd>Add package from git URL</kbd>
+   - paste and <kbd>Add</kbd> `https://github.com/JohnBaracuda/com.baracuda.thread-dispatcher.git` (dependency)
+   - paste and <kbd>Add</kbd> `https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring.git`
+   - take a look at [Setup](#customized-setup) to see what comes next
+   </details>
+
+<details>
+    <summary>Option 2. Install via Open UPM (coming soon)</summary>
+   
+   - open <kbd>Edit/Project Settings/Package Manager</kbd>
+   - add a new Scoped Registry:    
+   
+    • Name: OpenUPM 
+    • URL:  https://package.openupm.com/ 
+    • Scope(s): com.baracuda
+    
+   - click <kbd>Save</kbd>
+   - open <kbd>Window/Package Manager</kbd>
+   - click <kbd>+</kbd>
+   - click <kbd>Add package from git URL</kbd>
+   - paste `https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring.git`
+   - click <kbd>Add</kbd>
+   - take a look at [Setup](#customized-setup) to see what comes next
+</details>
+
+Option 3. Get Runtime Monitoring from the [Asset Store](https://u3d.as/2QxJ)
+
+Option 4. Download a <kbd>.unitypackage</kbd> from [Releases](https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring/releases)
+
+
+
 
 &nbsp;
 # Getting Started
@@ -76,8 +120,7 @@ public event Action OnHealthChanged;
 
 ```
 
-#### ⚠️ Important!
->  When monitoring instance (non static) member, objects of these classes must be registered when they are created and unregistered when they are destroyed. [Learn More](#instanced-and-static-member)
+> ⚠️ When monitoring instance (non static) member, objects of these classes must be registered when they are created and unregistered when they are destroyed. [Learn More](#instanced-and-static-member)
 
 ```c#
 
@@ -159,20 +202,12 @@ public bool TryGetPlayer(int playerId, out var player)
 
 
 
-&nbsp;
-## Import and Update
-
-Import this asset into your project as a .unitypackage available at [Runtime-Monitoring/releases](https://github.com/JohnBaracuda/Runtime-Monitoring/releases) or clone this repository and use it directly. You can also download this asset from the [Asset Store!](https://u3d.as/2QxJ). Take a look at [Setup](#setup) instructions for more information how to import optional packages. (spoiler: via the settings window)
-
-#### ⚠️ Important for version updates!
->  When updating from an older version of this tool it is recommended to perform a clean update. Delete the Baracuda folder and import this asset again. Be aware that this may temporarily cause compile errors. To maintain compatibility when upgrading from an older version multiple files are contained in a special assembly named Assembly-Baracuda-Obsolete. This assembly and all of its contents can be deleted after a successful import. Obsolete files are located at (Baracuda/Monitoring/Internal) & (Baracuda/Monitoring/Interface)
-
-
-
 
 
 &nbsp;
-## Setup
+## Customized Setup
+> Note that since version 3.0.0, Runtime Monitoring is a UPM package and therefore immutable. Use the samples section in the package manager window to import UI resorces for IMGUI, TextMeshPro and UIToolkit. Parts of this documentation will be updated soon.
+
 Download and import Runtime Monitoring. To setup a different UI Controller (IMGUI, TMP or UIToolkit) follow these optional steps:
 + Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
 + Depending on the Unity version and your preferences, import and optional UIController package.
@@ -182,8 +217,6 @@ Download and import Runtime Monitoring. To setup a different UI Controller (IMGU
 &nbsp;
 
 ![basic example](https://johnbaracuda.com/media/img/monitoring/Example_06.png)
-
-
 
 
 
@@ -1254,7 +1287,7 @@ Assembly-Baracuda-Reflection                 | Baracuda/Reflection              
 &nbsp;
 ### What is Thread Dispatcher?
 
-Thread Dispatcher is another free & open source tool I developed to to pass the execution of a Delegate, Coroutine or Task from a background thread to the main thread, and await its completion or result on the calling thread as needed. Runtime Monitoring optionally uses a background thread for initial assembly profiling & setup processes. You can find more information about it on its [GitHub Repository](https://github.com/JohnBaracuda/Thread-Dispatcher),  its [Documentation](https://johnbaracuda.com/dispatcher.html) and its page on the [Asset Store](https://assetstore.unity.com/packages/slug/202421). I would also appreciate if you would leave a ❤️ or a ⭐on its page because it is also something I spent a lot of time working on.
+Thread Dispatcher is another free & open source tool I developed to to pass the execution of a Delegate, Coroutine or Task from a background thread to the main thread, and await its completion or result on the calling thread as needed. Runtime Monitoring optionally uses a background thread for initial assembly profiling & setup processes. You can find more information about it on its [GitHub Repository](https://github.com/JohnBaracuda/com.baracuda.thread-dispatcher),  its [Documentation](https://johnbaracuda.com/dispatcher.html) and its page on the [Asset Store](https://assetstore.unity.com/packages/slug/202421). I would also appreciate if you would leave a ❤️ or a ⭐on its page because it is also something I spent a lot of time working on.
 
 
 
