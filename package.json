@@ -16,6 +16,9 @@
     "utility",
     "helper"
   ],
+  "dependencies": {
+    "com.baracuda.thread-dispatcher": "4.0.0"
+  },
   "samples": [
     {
       "displayName": "Example Scene",
