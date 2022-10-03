@@ -69,8 +69,6 @@ namespace Baracuda.Monitoring.Editor
         private readonly string typeDefEnumerable = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefEnumerable)}";
         private readonly string typeDefList = $"{typeof(IL2CPPTypeDefinitions).FullName}.{nameof(IL2CPPTypeDefinitions.TypeDefList)}";
 
-        private readonly bool throwExceptions = false;
-
         private readonly UnityEditor.Compilation.Assembly[] unityAssemblies;
 
         private List<Exception> ExceptionBuffer { get; } = new List<Exception>();
@@ -142,7 +140,6 @@ namespace Baracuda.Monitoring.Editor
         {
             unityAssemblies = CompilationPipeline.GetAssemblies();
             assemblies = GetFilteredAssemblies();
-            throwExceptions = MonitoringSystems.Settings.ThrowOnTypeGenerationError;
         }
 
         private void OnPreprocessBuildInternal()
@@ -171,12 +168,17 @@ namespace Baracuda.Monitoring.Editor
 
             WriteContentToFile(filePath, stringBuilder);
 
-            Debug.Log($"[Monitoring] Completed Type Definitions for IL2CPP at:\n{filePath}");
+            Debug.Log($"[Monitoring] Completed Type Definitions for IL2CPP at with [{ExceptionBuffer.Count}] Exceptions!");
             Debug.Log($"[Monitoring] {Stats}");
 
-            foreach (var exception in ExceptionBuffer)
+            if (ExceptionBuffer.Any())
             {
-                Debug.LogException(exception);
+                foreach (var exception in ExceptionBuffer)
+                {
+                    Debug.LogException(exception);
+                }
+
+                throw new OperationCanceledException("Cancel Build Process");
             }
         }
 
@@ -373,10 +375,6 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (throwExceptions)
-                {
-                    throw;
-                }
                 ExceptionBuffer.Add(exception);
             }
         }
@@ -425,10 +423,6 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (throwExceptions)
-                {
-                    throw;
-                }
                 ExceptionBuffer.Add(exception);
             }
         }
@@ -478,10 +472,6 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (throwExceptions)
-                {
-                    throw;
-                }
                 ExceptionBuffer.Add(exception);
             }
         }
@@ -527,10 +517,6 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (throwExceptions)
-                {
-                    throw;
-                }
                 ExceptionBuffer.Add(exception);
             }
 
@@ -602,10 +588,6 @@ namespace Baracuda.Monitoring.Editor
             }
             catch (Exception exception)
             {
-                if (throwExceptions)
-                {
-                    throw;
-                }
                 ExceptionBuffer.Add(exception);
             }
         }

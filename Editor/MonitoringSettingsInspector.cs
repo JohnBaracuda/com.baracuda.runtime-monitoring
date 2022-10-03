@@ -84,8 +84,7 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _bannedAssemblyNames;
 
         private SerializedProperty _scriptFileIL2CPP;
-        private SerializedProperty _useIPreprocessBuildWithReport;
-        private SerializedProperty _throwOnTypeGenerationError;
+        private SerializedProperty _generateTypeDefinitionsOnBuild;
         private SerializedProperty _preprocessBuildCallbackOrder;
 
         #endregion
@@ -195,11 +194,6 @@ namespace Baracuda.Monitoring.Editor
                 DrawUIController();
             }
 
-            if (Foldout["Optional Packages"])
-            {
-                DrawAdditionalPackages();
-            }
-
             if (Foldout["Filtering"])
             {
                 EditorGUILayout.Space();
@@ -220,7 +214,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.Space();
             }
 
-            if (Foldout["Formatting"])
+            if (Foldout["Format & Style"])
             {
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_addClassName);
@@ -228,12 +222,6 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.PropertyField(_humanizeNames);
                 EditorGUILayout.PropertyField(_enableRichText);
                 EditorGUILayout.PropertyField(_variablePrefixes);
-                EditorGUILayout.Space();
-            }
-
-            if (Foldout["Color"])
-            {
-                EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_trueColor);
                 EditorGUILayout.PropertyField(_falseColor);
                 EditorGUILayout.PropertyField(_xColor);
@@ -274,11 +262,13 @@ namespace Baracuda.Monitoring.Editor
             if (Foldout["IL2CPP Settings"])
             {
                 EditorGUILayout.Space();
-                DrawRequired(_scriptFileIL2CPP);
-                EditorGUILayout.PropertyField(_useIPreprocessBuildWithReport);
-                EditorGUILayout.PropertyField(_throwOnTypeGenerationError);
-                EditorGUILayout.PropertyField(_preprocessBuildCallbackOrder);
-                DrawGenerateAotTypesButton();
+                EditorGUILayout.PropertyField(_generateTypeDefinitionsOnBuild);
+                if (_generateTypeDefinitionsOnBuild.boolValue)
+                {
+                    DrawRequired(_scriptFileIL2CPP);
+                    EditorGUILayout.PropertyField(_preprocessBuildCallbackOrder);
+                    DrawGenerateAotTypesButton();
+                }
                 EditorGUILayout.Space();
             }
 
@@ -465,128 +455,6 @@ namespace Baracuda.Monitoring.Editor
                 {
                     _availableUIController.Add(controller);
                 }
-            }
-        }
-
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Package GUI ---
-
-        private readonly GUIContent _showPackage =
-            new GUIContent("Show Package", "Open and select the package in the project window");
-
-        private readonly GUIContent _importPackage =
-            new GUIContent("Import Package", "Import the package into your project. This will open an import dialogue.");
-
-        private void DrawAdditionalPackages()
-        {
-            EditorGUILayout.Space();
-            const int HORIZONTAL_THRESHOLD = 700;
-            var currentViewWidth = EditorGUIUtility.currentViewWidth - 20;
-            var makeHorizontal = currentViewWidth > HORIZONTAL_THRESHOLD;
-            var verticalWidth = makeHorizontal ? currentViewWidth / 3 : currentViewWidth;
-
-            if (makeHorizontal)
-            {
-                GUILayout.BeginHorizontal();
-            }
-
-            // IMGUI
-            GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"), GUILayout.MaxWidth(verticalWidth));
-            GUILayout.Label("IMGUI Package (default)", InspectorUtilities.TitleStyle());
-
-            if (GUILayout.Button(_showPackage))
-            {
-                MoveToPackagePath("RuntimeMonitoring_IMGUI");
-            }
-            if (GUILayout.Button(_importPackage))
-            {
-                ImportPackage("RuntimeMonitoring_IMGUI");
-            }
-
-            EditorGUILayout.Space();
-            GUILayout.EndVertical();
-
-            // uGUI TextMeshPro
-            EditorGUILayout.Space();
-            GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"), GUILayout.MaxWidth(verticalWidth));
-            GUILayout.Label("TextMeshPro Package", InspectorUtilities.TitleStyle());
-
-            if (GUILayout.Button(_showPackage))
-            {
-                MoveToPackagePath("RuntimeMonitoring_TextMeshPro");
-            }
-            if (GUILayout.Button(_importPackage))
-            {
-                ImportPackage("RuntimeMonitoring_TextMeshPro");
-            }
-
-            EditorGUILayout.Space();
-            GUILayout.EndVertical();
-
-            // UIToolkit
-            EditorGUILayout.Space();
-            GUILayout.BeginVertical(GUI.skin.GetStyle("HelpBox"), GUILayout.MaxWidth(verticalWidth));
-            GUILayout.Label("UIToolkit (Unity 2021.1 Or Higher)", InspectorUtilities.TitleStyle());
-
-            if (GUILayout.Button(_showPackage))
-            {
-                MoveToPackagePath("RuntimeMonitoring_UIToolkit");
-            }
-
-            if (GUILayout.Button(_importPackage))
-            {
-                ImportPackage("RuntimeMonitoring_UIToolkit");
-            }
-            EditorGUILayout.Space();
-            GUILayout.EndVertical();
-
-            if (makeHorizontal)
-            {
-                GUILayout.EndHorizontal();
-            }
-            EditorGUILayout.Space();
-        }
-
-        #endregion
-
-        #region --- Package Installation ---
-
-        private static string GetPackagePath(string packageName)
-        {
-            var assets = AssetDatabase.FindAssets(packageName);
-            var assetGuid = assets.FirstOrDefault();
-            var assetPath = AssetDatabase.GUIDToAssetPath(assetGuid);
-            return assetPath;
-        }
-
-        private static void MoveToPackagePath(string packageName)
-        {
-            var assetPath = GetPackagePath(packageName);
-            var asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
-            if (asset != null)
-            {
-                Selection.activeObject = asset;
-                EditorGUIUtility.PingObject(asset);
-            }
-            else
-            {
-                Debug.LogError($"Operation failed! <b>{packageName}.unitypackage</b> was not found! Did you delete or exclude this file on import?");
-            }
-        }
-
-        private static void ImportPackage(string packageName)
-        {
-            var assetPath = GetPackagePath(packageName);
-            if (!string.IsNullOrWhiteSpace(assetPath))
-            {
-                AssetDatabase.ImportPackage(assetPath, true);
-            }
-            else
-            {
-                Debug.LogError($"Import failed! <b>{packageName}.unitypackage</b> was not found! Did you delete or exclude this file on import?");
             }
         }
 
