@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2022-10-04
+
+### Fixed
+- Fixed a versioning issue with Open UPM
+
 ## [3.0.0] - 2022-10-03
 
 ### Changed
