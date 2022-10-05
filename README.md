@@ -4,6 +4,8 @@ Runtime Monitoring
 Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property, event or method and get its value or state displayed automatically in a customizable and extendable UI.
 
 [![openupm](https://img.shields.io/npm/v/com.baracuda.runtime-monitoring?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.baracuda.runtime-monitoring/)
+![Release](https://img.shields.io/github/v/release/johnBaracuda/com.baracuda.runtime-monitoring?sort=semver)
+![Last Commit](https://img.shields.io/github/last-commit/johnBaracuda/com.baracuda.runtime-monitoring)
 
 #### ⚠️ Attention!
 > Runtime Monitoring has recently undergone some **Major** structural changes. Therefore parts of this documentation may not be up to date. Please be aware of this and stay tuned for updates. Also, don't forget to remove old versions from your project if you're updating Runtime Monitoring! :)
