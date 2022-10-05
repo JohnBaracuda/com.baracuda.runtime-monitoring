@@ -2,17 +2,11 @@
 Runtime Monitoring
 ===
 Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property, event or method and get its value or state displayed automatically in a customizable and extendable UI.
+
+[![openupm](https://img.shields.io/npm/v/com.baracuda.runtime-monitoring?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.baracuda.runtime-monitoring/)
+
 #### ⚠️ Attention!
 > Runtime Monitoring has recently undergone some **Major** structural changes. Therefore parts of this documentation may not be up to date. Please be aware of this and stay tuned for updates. Also, don't forget to remove old versions from your project if you're updating Runtime Monitoring! :)
-
-
-&nbsp;
-
-# Also available on the [Asset Store!](https://u3d.as/2QxJ)
-
-&nbsp;
-
-[![YouTube Preview](https://johnBaracuda.com/media/img/monitoring/Thumbnail.png)](https://www.youtube.com/watch?v=Ir4KPjykYUM)
 
 &nbsp;
 ## Table of Contents
@@ -60,25 +54,12 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 #### ⚠️ Important for version updates!
 > Don't forget to remove the old version from the project before importing the new one when updating Runtime Monitoring! This is especially important when updating to version 3.0.0.
 
-Threre are multiple options to chose from. If you like runtime monitoring, consider leaving a good review on the Asset Store regardless of which installation method you chose.
 
-<details>
-    <summary>Option 1. Install via Git URL (recommended)</summary>
+### Option 1. **Install via Open UPM (recommended)** [![openupm](https://img.shields.io/npm/v/com.baracuda.runtime-monitoring?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.baracuda.runtime-monitoring/)
 
-   - open <kbd>Window/Package Manager</kbd>
-   - click <kbd>+</kbd>
-   - click <kbd>Add package from git URL</kbd>
-   - paste and <kbd>Add</kbd> `https://github.com/JohnBaracuda/com.baracuda.thread-dispatcher.git` (dependency)
-   - paste and <kbd>Add</kbd> `https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring.git`
-   - take a look at [Setup](#customized-setup) to see what comes next
-   </details>
-
-<details>
-    <summary>Option 2. Install via Open UPM (coming soon)</summary>
-   
    - open <kbd>Edit/Project Settings/Package Manager</kbd>
    - add a new Scoped Registry:    
-   
+        
     • Name: OpenUPM
     • URL:  https://package.openupm.com
     • Scope(s): com.baracuda
@@ -86,19 +67,36 @@ Threre are multiple options to chose from. If you like runtime monitoring, consi
    - click <kbd>Save</kbd>
    - open <kbd>Window/Package Manager</kbd>
    - click <kbd>+</kbd>
-   - click <kbd>Add package from git URL</kbd>
-   - paste and <kbd>Add</kbd>  `https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring.git`
    - click <kbd>Add package by name...</kbd>
    - paste and <kbd>Add</kbd>  `com.baracuda.runtime-monitoring`
    - this will automatically install `com.baracuda.thread-dispatcher` as a dependecy
    - take a look at [Setup](#customized-setup) to see what comes next
+
+&nbsp;
+
+> If you like runtime monitoring, consider leaving a good review on the Asset Store regardless of which installation method you chose.
+
+#### Option 2. Install via Git URL
+
+<details>
+    <summary>How to install via Git URL </summary>
+
+   - open <kbd>Window/Package Manager</kbd>
+   - click <kbd>+</kbd>
+   - click <kbd>Add package from git URL</kbd>
+   - paste and <kbd>Add</kbd> `https://github.com/JohnBaracuda/com.baracuda.thread-dispatcher.git` (dependency)
+   - paste and <kbd>Add</kbd> `https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring.git`
+   - take a look at [Setup](#customized-setup) to see what comes next
 </details>
 
-Option 3. Get Runtime Monitoring from the [Asset Store](https://u3d.as/2QxJ)
-
-Option 4. Download a <kbd>.unitypackage</kbd> from [Releases](https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring/releases)
+#### Option 3. Get Runtime Monitoring from the [Asset Store](https://u3d.as/2QxJ)
 
 
+#### Option 4. Download a <kbd>.unitypackage</kbd> from [Releases](https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring/releases)
+
+&nbsp;
+
+[![YouTube Preview](https://johnBaracuda.com/media/img/monitoring/Thumbnail.png)](https://www.youtube.com/watch?v=Ir4KPjykYUM)
 
 
 &nbsp;
@@ -229,13 +227,12 @@ Download and import Runtime Monitoring. To setup a different UI Controller (IMGU
 
 
 
-
 &nbsp;
 ## Technical Information
 + Unity Version: <b>2019.4</b> (for UIToolkit <b>2020.1</b>) <br/> 
 + Scripting Backend: <b>Mono & IL2CPP</b>
 + API Compatibility: <b>.NET Standard 2.0 or .NET 4.x</b>
-+ Asset Version: <b>2.0.1</b>
++ Asset Version: [![openupm](https://img.shields.io/npm/v/com.baracuda.runtime-monitoring?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.baracuda.runtime-monitoring/)
 
 
 
