@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed NullReferenceExceptions caused by missing dummy systems when disabling runtime monitoring.
+- Fixed an issue with missing namespaces in newer Unity versions.
 
 ## [3.0.1] - 2022-10-04
 

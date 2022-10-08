@@ -3,6 +3,7 @@
 using Baracuda.Monitoring.Utilities.Pooling;
 using System;
 using System.Runtime.CompilerServices;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 #if UNITY_2020_1_OR_NEWER
 #endif
@@ -19,6 +20,7 @@ namespace Baracuda.Monitoring.Types
         {
 #if UNITY_2020_1_OR_NEWER
             return UnsafeUtility.As<TFrom, TTo>(ref value);
+
 #else
             return (TTo)(object)value;
 #endif
@@ -32,7 +34,7 @@ namespace Baracuda.Monitoring.Types
         {
             try
             {
-                result = (TTo)Convert.ChangeType(value, typeof(TTo));
+                result = (TTo) Convert.ChangeType(value, typeof(TTo));
                 return true;
             }
             catch (Exception)

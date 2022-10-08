@@ -7,9 +7,9 @@ using UnityEngine.UIElements;
 namespace Baracuda.Monitoring.UIToolkit
 {
     [RequireComponent(typeof(UIDocument))]
-    internal class UIToolkitMonitoringUIController : MonitoringUIController, IStyleProvider
+    internal class UIToolkitMonitoringUIController : MonitoringUI, IStyleProvider
     {
-        #region --- Inspector ---
+        #region Inspector
 
         [Header("Font")]
         [SerializeField] private Font defaultFont;
@@ -28,7 +28,7 @@ namespace Baracuda.Monitoring.UIToolkit
 
         #endregion
 
-        #region --- Properties ---
+        #region Properties
 
         public string[] InstanceUnitStyles => _instanceUnitStyles ??= instanceUnitStyles.Split(' ');
         public string[] InstanceGroupStyles => _instanceGroupStyles ??= instanceGroupStyles.Split(' ');
@@ -46,7 +46,7 @@ namespace Baracuda.Monitoring.UIToolkit
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Fields ---
+        #region Fields
 
 
         private readonly Dictionary<int, Font> _loadedFonts = new Dictionary<int, Font>();
@@ -70,7 +70,7 @@ namespace Baracuda.Monitoring.UIToolkit
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Setup ---
+        #region Setup
 
         protected override void Awake()
         {
@@ -103,37 +103,42 @@ namespace Baracuda.Monitoring.UIToolkit
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Open Close ---
+        #region Visiblility
 
-        public override bool IsVisible() => _isVisible;
-
-        public override void ShowMonitoringUI()
+        /// <summary>
+        /// The visible state of the UI.
+        /// </summary>
+        public override bool Visible
         {
-            _isVisible = true;
-            _uiDocument.rootVisualElement.SetEnabled(true);
-            _uiDocument.rootVisualElement.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
+            get => _isVisible;
+            set
+            {
+                _isVisible = value;
+                _uiDocument.rootVisualElement.SetEnabled(value);
+                _uiDocument.rootVisualElement.style.display = value
+                    ? new StyleEnum<DisplayStyle>(DisplayStyle.Flex)
+                    : new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            }
         }
-
-        public override void HideMonitoringUI()
-        {
-            _isVisible = false;
-            _uiDocument.rootVisualElement.SetEnabled(false);
-            _uiDocument.rootVisualElement.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
-        }
-
 
         #endregion
 
-        #region --- Ui Element Instantiation ---
+        #region Ui Element Instantiation
 
-        public override void OnUnitCreated(IMonitorUnit monitorUnit)
+        /// <summary>
+        /// Use to add UI elements for the passed unit.
+        /// </summary>
+        protected override void OnMonitorUnitCreated(IMonitorUnit unit)
         {
-            _monitorUnitDisplays.Add(monitorUnit, new MonitoringUIElement(_frame, monitorUnit, this));
+            _monitorUnitDisplays.Add(unit, new MonitoringUIElement(_frame, unit, this));
         }
 
-        public override void OnUnitDisposed(IMonitorUnit monitorUnit)
+        /// <summary>
+        /// Use to remove UI elements for the passed unit.
+        /// </summary>
+        protected override void OnMonitorUnitDisposed(IMonitorUnit unit)
         {
-            _monitorUnitDisplays.Remove(monitorUnit);
+            _monitorUnitDisplays.Remove(unit);
         }
 
         #endregion
