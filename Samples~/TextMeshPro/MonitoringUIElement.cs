@@ -3,6 +3,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 namespace Baracuda.Monitoring.TextMeshPro
@@ -14,7 +15,7 @@ namespace Baracuda.Monitoring.TextMeshPro
         [SerializeField] private TMP_Text tmpText;
         [SerializeField] private Image backgroundImage;
         [SerializeField] private Canvas backgroundCanvas;
-        
+
         private Action<string> _update;
         private Action<bool> _toggle;
         private IMonitorUnit _monitorUnit;
@@ -27,21 +28,25 @@ namespace Baracuda.Monitoring.TextMeshPro
 
         private void Awake()
         {
+            transform.localScale = Vector3.one;
             _toggle = gameObject.SetActive;
             _update = str => tmpText.text = str;
             _sortingOrder = backgroundCanvas.sortingOrder;
         }
-        
+
         public void Setup(IMonitorUnit monitorUnit)
         {
-            var controller = MonitoringSystems.Resolve<IMonitoringUI>().GetActiveUIController<TMPMonitoringUIController>();
+            var controller = MonitoringSystems.UI.GetCurrent<TMPMonitoringUI>();
+
+            Assert.IsNotNull(controller);
+
             _monitorUnit = monitorUnit;
             var format = monitorUnit.Profile.FormatData;
-            
+
             tmpText.font = format.FontHash != 0
                 ? controller.GetFontAsset(format.FontHash)
                 : controller.GetDefaultFontAsset();
-            
+
             if (format.BackgroundColor.HasValue)
             {
                 backgroundImage.color = format.BackgroundColor.Value;
@@ -58,7 +63,7 @@ namespace Baracuda.Monitoring.TextMeshPro
             tmpText.richText = format.RichTextEnabled;
             tmpText.alignment = format.TextAlign.ToTextAlignmentOptions();
             _order = format.Order;
-            
+
             monitorUnit.ValueUpdated += _update;
             monitorUnit.ActiveStateChanged += _toggle;
             _update(monitorUnit.GetState());

@@ -41,7 +41,7 @@ namespace Baracuda.Example.Scripts
 
         #endregion
 
-        #region Setup ---
+        #region --- Setup ---
 
         private void Start()
         {
@@ -79,7 +79,7 @@ namespace Baracuda.Example.Scripts
 
         #endregion
 
-        #region Damage Handling ---
+        #region --- Damage Handling ---
 
         public void TakeDamage(float damage)
         {

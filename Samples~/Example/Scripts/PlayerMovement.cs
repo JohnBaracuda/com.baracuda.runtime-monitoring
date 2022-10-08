@@ -10,7 +10,7 @@ namespace Baracuda.Example.Scripts
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : MonitoredBehaviour
     {
-        #region --- Inspector ---
+        #region Inspector ---
 
         [Header("Movement Settings")]
         [SerializeField] private float movementSpeed = 16.5f;

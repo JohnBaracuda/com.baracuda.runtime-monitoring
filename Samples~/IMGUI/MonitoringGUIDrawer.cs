@@ -13,50 +13,11 @@ namespace Baracuda.Monitoring.IMGUI
     /// This class is showing the base for a GUI based monitoring UI Controller.
     /// I recommend using either the TextMesh Pro based uGUI solution or the UIToolkit solution instead.
     /// </summary>
-    public class MonitoringGUIDrawer : MonitoringUIController
+    public class MonitoringGUIDrawer : MonitoringUI
     {
-        #region --- Inspector ---
-#pragma warning disable
+        #region Type Definitions
 
-        [Header("Element & Window Spacing")]
-        [SerializeField] private float elementSpacing = 2f;
-        [SerializeField] private MarginOrPadding windowMargin;
-        [SerializeField] private MarginOrPadding elementPadding;
-
-        [Header("Scaling")]
-        [SerializeField] private bool customScale = true;
-        [SerializeField] [Range(0, 10)] private float scale = 1;
-
-        [Header("Coloring")]
-        [SerializeField] private Color backgroundColor = Color.black;
-
-        [Header("FontName")]
-        [SerializeField] private Font defaultFont;
-        [SerializeField] private Font[] availableFonts;
-
-#pragma warning restore
-        #endregion
-
-        #region --- Fields, Properties & Nested Types ---
-
-        private readonly List<GUIElement> _unitsUpperLeft = new List<GUIElement>(100);
-        private readonly List<GUIElement> _unitsUpperRight = new List<GUIElement>(100);
-        private readonly List<GUIElement> _unitsLowerLeft = new List<GUIElement>(100);
-        private readonly List<GUIElement> _unitsLowerRight = new List<GUIElement>(100);
-
-        private readonly GUIContent _content = new GUIContent();
-
-        private float _calculatedScale;
-        private bool _draw = true;
-
-        private static float lastLowerLeftHeight;
-        private static float lastLowerRightHeight;
-        private static int topLeftRows;
-        private static int topRightRows;
-
-        private readonly Dictionary<int, Font> _loadedFonts = new Dictionary<int, Font>();
-
-        [Serializable]
+         [Serializable]
         public struct MarginOrPadding
         {
             public float top;
@@ -67,7 +28,7 @@ namespace Baracuda.Monitoring.IMGUI
 
         private class GUIElement
         {
-            public static Comparison<GUIElement> Comparison =
+            public static readonly Comparison<GUIElement> Comparison =
                 (lhs, rhs) => lhs.Order > rhs.Order ? -1 : lhs.Order < rhs.Order ? 1 : 0;
 
             public int Order { get; }
@@ -205,6 +166,46 @@ namespace Baracuda.Monitoring.IMGUI
             }
         }
 
+        #endregion
+
+        #region Data
+
+#pragma warning disable
+
+        [Header("Element & Window Spacing")]
+        [SerializeField] private float elementSpacing = 2f;
+        [SerializeField] private MarginOrPadding windowMargin;
+        [SerializeField] private MarginOrPadding elementPadding;
+
+        [Header("Scaling")]
+        [SerializeField] private bool customScale = true;
+        [SerializeField] [Range(0, 10)] private float scale = 1;
+
+        [Header("Coloring")]
+        [SerializeField] private Color backgroundColor = Color.black;
+
+        [Header("FontName")]
+        [SerializeField] private Font defaultFont;
+        [SerializeField] private Font[] availableFonts;
+
+#pragma warning restore
+
+        private readonly List<GUIElement> _unitsUpperLeft = new List<GUIElement>(100);
+        private readonly List<GUIElement> _unitsUpperRight = new List<GUIElement>(100);
+        private readonly List<GUIElement> _unitsLowerLeft = new List<GUIElement>(100);
+        private readonly List<GUIElement> _unitsLowerRight = new List<GUIElement>(100);
+
+        private readonly GUIContent _content = new GUIContent();
+
+        private float _calculatedScale;
+
+        private static float lastLowerLeftHeight;
+        private static float lastLowerRightHeight;
+        private static int topLeftRows;
+        private static int topRightRows;
+
+        private readonly Dictionary<int, Font> _loadedFonts = new Dictionary<int, Font>();
+
         private Font GetFont(int fontHash)
         {
             return _loadedFonts.TryGetValue(fontHash, out var fontAsset) ? fontAsset : defaultFont;
@@ -212,9 +213,7 @@ namespace Baracuda.Monitoring.IMGUI
 
         #endregion
 
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Setup ---
+        #region Setup
 
         protected override void Awake()
         {
@@ -235,8 +234,30 @@ namespace Baracuda.Monitoring.IMGUI
             UpdateScale();
         }
 
-        private void Start()
+        /// <summary>
+        /// The visible state of the UI.
+        /// </summary>
+        public override bool Visible { get; set; } = true;
+
+        /// <summary>
+        /// Use to add UI elements for the passed unit.
+        /// </summary>
+        protected override void OnMonitorUnitCreated(IMonitorUnit unit)
         {
+            OnUnitCreatedInternal(unit);
+        }
+
+        /// <summary>
+        /// Use to remove UI elements for the passed unit.
+        /// </summary>
+        protected override void OnMonitorUnitDisposed(IMonitorUnit unit)
+        {
+            OnUnitDisposedInternal(unit);
+        }
+
+        protected override void Start()
+        {
+            base.Start();
             UpdateScale();
         }
 
@@ -256,21 +277,23 @@ namespace Baracuda.Monitoring.IMGUI
 
         #endregion
 
-        #region --- GUI ---
+        #region GUI
 
         private void OnGUI()
         {
-            if (_draw)
+            if (!Visible)
             {
-                GUI.skin.font = defaultFont;
-                GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(_calculatedScale, _calculatedScale, 1));
-                var ctx = new Context(GUI.skin.label);
-                var screenData = new ScreenData(Screen.width / _calculatedScale, Screen.height / _calculatedScale);
-                DrawUpperLeft(ctx, screenData);
-                DrawUpperRight(ctx, screenData);
-                DrawLowerLeft(ctx, screenData);
-                DrawLowerRight(ctx, screenData);
+                return;
             }
+
+            GUI.skin.font = defaultFont;
+            GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(_calculatedScale, _calculatedScale, 1));
+            var ctx = new Context(GUI.skin.label);
+            var screenData = new ScreenData(Screen.width / _calculatedScale, Screen.height / _calculatedScale);
+            DrawUpperLeft(ctx, screenData);
+            DrawUpperRight(ctx, screenData);
+            DrawLowerLeft(ctx, screenData);
+            DrawLowerRight(ctx, screenData);
         }
 
         /*
@@ -538,37 +561,7 @@ namespace Baracuda.Monitoring.IMGUI
 
         #endregion
 
-        #region --- Overrides ---
-
-        public override bool IsVisible()
-        {
-            return _draw;
-        }
-
-        public override void ShowMonitoringUI()
-        {
-            _draw = true;
-        }
-
-        public override void HideMonitoringUI()
-        {
-            _draw = false;
-        }
-
-        public override void OnUnitDisposed(IMonitorUnit unit)
-        {
-            OnUnitDisposedInternal(unit);
-        }
-
-
-        public override void OnUnitCreated(IMonitorUnit unit)
-        {
-            OnUnitCreatedInternal(unit);
-        }
-
-        #endregion
-
-        #region --- Unit Creating / Disposal ---
+        #region -Unit Creating / Disposal
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void OnUnitCreatedInternal(IMonitorUnit unit)

@@ -12,33 +12,33 @@ namespace Baracuda.Monitoring.TextMeshPro
     [RequireComponent(typeof(VerticalLayoutGroup))]
     internal class MonitoringUISection : MonoBehaviour
     {
-        private TMPMonitoringUIController _controller;
+        private TMPMonitoringUI _controller;
         private Transform _transform;
-        
+
         private readonly Dictionary<string, MonitoringUIGroup> _namedGroups =
             new Dictionary<string, MonitoringUIGroup>();
-        
+
         private readonly Dictionary<object, MonitoringUIGroup> _targetedGroups =
             new Dictionary<object, MonitoringUIGroup>();
 
         private readonly Dictionary<IMonitorUnit, MonitoringUIElement> _unitUIElements =
             new Dictionary<IMonitorUnit, MonitoringUIElement>(32);
-            
+
         private readonly List<MonitoringUIBase> _children = new List<MonitoringUIBase>();
         private static readonly StringBuilder stringBuilder = new StringBuilder(64);
 
         /*
-         * Setup   
+         * Setup
          */
-        
-        private void Awake()
+
+        internal void Awake()
         {
-            _controller = GetComponentInParent<TMPMonitoringUIController>();
+            _controller = GetComponentInParent<TMPMonitoringUI>();
             _transform = transform;
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        
+
         internal void AddChild(IMonitorUnit monitorUnit)
         {
             if (TryGetGroupForNewUnit(monitorUnit, out var uiGroup))
@@ -54,7 +54,7 @@ namespace Baracuda.Monitoring.TextMeshPro
                 _unitUIElements.Add(monitorUnit, unitUIElement);
                 _children.Add(unitUIElement);
             }
-            
+
             _children.Sort(MonitoringUIBase.Comparison);
             for (var i = 0; i < _children.Count; i++)
             {
@@ -84,7 +84,11 @@ namespace Baracuda.Monitoring.TextMeshPro
                 }
                 else
                 {
-                    uiGroup = _targetedGroups[monitorUnit.Target];
+                    if (!_targetedGroups.TryGetValue(monitorUnit.Target, out uiGroup))
+                    {
+                        return;
+                    }
+                    //uiGroup = _targetedGroups[monitorUnit.Target];
                     uiGroup.RemoveChild(monitorUnit);
                     if (uiGroup.ChildCount != 0)
                     {
@@ -103,7 +107,7 @@ namespace Baracuda.Monitoring.TextMeshPro
                 _controller.ReleaseElementToPool(unitUIElement);
             }
         }
-        
+
         private bool TryGetGroupForNewUnit(IMonitorUnit monitorUnit, out MonitoringUIGroup uiGroup)
         {
             if (!monitorUnit.Profile.FormatData.AllowGrouping)

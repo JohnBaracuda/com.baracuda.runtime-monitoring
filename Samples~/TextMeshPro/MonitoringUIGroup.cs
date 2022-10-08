@@ -18,23 +18,21 @@ namespace Baracuda.Monitoring.TextMeshPro
         protected override int Order => _order;
 
         private Transform _transform;
-        private TMPMonitoringUIController _controller;
+        private TMPMonitoringUI _controller;
         private Action<bool> _checkVisibility;
         private int _order = 0;
-        
-        
 
         private readonly List<MonitoringUIElement> _children = new List<MonitoringUIElement>(8);
         private readonly Dictionary<IMonitorUnit, MonitoringUIElement> _unitUIElements = new Dictionary<IMonitorUnit, MonitoringUIElement>(32);
 
-
         private void Awake()
         {
             _transform = transform;
+            _transform.localScale = Vector3.one;
             _checkVisibility = CheckVisibility;
         }
-        
-        public void SetupGroup(string title, TMPMonitoringUIController controller)
+
+        public void SetupGroup(string title, TMPMonitoringUI controller)
         {
             groupTitle.text = title;
             _controller = controller;
@@ -54,7 +52,7 @@ namespace Baracuda.Monitoring.TextMeshPro
             _children.Sort(Comparison);
             _unitUIElements.Add(monitorUnit, unitUIElement);
             ChildCount++;
-            
+
             for (var i = 0; i < _children.Count; i++)
             {
                 _children[i].SetSiblingIndex(i + 1);
@@ -73,7 +71,7 @@ namespace Baracuda.Monitoring.TextMeshPro
             ChildCount--;
             CheckVisibility(false);
         }
-        
+
         private void CheckVisibility(bool childVisible)
         {
             gameObject.SetActive(childVisible || IsAnyChildVisible());

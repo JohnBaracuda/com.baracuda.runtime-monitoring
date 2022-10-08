@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Selecting a MonitoringUI prefab in the settings window is no longer required. Instead you can now select an override prefab to replace the default IMGUI based UI.
 - The default IMGUI based UI is no longer a readonly prefab but now created dynamically during runtime. You can still import an IMGUI based prefab / MonitoringUI from the samples.
 - The 'Enable Monitoring' toggle in the settings window is now a selection with an additional editor only option.
+- Updated samples for IMGUI, TextMeshPro and UIToolkit.
+- Updated example scene.
 
 ### Deprecated
 - IMonitoringUI.IsVisible() is now obsolete. Use IMonitoringUI.Visible instead. Removing in [4.0.0]
@@ -35,6 +37,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MonitoringUIController.HideMonitoringUI() is now obsolete. Use MonitoringUI.Visible instead. Removing in [4.0.0]
 - MonitoringUIController.OnUnitDisposed() is now obsolete. Use MonitoringUI.OnMonitorUnitDisposed instead. Removing in [4.0.0]
 - MonitoringUIController.OnUnitCreated() is now obsolete. Use MonitoringUI.OnMonitorUnitCreated instead. Removing in [4.0.0]
+
+### Removed
+- Removed com.baracuda.ui assembly.
 
 ### Fixed
 - Fixed NullReferenceExceptions caused by missing dummy systems when disabling runtime monitoring.

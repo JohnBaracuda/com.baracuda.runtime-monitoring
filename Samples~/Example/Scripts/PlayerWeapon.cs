@@ -11,7 +11,7 @@ namespace Baracuda.Example.Scripts
     [MTag("PlayerState")]
     public class PlayerWeapon : MonitoredBehaviour
     {
-        #region --- Fields ---
+        #region Fields ---
 
         /*
          *  Inspector Fields

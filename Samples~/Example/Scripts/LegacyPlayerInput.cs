@@ -11,7 +11,7 @@ namespace Baracuda.Example.Scripts
     /// </summary>
     public class LegacyPlayerInput : MonitoredBehaviour, IPlayerInput
     {
-        #region --- Inspector ---
+        #region Inspector ---
 
         [Header("Monitoring")]
         [SerializeField] private KeyCode toggleFilterKey = KeyCode.F5;
@@ -29,7 +29,7 @@ namespace Baracuda.Example.Scripts
 
         #endregion
 
-        #region --- Static ---
+        #region Static ---
 
         public static KeyCode ToggleFilterKey;
         public static KeyCode ToggleMonitoringKey;

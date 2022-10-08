@@ -50,7 +50,7 @@ namespace Baracuda.Example.Scripts
 
         private void OnToggleMonitoring()
         {
-            MonitoringSystems.Resolve<IMonitoringUI>().ToggleDisplay();
+            MonitoringSystems.UI.Visible = !MonitoringSystems.UI.Visible;
         }
 
         private void OnToggleFilter(InputMode inputMode)

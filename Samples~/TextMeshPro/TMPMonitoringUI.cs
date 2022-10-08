@@ -11,7 +11,7 @@ namespace Baracuda.Monitoring.TextMeshPro
 {
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(UIControllerComponents))]
-    public class TMPMonitoringUIController : MonitoringUIController
+    public class TMPMonitoringUI : MonitoringUI
     {
         #region --- Inspector ---
 
@@ -63,9 +63,8 @@ namespace Baracuda.Monitoring.TextMeshPro
 
         protected override void Awake()
         {
-            base.Awake();
-            _transform = transform;
             _components = GetComponent<UIControllerComponents>();
+            _transform = transform;
 
             // Pools
             _uiElementPool = new Stack<MonitoringUIElement>(initialElementPoolSize);
@@ -90,6 +89,7 @@ namespace Baracuda.Monitoring.TextMeshPro
                 }
             }
             availableFonts = null;
+            base.Awake();
         }
 
         #endregion
@@ -164,42 +164,40 @@ namespace Baracuda.Monitoring.TextMeshPro
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Visibility ---
+        #region Visibility
 
-        public override bool IsVisible()
+
+        /// <summary>
+        /// The visible state of the UI.
+        /// </summary>
+        public override bool Visible
         {
-            return gameObject.activeInHierarchy;
-        }
-
-        public override void ShowMonitoringUI()
-        {
-            gameObject.SetActive(true);
-            // This is a fix to force canvas sorting order to update.
-            // Calling Canvas.ForceUpdateCanvas does not do this.
-            _canvas.sortingOrder = _canvas.sortingOrder;
-        }
-
-
-        public override void HideMonitoringUI()
-        {
-            gameObject.SetActive(false);
+            get => gameObject.activeInHierarchy;
+            set
+            {
+                gameObject.SetActive(value);
+                _canvas.sortingOrder = _canvas.sortingOrder;
+            }
         }
 
         #endregion
 
-        #region --- Unit Creation / Disposing ---
+        #region Unit Creation / Disposing
 
-        /*
-         * Unit creation
-         */
 
-        public override void OnUnitCreated(IMonitorUnit unit)
+        /// <summary>
+        /// Use to add UI elements for the passed unit.
+        /// </summary>
+        protected override void OnMonitorUnitCreated(IMonitorUnit unit)
         {
             var section = GetSection(unit.Profile.FormatData.Position);
             section.AddChild(unit);
         }
 
-        public override void OnUnitDisposed(IMonitorUnit unit)
+        /// <summary>
+        /// Use to remove UI elements for the passed unit.
+        /// </summary>
+        protected override void OnMonitorUnitDisposed(IMonitorUnit unit)
         {
             var section = GetSection(unit.Profile.FormatData.Position);
             section.RemoveChild(unit);

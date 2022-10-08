@@ -3,7 +3,7 @@ guid: 864618023adb9284e9e29fd70fb184a6
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
-  fontSize: 16
+  fontSize: 14
   forceTextureCase: -2
   characterSpacing: 0
   characterPadding: 1
@@ -11,7 +11,9 @@ TrueTypeFontImporter:
   fontName: Arial Monospaced MT
   fontNames:
   - Arial Monospaced MT
-  fallbackFontReferences: []
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: cd279934efece26498f18152108f4c89, type: 3}
+  - {fileID: 12800000, guid: 705127288c683f54797ff36d995f0dc5, type: 3}
   customCharacters: 
   fontRenderingMode: 0
   ascentCalculationMode: 1
