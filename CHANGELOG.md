@@ -6,7 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
-- UI API will be reworked slightly to improve synergy with VR and world space canvas. The main issue right now is that there is no easy way to destroy and replace world space UI.
 
 ## [3.1.0] - 2022-10-08
 
