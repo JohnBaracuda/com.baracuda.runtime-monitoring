@@ -30,5 +30,27 @@ namespace Baracuda.Monitoring
         {
             MonitoringSystems.Manager.UnregisterTarget(target);
         }
+
+        /// <summary>
+        /// Register an object that is monitored during runtime.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <typeparam name="T"></typeparam>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void BeginMonitor<T>(this T target) where T : class
+        {
+            MonitoringSystems.Manager.RegisterTarget(target);
+        }
+
+        /// <summary>
+        /// Unregister an object that is monitored during runtime.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <typeparam name="T"></typeparam>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void EndMonitor<T>(this T target) where T : class
+        {
+            MonitoringSystems.Manager.UnregisterTarget(target);
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Baracuda.Monitoring.Core.Utilities.Reflection
+namespace Baracuda.Monitoring.Utilities.Reflection
 {
     /// <summary>
     /// Disable reflection for the target assembly or class.

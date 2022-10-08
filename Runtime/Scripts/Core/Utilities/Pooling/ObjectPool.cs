@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 
-namespace Baracuda.Monitoring.Core.Utilities.Pooling
+namespace Baracuda.Monitoring.Utilities.Pooling
 {
     internal class ObjectPool<T>
     {

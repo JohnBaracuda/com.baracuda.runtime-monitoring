@@ -1,12 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Core.Profiles;
-using Baracuda.Monitoring.Core.Utilities.Extensions;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Baracuda.Monitoring.Core.Units
+namespace Baracuda.Monitoring.Units
 {
     /// <summary>
     /// Object wrapping and handling the monitoring of a monitored member.

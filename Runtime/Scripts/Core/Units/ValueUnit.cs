@@ -1,13 +1,13 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Core.Profiles;
-using Baracuda.Monitoring.Core.Types;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Types;
 using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Units
+namespace Baracuda.Monitoring.Units
 {
     /// <summary>
     /// Base type for units that monitor a value <br/>

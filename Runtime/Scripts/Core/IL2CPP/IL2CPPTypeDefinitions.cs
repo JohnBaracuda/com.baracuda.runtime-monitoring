@@ -2,17 +2,17 @@
 
 #if ENABLE_IL2CPP || UNITY_EDITOR
 
-using Baracuda.Monitoring.Core.Profiles;
-using Baracuda.Monitoring.Core.Systems;
-using Baracuda.Monitoring.Core.Types;
-using Baracuda.Monitoring.Core.Units;
+using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Systems;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Units;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine.Scripting;
-using Void = Baracuda.Monitoring.Core.Types.Void;
+using Void = Baracuda.Monitoring.Types.Void;
 
-namespace Baracuda.Monitoring.Core.IL2CPP
+namespace Baracuda.Monitoring.IL2CPP
 {
     /// <summary>
     /// Class is used to create type definitions for IL2CPP.<br/>

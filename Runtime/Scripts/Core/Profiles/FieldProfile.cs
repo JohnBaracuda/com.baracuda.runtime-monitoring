@@ -1,12 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Types;
-using Baracuda.Monitoring.Core.Units;
-using Baracuda.Monitoring.Core.Utilities.Extensions;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Units;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Reflection;
 
-namespace Baracuda.Monitoring.Core.Profiles
+namespace Baracuda.Monitoring.Profiles
 {
     /// <typeparam name="TTarget">The <see cref="Type"/> of the fields target object</typeparam>
     /// <typeparam name="TValue">The <see cref="Type"/> of the return value of the field</typeparam>

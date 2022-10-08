@@ -1,12 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     /// <summary>
     /// Class creates custom ValueProcessor delegates for Monitoring units based on their values type.

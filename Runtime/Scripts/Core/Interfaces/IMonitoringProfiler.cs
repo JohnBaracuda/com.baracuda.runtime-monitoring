@@ -2,7 +2,7 @@
 
 using System.Threading;
 
-namespace Baracuda.Monitoring.Core.Interfaces
+namespace Baracuda.Monitoring.Interfaces
 {
     internal interface IMonitoringProfiler : IMonitoringSubsystem<IMonitoringProfiler>
     {

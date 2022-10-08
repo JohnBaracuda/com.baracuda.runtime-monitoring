@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-namespace Baracuda.Monitoring.Core.Interfaces
+namespace Baracuda.Monitoring.Interfaces
 {
     internal interface IMonitoringUtilityInternal : IMonitoringSubsystem<IMonitoringUtilityInternal>
     {

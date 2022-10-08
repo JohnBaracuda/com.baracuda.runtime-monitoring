@@ -1,12 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Interfaces;
+using Baracuda.Monitoring.Interfaces;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal sealed class MonitoringLogging : IMonitoringLogger
     {
@@ -16,7 +16,7 @@ namespace Baracuda.Monitoring.Core.Systems
         private readonly LoggingLevel _operationCancelledLevel;
         private readonly LoggingLevel _badImageFormatLevel;
         private readonly LoggingLevel _defaultLevel;
-        
+
         internal MonitoringLogging(IMonitoringSettings settings)
         {
             _processorNotFoundLoggingLevel = settings.LogProcessorNotFoundException;
@@ -26,7 +26,7 @@ namespace Baracuda.Monitoring.Core.Systems
             _operationCancelledLevel = settings.LogOperationCanceledException;
             _badImageFormatLevel = settings.LogBadImageFormatException;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LogInternal(string message, LoggingLevel loggingLevel)
         {
@@ -44,7 +44,7 @@ namespace Baracuda.Monitoring.Core.Systems
                     break;
             }
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LogInternal(Exception exception, LoggingLevel loggingLevel)
         {
@@ -69,7 +69,7 @@ namespace Baracuda.Monitoring.Core.Systems
         {
             LogInternal(exception, _defaultLevel);
         }
-        
+
         public void LogBadImageFormatException(BadImageFormatException exception)
         {
             LogInternal(exception, _badImageFormatLevel);
@@ -79,7 +79,7 @@ namespace Baracuda.Monitoring.Core.Systems
         {
             LogInternal(exception, _threadAbortedLevel);
         }
-        
+
         public void LogOperationCancelledException(OperationCanceledException exception)
         {
             LogInternal(exception, _operationCancelledLevel);
@@ -90,7 +90,7 @@ namespace Baracuda.Monitoring.Core.Systems
             var message = $"[ValueProcessor] Processor: {processor} in {type.Name} with a valid signature was not found! Note that only static methods are valid value processors";
             LogInternal(message, _processorNotFoundLoggingLevel);
         }
-        
+
         public void LogInvalidProcessorSignature(string processor, Type type)
         {
             var message = $"[ValueProcessor] Processor: {processor} in {type.Name} does not have a valid value processor signature!";

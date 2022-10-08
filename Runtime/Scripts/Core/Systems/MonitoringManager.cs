@@ -1,10 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Core.Profiles;
-using Baracuda.Monitoring.Core.Units;
-using Baracuda.Monitoring.Core.Utilities.Extensions;
-using Baracuda.Monitoring.Core.Utilities.Pooling;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Units;
+using Baracuda.Monitoring.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Pooling;
 using Baracuda.Threading;
 using System;
 using System.Collections.Generic;
@@ -15,11 +15,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal class MonitoringManager : IMonitoringManager, IMonitoringManagerInternal
     {
-        #region --- API ---
+        #region API ---
 
         public bool IsInitialized
         {
@@ -90,7 +90,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Private Fields ---
+        #region Private Fields ---
 
         private Dictionary<Type, List<MonitorProfile>> _instanceMonitorProfiles = new Dictionary<Type, List<MonitorProfile>>();
 
@@ -112,7 +112,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         #endregion
 
-        #region --- Raise Events ---
+        #region Raise Events ---
 
         private void RaiseUnitCreated(IMonitorUnit monitorUnit)
         {

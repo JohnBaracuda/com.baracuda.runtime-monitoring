@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValueProcessorFactory
     {

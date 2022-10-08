@@ -1,9 +1,9 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Types;
-using Baracuda.Monitoring.Core.Units;
-using Baracuda.Monitoring.Core.Utilities.Extensions;
-using Baracuda.Monitoring.Core.Utilities.Pooling;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Units;
+using Baracuda.Monitoring.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Pooling;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -12,11 +12,11 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Profiles
+namespace Baracuda.Monitoring.Profiles
 {
     internal sealed class EventProfile<TTarget, TDelegate> : MonitorProfile where TDelegate : Delegate where TTarget : class
     {
-        #region --- Fields & Properties ---
+        #region Fields & Properties ---
 
         public bool ShowSubscriberCount { get; } = true;
         public bool ShowInvokeCounter { get; } = true;
@@ -164,7 +164,7 @@ namespace Baracuda.Monitoring.Core.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- State Foramtting ---
+        #region State Foramtting ---
 
         private StateFormatDelegate CreateDisplayEventStateDelegate(Func<TTarget, int> counterDelegate, Func<TTarget, string> subInfoDelegate, IMonitoringSettings settings)
         {
@@ -301,7 +301,7 @@ namespace Baracuda.Monitoring.Core.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Event Handler ---
+        #region Event Handler ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void SubscribeToEvent(TTarget target, Delegate eventHandler)
@@ -433,7 +433,7 @@ namespace Baracuda.Monitoring.Core.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Misc ---
+        #region Misc ---
 
         private int CalculateElementIndent()
         {

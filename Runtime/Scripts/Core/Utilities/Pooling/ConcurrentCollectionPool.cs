@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Baracuda.Monitoring.Core.Utilities.Pooling
+namespace Baracuda.Monitoring.Utilities.Pooling
 {
     internal class ConcurrentCollectionPool<TCollection, TItem> where TCollection : class, ICollection<TItem>, new()
     {

@@ -12,11 +12,9 @@ namespace Baracuda.Monitoring.Dummy
         IMonitoringUtility,
         IMonitoringSettings
     {
-        #region --- Pragma ---
 #pragma warning disable
-        #endregion
 
-        #region --- MonitoringManager ---
+        #region MonitoringManager
 
         /// <summary>
         /// Value indicated whether or not monitoring profiling has completed and monitoring is fully initialized.
@@ -80,30 +78,12 @@ namespace Baracuda.Monitoring.Dummy
 
         #endregion
 
-        #region --- IMonitoringUI ---
+        #region IMonitoringUI
 
         /// <summary>
-        /// Set the active monitoring display visible.
+        /// Get or set the visibility of the current monitoring UI.
         /// </summary>
-        public void Show()
-        {
-        }
-
-        /// <summary>
-        /// Hide the active monitoring display.
-        /// </summary>
-        public void Hide()
-        {
-        }
-
-        /// <summary>
-        /// Toggle the visibility of the active monitoring display.
-        /// This method returns a value indicating the new visibility state.
-        /// </summary>
-        public bool ToggleDisplay()
-        {
-            return default;
-        }
+        public bool Visible { get; set; } = false;
 
         /// <summary>
         /// Event is invoked when the monitoring UI became visible/invisible
@@ -111,36 +91,11 @@ namespace Baracuda.Monitoring.Dummy
         public event Action<bool> VisibleStateChanged;
 
         /// <summary>
-        /// Returns true if the there is an active monitoring display that is also visible.
+        /// Get the current monitoring UI instance
         /// </summary>
-        public bool IsVisible()
+        public TMonitoringUI GetCurrent<TMonitoringUI>() where TMonitoringUI : MonitoringUI
         {
             return default;
-        }
-
-        /// <summary>
-        /// Get the current <see cref="MonitoringUIController"/>
-        /// </summary>
-        public MonitoringUIController GetActiveUIController()
-        {
-            return default;
-        }
-
-        /// <summary>
-        /// Get the current <see cref="MonitoringUIController"/> as a concrete implementation of T.
-        /// </summary>
-        public TUIController GetActiveUIController<TUIController>() where TUIController : MonitoringUIController
-        {
-            return default;
-        }
-
-        /// <summary>
-        /// Create a MonitoringUIController instance if there is none already. Disable 'Auto Instantiate UI' in the
-        /// Monitoring Settings and use this method for more control over the timing in which the MonitoringUIController
-        /// is instantiated.
-        /// </summary>
-        public void CreateMonitoringUI()
-        {
         }
 
         /// <summary>
@@ -157,18 +112,9 @@ namespace Baracuda.Monitoring.Dummy
         {
         }
 
-        public void Filter(string filter)
-        {
-        }
-
-        public void Initialize()
-        {
-
-        }
-
         #endregion
 
-        #region --- IMonitoringUtility ---
+        #region IMonitoringUtility
 
         /// <summary>
         /// Method returns true if the passed hash from the name of a font asset is used by a MFontNameAttribute and therefore
@@ -203,10 +149,12 @@ namespace Baracuda.Monitoring.Dummy
 
         #endregion
 
-        #region --- Settings ---
+        #region Settings
 
-        public bool EnableMonitoring { get; } = false;
+        public bool IsMonitoringEnabled { get; } = false;
+        public bool IsEditorOnly { get; } = false;
         public bool AutoInstantiateUI { get; } = false;
+        public bool AllowMultipleUIInstances { get; } = false;
         public bool AsyncProfiling { get; } = false;
         public bool OpenDisplayOnLoad { get; } = false;
         public bool ShowRuntimeMonitoringObject { get; } = false;
@@ -238,7 +186,8 @@ namespace Baracuda.Monitoring.Dummy
         public bool UseIPreprocessBuildWithReport { get; } = false;
         public bool ThrowOnTypeGenerationError { get; } = false;
         public int PreprocessBuildCallbackOrder { get; } = 0;
-        public MonitoringUIController UIController { get; } = default;
+
+        public MonitoringUI MonitoringUIOverride { get; } = default;
         public Color OutParamColor { get; } = Color.magenta;
         public bool FilterLabel { get; } = false;
         public bool FilterStaticOrInstance { get; } = false;
@@ -252,6 +201,55 @@ namespace Baracuda.Monitoring.Dummy
         public char FilterNegateSymbol { get; } = default;
         public char FilterAbsoluteSymbol { get; } = default;
         public char FilterTagsSymbol { get; } = default;
+
+        #endregion
+
+        #region Obsolete
+
+        [Obsolete]
+        public bool IsVisible()
+        {
+            return default;
+        }
+
+        [Obsolete]
+        public void Show()
+        {
+        }
+
+        [Obsolete]
+        public void Hide()
+        {
+        }
+
+        [Obsolete]
+        public bool ToggleDisplay()
+        {
+            return default;
+        }
+
+        [Obsolete]
+        public MonitoringUIController GetActiveUIController()
+        {
+            return default;
+        }
+
+        [Obsolete]
+        public TUIController GetActiveUIController<TUIController>() where TUIController : MonitoringUIController
+        {
+            return default;
+        }
+
+        [Obsolete]
+        public void CreateMonitoringUI()
+        {
+        }
+
+        [Obsolete]
+        public MonitoringUIController UIController { get; } = default;
+
+        [Obsolete]
+        public bool EnableMonitoring { get; } = false;
 
         #endregion
     }

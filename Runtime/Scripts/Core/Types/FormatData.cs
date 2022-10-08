@@ -1,11 +1,11 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Utilities.Extensions;
-using Baracuda.Monitoring.Core.Utilities.Pooling;
+using Baracuda.Monitoring.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Pooling;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Types
+namespace Baracuda.Monitoring.Types
 {
     internal class FormatData : IFormatData
     {

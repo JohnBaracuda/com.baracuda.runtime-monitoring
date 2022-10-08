@@ -1,17 +1,17 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Core.Types;
-using Baracuda.Monitoring.Core.Utilities.Extensions;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Baracuda.Monitoring.Core.Profiles
+namespace Baracuda.Monitoring.Profiles
 {
     internal abstract class ValueProfile<TTarget, TValue> : NotifiableProfile<TTarget, TValue> where TTarget : class
     {
-        #region --- Properties ---
+        #region Properties ---
 
         public bool SetAccessEnabled { get; }
         internal IsDirtyDelegate IsDirtyFunc { get; }

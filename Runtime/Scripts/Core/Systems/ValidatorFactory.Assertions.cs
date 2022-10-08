@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Types;
-using Baracuda.Monitoring.Core.Utilities.Extensions;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValidatorFactory
     {

@@ -1,10 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Profiles;
-using Baracuda.Monitoring.Core.Types;
+using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Types;
 using System;
 
-namespace Baracuda.Monitoring.Core.Units
+namespace Baracuda.Monitoring.Units
 {
     internal sealed class PropertyUnit<TTarget, TValue> : ValueUnit<TTarget, TValue> where TTarget : class
     {

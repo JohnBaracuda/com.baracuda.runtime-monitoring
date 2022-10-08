@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Baracuda.Monitoring.Core.Interfaces
+namespace Baracuda.Monitoring.Interfaces
 {
     internal interface IMonitoringTicker : IMonitoringSubsystem<IMonitoringTicker>
     {

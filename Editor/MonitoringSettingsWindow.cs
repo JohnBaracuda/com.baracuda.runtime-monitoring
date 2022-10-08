@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Systems;
+using Baracuda.Monitoring.Systems;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,7 +26,6 @@ namespace Baracuda.Monitoring.Editor
         {
             var settings = MonitoringSettings.FindOrCreateSettingsAsset();
             _inspector = (MonitoringSettingsInspector) UnityEditor.Editor.CreateEditor(settings);
-            _inspector.Refresh();
         }
 
         private void OnGUI()

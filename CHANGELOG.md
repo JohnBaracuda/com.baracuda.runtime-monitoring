@@ -8,6 +8,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
 - UI API will be reworked slightly to improve synergy with VR and world space canvas. The main issue right now is that there is no easy way to destroy and replace world space UI.
 
+## [3.1.0] - 2022-10-08
+
+### Added
+- Added multiple font assets to "Resources/Monitoring" that are used by the default MonitoringUI. Additional fonts at this path will be available when using the default MonitoringUI.
+
+### Changed
+- Reworked multiple aspects of the UI system. MonitoringUI instances can now be instantiated and destroyed at will during runtime.
+- Selecting a MonitoringUI prefab in the settings window is no longer required. Instead you can now select an override prefab to replace the default IMGUI based UI.
+- The default IMGUI based UI is no longer a readonly prefab but now created dynamically during runtime. You can still import an IMGUI based prefab / MonitoringUI from the samples.
+- The 'Enable Monitoring' toggle in the settings window is now a selection with an additional editor only option.
+
+### Deprecated
+- IMonitoringUI.IsVisible() is now obsolete. Use IMonitoringUI.Visible instead. Removing in [4.0.0]
+- IMonitoringUI.Show() is now obsolete. Use IMonitoringUI.Visible instead. Removing in [4.0.0]
+- IMonitoringUI.Hide() is now obsolete. Use IMonitoringUI.Visible instead. Removing in [4.0.0]
+- IMonitoringUI.ToggleDisplay() is now obsoleteUse IMonitoringUI.Visible instead. Removing in [4.0.0]
+- IMonitoringUI.GetActiveUIController() is now obsolete. Use IMonitoringUI.GetCurrent<T> instead. Removing in [4.0.0]
+- IMonitoringUI.GetActiveUIController<T>() is now obsolete. Use IMonitoringUI.GetCurrent<T> instead. Removing in [4.0.0]
+- IMonitoringUI.CreateMonitoringUI() is now obsolete. Use IMonitoringUI.Visible instead. Removing in [4.0.0]
+- IMonitoringSettings.UIController is now obsolete. Use different approach instead. Removing in [4.0.0]
+- IMonitoringSettings.EnableMonitoring is now obsolete. Use IMonitoringSettings.IsMonitoringEnabled instead. Removing in [4.0.0]
+- MonitoringUIController is now obsolete. Use MonitoringUI instead. Removing in [4.0.0]
+- MonitoringUIController.IsVisible() is now obsolete. Use MonitoringUI.Visible instead. Removing in [4.0.0]
+- MonitoringUIController.ShowMonitoringUI() is now obsolete. Use MonitoringUI.Visible instead. Removing in [4.0.0]
+- MonitoringUIController.HideMonitoringUI() is now obsolete. Use MonitoringUI.Visible instead. Removing in [4.0.0]
+- MonitoringUIController.OnUnitDisposed() is now obsolete. Use MonitoringUI.OnMonitorUnitDisposed instead. Removing in [4.0.0]
+- MonitoringUIController.OnUnitCreated() is now obsolete. Use MonitoringUI.OnMonitorUnitCreated instead. Removing in [4.0.0]
+
+### Fixed
+- Fixed NullReferenceExceptions caused by missing dummy systems when disabling runtime monitoring.
+
 ## [3.0.1] - 2022-10-04
 
 ### Fixed
@@ -16,9 +47,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.0.0] - 2022-10-03
 
 ### Changed
-- Changed the project strucute and layout to make it comply with UPM package conventions.
+- Changed the project structure and layout to make it comply with UPM package conventions.
 - Restructured the repository to make it compatible with UPM.
-- Reworked IL2CPP type defintion generation.
+- Reworked IL2CPP type definition generation.
 
 ### Added
 - Static struct member can now be monitored.
@@ -26,7 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added package manager dependencies for com.baracuda.thread-dispatcher
 
 ### Fixed
-- Fixed an IL2CPP type defintion issue caused by missing support for generic monitored types. 
+- Fixed an IL2CPP type definition issue caused by missing support for generic monitored types. 
 
 ### Removed
 - Removed obsolete scripts, API and assemblies. 
@@ -36,7 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.1.5] - 2022-09-24
 
 ### Fixed
-- Fixed some IL2CPP type generation issues caused by potentially inaccessbile type generations beeing generated.
+- Fixed some IL2CPP type generation issues caused by potentially inaccessible type generations being generated.
 - Fixed some potential runtime exceptions caused by missing generic type checks.
 
 
@@ -64,8 +95,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Deprecated Assembly-Baracuda-Pooling.
 - Deprecated Assembly-Baracuda-Reflection.
-- Scripts from obsolete assemblies are now contained in Assembly-Baracuda-Utilties.
-- Note that obsolete asselbies and their contents can be removed and only exist because of update compatibility.
+- Scripts from obsolete assemblies are now contained in Assembly-Baracuda-Utilities.
+- Note that obsolete assemblies and their contents can be removed and only exist because of update compatibility.
 - The first MonitoringUIController instance in a scene will be used as the active MonitoringUIController. Only if no instance is located in a scene the selected prefab from the settings window is instantiated and used.
 
 ### Added
@@ -84,7 +115,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactored and moved internal classes and namespaces.
 - Reworked how events are monitored. (more options, coloring & subscriber display)
 - Reworked AOT file generation.
-- Reworked dynamic filering of monitored member.
+- Reworked dynamic filtering of monitored member.
 - Reworked and optimized TMP & UIToolkit controller.
 
 ### Added
@@ -104,5 +135,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed an issue that was caused when monitoring constant fields.
-- Fixed coditonal compilation using DISABLE_MONITORING
+- Fixed conditional compilation using DISABLE_MONITORING
 - Fixed WebGL runtime issues caused by WebGL initialization order.

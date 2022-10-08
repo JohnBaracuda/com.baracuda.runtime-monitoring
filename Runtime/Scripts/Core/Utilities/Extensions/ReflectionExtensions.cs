@@ -1,17 +1,16 @@
 // Copyright (c) 2022 Jonathan Lang
 #define UNITY_ASSERTIONS
 
-using Baracuda.Monitoring.Core.Utilities.Pooling;
+using Baracuda.Monitoring.Utilities.Pooling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Utilities.Extensions
+namespace Baracuda.Monitoring.Utilities.Extensions
 {
     internal static class ReflectionExtensions
     {

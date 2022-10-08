@@ -3,7 +3,7 @@
 using System.Text;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Utilities.Pooling
+namespace Baracuda.Monitoring.Utilities.Pooling
 {
     internal static class StringBuilderPool
     {

@@ -11,7 +11,7 @@ namespace Baracuda.Example.Scripts
     [MGroupOrder(-100)]
     public class ShootingTarget : MonitoredBehaviour
     {
-        #region --- Inspector ---
+        #region Inspector ---
 
         [SerializeField] private float health = 200;
         [SerializeField] private float recoverCooldownMin = 1f;
@@ -21,7 +21,7 @@ namespace Baracuda.Example.Scripts
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Fields ---
+        #region Fields ---
 
         private bool _isAlive = true;
         [Monitor] [MShowIf(Condition.NotZero)]
@@ -34,14 +34,14 @@ namespace Baracuda.Example.Scripts
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Animator ---
+        #region Animator ---
 
         private static readonly int knockdown = Animator.StringToHash("knockdown");
         private static readonly int recover = Animator.StringToHash("recover");
 
         #endregion
 
-        #region --- Setup ---
+        #region Setup ---
 
         private void Start()
         {
@@ -79,7 +79,7 @@ namespace Baracuda.Example.Scripts
 
         #endregion
 
-        #region --- Damage Handling ---
+        #region Damage Handling ---
 
         public void TakeDamage(float damage)
         {

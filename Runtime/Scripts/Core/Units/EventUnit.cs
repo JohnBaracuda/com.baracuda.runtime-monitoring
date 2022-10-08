@@ -1,10 +1,10 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Profiles;
+using Baracuda.Monitoring.Profiles;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Baracuda.Monitoring.Core.Units
+namespace Baracuda.Monitoring.Units
 {
     internal class EventUnit<TTarget, TDelegate> : MonitorUnit where TTarget : class where TDelegate : Delegate
     {

@@ -1,12 +1,12 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Profiles;
+using Baracuda.Monitoring.Profiles;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Baracuda.Monitoring.Core.Interfaces
+namespace Baracuda.Monitoring.Interfaces
 {
     internal interface IMonitoringManagerInternal : IMonitoringSubsystem<IMonitoringManagerInternal>
     {

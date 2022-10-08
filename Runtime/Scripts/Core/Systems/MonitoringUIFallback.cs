@@ -7,69 +7,11 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.UI
+namespace Baracuda.Monitoring.Systems
 {
-#if UNITY_EDITOR
-
-    [UnityEditor.CustomEditor(typeof(DefaultMonitoringUI))]
-    internal class DefaultMonitoringUIInspector : UnityEditor.Editor
+    internal class MonitoringUIFallback : MonitoringUI
     {
-        private const string TEXT = "You can import mutable assets for <b>IMGUI</b>, <b>TextMeshPro</b> and <b>UI Toolkit</b> from the samples section of this asset in the package manager. This prefab is readonly because it is the default Monitoring UI Controller.";
-
-        public override void OnInspectorGUI()
-        {
-            var style = new GUIStyle("Helpbox")
-            {
-                fontSize = 14,
-                richText = true,
-                padding = new RectOffset(7, 7, 7, 7)
-            };
-            UnityEditor.EditorGUILayout.LabelField(TEXT, style);
-            UnityEditor.EditorGUILayout.Space();
-            GUI.enabled = Event.current.control;
-            base.OnInspectorGUI();
-            GUI.enabled = true;
-        }
-    }
-
-#endif
-
-    /// <summary>
-    /// This class is showing the base for a GUI based monitoring UI Controller.
-    /// I recommend using either the TextMesh Pro based uGUI solution or the UIToolkit solution instead.
-    /// </summary>
-    internal class DefaultMonitoringUI : MonitoringUIController
-    {
-        #region --- Inspector ---
-
-        [SerializeField] private Font defaultFont;
-        [SerializeField] private Font[] availableFonts;
-
-        #endregion
-
-        #region --- Fields, Properties & Nested Types ---
-
-        private readonly List<GUIElement> _unitsUpperLeft = new List<GUIElement>(100);
-        private readonly List<GUIElement> _unitsUpperRight = new List<GUIElement>(100);
-        private readonly List<GUIElement> _unitsLowerLeft = new List<GUIElement>(100);
-        private readonly List<GUIElement> _unitsLowerRight = new List<GUIElement>(100);
-
-        private readonly GUIContent _content = new GUIContent();
-
-        private bool _draw = true;
-
-        private static float lastLowerLeftHeight;
-        private static float lastLowerRightHeight;
-        private static int topLeftRows;
-        private static int topRightRows;
-
-        private readonly Dictionary<int, Font> _loadedFonts = new Dictionary<int, Font>();
-
-        private const float ELEMENT_SPACING = 1f;
-        private readonly MarginOrPadding windowMargin = new MarginOrPadding(2, 2, 2, 2);
-        private readonly MarginOrPadding elementPadding = new MarginOrPadding(0, 0, 5, 5);
-
-        private readonly Color backgroundColor = Color.black;
+        #region Type Definitions
 
         [Serializable]
         public struct MarginOrPadding
@@ -90,7 +32,7 @@ namespace Baracuda.Monitoring.UI
 
         private class GUIElement
         {
-            public static Comparison<GUIElement> Comparison =
+            public static readonly Comparison<GUIElement> Comparison =
                 (lhs, rhs) => lhs.Order > rhs.Order ? -1 : lhs.Order < rhs.Order ? 1 : 0;
 
             public int Order { get; }
@@ -98,8 +40,19 @@ namespace Baracuda.Monitoring.UI
             public bool OverrideFont { get; }
             public Font Font { get; }
             public int ID { get; }
-            public string Content { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; private set; }
-            private IFormatData Format { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
+
+            public string Content
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get;
+                private set;
+            }
+
+            private IFormatData Format
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get;
+            }
 
             public readonly Texture2D BackgroundTexture;
 
@@ -111,7 +64,7 @@ namespace Baracuda.Monitoring.UI
 
             private readonly StringBuilder _stringBuilder = new StringBuilder(100);
 
-            public GUIElement(IMonitorUnit unit, DefaultMonitoringUI ctx)
+            public GUIElement(IMonitorUnit unit, MonitoringUIFallback ui)
             {
                 unit.ActiveStateChanged += SetActive;
                 Enabled = unit.Enabled;
@@ -120,7 +73,7 @@ namespace Baracuda.Monitoring.UI
 
                 Order = Format.Order;
 
-                var backgroundColor = Format.BackgroundColor.GetValueOrDefault(ctx.backgroundColor);
+                var backgroundColor = Format.BackgroundColor.GetValueOrDefault(ui.backgroundColor);
 
                 if (Format.TextColor.HasValue)
                 {
@@ -147,7 +100,7 @@ namespace Baracuda.Monitoring.UI
 
                 if (Format.FontHash != 0)
                 {
-                    var fontAsset = ctx.GetFont(Format.FontHash);
+                    var fontAsset = ui.GetFont(Format.FontHash);
                     if (fontAsset != null)
                     {
                         OverrideFont = true;
@@ -157,10 +110,9 @@ namespace Baracuda.Monitoring.UI
 
                 _size = Format.FontSize > 0
                     ? Format.FontSize
-                    : OverrideFont
-                        // ReSharper disable once PossibleNullReferenceException
+                    : OverrideFont && Font
                         ? Font.fontSize
-                        : ctx.defaultFont.fontSize;
+                        : ui.defaultFont ? ui.defaultFont.fontSize : 16;
 
                 if (Format.TextColor.HasValue)
                 {
@@ -224,9 +176,35 @@ namespace Baracuda.Monitoring.UI
 
             public Context(GUIStyle style)
             {
-                this.Style = style;
+                Style = style;
             }
         }
+
+        #endregion
+
+        #region Data
+
+        private Font defaultFont;
+
+        private readonly List<GUIElement> _unitsUpperLeft = new List<GUIElement>(100);
+        private readonly List<GUIElement> _unitsUpperRight = new List<GUIElement>(100);
+        private readonly List<GUIElement> _unitsLowerLeft = new List<GUIElement>(100);
+        private readonly List<GUIElement> _unitsLowerRight = new List<GUIElement>(100);
+
+        private readonly GUIContent _content = new GUIContent();
+
+        private static float lastLowerLeftHeight;
+        private static float lastLowerRightHeight;
+        private static int topLeftRows;
+        private static int topRightRows;
+
+        private readonly Dictionary<int, Font> _loadedFonts = new Dictionary<int, Font>();
+
+        private const float ELEMENT_SPACING = 1f;
+        private readonly MarginOrPadding windowMargin = new MarginOrPadding(2, 2, 2, 2);
+        private readonly MarginOrPadding elementPadding = new MarginOrPadding(0, 0, 5, 5);
+
+        private readonly Color backgroundColor = Color.black;
 
         private Font GetFont(int fontHash)
         {
@@ -235,15 +213,14 @@ namespace Baracuda.Monitoring.UI
 
         #endregion
 
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Setup ---
+        #region Setup
 
         protected override void Awake()
         {
             base.Awake();
 
             var utility = MonitoringSystems.Resolve<IMonitoringUtility>();
+            var availableFonts = Resources.LoadAll<Font>("Monitoring");
 
             for (var i = 0; i < availableFonts.Length; i++)
             {
@@ -254,16 +231,42 @@ namespace Baracuda.Monitoring.UI
                     _loadedFonts.Add(hash, fontAsset);
                 }
             }
-            availableFonts = null;
+
+            defaultFont = GetFont("JetBrainsMono-Regular".GetHashCode());
         }
 
         #endregion
 
-        #region --- GUI ---
+        #region Overrides
+
+        /// <summary>
+        /// The visible state of the UI.
+        /// </summary>
+        public override bool Visible { get; set; }
+
+        /// <summary>
+        /// Use to add UI elements for the passed unit.
+        /// </summary>
+        protected override void OnMonitorUnitCreated(IMonitorUnit unit)
+        {
+            OnUnitCreatedInternal(unit);
+        }
+
+        /// <summary>
+        /// Use to remove UI elements for the passed unit.
+        /// </summary>
+        protected override void OnMonitorUnitDisposed(IMonitorUnit unit)
+        {
+            OnUnitDisposedInternal(unit);
+        }
+
+        #endregion
+
+        #region GUI
 
         private void OnGUI()
         {
-            if (_draw)
+            if (Visible)
             {
                 GUI.skin.font = defaultFont;
                 var ctx = new Context(GUI.skin.label);
@@ -540,37 +543,7 @@ namespace Baracuda.Monitoring.UI
 
         #endregion
 
-        #region --- Overrides ---
-
-        public override bool IsVisible()
-        {
-            return _draw;
-        }
-
-        public override void ShowMonitoringUI()
-        {
-            _draw = true;
-        }
-
-        public override void HideMonitoringUI()
-        {
-            _draw = false;
-        }
-
-        public override void OnUnitDisposed(IMonitorUnit unit)
-        {
-            OnUnitDisposedInternal(unit);
-        }
-
-
-        public override void OnUnitCreated(IMonitorUnit unit)
-        {
-            OnUnitCreatedInternal(unit);
-        }
-
-        #endregion
-
-        #region --- Unit Creating / Disposal ---
+        #region Unit Creating / Disposal
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void OnUnitCreatedInternal(IMonitorUnit unit)

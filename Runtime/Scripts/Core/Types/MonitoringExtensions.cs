@@ -1,14 +1,13 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Utilities.Pooling;
+using Baracuda.Monitoring.Utilities.Pooling;
 using System;
 using System.Runtime.CompilerServices;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 #if UNITY_2020_1_OR_NEWER
 #endif
 
-namespace Baracuda.Monitoring.Core.Types
+namespace Baracuda.Monitoring.Types
 {
     internal static class MonitoringExtensions
     {

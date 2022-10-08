@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Baracuda.Monitoring.Core.Types
+namespace Baracuda.Monitoring.Types
 {
     internal abstract class OutParameterHandle
     {

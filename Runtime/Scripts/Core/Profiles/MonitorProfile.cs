@@ -1,21 +1,21 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Core.Types;
-using Baracuda.Monitoring.Core.Units;
-using Baracuda.Monitoring.Core.Utilities.Extensions;
-using Baracuda.Monitoring.Core.Utilities.Pooling;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Units;
+using Baracuda.Monitoring.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Pooling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using static Baracuda.Monitoring.Core.Types.FormatData;
+using static Baracuda.Monitoring.Types.FormatData;
 
-namespace Baracuda.Monitoring.Core.Profiles
+namespace Baracuda.Monitoring.Profiles
 {
     internal abstract class MonitorProfile : IMonitorProfile
     {
-        #region --- Interface ---
+        #region Interface ---
 
         public MonitorAttribute Attribute { get; }
         public MemberInfo MemberInfo { get; }
@@ -43,7 +43,7 @@ namespace Baracuda.Monitoring.Core.Profiles
 
         #endregion
 
-        #region --- Fields ---
+        #region Fields ---
 
         private readonly Dictionary<Type, MonitoringMetaAttribute> _metaAttributes =
             new Dictionary<Type, MonitoringMetaAttribute>();
@@ -52,7 +52,7 @@ namespace Baracuda.Monitoring.Core.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Ctor ---
+        #region Ctor ---
 
         protected MonitorProfile(
             MemberInfo memberInfo,
@@ -205,7 +205,7 @@ namespace Baracuda.Monitoring.Core.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Factory ---
+        #region Factory ---
 
         /// <summary>
         /// Creates a <see cref="MonitorUnit"/> with the <see cref="MonitorProfile"/>.
@@ -218,7 +218,7 @@ namespace Baracuda.Monitoring.Core.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Reflection Fields ---
+        #region Reflection Fields ---
 
         protected const BindingFlags StaticFlags
             = BindingFlags.Default |
@@ -238,7 +238,7 @@ namespace Baracuda.Monitoring.Core.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Validator ---
+        #region Validator ---
 
 
 

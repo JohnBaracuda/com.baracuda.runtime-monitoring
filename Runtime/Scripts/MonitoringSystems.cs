@@ -1,8 +1,8 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Core.Systems;
 using Baracuda.Monitoring.Dummy;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Systems;
 using Baracuda.Threading;
 using System;
 using System.Collections.Generic;
@@ -42,6 +42,10 @@ namespace Baracuda.Monitoring
         /// Access monitoring UI methods of the currently active UI instance.
         /// </summary>
         public static IMonitoringUI UI { get; private set; }
+
+
+        internal static MonitoringUIManager InternalUI { get; private set; }
+        internal static IMonitoringTicker Ticker { get; private set; }
 
         //--------------------------------------------------------------------------------------------------------------
 
@@ -121,7 +125,7 @@ namespace Baracuda.Monitoring
                 return;
             }
             var settings = MonitoringSettings.FindOrCreateSettingsAsset();
-            if (settings.EnableMonitoring)
+            if (settings.IsMonitoringEnabled)
             {
                 InstallCoreSystems(settings);
             }
@@ -140,6 +144,11 @@ namespace Baracuda.Monitoring
             Register<IMonitoringManager>(dummy);
             Register<IMonitoringUI>(dummy);
             Register<IMonitoringUtility>(dummy);
+
+            Manager = dummy;
+            Settings = dummy;
+            Utility = dummy;
+            UI = dummy;
         }
 
         private static void InstallCoreSystems(IMonitoringSettings settings)
@@ -169,10 +178,12 @@ namespace Baracuda.Monitoring
 #endif
 
             var ticker = new MonitoringTicker(manager);
+            Ticker = ticker;
             Register<IMonitoringTicker>(ticker);
 
-            var uiSystem = new MonitoringUISystem(manager, settings, ticker);
+            var uiSystem = new MonitoringUIManager();
             UI = uiSystem;
+            InternalUI = uiSystem;
             Register<IMonitoringUI>(uiSystem);
 
             Register<IValueProcessorFactory>(new ValueProcessorFactory(settings));

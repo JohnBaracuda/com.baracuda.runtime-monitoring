@@ -3,7 +3,7 @@
 using System;
 using System.Reflection;
 
-namespace Baracuda.Monitoring.Core.Types
+namespace Baracuda.Monitoring.Types
 {
     /// <summary>
     /// Object acts as a wrapper for additional arguments that need to be passed when constructing a unit profile.

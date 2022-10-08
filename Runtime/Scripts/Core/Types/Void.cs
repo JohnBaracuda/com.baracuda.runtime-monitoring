@@ -2,7 +2,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace Baracuda.Monitoring.Core.Types
+namespace Baracuda.Monitoring.Types
 {
     [StructLayout(LayoutKind.Explicit, Size = 1)]
     internal struct Void

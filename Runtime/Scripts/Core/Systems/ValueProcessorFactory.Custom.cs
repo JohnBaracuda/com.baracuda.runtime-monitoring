@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Core.Types;
-using Baracuda.Monitoring.Core.Units;
-using Baracuda.Monitoring.Core.Utilities.Extensions;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Units;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +12,11 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValueProcessorFactory
     {
-        #region --- Find ValueProcessor ---
+        #region Find ValueProcessor ---
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Func<TValue, string> FindCustomStaticProcessorInternal<TTarget, TValue>(
@@ -70,7 +70,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
                 //----------------------------
 
-                #region --- Ilist<T> ---
+                #region Ilist<T> ---
 
                 // IList<T> processor
                 if (valueType.IsGenericIList())
@@ -130,7 +130,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
                 //----------------------------
 
-                #region --- IDictionary<TKey,TValue> ---
+                #region IDictionary<TKey,TValue> ---
 
                 // IDictionary<TKey, TValue> processor
                 if (valueType.IsGenericIDictionary())
@@ -169,7 +169,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
                 //----------------------------
 
-                #region --- IEnumerable<T> ---
+                #region IEnumerable<T> ---
 
                 // IEnumerable<T> processor
                 if (valueType.IsGenericIEnumerable(true))
@@ -272,7 +272,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- IEnumerable ---
+        #region IEnumerable ---
 
         private static readonly MethodInfo genericIEnumerableProcessorMethod =
             typeof(ValueProcessorFactory).GetMethod(nameof(CreateIEnumerableFunc), STATIC_FLAGS);
@@ -323,7 +323,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         #endregion
 
-        #region --- Dictionary ---
+        #region Dictionary ---
 
         private static readonly MethodInfo genericIDictionaryCreateMethod =
             typeof(ValueProcessorFactory).GetMethod(nameof(CreateIDictionaryFunc), STATIC_FLAGS);
@@ -374,7 +374,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         #endregion
 
-        #region --- IList ---
+        #region IList ---
 
         private static readonly MethodInfo genericIListWithoutIndexCreateMethod =
             typeof(ValueProcessorFactory).GetMethod(nameof(CreateIListFuncWithoutIndexArgument), STATIC_FLAGS);
@@ -394,7 +394,7 @@ namespace Baracuda.Monitoring.Core.Systems
                 // create a stringBuilder object to be used by the lambda.
                 var stringBuilder = new StringBuilder();
 
-                #region --- Processor Code ---
+                #region Processor Code ---
 
                 return (value) =>
                 {
@@ -429,7 +429,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         #endregion
 
-        #region --- IList + Index ---
+        #region IList + Index ---
 
         private static readonly MethodInfo genericIListWithIndexCreateMethod =
             typeof(ValueProcessorFactory).GetMethod(nameof(CreateIListFuncWithIndexArgument), STATIC_FLAGS);
@@ -459,7 +459,7 @@ namespace Baracuda.Monitoring.Core.Systems
                 // create a stringBuilder object to be used by the lambda.
                 var stringBuilder = new StringBuilder();
 
-                #region --- Processor Code ---
+                #region Processor Code ---
 
                 return (value) =>
                 {

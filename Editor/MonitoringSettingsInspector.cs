@@ -1,6 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Systems;
+using Baracuda.Monitoring.Systems;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,7 +13,7 @@ namespace Baracuda.Monitoring.Editor
     [CustomEditor(typeof(MonitoringSettings))]
     internal class MonitoringSettingsInspector : UnityEditor.Editor
     {
-        #region --- Data ---
+        #region Data
 
         /*
          * Private Fields
@@ -32,7 +32,8 @@ namespace Baracuda.Monitoring.Editor
         private SerializedProperty _autoInstantiateUI;
         private SerializedProperty _openDisplayOnLoad;
         private SerializedProperty _asyncProfiling;
-        private SerializedProperty _monitoringUIController;
+        private SerializedProperty _monitoringUIOverride;
+        private SerializedProperty _allowMultipleUIInstances;
 
         private SerializedProperty _showRuntimeMonitoringObject;
         private SerializedProperty _logBadImageFormatException;
@@ -89,53 +90,12 @@ namespace Baracuda.Monitoring.Editor
 
         #endregion
 
-        #region --- Setup ---
+        #region Setup
 
         private void OnEnable()
         {
             Foldout = new FoldoutHandler(nameof(MonitoringSettings));
             PopulateSerializedProperties();
-            PopulateAvailableUIController();
-
-            AssetDatabase.importPackageCompleted -= ImportPackageCompleted;
-            AssetDatabase.importPackageCompleted += ImportPackageCompleted;
-        }
-
-        private void OnDisable()
-        {
-            AssetDatabase.importPackageCompleted -= ImportPackageCompleted;
-        }
-
-        internal void Refresh()
-        {
-            PopulateAvailableUIController();
-        }
-
-        private void ImportPackageCompleted(string packageName)
-        {
-            PopulateAvailableUIController();
-
-            if (!_availableUIController.Any())
-            {
-                return;
-            }
-
-            if (!packageName.StartsWith("RuntimeMonitoring"))
-            {
-                return;
-            }
-
-            for (var i = 0; i < _availableUIController.Count; i++)
-            {
-                var controllerName = _availableUIController[i].name.Replace("MonitoringUIController_", "");
-                var package = packageName.Replace("RuntimeMonitoring_", "");
-                if (package == controllerName)
-                {
-                    _monitoringUIController.objectReferenceValue = _availableUIController[i];
-                    _monitoringUIController.serializedObject.ApplyModifiedProperties();
-                    break;
-                }
-            }
         }
 
         protected void PopulateSerializedProperties()
@@ -165,9 +125,7 @@ namespace Baracuda.Monitoring.Editor
 
         #endregion
 
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- GUI ---
+        #region GUI
 
         public void DrawCustomInspector()
         {
@@ -296,27 +254,20 @@ namespace Baracuda.Monitoring.Editor
         {
             EditorGUILayout.Space();
             EditorGUILayout.PropertyField(_autoInstantiateUI);
-            var isNotNull = DrawRequired(_monitoringUIController);
+            EditorGUILayout.PropertyField(_allowMultipleUIInstances);
+            EditorGUILayout.PropertyField(_monitoringUIOverride);
+
             DrawSelectableUIController();
 
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Refresh", GUILayout.Width(80), GUILayout.Height(25)))
+            if (_monitoringUIOverride.objectReferenceValue != null)
             {
-                Refresh();
-            }
-            EditorGUILayout.EndHorizontal();
-
-            if (isNotNull)
-            {
-                if (Application.isPlaying)
+                if (Application.isPlaying && MonitoringSystems.UI.GetCurrent<MonitoringUI>() is Object targetObject)
                 {
-                    var targetObject = MonitoringSystems.UI.GetActiveUIController();
                     DrawInlinedUIControllerPrefab(targetObject);
                 }
                 else
                 {
-                    var targetObject = _monitoringUIController.objectReferenceValue;
+                    targetObject = _monitoringUIOverride.objectReferenceValue;
                     DrawInlinedUIControllerPrefab(targetObject);
                 }
             }
@@ -363,19 +314,7 @@ namespace Baracuda.Monitoring.Editor
 
         #endregion
 
-        #region --- Misc ---
-
-        private static bool DrawRequired(SerializedProperty property)
-        {
-            var isNull = property.objectReferenceValue == null;
-            if (isNull)
-            {
-                EditorGUILayout.HelpBox($"{property.displayName} is Required!", MessageType.Error);
-            }
-            EditorGUILayout.PropertyField(property);
-            return !isNull;
-        }
-
+        #region Misc
 
         private void DrawInlinedUIControllerPrefab(Object targetObject)
         {
@@ -400,7 +339,7 @@ namespace Baracuda.Monitoring.Editor
 
         #endregion
 
-        #region --- UI Controller Selection ---
+        #region UI Controller Selection
 
         private void DrawSelectableUIController()
         {
@@ -415,13 +354,13 @@ namespace Baracuda.Monitoring.Editor
                 for (var i = 0; i < _availableUIController.Count; i++)
                 {
                     GUILayout.BeginHorizontal();
-                    var isSelected = _monitoringUIController.objectReferenceValue == _availableUIController[i];
+                    var isSelected = _monitoringUIOverride.objectReferenceValue == _availableUIController[i];
                     GUILayout.Label(BoldIf(_availableUIController[i].name, isSelected), InspectorUtilities.RichTextStyle(), GUILayout.Width(EditorGUIUtility.labelWidth - 7f));
                     GUILayout.FlexibleSpace();
                     if (GUILayout.Button("Set Active UIController", GUILayout.Width(200)))
                     {
-                        _monitoringUIController.objectReferenceValue = _availableUIController[i];
-                        _monitoringUIController.serializedObject.ApplyModifiedProperties();
+                        _monitoringUIOverride.objectReferenceValue = _availableUIController[i];
+                        _monitoringUIOverride.serializedObject.ApplyModifiedProperties();
                     }
                     if (GUILayout.Button("Select", GUILayout.Width(75)))
                     {
@@ -444,7 +383,7 @@ namespace Baracuda.Monitoring.Editor
             }
         }
 
-        private readonly List<MonitoringUIController> _availableUIController = new List<MonitoringUIController>(10);
+        private readonly List<MonitoringUI> _availableUIController = new List<MonitoringUI>(10);
 
         private void PopulateAvailableUIController()
         {
@@ -455,7 +394,7 @@ namespace Baracuda.Monitoring.Editor
                 var guid = guids[i];
                 var path = AssetDatabase.GUIDToAssetPath(guid);
                 var gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                var controller = gameObject.GetComponent<MonitoringUIController>();
+                var controller = gameObject.GetComponent<MonitoringUI>();
                 if (controller != null)
                 {
                     _availableUIController.Add(controller);

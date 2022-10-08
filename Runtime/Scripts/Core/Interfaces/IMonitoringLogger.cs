@@ -3,7 +3,7 @@
 using System;
 using System.Threading;
 
-namespace Baracuda.Monitoring.Core.Interfaces
+namespace Baracuda.Monitoring.Interfaces
 {
     internal interface IMonitoringLogger : IMonitoringSubsystem<IMonitoringLogger>
     {

@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Types;
+using Baracuda.Monitoring.Types;
 using System;
 using System.Reflection;
 
-namespace Baracuda.Monitoring.Core.Profiles
+namespace Baracuda.Monitoring.Profiles
 {
     internal abstract class NotifiableProfile<TTarget, TValue> : MonitorProfile
     {
@@ -23,7 +23,7 @@ namespace Baracuda.Monitoring.Core.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Ctor ---
+        #region Ctor ---
 
         protected NotifiableProfile(
             MemberInfo memberInfo,
@@ -66,7 +66,7 @@ namespace Baracuda.Monitoring.Core.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Try Subscribe ---
+        #region Try Subscribe ---
 
         internal bool TrySubscribeToUpdateEvent(TTarget target, Action refreshAction, Action<TValue> setValueDelegate)
         {
@@ -101,7 +101,7 @@ namespace Baracuda.Monitoring.Core.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Custom Update Event ---
+        #region Custom Update Event ---
 
         private static UpdateHandleDelegate<T, TParam> CreateUpdateHandlerDelegate<T, TParam>(
             string eventName, IMonitorProfile profile, bool createAddMethod)

@@ -3,7 +3,7 @@
 using System;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Types
+namespace Baracuda.Monitoring.Types
 {
     internal class SceneHook : MonoBehaviour
     {

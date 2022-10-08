@@ -5,17 +5,17 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     /// <summary>
     /// Settings of the monitoring system.
     /// </summary>
     public class MonitoringSettings : ScriptableObject, IMonitoringSettings
     {
-        #region --- General ---
+        #region General
 
 #pragma warning disable CS0414
-        [SerializeField] private bool enableMonitoring = true;
+        [SerializeField] private EnabledState enableMonitoring = EnabledState.Enabled;
 
         [Tooltip("When enabled, monitoring UI is instantiated as soon as profiling has completed. Otherwise MonitoringUI.CreateMonitoringUI() must be called manually.")]
         [SerializeField] private bool autoInstantiateUI = true;
@@ -26,12 +26,15 @@ namespace Baracuda.Monitoring.Core.Systems
         [Tooltip("When enabled, the monitoring display will be opened as soon as profiling has completed.")]
         [SerializeField] private bool openDisplayOnLoad = true;
 
+        [Tooltip("When enabled, multiple UI instances are allowed simultaneously. Otherwise UI instances are destroyed if a new instance is instantiated / enabled.")]
+        [SerializeField] private bool allowMultipleUIInstances = false;
+
         [Tooltip("Reference to the used MonitoringDisplay object.")]
-        [SerializeReference, SerializeField] private MonitoringUIController monitoringUIController = null;
+        [SerializeReference, SerializeField] private MonitoringUI monitoringUIOverride = null;
 
         #endregion
 
-        #region --- Debug ---
+        #region Debug
 
         [Tooltip("When enabled, the monitoring runtime object is set visible in the hierarchy.")] [SerializeField]
         private bool showRuntimeMonitoringObject = false;
@@ -56,7 +59,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         #endregion
 
-        #region --- Filtering ---
+        #region Filtering
 
         [Tooltip("When enabled, label are used for filtering.")]
         [SerializeField] private bool filterLabel = true;
@@ -85,7 +88,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         #endregion
 
-        #region --- Formatting ---
+        #region Formatting
 
         [Tooltip("When enabled, class names will be used as a prefix for displayed units")] [SerializeField]
         private bool addClassName = false;
@@ -107,7 +110,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         #endregion
 
-        #region --- Color ---
+        #region Color
 
         [Header("Color")]
         [SerializeField] private Color trueColor = Color.green;
@@ -129,7 +132,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         #endregion
 
-        #region --- Assembly Settings ---
+        #region Assembly Settings
 
         [SerializeField]
         [Tooltip("Assemblies with matching prefixes are ignored when creating a monitoring profile during initialization. Note that Unity, System and other core assemblies will always be ignored.")]
@@ -263,7 +266,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         #endregion
 
-        #region --- IL2CPP ---
+        #region IL2CPP
 
         [Tooltip("When enabled, this object will listen to an IPreprocessBuildWithReport callback")]
         [SerializeField] private bool generateTypeDefinitionsOnBuild = true;
@@ -279,22 +282,21 @@ namespace Baracuda.Monitoring.Core.Systems
 
         #endregion
 
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Properties ---
-
-        /*
-         * General
-         */
-
+        #region Properties
 
         /// <inheritdoc />
-        public bool EnableMonitoring =>
-#if !DISABLE_MONITORING
-            enableMonitoring;
+        public bool IsEditorOnly => enableMonitoring == EnabledState.EditorOnly;
+
+        /// <inheritdoc />
+        public bool IsMonitoringEnabled =>
+#if UNITY_EDITOR
+            enableMonitoring == EnabledState.EditorOnly || enableMonitoring == EnabledState.Enabled;
 #else
-            false;
+            enableMonitoring == EnabledState.Enabled;
 #endif
+
+        /// <inheritdoc />
+        public bool AllowMultipleUIInstances => allowMultipleUIInstances;
 
         /// <inheritdoc />
         public bool AsyncProfiling =>
@@ -311,13 +313,14 @@ namespace Baracuda.Monitoring.Core.Systems
          * UI Controller
          */
 
+
         /// <inheritdoc />
-        public MonitoringUIController UIController
+        public MonitoringUI MonitoringUIOverride
         {
             get
             {
 #if UNITY_EDITOR
-                if (monitoringUIController == null)
+                if (monitoringUIOverride == null)
                 {
                     var guids = UnityEditor.AssetDatabase.FindAssets("t:Prefab");
                     for (var i = 0; i < guids.Length; i++)
@@ -325,18 +328,18 @@ namespace Baracuda.Monitoring.Core.Systems
                         var guid = guids[i];
                         var path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
                         var gameObject = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                        var controller = gameObject.GetComponent<MonitoringUIController>();
+                        var controller = gameObject.GetComponent<MonitoringUI>();
                         if (controller == null)
                         {
                             continue;
                         }
-                        monitoringUIController = controller;
+                        monitoringUIOverride = controller;
                         UnityEditor.EditorUtility.SetDirty(this);
                         break;
                     }
                 }
 #endif
-                return monitoringUIController;
+                return monitoringUIOverride;
             }
         }
 
@@ -494,9 +497,7 @@ namespace Baracuda.Monitoring.Core.Systems
 
         #endregion
 
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Asset Logic ---
+        #region Asset Logic
 
         /// <summary>
         /// Get the settings asset or create a new instance of it.
@@ -525,6 +526,18 @@ namespace Baracuda.Monitoring.Core.Systems
 #endif
             return asset;
         }
+
+        #endregion
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region Obsolete
+
+        [Obsolete]
+        public MonitoringUIController UIController => MonitoringUIOverride as MonitoringUIController;
+
+        [Obsolete]
+        public bool EnableMonitoring => IsMonitoringEnabled;
 
         #endregion
     }

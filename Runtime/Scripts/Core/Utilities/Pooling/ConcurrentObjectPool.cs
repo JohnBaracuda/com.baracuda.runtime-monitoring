@@ -3,7 +3,7 @@
 using JetBrains.Annotations;
 using System;
 
-namespace Baracuda.Monitoring.Core.Utilities.Pooling
+namespace Baracuda.Monitoring.Utilities.Pooling
 {
     internal sealed class ConcurrentObjectPool<T> : ObjectPool<T>
     {

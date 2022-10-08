@@ -1,19 +1,19 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Types;
+using Baracuda.Monitoring.Types;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValueProcessorFactory
     {
         private readonly Dictionary<Type, Delegate> _globalValueProcessors =
             new Dictionary<Type, Delegate>();
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AddGlobalValueProcessorInternal(MethodInfo methodInfo)
         {
@@ -33,7 +33,7 @@ namespace Baracuda.Monitoring.Core.Systems
                 Debug.LogWarning($"[GlobalValueProcessor] processor for {valueType.Name} is already defined!");
                 return;
             }
-            
+
             _globalValueProcessors.Add(valueType, processor);
         }
 

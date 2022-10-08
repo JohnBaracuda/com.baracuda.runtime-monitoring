@@ -1,16 +1,16 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Core.Types;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Types;
 using System;
 using System.Reflection;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValidatorFactory : IValidatorFactory
     {
-        #region --- API ---
-        
+        #region API ---
+
         public Func<bool> CreateStaticValidator(MShowIfAttribute attribute, MemberInfo memberInfo)
         {
             return CreateStaticValidatorInternal(attribute, memberInfo);
@@ -20,7 +20,7 @@ namespace Baracuda.Monitoring.Core.Systems
         {
             return CreateInstanceValidatorInternal<TTarget>(attribute);
         }
-        
+
         public Func<TValue, bool> CreateStaticConditionalValidator<TValue>(MShowIfAttribute attribute, MemberInfo memberInfo)
         {
             return CreateStaticValidatorCondition<TValue>(attribute, memberInfo);
@@ -34,8 +34,8 @@ namespace Baracuda.Monitoring.Core.Systems
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
-        
-        #region --- Reflection Fields ---
+
+        #region Reflection Fields ---
 
         private const BindingFlags STATIC_FLAGS
             = BindingFlags.Default |

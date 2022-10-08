@@ -1,17 +1,17 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using Object = UnityEngine.Object;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValueProcessorFactory
     {
-        #region --- Bool Array ---
+        #region Bool Array ---
 
         private Func<bool[], string> BooleanArrayProcessor(IFormatData formatData)
         {

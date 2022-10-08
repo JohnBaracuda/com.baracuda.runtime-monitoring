@@ -14,13 +14,23 @@ namespace Baracuda.Monitoring
         /// When enabled, the monitoring system is active, otherwise dummy systems are in place to prevent API calls from
         /// resulting in compile or runtime exceptions.
         /// </summary>
-        bool EnableMonitoring { get; }
+        bool IsMonitoringEnabled { get; }
+
+        /// <summary>
+        /// Returns true if runtime monitoring is currently editor only.
+        /// </summary>
+        bool IsEditorOnly { get; }
 
         /// <summary>
         /// When enabled, monitoring UI is instantiated as soon as profiling has completed.
         /// Otherwise MonitoringUI.CreateMonitoringUI() must be called manually.
         /// </summary>
         bool AutoInstantiateUI { get; }
+
+        /// <summary>
+        /// When enabled, multiple UI instances are allowed simultaneously. Otherwise UI instances are destroyed if a new instance is instantiated / enabled.
+        /// </summary>
+        bool AllowMultipleUIInstances { get; }
 
         /// <summary>
         /// When enabled, initial profiling will be processed asynchronous on a background thread. (Disabled for WebGL)
@@ -183,9 +193,9 @@ namespace Baracuda.Monitoring
         int PreprocessBuildCallbackOrder { get; }
 
         /// <summary>
-        /// Reference to the used MonitoringDisplay object.
+        /// Reference to the an MonitoringUI override.
         /// </summary>
-        MonitoringUIController UIController { get; }
+        MonitoringUI MonitoringUIOverride { get; }
 
         /// <summary>
         /// When enabled, label are used for filtering.
@@ -246,5 +256,17 @@ namespace Baracuda.Monitoring
         /// Symbol can be used to tag filtering, meaning that it is only searching for custom tags.
         /// </summary>
         char FilterTagsSymbol { get; }
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region Obsolete
+
+        [Obsolete("Use MonitoringUIPrefab instead! This API will be removed in 4.0.0")]
+        MonitoringUIController UIController { get; }
+
+        [Obsolete("Use IMonitoringSettings.IsMonitoringEnabled instead. This API will be removed in 4.0.0")]
+        bool EnableMonitoring { get; }
+
+        #endregion
     }
 }

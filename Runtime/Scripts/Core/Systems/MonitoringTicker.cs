@@ -1,13 +1,13 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Core.Types;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Types;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal class MonitoringTicker : IMonitoringTicker
     {
@@ -52,6 +52,8 @@ namespace Baracuda.Monitoring.Core.Systems
                 : HideFlags.HideInHierarchy;
 
             sceneHook.LateUpdateEvent += Tick;
+
+            tickEnabled = MonitoringSystems.UI.Visible;
 
             MonitoringSystems.UI.VisibleStateChanged += visible =>
             {

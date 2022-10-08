@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-namespace Baracuda.Monitoring.Core.IL2CPP
+namespace Baracuda.Monitoring.IL2CPP
 {
     /// <summary>
     /// Concrete 8 bit enum type definition used for IL2CPP AOT compilation.

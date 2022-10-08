@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Baracuda.Monitoring.Core.Types
+namespace Baracuda.Monitoring.Types
 {
     internal class ValidationEvent
     {

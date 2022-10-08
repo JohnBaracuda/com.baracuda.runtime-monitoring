@@ -3,7 +3,7 @@
 using System.Text;
 using UnityEngine;
 
-namespace Baracuda.Monitoring.Core.Utilities.Pooling
+namespace Baracuda.Monitoring.Utilities.Pooling
 {
     /// <summary>
     /// Thread safe version of a <see cref="StringBuilderPool"/>

@@ -1,11 +1,11 @@
 // Copyright (c) 2022 Jonathan Lang
 #define UNITY_ASSERTIONS
 
-using Baracuda.Monitoring.Core.Interfaces;
-using Baracuda.Monitoring.Core.Profiles;
-using Baracuda.Monitoring.Core.Types;
-using Baracuda.Monitoring.Core.Utilities.Extensions;
-using Baracuda.Monitoring.Core.Utilities.Reflection;
+using Baracuda.Monitoring.Interfaces;
+using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Types;
+using Baracuda.Monitoring.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +14,9 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Debug = UnityEngine.Debug;
-using Void = Baracuda.Monitoring.Core.Types.Void;
+using Void = Baracuda.Monitoring.Types.Void;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     /// <summary>
     /// Class responsible for creating <see cref="MonitorProfile"/>s for member found in custom assemblies that were
@@ -24,7 +24,7 @@ namespace Baracuda.Monitoring.Core.Systems
     /// </summary>
     internal class MonitoringProfiler : IMonitoringProfiler
     {
-        #region --- Fields ---
+        #region Fields ---
 
         /*
          * Internal

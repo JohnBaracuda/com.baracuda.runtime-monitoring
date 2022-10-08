@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-namespace Baracuda.Monitoring.Core.Types
+namespace Baracuda.Monitoring.Types
 {
     internal readonly struct MethodResult<TValue>
     {

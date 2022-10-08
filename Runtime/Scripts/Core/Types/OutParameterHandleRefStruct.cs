@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Text;
 
-namespace Baracuda.Monitoring.Core.Types
+namespace Baracuda.Monitoring.Types
 {
     /// <summary>
     /// Out parameter handle capable of handing readonly ref struct out parameters in IL2CPP Runtime.

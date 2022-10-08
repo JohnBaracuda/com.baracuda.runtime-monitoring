@@ -1,12 +1,12 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Core.Utilities.Extensions;
+using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Baracuda.Monitoring.Core.Utilities.Reflection
+namespace Baracuda.Monitoring.Utilities.Reflection
 {
     internal static class AssemblyProfiler
     {

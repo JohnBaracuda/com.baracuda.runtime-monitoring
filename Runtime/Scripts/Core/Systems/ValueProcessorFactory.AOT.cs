@@ -2,18 +2,18 @@
 
 #if ENABLE_IL2CPP || UNITY_EDITOR
 
-using Baracuda.Monitoring.Core.IL2CPP;
+using Baracuda.Monitoring.IL2CPP;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Scripting;
 
-namespace Baracuda.Monitoring.Core.Systems
+namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValueProcessorFactory
     {
-        #region --- AOT ---
+        #region AOT ---
 
         [Preserve]
         [MethodImpl(MethodImplOptions.NoOptimization)]
