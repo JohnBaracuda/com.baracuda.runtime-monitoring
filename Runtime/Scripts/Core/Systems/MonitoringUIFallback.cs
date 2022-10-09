@@ -242,7 +242,7 @@ namespace Baracuda.Monitoring.Systems
         /// <summary>
         /// The visible state of the UI.
         /// </summary>
-        public override bool Visible { get; set; }
+        public override bool Visible { get; set; } = true;
 
         /// <summary>
         /// Use to add UI elements for the passed unit.

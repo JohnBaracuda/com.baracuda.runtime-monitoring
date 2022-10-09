@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
 
+## [3.1.1] - 2022-10-09
+
+### Fixed
+- Fixed UI not updating when using the default IMGUI UI. (UI started to update after its visibility was changed manually)
+
 ## [3.1.0] - 2022-10-08
 
 ### Added
