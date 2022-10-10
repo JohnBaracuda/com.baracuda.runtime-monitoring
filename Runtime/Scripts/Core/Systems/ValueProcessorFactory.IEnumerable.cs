@@ -24,7 +24,7 @@ namespace Baracuda.Monitoring.Systems
 
             if (unityValueType.IsSubclassOrAssignable(typeof(UnityEngine.Object)))
             {
-                return formatData.ShowIndexer
+                return formatData.ShowIndex
                     ? (Func<IEnumerable, string>) ((value) =>
                     {
                         if ((UnityEngine.Object) value == null)
@@ -70,7 +70,7 @@ namespace Baracuda.Monitoring.Systems
             }
             else
             {
-                return formatData.ShowIndexer
+                return formatData.ShowIndex
                     ? (Func<IEnumerable, string>) ((value) =>
                     {
                         if (value == null)
@@ -137,7 +137,7 @@ namespace Baracuda.Monitoring.Systems
 #if UNITY_EDITOR
             if (typeof(Object).IsAssignableFrom(type))
             {
-                return formatData.ShowIndexer
+                return formatData.ShowIndex
                     ? (Func<IEnumerable<T>, string>) ((value) =>
                     {
                         // ReSharper disable once SuspiciousTypeConversion.Global
@@ -186,7 +186,7 @@ namespace Baracuda.Monitoring.Systems
             else
 #endif //UNITY_EDITOR
             {
-                return formatData.ShowIndexer
+                return formatData.ShowIndex
                     ? (Func<IEnumerable<T>, string>) ((value) =>
                     {
                         if (value == null)
@@ -242,7 +242,7 @@ namespace Baracuda.Monitoring.Systems
             var stringBuilder = new StringBuilder();
             var indent = GetIndentStringForProfile(formatData);
 
-            return formatData.ShowIndexer
+            return formatData.ShowIndex
                 ? (Func<IEnumerable<bool>, string>) ((value) =>
                 {
                     if (value == null)

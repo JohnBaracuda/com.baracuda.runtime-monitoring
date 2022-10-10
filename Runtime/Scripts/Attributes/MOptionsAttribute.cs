@@ -50,7 +50,7 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// If the member is a collection, determine if the index of individual elements should be displayed or not.
         /// </summary>
-        public bool ShowIndexer { get; set; } = true;
+        public bool ShowIndex { get; set; } = true;
 
         /// <summary>
         /// The indent of individual elements of a displayed collection.
@@ -158,5 +158,19 @@ namespace Baracuda.Monitoring
         public MOptionsAttribute()
         {
         }
+
+        //--------------------------------------------------------------------------------------------------------------
+
+        #region Obsolete
+
+
+        [Obsolete("Use ShowIndex instead! This API will be removed in 4.0.0")]
+        public bool ShowIndexer
+        {
+            get => ShowIndex;
+            set => ShowIndex = value;
+        }
+
+        #endregion
     }
 }

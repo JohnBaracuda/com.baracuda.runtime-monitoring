@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using System;
 using UnityEngine;
 
 namespace Baracuda.Monitoring
@@ -17,7 +18,7 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// When enabled, the index of the elements of a monitored collection are displayed.
         /// </summary>
-        bool ShowIndexer { get; }
+        bool ShowIndex { get; }
 
         /// <summary>
         /// The label for the monitored member.
@@ -93,5 +94,12 @@ namespace Baracuda.Monitoring
         /// The group color for the monitored member.
         /// </summary>
         Color? GroupColor { get; }
+
+        #region Obsolete
+
+        [Obsolete("Use ShowIndex instead! This API will be removed in 4.0.0")]
+        bool ShowIndexer { get; }
+
+        #endregion
     }
 }

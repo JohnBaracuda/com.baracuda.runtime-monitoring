@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
+- 
+## [3.1.2] - 2022-10-09
+
+### Deprecated
+- MShowIndexerAttribute is now obsolete. Use MShowIndexAttribute instead. Removing in [4.0.0]
 
 ## [3.1.1] - 2022-10-09
 

@@ -27,7 +27,7 @@ namespace Baracuda.Monitoring.Systems
             {
                 if (typeof(TValue).IsValueType)
                 {
-                    return formatData.ShowIndexer
+                    return formatData.ShowIndex
                         ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
                             if (value == null)
@@ -48,65 +48,7 @@ namespace Baracuda.Monitoring.Systems
                                 stringBuilder.Append(']');
                                 stringBuilder.Append(' ');
                                 stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key.ToString());
-                                stringBuilder.Append(',');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value.ToString());
-                                stringBuilder.Append(']');
-                            }
-
-                            return stringBuilder.ToString();
-                        })
-                        : (value) =>
-                        {
-                            if (value == null)
-                            {
-                                return nullString;
-                            }
-
-                            stringBuilder.Clear();
-                            stringBuilder.Append(name);
-
-                            foreach (KeyValuePair<TKey, TValue> element in value)
-                            {
-                                stringBuilder.Append(Environment.NewLine);
-                                stringBuilder.Append(indent);
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key.ToString());
-                                stringBuilder.Append(',');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value.ToString());
-                                stringBuilder.Append(']');
-                            }
-
-                            return stringBuilder.ToString();
-                        };
-                }
-                else
-                {
-                    return formatData.ShowIndexer
-                        ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
-                        {
-                            if (value == null)
-                            {
-                                return nullString;
-                            }
-
-                            var index = 0;
-                            stringBuilder.Clear();
-                            stringBuilder.Append(name);
-
-                            foreach (KeyValuePair<TKey, TValue> element in value)
-                            {
-                                stringBuilder.Append(Environment.NewLine);
-                                stringBuilder.Append(indent);
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(index++);
-                                stringBuilder.Append(']');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key.ToString());
+                                stringBuilder.Append(element.Key?.ToString());
                                 stringBuilder.Append(',');
                                 stringBuilder.Append(' ');
                                 stringBuilder.Append(element.Value?.ToString());
@@ -131,7 +73,65 @@ namespace Baracuda.Monitoring.Systems
                                 stringBuilder.Append(indent);
                                 stringBuilder.Append(' ');
                                 stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key.ToString());
+                                stringBuilder.Append(element.Key?.ToString());
+                                stringBuilder.Append(',');
+                                stringBuilder.Append(' ');
+                                stringBuilder.Append(element.Value?.ToString());
+                                stringBuilder.Append(']');
+                            }
+
+                            return stringBuilder.ToString();
+                        };
+                }
+                else
+                {
+                    return formatData.ShowIndex
+                        ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
+                        {
+                            if (value == null)
+                            {
+                                return nullString;
+                            }
+
+                            var index = 0;
+                            stringBuilder.Clear();
+                            stringBuilder.Append(name);
+
+                            foreach (KeyValuePair<TKey, TValue> element in value)
+                            {
+                                stringBuilder.Append(Environment.NewLine);
+                                stringBuilder.Append(indent);
+                                stringBuilder.Append('[');
+                                stringBuilder.Append(index++);
+                                stringBuilder.Append(']');
+                                stringBuilder.Append(' ');
+                                stringBuilder.Append('[');
+                                stringBuilder.Append(element.Key?.ToString());
+                                stringBuilder.Append(',');
+                                stringBuilder.Append(' ');
+                                stringBuilder.Append(element.Value?.ToString());
+                                stringBuilder.Append(']');
+                            }
+
+                            return stringBuilder.ToString();
+                        })
+                        : (value) =>
+                        {
+                            if (value == null)
+                            {
+                                return nullString;
+                            }
+
+                            stringBuilder.Clear();
+                            stringBuilder.Append(name);
+
+                            foreach (KeyValuePair<TKey, TValue> element in value)
+                            {
+                                stringBuilder.Append(Environment.NewLine);
+                                stringBuilder.Append(indent);
+                                stringBuilder.Append(' ');
+                                stringBuilder.Append('[');
+                                stringBuilder.Append(element.Key?.ToString());
                                 stringBuilder.Append(',');
                                 stringBuilder.Append(' ');
                                 stringBuilder.Append(element.Value?.ToString());
@@ -146,7 +146,7 @@ namespace Baracuda.Monitoring.Systems
             {
                 if (typeof(TValue).IsValueType)
                 {
-                    return formatData.ShowIndexer
+                    return formatData.ShowIndex
                         ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
                             if (value == null)
@@ -170,7 +170,7 @@ namespace Baracuda.Monitoring.Systems
                                 stringBuilder.Append(element.Key?.ToString());
                                 stringBuilder.Append(',');
                                 stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value.ToString());
+                                stringBuilder.Append(element.Value?.ToString());
                                 stringBuilder.Append(']');
                             }
 
@@ -195,7 +195,7 @@ namespace Baracuda.Monitoring.Systems
                                 stringBuilder.Append(element.Key?.ToString());
                                 stringBuilder.Append(',');
                                 stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value.ToString());
+                                stringBuilder.Append(element.Value?.ToString());
                                 stringBuilder.Append(']');
                             }
 
@@ -204,7 +204,7 @@ namespace Baracuda.Monitoring.Systems
                 }
                 else
                 {
-                    return formatData.ShowIndexer
+                    return formatData.ShowIndex
                         ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
                         {
                             if (value == null)

@@ -20,7 +20,7 @@ namespace Baracuda.Monitoring.Systems
             var stringBuilder = new StringBuilder();
             var indent = GetIndentStringForProfile(formatData);
 
-            return formatData.ShowIndexer
+            return formatData.ShowIndex
                 ? (Func<bool[], string>) ((value) =>
                 {
                     if (value == null)
@@ -88,7 +88,7 @@ namespace Baracuda.Monitoring.Systems
 
             if (typeof(T).IsSubclassOrAssignable(typeof(Object)))
             {
-                return formatData.ShowIndexer
+                return formatData.ShowIndex
                     ? (Func<T[], string>) ((value) =>
                     {
                         if (value == null)
@@ -135,7 +135,7 @@ namespace Baracuda.Monitoring.Systems
             }
             else
             {
-                if (formatData.ShowIndexer)
+                if (formatData.ShowIndex)
                 {
                     return (value) =>
                     {
@@ -203,7 +203,7 @@ namespace Baracuda.Monitoring.Systems
             var stringBuilder = new StringBuilder();
             var indent = GetIndentStringForProfile(formatData);
 
-            return formatData.ShowIndexer
+            return formatData.ShowIndex
                 ? (Func<T[], string>) ((value) =>
                 {
                     if (value == null)

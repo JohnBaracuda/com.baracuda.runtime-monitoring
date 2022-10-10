@@ -48,7 +48,7 @@ namespace Baracuda.Monitoring.Modules
         [MOrder(-1000)]
         [MBackgroundColor(ColorPreset.TransparentBlack)]
         [MFontName("JetBrainsMono-Regular")]
-        [MOptions(UIPosition.LowerRight, ShowIndexer = false, ElementIndent = 0, GroupElement = false)]
+        [MOptions(UIPosition.LowerRight, ShowIndex = false, ElementIndent = 0, GroupElement = false)]
         [MShowIf(Condition.CollectionNotEmpty)]
         [MUpdateEvent(nameof(UpdateDisplayedLogs))]
         private Queue<string> Console => messageLogCache;

@@ -41,7 +41,6 @@ namespace Baracuda.Monitoring.Profiles
             var parameterInfos = methodInfo.GetParameters();
             var parameterHandles = CreateParameterHandles(parameterInfos, format, settings);
 
-
             if (methodInfo.ReturnType == typeof(void))
             {
                 return target =>
@@ -90,7 +89,7 @@ namespace Baracuda.Monitoring.Profiles
                     var parameterFormat = new FormatData
                     {
                         Format = format.Format,
-                        ShowIndexer = format.ShowIndexer,
+                        ShowIndex = format.ShowIndex,
                         Label = outArgName,
                         FontSize = format.FontSize,
                         Position = format.Position,

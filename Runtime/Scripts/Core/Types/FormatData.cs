@@ -2,6 +2,7 @@
 
 using Baracuda.Monitoring.Utilities.Extensions;
 using Baracuda.Monitoring.Utilities.Pooling;
+using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace Baracuda.Monitoring.Types
     internal class FormatData : IFormatData
     {
         public string Format { get; internal set; }
-        public bool ShowIndexer { get; internal set; }
+        public bool ShowIndex { get; internal set; }
         public string Label { get; internal set; }
         public int FontSize { get; internal set; }
         public string FontName { get; internal set; }
@@ -47,9 +48,9 @@ namespace Baracuda.Monitoring.Types
                 ? formatAttribute.Format
                 : optionsAttribute?.Format;
 
-            var showIndexer = profile.TryGetMetaAttribute<MShowIndexerAttribute>(out var showIndexerAttribute)
-                ? showIndexerAttribute.ShowIndexer
-                : optionsAttribute?.ShowIndexer ?? true;
+            var showIndexer = profile.TryGetMetaAttribute<MShowIndexAttribute>(out var showIndexerAttribute)
+                ? showIndexerAttribute.ShowIndex
+                : optionsAttribute?.ShowIndex ?? true;
 
             var label = profile.TryGetMetaAttribute<MLabelAttribute>(out var labelAttribute)
                 ? labelAttribute.Label
@@ -112,7 +113,7 @@ namespace Baracuda.Monitoring.Types
             return new FormatData
             {
                 Format = format,
-                ShowIndexer = showIndexer,
+                ShowIndex = showIndexer,
                 Label = label,
                 FontSize = fontSize,
                 FontName = fontName,
@@ -273,5 +274,12 @@ namespace Baracuda.Monitoring.Types
 
             return true;
         }
+
+        #region Obsolete
+
+        [Obsolete("Use ShowIndex instead! This API will be removed in 4.0.0")]
+        public bool ShowIndexer => ShowIndex;
+
+        #endregion
     }
 }
