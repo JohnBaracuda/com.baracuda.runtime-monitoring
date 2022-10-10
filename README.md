@@ -1,7 +1,7 @@
 
 Runtime Monitoring
 ===
-Runtime Monitoring is an easy way for you to monitor the state of your C# classes and objects during runtime. Just add the 'Monitor' attribute to a field, property, event or method and get its value or state displayed automatically in a customizable and extendable UI.
+Runtime Monitoring is an easy way to monitor the value or state of C# members during runtime. Just add the <code>[Monitor]</code> attribute to a field, property, event or method and get its value or state displayed automatically in a customizable and extendable UI.
 
 [![openupm](https://img.shields.io/npm/v/com.baracuda.runtime-monitoring?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.baracuda.runtime-monitoring/)
 ![Release](https://img.shields.io/github/v/release/johnBaracuda/com.baracuda.runtime-monitoring?sort=semver)
@@ -74,14 +74,7 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
    - this will automatically install `com.baracuda.thread-dispatcher` as a dependecy
    - take a look at [Setup](#customized-setup) to see what comes next
 
-&nbsp;
-
-> If you like runtime monitoring, consider leaving a good review on the Asset Store regardless of which installation method you chose.
-
 #### Option 2. Install via Git URL
-
-<details>
-    <summary>How to install via Git URL </summary>
 
    - open <kbd>Window/Package Manager</kbd>
    - click <kbd>+</kbd>
@@ -89,12 +82,15 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
    - paste and <kbd>Add</kbd> `https://github.com/JohnBaracuda/com.baracuda.thread-dispatcher.git` (dependency)
    - paste and <kbd>Add</kbd> `https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring.git`
    - take a look at [Setup](#customized-setup) to see what comes next
-</details>
+
 
 #### Option 3. Get Runtime Monitoring from the [Asset Store](https://u3d.as/2QxJ)
 
 
 #### Option 4. Download a <kbd>.unitypackage</kbd> from [Releases](https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring/releases)
+
+&nbsp;
+> If you like runtime monitoring, consider leaving a good review on the Asset Store regardless of which installation method you chose.
 
 &nbsp;
 
@@ -105,6 +101,7 @@ Runtime Monitoring is an easy way for you to monitor the state of your C# classe
 # Getting Started
 
 ```c#
+using Baracuda.Monitoring;
 
 // Monitor any field, property, event or method during runtime!
 
@@ -234,7 +231,7 @@ Download and import Runtime Monitoring. To setup a different UI Controller (IMGU
 + Unity Version: <b>2019.4</b> (for UIToolkit <b>2020.1</b>) <br/> 
 + Scripting Backend: <b>Mono & IL2CPP</b>
 + API Compatibility: <b>.NET Standard 2.0 or .NET 4.x</b>
-+ Asset Version: [![openupm](https://img.shields.io/npm/v/com.baracuda.runtime-monitoring?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.baracuda.runtime-monitoring/)
++ Asset Version: [![openupm](https://img.shields.io/npm/v/com.baracuda.runtime-monitoring?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.baracuda.runtime-monitoring/) ![Release](https://img.shields.io/github/v/release/johnBaracuda/com.baracuda.runtime-monitoring?sort=semver)
 
 
 
@@ -287,6 +284,8 @@ When monitoring non static member of a class, instances of these classes must be
 + ```MonitoredObject : object, IDisposable```
 
 ```c#
+using Baracuda.Monitoring;
+
 // Monitored instance must be registered / unregistered.
 public class Player : MonoBehaviour
 {
@@ -328,6 +327,8 @@ public class Player : MonitoredBehaviour
 ```
 
 ```c#
+using Baracuda.Monitoring;
+
 public class GameManager
 {
     // Static member are always monitored!
@@ -346,6 +347,8 @@ public class GameManager
 Monitoring fields and properties is almost identical, differing only in their technical implementations. Just place the Monitor, MonitorField or MonitorProperty on either a field or a property and get its value displayed [automatically](#instanced-and-static-member) .  Multiple types like Booleans, Collections, Vectors etc. are also displayed in a readable way. To customize how a monitored value is displayed you can use a [Value Processor](#value-processor) and utilize a variety of additional  [formatting](#ui-formatting) attributes. 
 
 ```c#
+using Baracuda.Monitoring;
+
 [MonitorField] 
 private int value;
 
@@ -399,10 +402,12 @@ public event Action<Player> OnPlayerSpawn;
 A method can be monitored like a field or property with the additional feature that their out parameters are monitored too. Default parameter values can be set by passing them to the constructor of the `[MonitorMethod]` attribute. Even methods that return void can be monitored if they have at least one out parameter. Default and [Global Value Processor](#global-value-processor) are applied to monitored out parameters, meaning that collections, vectors etc. assigned via out parameter are displayed in a readable way and not just formatted with ToString().
 
 ```c#
+using Baracuda.Monitoring;
+
 [Monitor]
 public string GetName()
 {
-	return "Hello World"
+    return "Hello World";
 }
 
 [MonitorMethod(3, 5)]
@@ -1014,24 +1019,16 @@ Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#
 `void OnUnitCreated(IMonitorUnit unit)`|Use to add UI elements for the passed unit.|
 `void OnUnitDisposed(IMonitorUnit unit)`|Use to remove UI elements for the passed unit.|
 
-
-
-
-
-
-
-
 &nbsp;
 # Systems and API
 
-Get the interface for a monitoring system by calling ```MonitoringSystems.Resolve<TInterface>()```. Interface implementations will not change during runtime meaning it is safe to cache them when necessary. 
+Get the interface for a monitoring system by calling ```MonitoringSystems.Resolve<TInterface>()```. Or accessing the cached interface directly e.g. ```MonitoringSystems.Manger```
 
 System Interface    | Description |        
 :--                 |:-                                              
 `IMonitoringManager`   | Core access point for the system. Contains initialization and unit registry. [more](#monitoring-manager)|
 `IMonitoringUI`       | Access the active monitoring UI. [more](#monitoring-ui) |
 `IMonitoringSettigns`  | Access current configuration of the plugin. |
-`IMonitoringPlugin`    | Access static information about the plugin. |
 `IMonitoringUtility`   | Interface providing various uncategorized utility access points. [more](#monitoring-utility) |
 
 ```c#
@@ -1084,15 +1081,11 @@ Use the `IMonitoringUI` API to access the active MonitoringUIController and set 
 
 Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
 :---         |:-                                        
-`void Show()`|Show the monitoring UI overlay.|
-`void Hide()`|Hide the monitoring UI overlay.|
-`void ToggleDisplay()`|Toggle the visibility of the active monitoring display.|
-`bool IsVisible()`|True if monitoring UI is visible.|
-`T GetActiveUIController<T>()`|Get the currently active MonitoringUIController casted to a concrete implementation.|
-`void CreateMonitoringUI()`|Create a MonitoringUIController instance if there is none already. Disable 'Auto Instantiate UI' in the Monitoring Settings and use this method for more control over the timing in which the MonitoringUIController is instantiated. |
+`bool Visible`|Get or set the visiblility of the UI.|
+`event Action<bool> VisibleStateChanged()`|Event invoked when the monitoring UI became visible or invisible.|
+`T GetCurrent<T>()`|Get the currently active MonitoringUIController casted to a concrete implementation.|
 `void ApplyFilter(string filter)`|Filter displayed units by their name, tags etc. [more](#ui-filtering)|
 `void ResetFilter()`|Reset active filter. [more](#ui-filtering)|
-`event Action<bool> VisibleStateChanged()`|Event invoked when the monitoring UI became visible or invisible.|
 
 
 
@@ -1155,7 +1148,7 @@ Interface&#160;Membe&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
 
 &nbsp;
 # Compatibility
-If you encounter any compatibility issues please create an Issue on GitHub. Runtime Monitoring aims to provide compatibility for every platform, scripting backend & Unity version.
+If you encounter any compatibility issues please create an Issue on GitHub.
 
 
 
@@ -1165,28 +1158,6 @@ If you encounter any compatibility issues please create an Issue on GitHub. Runt
 Both Mono and IL2CPP runtimes are supported. RTM is making extensive use of dynamic type and method creation during its profiling process. In order to create these types, IL2CPP requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the necessary information to generate everything it needs during runtime. You can manually create this list form the settings window.
 
 ![example](https://johnbaracuda.com/media/img/monitoring/Example_08.png)
-
-
-
-
-&nbsp;
-## Platform Compatibility
-
-I can't test all of these platforms for compatibility. Let me know if you have tested any platform that is NA or not listed here.
-
-Platform              | Compatible       | Note                    |        
-:-                    |:-                |:-                       |             
-Windows Standalone    |:heavy_check_mark:|                         |
-Linux Standalone      |NA                |                         |
-Mac Standalone        |NA                |                         |
-IOS                   |NA                |                         |
-Android               |NA                |                         |
-WebGL                 |:heavy_check_mark:|Async profiling disabled |
-Stadia                |NA                |                         |
-XBox One              |NA                |                         |
-XSX                   |NA                |                         |
-PlayStation 4         |NA                |                         |
-PlayStation 5         |NA                |                         |
 
 
 
@@ -1240,8 +1211,8 @@ Monitored Transforms are another type that have the potential to create a lot of
 &nbsp;
 ### How can I disable the tool in a release?
 
-Use the ```#define DISABLE_MONITORING``` to disable the internal logic of the tool. 
-Public API will still compile so you don't have to wrap your API calls in a custom ```#if !DISABLE_MONITORING``` block.
+Set the **Enable Monitoring** field in the **Monitoring Settings** to **EditorOnly** This will install dummy systems in a build.
+
 
 
 
@@ -1264,24 +1235,6 @@ You can just remove the plugin by deleting the folder Assets/Baracuda.
 + Tutorial how to use.
 + Guide how to create a custom UI Controller.
 + Guide how to customize UI.
-
-
-
-&nbsp;
-### Assemblies and Modules?
-
- Assembly                                    | Path                                 | Core             | Note  
-:-                                           |:-                                    |:----------------:|:- 
-Assembly-Baracuda-Monitoring                 | Baracuda/Monitoring                  |:heavy_check_mark:|
-Assembly-Baracuda-Editor                     | Baracuda/Monitoring.Editor           |:heavy_check_mark:| Editor
-Assembly-Baracuda-Example                    | Baracuda/Monitoring.Example          |                  | 
-Assembly-Baracuda-Monitoring.GUI             | Baracuda/Monitoring.UI/UnityGUI      |:heavy_check_mark:| Default UI
-Assembly-Baracuda-Monitoring.UITookit        | Baracuda/Monitoring.UI/UIToolkit     |                  | Unity 2020.1 or newer
-Assembly-Baracuda-Monitoring.TextMeshPro     | Baracuda/Monitoring.UI/TextMeshPro   |                  | TMP Required
-Assembly-Baracuda-Pooling                    | Baracuda/Pooling                     |:heavy_check_mark:| 
-Assembly-Baracuda-Threading                  | Baracuda/Threading                   |:heavy_check_mark:| [Thread Dispatcher](https://github.com/JohnBaracuda/Thread-Dispatcher)
-Assembly-Baracuda-Reflection                 | Baracuda/Reflection                  |:heavy_check_mark:| 
-
 
 
 
