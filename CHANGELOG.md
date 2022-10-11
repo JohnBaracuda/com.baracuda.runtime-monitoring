@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 
 ## [3.1.2] - 2022-10-09
 
+### Fixed
+- Fixed an issue that preventet the UIs Visibility from being toggled.
+
 ### Deprecated
 - MShowIndexerAttribute is now obsolete. Use MShowIndexAttribute instead. Removing in [4.0.0]
 

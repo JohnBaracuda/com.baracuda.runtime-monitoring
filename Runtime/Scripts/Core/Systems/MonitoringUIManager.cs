@@ -90,6 +90,10 @@ namespace Baracuda.Monitoring.Systems
 
         internal void SetActiveMonitoringUI(MonitoringUI monitoringUI)
         {
+            if (monitoringUI == _current)
+            {
+                return;
+            }
             if (_current != null)
             {
                 if (MonitoringSystems.Settings.AllowMultipleUIInstances)
@@ -102,7 +106,6 @@ namespace Baracuda.Monitoring.Systems
                 }
             }
             _current = monitoringUI;
-            Visible = _current.Visible;
             VisibleStateChanged?.Invoke(Visible);
         }
 
