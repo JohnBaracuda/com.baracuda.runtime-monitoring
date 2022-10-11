@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
 - 
-## [3.1.2] - 2022-10-09
+## [3.1.2] - 2022-10-11
 
 ### Fixed
 - Fixed an issue that prevented the UIs visibility from being toggled.
