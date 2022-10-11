@@ -13,9 +13,7 @@ namespace Baracuda.Monitoring.Systems
 
         // State
         private string _activeFilter;
-
         private MonitoringUI _current;
-        private bool cachedVisibility = true;
 
         #endregion
 
@@ -41,7 +39,8 @@ namespace Baracuda.Monitoring.Systems
 
             if (MonitoringSystems.Settings.MonitoringUIOverride != null)
             {
-                Object.Instantiate(MonitoringSystems.Settings.MonitoringUIOverride);
+                var instance = Object.Instantiate(MonitoringSystems.Settings.MonitoringUIOverride);
+                Object.DontDestroyOnLoad(instance.gameObject);
             }
             else
             {
@@ -64,7 +63,6 @@ namespace Baracuda.Monitoring.Systems
             get => _current && _current.Visible;
             set
             {
-                cachedVisibility = value;
                 if (!_current || _current.Visible == value)
                 {
                     return;
@@ -107,7 +105,7 @@ namespace Baracuda.Monitoring.Systems
                 }
             }
             _current = monitoringUI;
-            Visible = cachedVisibility;
+            VisibleStateChanged?.Invoke(Visible);
         }
 
         #endregion
