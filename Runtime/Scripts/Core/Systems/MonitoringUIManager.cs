@@ -14,8 +14,8 @@ namespace Baracuda.Monitoring.Systems
         // State
         private string _activeFilter;
 
-        [Monitor]
         private MonitoringUI _current;
+        private bool cachedVisibility = true;
 
         #endregion
 
@@ -64,6 +64,7 @@ namespace Baracuda.Monitoring.Systems
             get => _current && _current.Visible;
             set
             {
+                cachedVisibility = value;
                 if (!_current || _current.Visible == value)
                 {
                     return;
@@ -106,7 +107,7 @@ namespace Baracuda.Monitoring.Systems
                 }
             }
             _current = monitoringUI;
-            VisibleStateChanged?.Invoke(Visible);
+            Visible = cachedVisibility;
         }
 
         #endregion
