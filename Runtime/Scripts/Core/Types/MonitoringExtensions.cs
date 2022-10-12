@@ -2,6 +2,7 @@
 
 using Baracuda.Monitoring.Utilities.Pooling;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
@@ -67,6 +68,18 @@ namespace Baracuda.Monitoring.Types
             sb.Append(content);
             sb.Append("</color>");
             return ConcurrentStringBuilderPool.Release(sb);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool AddUnique<T>(this IList<T> list, T item)
+        {
+            if (list.Contains(item))
+            {
+                return false;
+            }
+
+            list.Add(item);
+            return true;
         }
     }
 }

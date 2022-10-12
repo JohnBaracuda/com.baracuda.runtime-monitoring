@@ -2,6 +2,7 @@
 
 using Baracuda.Monitoring.Interfaces;
 using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Types;
 using Baracuda.Monitoring.Units;
 using Baracuda.Monitoring.Utilities.Extensions;
 using Baracuda.Monitoring.Utilities.Pooling;
@@ -106,9 +107,6 @@ namespace Baracuda.Monitoring.Systems
         private volatile bool _isInitialized = false;
         private ProfilingCompletedListener _profilingCompleted;
 
-#if DEBUG
-        private readonly HashSet<object> _registeredObjects = new HashSet<object>();
-#endif
 
         #endregion
 
@@ -147,36 +145,26 @@ namespace Baracuda.Monitoring.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void RegisterTargetInternal<T>(T target) where T : class
         {
-#if DEBUG
-            if (_registeredObjects.Contains(target))
+            if (_registeredTargets.AddUnique(target))
             {
-                Debug.LogWarning($"{target} is already registered as a <b>Monitoring Target</b>!" +
-                                 $"\nEnsure to not call <b>{nameof(IMonitoringManager)}.{nameof(RegisterTarget)}</b> " +
-                                 $"multiple times and don't make calls to " +
-                                 $"<b>{nameof(IMonitoringManager)}.{nameof(RegisterTarget)}</b> in classes inheriting from " +
-                                 $"<b>{nameof(MonitoredBehaviour)}</b>, <b>{nameof(MonitoredObject)}</b> or similar!");
+                if (_initialInstanceUnitsCreated)
+                {
+                    CreateInstanceUnits(target, target.GetType());
+                }
                 return;
             }
-            _registeredObjects.Add(target);
+#if DEBUG
+            Debug.LogWarning($"{target} is already registered as a <b>Monitoring Target</b>!" +
+                             $"\nEnsure to not call <b>{nameof(IMonitoringManager)}.{nameof(RegisterTarget)}</b> " +
+                             $"multiple times and don't make calls to " +
+                             $"<b>{nameof(IMonitoringManager)}.{nameof(RegisterTarget)}</b> in classes inheriting from " +
+                             $"<b>{nameof(MonitoredBehaviour)}</b>, <b>{nameof(MonitoredObject)}</b> or similar!");
 #endif
-            _registeredTargets.Add(target);
-            if (_initialInstanceUnitsCreated)
-            {
-                CreateInstanceUnits(target, target.GetType());
-            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UnregisterTargetInternal<T>(T target) where T : class
         {
-#if DEBUG
-            if (!_registeredObjects.Contains(target))
-            {
-                Debug.LogWarning($"{target} is not registered! Ensure to not call {nameof(UnregisterTargetInternal)} multiple times!");
-                return;
-            }
-            _registeredObjects.Remove(target);
-#endif
             DestroyInstanceUnits(target);
             _registeredTargets.Remove(target);
         }

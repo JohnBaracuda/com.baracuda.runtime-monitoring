@@ -124,6 +124,9 @@ namespace Baracuda.Monitoring
             {
                 return;
             }
+#if DISABLE_MONITORING
+            InstallDummySystems();
+#else
             var settings = MonitoringSettings.FindOrCreateSettingsAsset();
             if (settings.IsMonitoringEnabled)
             {
@@ -133,7 +136,7 @@ namespace Baracuda.Monitoring
             {
                 InstallDummySystems();
             }
-
+#endif
             installationCompleted = true;
         }
 

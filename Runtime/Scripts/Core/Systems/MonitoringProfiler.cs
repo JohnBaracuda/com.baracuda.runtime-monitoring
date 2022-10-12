@@ -24,7 +24,7 @@ namespace Baracuda.Monitoring.Systems
     /// </summary>
     internal class MonitoringProfiler : IMonitoringProfiler
     {
-        #region Fields ---
+        #region Fields
 
         /*
          * Internal
@@ -59,7 +59,7 @@ namespace Baracuda.Monitoring.Systems
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Ctor ---
+        #region Ctor
 
         internal MonitoringProfiler(IMonitoringSettings settings)
         {
@@ -70,7 +70,7 @@ namespace Baracuda.Monitoring.Systems
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Profiling Task ---
+        #region Profiling Task
 
         public void BeginProfiling(CancellationToken ct)
         {
@@ -244,7 +244,7 @@ namespace Baracuda.Monitoring.Systems
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Instance: Inspection ---
+        #region Instance: Inspection
 
         private void InspectInstanceFields(FieldInfo[] fieldInfos)
         {
@@ -338,7 +338,7 @@ namespace Baracuda.Monitoring.Systems
 
         //---------
 
-        #region --- Instance: Profiling ---
+        #region Instance: Profiling
 
         private void CreateInstanceFieldProfile(FieldInfo fieldInfo, MonitorAttribute attribute)
         {
@@ -540,7 +540,7 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
-        #region --- Instance: Profiling Generic Basetype Concretions ---
+        #region Instance: Profiling Generic Basetype Concretions
 
         // Methods in this region are called after every type has been profiled.
         // If a member of a generic type was flagged to be monitored, we have to again iterate over every type in the
@@ -717,7 +717,7 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
-        #region --- Profiling Helper ---
+        #region Profiling Helper
 
         private object CreateInstance<T1, T2, T3>(Type type, T1 arg1, T2 arg2, T3 arg3)
         {
@@ -729,7 +729,7 @@ namespace Baracuda.Monitoring.Systems
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Static: Inspection ---
+        #region Static: Inspection
 
         private void InspectStaticFields(FieldInfo[] staticFields)
         {
@@ -823,7 +823,7 @@ namespace Baracuda.Monitoring.Systems
 
         //---------
 
-        #region --- Static: Profiling ---
+        #region Static: Profiling
 
         private void CreateStaticFieldProfile(FieldInfo fieldInfo, MonitorAttribute attribute)
         {
@@ -978,7 +978,7 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
-        #region --- Static: Profiling Generic Basetype Concretions ---
+        #region Static: Profiling Generic Basetype Concretions
 
         // Methods in this region are called after every type has been profiled.
         // If a member of a generic type was flagged to be monitored, we have to again iterate over every type in the
@@ -1130,7 +1130,7 @@ namespace Baracuda.Monitoring.Systems
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Post Profining ---
+        #region Post Profining
 
         private void PostProfileGenericTypeFieldInfo(Type type)
         {
@@ -1205,6 +1205,5 @@ namespace Baracuda.Monitoring.Systems
         }
 
         #endregion
-
     }
 }

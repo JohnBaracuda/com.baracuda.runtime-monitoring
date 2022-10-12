@@ -19,7 +19,9 @@ namespace Baracuda.Monitoring.Systems
 
         #region Setup
 
+#if !DISABLE_MONITORING
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+#endif
         private static void Initialize()
         {
             if (!MonitoringSystems.Settings.AutoInstantiateUI)

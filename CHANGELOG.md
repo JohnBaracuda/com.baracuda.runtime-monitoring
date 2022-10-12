@@ -6,7 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
-- 
+- Thread-Dispatcher will be removed as a dependency in a future release.
+
+
+## [3.1.5] - 2022-10-12
+
+### Fixed
+- Fixed an exception that was caused by monitoring a struct with an IEnumerable interface.
+
+### Changed
+- IL2CPP type def class is now generated with a random name to prevent potential duplicates.
+
+### Removed
+- Removed a warning that was displayed when calling this.UnregisterMonitor() on an object that was not already registered. 
+
+
 ## [3.1.4] - 2022-10-11
 
 ### Fixed
@@ -15,10 +29,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 - MShowIndexerAttribute is now obsolete. Use MShowIndexAttribute instead. Removing in [4.0.0]
 
+
 ## [3.1.1] - 2022-10-09
 
 ### Fixed
 - Fixed UI not updating when using the default IMGUI UI. (UI started to update after its visibility was changed manually)
+
 
 ## [3.1.0] - 2022-10-08
 
@@ -57,10 +73,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed NullReferenceExceptions caused by missing dummy systems when disabling runtime monitoring.
 - Fixed an issue with missing namespaces in newer Unity versions.
 
+
 ## [3.0.1] - 2022-10-04
 
 ### Fixed
 - Fixed a versioning issue with Open UPM
+
 
 ## [3.0.0] - 2022-10-03
 

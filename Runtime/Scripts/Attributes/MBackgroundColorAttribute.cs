@@ -27,7 +27,7 @@ namespace Baracuda.Monitoring
         /// Determine the background color for the displayed value.
         /// </summary>
         /// <param name="colorPreset">Chose a preset of predefined color values</param>
-        public MBackgroundColorAttribute(ColorPreset colorPreset)  : base(colorPreset)
+        public MBackgroundColorAttribute(ColorPreset colorPreset) : base(colorPreset)
         {
         }
 
@@ -35,7 +35,7 @@ namespace Baracuda.Monitoring
         /// Determine the background color for the displayed value.
         /// </summary>
         /// <param name="colorValueHex">Set the color via hexadecimal value</param>
-        public MBackgroundColorAttribute(string colorValueHex)  : base(colorValueHex)
+        public MBackgroundColorAttribute(string colorValueHex) : base(colorValueHex)
         {
         }
     }

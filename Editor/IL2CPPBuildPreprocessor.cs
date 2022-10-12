@@ -16,6 +16,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Scripting;
 using Assembly = System.Reflection.Assembly;
+using Random = UnityEngine.Random;
 
 namespace Baracuda.Monitoring.Editor
 {
@@ -825,9 +826,18 @@ namespace Baracuda.Monitoring.Editor
         private void AppendOpenClass(StringBuilder stringBuilder)
         {
             stringBuilder.Append('\n');
-            stringBuilder.Append("internal class IL2CPP_AOT");
+            stringBuilder.Append("internal class IL2CPP_AOT_");
+
+            stringBuilder.Append(RandomString(20));
             stringBuilder.Append('\n');
             stringBuilder.Append('{');
+
+            string RandomString(int length)
+            {
+                var random = new System.Random();
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+            }
         }
 
         private void AppendCloseClass(StringBuilder stringBuilder)

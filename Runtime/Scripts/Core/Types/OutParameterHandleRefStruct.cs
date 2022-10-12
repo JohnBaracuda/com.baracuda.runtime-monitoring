@@ -36,7 +36,7 @@ namespace Baracuda.Monitoring.Types
                     _stringBuilder.Clear();
                     _stringBuilder.Append(_formatData.Label);
                     _stringBuilder.Append(' ');
-                    _stringBuilder.Append(((IFormattable)value).ToString(formatData.Format, null));
+                    _stringBuilder.Append(((IFormattable) value).ToString(formatData.Format, null));
                     return _stringBuilder.ToString();
                 };
             }
