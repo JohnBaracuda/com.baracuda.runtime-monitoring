@@ -274,9 +274,6 @@ namespace Baracuda.Monitoring.Systems
         [Tooltip("Reference to the .cs file that will be used to automatically create type definitions for IL2CPP. This file should be located in Assembly-CSharp")]
         [SerializeField] private TextAsset typeDefinitionsForIL2CPP = null;
 
-        [Tooltip("The relative file path in your Assets folder in which an IL2CPP file is generated if none is selected.")]
-        [SerializeField] private string fallbackFilePathForIL2CPP = "Script/Generated";
-
         [Tooltip("The IPreprocessBuildWithReport.callbackOrder of the AOT generation object.")]
         [SerializeField] private int preprocessBuildCallbackOrder = 0;
 
@@ -315,33 +312,7 @@ namespace Baracuda.Monitoring.Systems
 
 
         /// <inheritdoc />
-        public MonitoringUI MonitoringUIOverride
-        {
-            get
-            {
-#if UNITY_EDITOR
-                if (monitoringUIOverride == null)
-                {
-                    var guids = UnityEditor.AssetDatabase.FindAssets("t:Prefab");
-                    for (var i = 0; i < guids.Length; i++)
-                    {
-                        var guid = guids[i];
-                        var path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
-                        var gameObject = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                        var controller = gameObject.GetComponent<MonitoringUI>();
-                        if (controller == null)
-                        {
-                            continue;
-                        }
-                        monitoringUIOverride = controller;
-                        UnityEditor.EditorUtility.SetDirty(this);
-                        break;
-                    }
-                }
-#endif
-                return monitoringUIOverride;
-            }
-        }
+        public MonitoringUI MonitoringUIOverride => monitoringUIOverride;
 
         /// <inheritdoc />
         public bool OpenDisplayOnLoad => openDisplayOnLoad;

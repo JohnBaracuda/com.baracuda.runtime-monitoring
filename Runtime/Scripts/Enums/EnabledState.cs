@@ -6,7 +6,7 @@ namespace Baracuda.Monitoring
     {
         Disabled = 0,
         EditorOnly = 1,
-        Enabled = 3,
+        Enabled = 2
     }
 }
 
