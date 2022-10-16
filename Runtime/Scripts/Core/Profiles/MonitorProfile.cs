@@ -15,7 +15,7 @@ namespace Baracuda.Monitoring.Profiles
 {
     internal abstract class MonitorProfile : IMonitorProfile
     {
-        #region Interface ---
+        #region Interface
 
         public MonitorAttribute Attribute { get; }
         public MemberInfo MemberInfo { get; }
@@ -43,7 +43,7 @@ namespace Baracuda.Monitoring.Profiles
 
         #endregion
 
-        #region Fields ---
+        #region Fields
 
         private readonly Dictionary<Type, MonitoringMetaAttribute> _metaAttributes =
             new Dictionary<Type, MonitoringMetaAttribute>();
@@ -52,7 +52,7 @@ namespace Baracuda.Monitoring.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region Ctor ---
+        #region Ctor
 
         protected MonitorProfile(
             MemberInfo memberInfo,
@@ -205,7 +205,7 @@ namespace Baracuda.Monitoring.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region Factory ---
+        #region Factory
 
         /// <summary>
         /// Creates a <see cref="MonitorUnit"/> with the <see cref="MonitorProfile"/>.
@@ -218,7 +218,7 @@ namespace Baracuda.Monitoring.Profiles
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region Reflection Fields ---
+        #region Reflection Fields
 
         protected const BindingFlags StaticFlags
             = BindingFlags.Default |
@@ -233,14 +233,6 @@ namespace Baracuda.Monitoring.Profiles
               BindingFlags.NonPublic |
               BindingFlags.DeclaredOnly |
               BindingFlags.Instance;
-
-        #endregion
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region Validator ---
-
-
 
         #endregion
     }
