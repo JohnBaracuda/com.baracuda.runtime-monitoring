@@ -81,5 +81,22 @@ namespace Baracuda.Monitoring.Types
             list.Add(item);
             return true;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool TryGetValueValidated<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TValue value) where TValue : UnityEngine.Object
+        {
+            if (!dictionary.TryGetValue(key, out value))
+            {
+                return false;
+            }
+
+            if (value != null)
+            {
+                return true;
+            }
+
+            dictionary.Remove(key);
+            return false;
+        }
     }
 }

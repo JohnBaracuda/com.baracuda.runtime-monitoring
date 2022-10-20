@@ -70,7 +70,7 @@ namespace Baracuda.Monitoring.IMGUI
                     unit.ValueUpdated += Update;
                 }
 
-                if (backgroundTexturePool.TryGetValue(backgroundColor, out var texture))
+                if (TryGetValueValidated(backgroundTexturePool, backgroundColor, out var texture))
                 {
                     BackgroundTexture = texture;
                 }
@@ -561,7 +561,7 @@ namespace Baracuda.Monitoring.IMGUI
 
         #endregion
 
-        #region -Unit Creating / Disposal
+        #region Unit Creating / Disposal
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void OnUnitCreatedInternal(IMonitorUnit unit)
@@ -605,6 +605,27 @@ namespace Baracuda.Monitoring.IMGUI
                     _unitsLowerRight.Remove(_unitsLowerRight.First(element => element.ID == unit.UniqueID));
                     break;
             }
+        }
+
+        #endregion
+
+        #region Misc
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool TryGetValueValidated<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key, out TValue value) where TValue : UnityEngine.Object
+        {
+            if (!dictionary.TryGetValue(key, out value))
+            {
+                return false;
+            }
+
+            if (value != null)
+            {
+                return true;
+            }
+
+            dictionary.Remove(key);
+            return false;
         }
 
         #endregion

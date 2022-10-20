@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,21 +41,10 @@ namespace Baracuda.Monitoring.Systems
             public bool OverrideFont { get; }
             public Font Font { get; }
             public int ID { get; }
+            public string Content { get; private set; }
+            private IFormatData Format { get; }
 
-            public string Content
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get;
-                private set;
-            }
-
-            private IFormatData Format
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get;
-            }
-
-            public readonly Texture2D BackgroundTexture;
+            public Texture2D BackgroundTexture { get; }
 
             private readonly string _textColor;
             private readonly int _size;
@@ -85,7 +75,7 @@ namespace Baracuda.Monitoring.Systems
                     unit.ValueUpdated += Update;
                 }
 
-                if (backgroundTexturePool.TryGetValue(backgroundColor, out var texture))
+                if (backgroundTexturePool.TryGetValueValidated(backgroundColor, out var texture))
                 {
                     BackgroundTexture = texture;
                 }
