@@ -22,12 +22,6 @@ namespace Baracuda.Monitoring
         bool IsEditorOnly { get; }
 
         /// <summary>
-        /// When enabled, monitoring UI is instantiated as soon as profiling has completed.
-        /// Otherwise MonitoringUI.CreateMonitoringUI() must be called manually.
-        /// </summary>
-        bool AutoInstantiateUI { get; }
-
-        /// <summary>
         /// When enabled, multiple UI instances are allowed simultaneously. Otherwise UI instances are destroyed if a new instance is instantiated / enabled.
         /// </summary>
         bool AllowMultipleUIInstances { get; }
@@ -266,6 +260,9 @@ namespace Baracuda.Monitoring
 
         [Obsolete("Use IMonitoringSettings.IsMonitoringEnabled instead. This API will be removed in 4.0.0")]
         bool EnableMonitoring { get; }
+
+        [Obsolete("This API will be removed in 4.0.0")]
+        bool AutoInstantiateUI { get; }
 
         #endregion
     }

@@ -6,7 +6,6 @@ using Baracuda.Monitoring.Systems;
 using Baracuda.Threading;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -16,12 +15,12 @@ namespace Baracuda.Monitoring
     /// <summary>
     ///     Class manages references for individual monitoring systems.
     /// </summary>
-#if UNITY_EDITOR
-    [UnityEditor.InitializeOnLoad]
-#endif
     public static class MonitoringSystems
     {
-        // Persistent Cached Systems
+        /// <summary>
+        /// Returns true once all monitoring systems are installed.
+        /// </summary>
+        public static bool Initialized { get; private set; }
 
         /// <summary>
         /// Core interface for accessing Runtime Monitoring functionality.
@@ -49,7 +48,7 @@ namespace Baracuda.Monitoring
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Registration ---
+        #region Registration
 
         private static readonly Dictionary<Type, object> systems = new Dictionary<Type, object>(8);
 
@@ -71,7 +70,6 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Register a monitoring system. This API should only be called by the monitoring system itself.
         /// </summary>
-        [SuppressMessage("ReSharper", "HeapView.PossibleBoxingAllocation")]
         public static T Register<T>(T system) where T : class, IMonitoringSubsystem<T>
         {
             var key = typeof(T);
@@ -94,39 +92,24 @@ namespace Baracuda.Monitoring
         public class SystemNotRegisteredException : Exception
         {
             internal SystemNotRegisteredException(string systemName) : base(
-                $"System: [{systemName}] is not registered!")
+                $"System: [{systemName}] is not registered! Did you access a system from a static constructor or initializer?")
             {
             }
         }
 
         #endregion
 
-        #region --- Installation ---
 
-        private static bool installationCompleted;
+        #region Installation
 
-#if UNITY_EDITOR
         static MonitoringSystems()
         {
-            InstallMonitoringSystems();
+            Settings = MonitoringSettings.FindOrCreateSettingsAsset();
         }
-#endif
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void InitializeOnLoad()
-        {
-            InstallMonitoringSystems();
-        }
-
         private static void InstallMonitoringSystems()
         {
-            if (installationCompleted)
-            {
-                return;
-            }
-#if DISABLE_MONITORING
-            InstallDummySystems();
-#else
             var settings = MonitoringSettings.FindOrCreateSettingsAsset();
             if (settings.IsMonitoringEnabled)
             {
@@ -136,8 +119,8 @@ namespace Baracuda.Monitoring
             {
                 InstallDummySystems();
             }
-#endif
-            installationCompleted = true;
+            buffer.Clear();
+            Initialized = true;
         }
 
         private static void InstallDummySystems()
@@ -172,14 +155,6 @@ namespace Baracuda.Monitoring
             Register<IMonitoringUtility>(utility);
             Register<IMonitoringUtilityInternal>(utility);
 
-
-#if UNITY_EDITOR
-            if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
-            {
-                return;
-            }
-#endif
-
             var ticker = new MonitoringTicker(manager);
             Ticker = ticker;
             Register<IMonitoringTicker>(ticker);
@@ -192,6 +167,36 @@ namespace Baracuda.Monitoring
             Register<IValueProcessorFactory>(new ValueProcessorFactory(settings));
             Register<IValidatorFactory>(new ValidatorFactory());
             Register<IMonitoringProfiler>(new MonitoringProfiler(settings)).BeginProfiling(Dispatcher.RuntimeToken);
+
+            foreach (var obj in buffer)
+            {
+                Manager.RegisterTarget(obj);
+            }
+        }
+
+        #endregion
+
+
+        #region Experimental
+
+        private static readonly List<object> buffer = new List<object>(32);
+
+        /// <summary>
+        /// EXPERIMENTAL: Temp solution to register objects before initialization occured.
+        /// This API may be removed at any time.
+        /// </summary>
+        public static void __RegisterTarget<T>(T obj) where T : class
+        {
+            buffer.Add(obj);
+        }
+
+        /// <summary>
+        /// EXPERIMENTAL: Temp solution to unregister objects before initialization occured.
+        /// This API may be removed at any time.
+        /// </summary>
+        public static void __UnregisterTarget<T>(T obj) where T : class
+        {
+            buffer.Remove(obj);
         }
 
         #endregion

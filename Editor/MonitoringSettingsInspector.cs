@@ -29,7 +29,6 @@ namespace Baracuda.Monitoring.Editor
 #pragma warning disable CS0649
 #pragma warning disable CS0169
         private SerializedProperty _enableMonitoring;
-        private SerializedProperty _autoInstantiateUI;
         private SerializedProperty _openDisplayOnLoad;
         private SerializedProperty _asyncProfiling;
         private SerializedProperty _monitoringUIOverride;
@@ -120,7 +119,6 @@ namespace Baracuda.Monitoring.Editor
         {
             var parsedMemberName = (!string.IsNullOrWhiteSpace(member) && member[0] == '_') ? member.Remove(0, 1) : member;
             return serializedObject.FindProperty(parsedMemberName);
-
         }
 
         #endregion
@@ -142,15 +140,14 @@ namespace Baracuda.Monitoring.Editor
             {
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_enableMonitoring);
-                EditorGUILayout.PropertyField(_asyncProfiling);
-                EditorGUILayout.PropertyField(_openDisplayOnLoad);
+                EditorGUILayout.PropertyField(_asyncProfiling, new GUIContent("Multi Thread Profiling", _asyncProfiling.tooltip));
                 EditorGUILayout.Space();
             }
 
             if (Foldout["UI Controller"])
             {
                 EditorGUILayout.Space();
-                EditorGUILayout.PropertyField(_autoInstantiateUI);
+                EditorGUILayout.PropertyField(_openDisplayOnLoad, new GUIContent("Visible On Load", _openDisplayOnLoad.tooltip));
                 EditorGUILayout.PropertyField(_allowMultipleUIInstances);
                 EditorGUILayout.PropertyField(_monitoringUIOverride);
 

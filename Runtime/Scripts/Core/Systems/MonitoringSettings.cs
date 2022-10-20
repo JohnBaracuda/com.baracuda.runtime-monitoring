@@ -17,16 +17,14 @@ namespace Baracuda.Monitoring.Systems
 #pragma warning disable CS0414
         [SerializeField] private EnabledState enableMonitoring = EnabledState.Enabled;
 
-        [Tooltip("When enabled, monitoring UI is instantiated as soon as profiling has completed. Otherwise MonitoringUI.CreateMonitoringUI() must be called manually.")]
-        [SerializeField] private bool autoInstantiateUI = true;
-
         [Tooltip("When enabled, initial profiling will be processed asynchronous on a background thread. (Disabled for WebGL)")]
         [SerializeField] private bool asyncProfiling = true;
 
         [Tooltip("When enabled, the monitoring display will be opened as soon as profiling has completed.")]
         [SerializeField] private bool openDisplayOnLoad = true;
 
-        [Tooltip("When enabled, multiple UI instances are allowed simultaneously. Otherwise UI instances are destroyed if a new instance is instantiated / enabled.")]
+        [Tooltip("When enabled, multiple UI instances are allowed simultaneously. Otherwise UI instances are destroyed if a new instance is instantiated / enabled." +
+                 "Enable this setting if you want to dynamically switch between e.g. a world-space and a screen-space UI.")]
         [SerializeField] private bool allowMultipleUIInstances = false;
 
         [Tooltip("Reference to the used MonitoringDisplay object.")]
@@ -287,9 +285,9 @@ namespace Baracuda.Monitoring.Systems
         /// <inheritdoc />
         public bool IsMonitoringEnabled =>
 #if UNITY_EDITOR
-            enableMonitoring == EnabledState.EditorOnly || enableMonitoring == EnabledState.Enabled;
+            enableMonitoring == EnabledState.EditorOnly || enableMonitoring == EnabledState.Enabled || (int) enableMonitoring == 3;
 #else
-            enableMonitoring == EnabledState.Enabled;
+            enableMonitoring == EnabledState.Enabled || (int) enableMonitoring == 3;
 #endif
 
         /// <inheritdoc />
@@ -302,9 +300,6 @@ namespace Baracuda.Monitoring.Systems
 #else
             false;
 #endif
-
-        /// <inheritdoc />
-        public bool AutoInstantiateUI => autoInstantiateUI;
 
         /*
          * UI Controller
@@ -451,7 +446,21 @@ namespace Baracuda.Monitoring.Systems
         public string[] BannedAssemblyPrefixes => bannedAssemblyPrefixes;
 
         /// <inheritdoc />
-        public string[] BannedAssemblyNames => bannedAssemblyNames;
+        public string[] BannedAssemblyNames
+        {
+            get
+            {
+                if (!bannedAssemblyNames.Contains("Assembly-CSharp"))
+                {
+                    return bannedAssemblyNames;
+                }
+
+                var temp = bannedAssemblyNames.ToList();
+                temp.Remove("Assembly-CSharp");
+                bannedAssemblyNames = temp.ToArray();
+                return bannedAssemblyNames;
+            }
+        }
 
         /*
          * IL2CPP Settings
@@ -509,6 +518,9 @@ namespace Baracuda.Monitoring.Systems
 
         [Obsolete]
         public bool EnableMonitoring => IsMonitoringEnabled;
+
+        [Obsolete]
+        public bool AutoInstantiateUI { get; } = false;
 
         #endregion
     }

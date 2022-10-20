@@ -16,7 +16,6 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Scripting;
 using Assembly = System.Reflection.Assembly;
-using Random = UnityEngine.Random;
 
 namespace Baracuda.Monitoring.Editor
 {
@@ -172,9 +171,6 @@ namespace Baracuda.Monitoring.Editor
 
             WriteContentToFile(stringBuilder);
 
-            Debug.Log($"[Monitoring] Completed Type Definitions for IL2CPP at with [{ExceptionBuffer.Count}] Exceptions!");
-            Debug.Log($"[Monitoring] {Stats.ToString(false)}");
-
             if (ExceptionBuffer.Any())
             {
                 foreach (var exception in ExceptionBuffer)
@@ -184,6 +180,7 @@ namespace Baracuda.Monitoring.Editor
 
                 throw new OperationCanceledException("Cancel Build Process");
             }
+            Debug.Log($"[Monitoring] Created Type Definitions for IL2CPP");
         }
 
         internal static void GenerateIL2CPPAheadOfTimeTypes()

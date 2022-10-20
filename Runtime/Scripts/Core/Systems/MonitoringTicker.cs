@@ -11,10 +11,6 @@ namespace Baracuda.Monitoring.Systems
 {
     internal class MonitoringTicker : IMonitoringTicker
     {
-        /*
-         * Properties
-         */
-
         public bool ValidationTickEnabled { get; set; } = true;
 
         //--------------------------------------------------------------------------------------------------------------
@@ -23,7 +19,6 @@ namespace Baracuda.Monitoring.Systems
         private event Action ValidationTick;
 
         private static float updateTimer;
-        private static float validationTimer;
         private static bool tickEnabled;
 
         //--------------------------------------------------------------------------------------------------------------
@@ -79,12 +74,7 @@ namespace Baracuda.Monitoring.Systems
             {
                 updateTimer = 0;
                 UpdateTick();
-            }
 
-            validationTimer += deltaTime;
-            if (validationTimer > .1f)
-            {
-                validationTimer = 0;
                 if (ValidationTickEnabled)
                 {
                     ValidationTick?.Invoke();

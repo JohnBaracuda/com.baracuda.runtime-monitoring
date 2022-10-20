@@ -7,11 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
 - Thread-Dispatcher will be removed as a dependency in a future release.
+- MonitoringSystems.cs will be removed and replaced by a single Monitor.cs class which will include most API calls and support for target registration during static intialization.
+
+## [3.2.1] - 2022-10-20
+
+### Changed
+- Updated system installation process and removed initialization from static constructor.
+- Added a the new property 'Initialized' to MonitoringSystems.cs that returns true once systems are installed properly.
+- Added experimental API to register targets before systems are installed.
+
+### Fixed
+- Fixed an exception that happened when disabling async profiling.
+
 
 ## [3.2.0] - 2022-10-14
 
 ### Changed
 - Updated thread dispatcher version dependecy.
+
 
 ## [3.1.6] - 2022-10-13
 

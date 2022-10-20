@@ -24,10 +24,6 @@ namespace Baracuda.Monitoring.Systems
 #endif
         private static void Initialize()
         {
-            if (!MonitoringSystems.Settings.AutoInstantiateUI)
-            {
-                return;
-            }
 
             if (!(MonitoringSystems.UI is MonitoringUIManager uiManager))
             {

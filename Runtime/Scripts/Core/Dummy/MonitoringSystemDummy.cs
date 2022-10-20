@@ -153,7 +153,6 @@ namespace Baracuda.Monitoring.Dummy
 
         public bool IsMonitoringEnabled { get; } = false;
         public bool IsEditorOnly { get; } = false;
-        public bool AutoInstantiateUI { get; } = false;
         public bool AllowMultipleUIInstances { get; } = false;
         public bool AsyncProfiling { get; } = false;
         public bool OpenDisplayOnLoad { get; } = false;
@@ -250,6 +249,9 @@ namespace Baracuda.Monitoring.Dummy
 
         [Obsolete]
         public bool EnableMonitoring { get; } = false;
+
+        [Obsolete]
+        public bool AutoInstantiateUI { get; } = false;
 
         #endregion
     }

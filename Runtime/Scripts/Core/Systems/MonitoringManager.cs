@@ -20,7 +20,7 @@ namespace Baracuda.Monitoring.Systems
 {
     internal class MonitoringManager : IMonitoringManager, IMonitoringManagerInternal
     {
-        #region API ---
+        #region API
 
         public bool IsInitialized
         {
@@ -91,7 +91,7 @@ namespace Baracuda.Monitoring.Systems
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region Private Fields ---
+        #region Private Fields
 
         private Dictionary<Type, List<MonitorProfile>> _instanceMonitorProfiles = new Dictionary<Type, List<MonitorProfile>>();
 
@@ -110,7 +110,7 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
-        #region Raise Events ---
+        #region Raise Events
 
         private void RaiseUnitCreated(IMonitorUnit monitorUnit)
         {
@@ -171,7 +171,7 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
-        #region --- Complete Profiling ---
+        #region Complete Profiling
 
         public async Task CompleteProfilingAsync(
             List<MonitorProfile> staticProfiles,
