@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Thread-Dispatcher will be removed as a dependency in a future release.
 - MonitoringSystems.cs will be removed and replaced by a single Monitor.cs class which will include most API calls and support for target registration during static intialization.
 
+
+## [3.2.2] - 2022-10-21
+
+### Fixed
+- Added a temporary fix to prevent an exception during initialization.
+
 ## [3.2.1] - 2022-10-20
 
 ### Changed
