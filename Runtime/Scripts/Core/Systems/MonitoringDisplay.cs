@@ -181,7 +181,7 @@ namespace Baracuda.Monitoring.Systems
                         goto End;
                     }
 
-                    if (unit.TargetName.IndexOf(filterOnlyLetters, settings.FilterComparison) >= 0)
+                    if (unit.DisplayName.IndexOf(filterOnlyLetters, settings.FilterComparison) >= 0)
                     {
                         unitEnabled = !filterNoSpace.StartsWith(not);
                         goto End;

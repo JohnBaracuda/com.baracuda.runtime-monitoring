@@ -28,7 +28,7 @@ namespace Baracuda.Monitoring.Units
         /// <summary>
         /// Readable target object display name.
         /// </summary>
-        public string TargetName { get; }
+        public string DisplayName { get; }
 
         /// <summary>
         /// Get the current value or state of the monitored member as a formatted string.
@@ -147,13 +147,13 @@ namespace Baracuda.Monitoring.Units
             Target = target;
             if (target is UnityEngine.Object unityObject)
             {
-                TargetName = profile.DeclaringType.IsInterface
+                DisplayName = profile.DeclaringType.IsInterface
                     ? $"{target.GetType().Name} ({unityObject.name})"
                     : unityObject.name;
             }
             else
             {
-                TargetName = profile.DeclaringType.IsInterface
+                DisplayName = profile.DeclaringType.IsInterface
                     ? $"({target.GetType().Name})"
                     : profile.DeclaringType.Name;
             }
@@ -185,6 +185,13 @@ namespace Baracuda.Monitoring.Units
         {
             return GetType().HumanizedName();
         }
+
+        #endregion
+
+        #region Obsolete
+
+        [Obsolete]
+        public string TargetName { get; }
 
         #endregion
     }

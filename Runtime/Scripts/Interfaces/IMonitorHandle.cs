@@ -17,7 +17,7 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Readable target object display name.
         /// </summary>
-        string TargetName { get; }
+        string DisplayName { get; }
 
         /// <summary>
         /// The target object of the monitored member. Null if static.
@@ -63,5 +63,12 @@ namespace Baracuda.Monitoring
         /// Get the current value or state of the monitored member as a formatted string.
         /// </summary>
         string GetState();
+
+        #region Obsolete
+
+        [Obsolete("Use DisplayName instead! This API will be removed in 4.0.0")]
+        string TargetName { get; }
+
+        #endregion
     }
 }
