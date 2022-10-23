@@ -1,6 +1,5 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using Baracuda.Monitoring.Types;
 using Baracuda.Monitoring.Units;
 using Baracuda.Monitoring.Utilities.Extensions;
@@ -54,8 +53,7 @@ namespace Baracuda.Monitoring.Systems
 
                 if (!parameterInfos.Any())
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>()
-                        .LogInvalidProcessorSignature(processor, declaringType);
+                    Monitor.Logger.LogInvalidProcessorSignature(processor, declaringType);
                     return null;
                 }
 
@@ -243,8 +241,7 @@ namespace Baracuda.Monitoring.Systems
 
                 if (!parameterInfos.Any())
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>()
-                        .LogInvalidProcessorSignature(processor, declaringType);
+                    Monitor.Logger.LogInvalidProcessorSignature(processor, declaringType);
                     return null;
                 }
 
@@ -439,7 +436,7 @@ namespace Baracuda.Monitoring.Systems
         /// a custom value processor with a signature<br/>
         /// </summary>
         /// <param name="processor">the <see cref="MethodInfo"/> of the previously validated processor</param>
-        /// <param name="name">the name of the <see cref="ValueUnit{TTarget,TValue}"/></param>
+        /// <param name="name">the name of the <see cref="ValueHandle{TTarget,TValue}"/></param>
         /// <typeparam name="TInput">the exact argument/input type of the processors method. This type must be assignable from <see cref="IList{TElement}"/></typeparam>
         /// <typeparam name="TElement">the element type of the IList</typeparam>
         /// <returns></returns>

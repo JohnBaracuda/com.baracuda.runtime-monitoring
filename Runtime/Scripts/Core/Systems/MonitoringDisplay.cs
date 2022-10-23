@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Types;
 using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -7,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace Baracuda.Monitoring.Systems
 {
-    internal sealed class MonitoringUIManager : IMonitoringUI
+    internal sealed class MonitoringDisplay : LazySingleton<MonitoringDisplay>, IMonitoringUI
     {
         #region Data
 
@@ -24,8 +25,7 @@ namespace Baracuda.Monitoring.Systems
 #endif
         private static void Initialize()
         {
-
-            if (!(MonitoringSystems.UI is MonitoringUIManager uiManager))
+            if (!(Monitor.UI is MonitoringDisplay uiManager))
             {
                 return;
             }
@@ -35,16 +35,16 @@ namespace Baracuda.Monitoring.Systems
                 return;
             }
 
-            if (MonitoringSystems.Settings.MonitoringUIOverride != null)
+            if (Monitor.Settings.MonitoringUIOverride != null)
             {
-                var instance = Object.Instantiate(MonitoringSystems.Settings.MonitoringUIOverride);
+                var instance = Object.Instantiate(Monitor.Settings.MonitoringUIOverride);
                 Object.DontDestroyOnLoad(instance.gameObject);
             }
             else
             {
                 var gameObject = new GameObject("Monitoring UI");
                 gameObject.AddComponent<MonitoringUIFallback>();
-                gameObject.hideFlags = MonitoringSystems.Settings.ShowRuntimeMonitoringObject ? HideFlags.None : HideFlags.HideInHierarchy;
+                gameObject.hideFlags = Monitor.Settings.ShowRuntimeMonitoringObject ? HideFlags.None : HideFlags.HideInHierarchy;
                 Object.DontDestroyOnLoad(gameObject);
             }
         }
@@ -85,7 +85,7 @@ namespace Baracuda.Monitoring.Systems
             return _current as TMonitoringUI;
         }
 
-        internal void SetActiveMonitoringUI(MonitoringUI monitoringUI)
+        public void SetActiveMonitoringUI(MonitoringUI monitoringUI)
         {
             if (monitoringUI == _current)
             {
@@ -93,7 +93,7 @@ namespace Baracuda.Monitoring.Systems
             }
             if (_current != null)
             {
-                if (MonitoringSystems.Settings.AllowMultipleUIInstances)
+                if (Monitor.Settings.AllowMultipleUIInstances)
                 {
                     _current.gameObject.SetActive(false);
                 }
@@ -116,15 +116,15 @@ namespace Baracuda.Monitoring.Systems
         public void ApplyFilter(string filterString)
         {
             _activeFilter = filterString;
-            MonitoringSystems.Ticker.ValidationTickEnabled = false;
+            Monitor.Ticker.ValidationTickEnabled = false;
 
-            var settings = MonitoringSystems.Settings;
+            var settings = Monitor.Settings;
             var and = settings.FilterAppendSymbol;
             var not = settings.FilterNegateSymbol.ToString();
             var absolute = settings.FilterAbsoluteSymbol.ToString();
             var tag = settings.FilterTagsSymbol.ToString();
 
-            var list = MonitoringSystems.Manager.GetAllMonitoringUnits();
+            var list = Monitor.Registry.GetMonitorHandles();
             var filters = filterString.Split(and);
 
             for (var i = 0; i < list.Count; i++)
@@ -215,8 +215,8 @@ namespace Baracuda.Monitoring.Systems
             }
 
             _activeFilter = null;
-            MonitoringSystems.Ticker.ValidationTickEnabled = true;
-            var units = MonitoringSystems.Manager.GetAllMonitoringUnits();
+            Monitor.Ticker.ValidationTickEnabled = true;
+            var units = Monitor.Registry.GetMonitorHandles();
             for (var i = 0; i < units.Count; i++)
             {
                 var unit = units[i];

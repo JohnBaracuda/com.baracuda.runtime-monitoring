@@ -6,21 +6,16 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Dummy
 {
-    internal class MonitoringSystemDummy :
+#pragma warning disable
+    internal class MonitoringDummy :
         IMonitoringManager,
         IMonitoringUI,
         IMonitoringUtility,
-        IMonitoringSettings
+        IMonitoringSettings,
+        IMonitoringRegistry,
+        IMonitoringEvents
     {
-#pragma warning disable
-
-        #region MonitoringManager
-
-        /// <summary>
-        /// Value indicated whether or not monitoring profiling has completed and monitoring is fully initialized.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
-        public bool IsInitialized { get; } = false;
+        #region IMonitoringEvents
 
         /// <summary>
         /// Event is invoked when profiling process for the current system has been completed.
@@ -29,54 +24,41 @@ namespace Baracuda.Monitoring.Dummy
         public event ProfilingCompletedListener ProfilingCompleted;
 
         /// <summary>
-        /// Event is called when a new <see cref="MonitorUnit"/> was created.
+        /// Event is called when a new <see cref="IMonitorHandle"/> was created.
         /// </summary>
-        public event Action<IMonitorUnit> UnitCreated;
+        public event Action<IMonitorHandle> MonitorHandleCreated;
 
         /// <summary>
-        /// Event is called when a <see cref="MonitorUnit"/> was disposed.
+        /// Event is called when a <see cref="IMonitorHandle"/> was disposed.
         /// </summary>
-        public event Action<IMonitorUnit> UnitDisposed;
-
-        /// <summary>
-        /// Register an object that is monitored during runtime.
-        /// </summary>
-        public void RegisterTarget<T>(T target) where T : class
-        {
-        }
-
-        /// <summary>
-        /// Unregister an object that is monitored during runtime.
-        /// </summary>
-        public void UnregisterTarget<T>(T target) where T : class
-        {
-        }
+        public event Action<IMonitorHandle> MonitorHandleDisposed;
 
         /// <summary>
         /// Get a list of monitoring units for static targets.
         /// </summary>
-        public IReadOnlyList<IMonitorUnit> GetStaticUnits()
+        public IReadOnlyList<IMonitorHandle> GetStaticUnits()
         {
-            return Array.Empty<IMonitorUnit>();
+            return Array.Empty<IMonitorHandle>();
         }
 
         /// <summary>
         /// Get a list of monitoring units for instance targets.
         /// </summary>
-        public IReadOnlyList<IMonitorUnit> GetInstanceUnits()
+        public IReadOnlyList<IMonitorHandle> GetInstanceUnits()
         {
-            return Array.Empty<IMonitorUnit>();
+            return Array.Empty<IMonitorHandle>();
         }
 
         /// <summary>
         /// Get a list of all monitoring units.
         /// </summary>
-        public IReadOnlyList<IMonitorUnit> GetAllMonitoringUnits()
+        public IReadOnlyList<IMonitorHandle> GetAllMonitoringUnits()
         {
-            return Array.Empty<IMonitorUnit>();
+            return Array.Empty<IMonitorHandle>();
         }
 
         #endregion
+
 
         #region IMonitoringUI
 
@@ -112,7 +94,15 @@ namespace Baracuda.Monitoring.Dummy
         {
         }
 
+        /// <summary>
+        /// Set the active MonitoringUI
+        /// </summary>
+        public void SetActiveMonitoringUI(MonitoringUI monitoringUI)
+        {
+        }
+
         #endregion
+
 
         #region IMonitoringUtility
 
@@ -127,11 +117,11 @@ namespace Baracuda.Monitoring.Dummy
         }
 
         /// <summary>
-        /// Get a list of <see cref="IMonitorUnit"/>s registered to the passed target object.
+        /// Get a list of <see cref="IMonitorHandle"/>s registered to the passed target object.
         /// </summary>
-        public IMonitorUnit[] GetMonitorUnitsForTarget(object target)
+        public IMonitorHandle[] GetMonitorUnitsForTarget(object target)
         {
-            return Array.Empty<IMonitorUnit>();
+            return Array.Empty<IMonitorHandle>();
         }
 
         /// <summary>
@@ -148,6 +138,7 @@ namespace Baracuda.Monitoring.Dummy
         }
 
         #endregion
+
 
         #region Settings
 
@@ -203,6 +194,43 @@ namespace Baracuda.Monitoring.Dummy
 
         #endregion
 
+
+        #region IMonitoringRegistry
+
+        /// <summary>
+        /// Get a list of monitoring handles for all targets.
+        /// </summary>
+        public IReadOnlyList<IMonitorHandle> GetMonitorHandles(HandleTypes handleTypes = HandleTypes.All)
+        {
+            return Array.Empty<IMonitorHandle>();
+        }
+
+        /// <summary>
+        /// Get a list of <see cref="IMonitorHandle"/>s registered to the passed target object.
+        /// </summary>
+        public IMonitorHandle[] GetMonitorUnitsForTarget<T>(T target) where T : class
+        {
+            return Array.Empty<IMonitorHandle>();
+        }
+
+        /// <summary>
+        /// Get a collection of used tags.
+        /// </summary>
+        public IReadOnlyCollection<string> UsedTags { get; } = Array.Empty<string>();
+
+        /// <summary>
+        /// Get a collection of used fonts.
+        /// </summary>
+        public IReadOnlyCollection<string> UsedFonts { get; } = Array.Empty<string>();
+
+        /// <summary>
+        /// Get a collection of monitored types.
+        /// </summary>
+        public IReadOnlyCollection<Type> UsedTypes { get; } = Array.Empty<Type>();
+
+        #endregion
+
+
         #region Obsolete
 
         [Obsolete]
@@ -252,6 +280,25 @@ namespace Baracuda.Monitoring.Dummy
 
         [Obsolete]
         public bool AutoInstantiateUI { get; } = false;
+
+        [Obsolete]
+        public event Action<IMonitorHandle> UnitCreated;
+
+        [Obsolete]
+        public event Action<IMonitorHandle> UnitDisposed;
+
+        [Obsolete]
+        public void RegisterTarget<T>(T target) where T : class
+        {
+        }
+
+        [Obsolete]
+        public void UnregisterTarget<T>(T target) where T : class
+        {
+        }
+
+        [Obsolete]
+        public bool IsInitialized { get; } = false;
 
         #endregion
     }

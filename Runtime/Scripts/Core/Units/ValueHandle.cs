@@ -1,6 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using Baracuda.Monitoring.Profiles;
 using Baracuda.Monitoring.Types;
 using System;
@@ -11,12 +10,12 @@ namespace Baracuda.Monitoring.Units
 {
     /// <summary>
     /// Base type for units that monitor a value <br/>
-    /// <see cref="FieldUnit{TTarget,TValue}"/><br/>
-    /// <see cref="PropertyUnit{TTarget,TValue}"/>
+    /// <see cref="FieldHandle{TTarget,TValue}"/><br/>
+    /// <see cref="PropertyHandle{TTarget,TValue}"/>
     /// </summary>
     /// <typeparam name="TTarget"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    internal abstract class ValueUnit<TTarget, TValue> : MonitorUnit, ISettableValue<TValue>, IGettableValue<TValue> where TTarget : class
+    internal abstract class ValueHandle<TTarget, TValue> : MonitorHandle, ISettableValue<TValue>, IGettableValue<TValue> where TTarget : class
     {
         #region --- Fields ---
 
@@ -40,7 +39,7 @@ namespace Baracuda.Monitoring.Units
 
         #region --- Ctor ---
 
-        internal ValueUnit(TTarget target,
+        internal ValueHandle(TTarget target,
             Func<TTarget, TValue> getValue,
             Action<TTarget, TValue> setValue,
             Func<TValue, string> valueProcessor,
@@ -89,7 +88,7 @@ namespace Baracuda.Monitoring.Units
                 }
 
                 _validationTick = () => Enabled = _validateFunc();
-                MonitoringSystems.Resolve<IMonitoringTicker>().AddValidationTicker(_validationTick);
+                Monitor.Ticker.AddValidationTicker(_validationTick);
             }
         }
 
@@ -207,7 +206,7 @@ namespace Baracuda.Monitoring.Units
 
             if (_validationTick != null)
             {
-                MonitoringSystems.Resolve<IMonitoringTicker>().RemoveValidationTicker(_validationTick);
+                Monitor.Ticker.RemoveValidationTicker(_validationTick);
             }
         }
 

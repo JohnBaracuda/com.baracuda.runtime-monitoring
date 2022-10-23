@@ -26,7 +26,7 @@ namespace Baracuda.Monitoring.Editor
         /// <summary>
         ///   <para>Returns the relative callback order for callbacks.  Callbacks with lower values are called before ones with higher values.</para>
         /// </summary>
-        public int callbackOrder => MonitoringSystems.Settings.PreprocessBuildCallbackOrder;
+        public int callbackOrder => Monitor.Settings.PreprocessBuildCallbackOrder;
 
         /// <summary>
         ///   <para>Implement this function to receive a callback before the build is started.</para>
@@ -34,12 +34,12 @@ namespace Baracuda.Monitoring.Editor
         /// <param name="report">A report containing information about the build, such as its target platform and output path.</param>
         public void OnPreprocessBuild(BuildReport report)
         {
-            if (!MonitoringSystems.Settings.UseIPreprocessBuildWithReport)
+            if (!Monitor.Settings.UseIPreprocessBuildWithReport)
             {
                 return;
             }
 
-            if (MonitoringSystems.Settings.IsEditorOnly)
+            if (Monitor.Settings.IsEditorOnly)
             {
                 return;
             }
@@ -190,7 +190,7 @@ namespace Baracuda.Monitoring.Editor
 
         private void WriteContentToFile(StringBuilder stringBuilder)
         {
-            var textFile = MonitoringSystems.Settings.TypeDefinitionsForIL2CPP;
+            var textFile = Monitor.Settings.TypeDefinitionsForIL2CPP;
             var filePath = textFile
                 ? AssetDatabase.GetAssetPath(textFile)
                 : Application.dataPath + "/Baracuda/IL2CPP/TYPE_DEFINITIONS_FOR_IL2CPP.cs";

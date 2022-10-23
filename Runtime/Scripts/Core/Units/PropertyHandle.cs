@@ -6,9 +6,9 @@ using System;
 
 namespace Baracuda.Monitoring.Units
 {
-    internal sealed class PropertyUnit<TTarget, TValue> : ValueUnit<TTarget, TValue> where TTarget : class
+    internal sealed class PropertyHandle<TTarget, TValue> : ValueHandle<TTarget, TValue> where TTarget : class
     {
-        internal PropertyUnit(TTarget target,
+        internal PropertyHandle(TTarget target,
             Func<TTarget, TValue> getValue,
             Action<TTarget, TValue> setValue,
             Func<TValue, string> valueProcessor,

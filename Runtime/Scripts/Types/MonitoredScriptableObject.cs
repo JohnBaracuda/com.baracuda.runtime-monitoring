@@ -14,7 +14,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected virtual void OnEnable()
         {
-            MonitoringSystems.Manager.RegisterTarget(this);
+            Monitor.BeginMonitoring(this);
         }
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected virtual void OnDisable()
         {
-            MonitoringSystems.Manager.UnregisterTarget(this);
+            Monitor.EndMonitoring(this);
         }
     }
 }

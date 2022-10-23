@@ -1,6 +1,5 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using Baracuda.Monitoring.Profiles;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Reflection;
 
 namespace Baracuda.Monitoring.Systems
 {
-    internal partial class ValueProcessorFactory : IValueProcessorFactory
+    internal partial class ValueProcessorFactory
     {
         /// <summary>
         /// Creates a default type specific processor to format the value depending on its exact type.

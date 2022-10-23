@@ -29,17 +29,17 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Use to add UI elements for the passed unit.
         /// </summary>
-        protected override void OnMonitorUnitCreated(IMonitorUnit unit)
+        protected override void OnMonitorUnitCreated(IMonitorHandle handle)
         {
-            OnUnitCreated(unit);
+            OnUnitCreated(handle);
         }
 
         /// <summary>
         /// Use to remove UI elements for the passed unit.
         /// </summary>
-        protected override void OnMonitorUnitDisposed(IMonitorUnit unit)
+        protected override void OnMonitorUnitDisposed(IMonitorHandle handle)
         {
-            OnUnitDisposed(unit);
+            OnUnitDisposed(handle);
         }
 
         [Obsolete("Use MonitoringUI.Visible instead! This class will be removed in 4.0.0")]
@@ -52,9 +52,9 @@ namespace Baracuda.Monitoring
         public abstract void HideMonitoringUI();
 
         [Obsolete("Use MonitoringUI.OnMonitorUnitDisposed instead! This class will be removed in 4.0.0")]
-        public abstract void OnUnitDisposed(IMonitorUnit unit);
+        public abstract void OnUnitDisposed(IMonitorHandle handle);
 
         [Obsolete("Use MonitoringUI.OnMonitorUnitCreated instead! This class will be removed in 4.0.0")]
-        public abstract void OnUnitCreated(IMonitorUnit unit);
+        public abstract void OnUnitCreated(IMonitorHandle handle);
     }
 }

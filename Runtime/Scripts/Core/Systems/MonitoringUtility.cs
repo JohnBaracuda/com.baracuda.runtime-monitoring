@@ -1,85 +1,48 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
-using Baracuda.Monitoring.Utilities.Pooling;
-using JetBrains.Annotations;
+using Baracuda.Monitoring.Utilities.Extensions;
+using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using UnityEngine;
 
 namespace Baracuda.Monitoring.Systems
 {
-    internal class MonitoringUtility : IMonitoringUtility, IMonitoringUtilityInternal
+    [Obsolete]
+    internal class MonitoringUtility : IMonitoringUtility
     {
-        private readonly IMonitoringManager _monitoringManager;
-        private readonly HashSet<string> _tags = new HashSet<string>();
-        private readonly HashSet<string> _typeStrings = new HashSet<string>();
-
-        internal MonitoringUtility(IMonitoringManager monitoringManager)
-        {
-            _monitoringManager = monitoringManager;
-        }
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        private readonly HashSet<int> _fontHashSet = new HashSet<int>();
-
+        [Obsolete]
         public bool IsFontHashUsed(int fontHash)
         {
-            return _fontHashSet.Contains(fontHash);
-        }
-
-        public void AddFontHash(int fontHash)
-        {
-            _fontHashSet.Add(fontHash);
-        }
-
-        public void AddTag(string tag)
-        {
-            _tags.Add(tag);
-        }
-
-        public void AddTypeString(string typeString)
-        {
-            _typeStrings.Add(typeString);
-        }
-
-        //--------------------------------------------------------------------------------------------------------------
-
-        [Pure]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IMonitorUnit[] GetMonitorUnitsForTarget(object target)
-        {
-            if (!_monitoringManager.IsInitialized)
+            foreach (var registryUsedFont in Monitor.Registry.UsedFonts)
             {
-                Debug.LogWarning(
-                    $"Calling {nameof(GetMonitorUnitsForTarget)} before profiling has completed. " +
-                    $"If you need to access units during initialization consider disabling async profiling in the monitoring settings!");
-            }
-
-            var list = ListPool<IMonitorUnit>.Get();
-            var monitorUnits = _monitoringManager.GetInstanceUnits();
-            for (var i = 0; i <monitorUnits.Count; i++)
-            {
-                var instanceUnit = monitorUnits[i];
-                if (instanceUnit.Target == target)
+                if (registryUsedFont.GetHashCode() == fontHash)
                 {
-                    list.Add(instanceUnit);
+                    return true;
                 }
             }
-            var returnValue = list.ToArray();
-            ListPool<IMonitorUnit>.Release(list);
-            return returnValue;
+            return false;
         }
 
+        [Obsolete]
+        public IMonitorHandle[] GetMonitorUnitsForTarget(object target)
+        {
+            return Monitor.Registry.GetMonitorUnitsForTarget(target);
+        }
+
+        [Obsolete]
         public IReadOnlyCollection<string> GetAllTags()
         {
-            return _tags;
+            return Monitor.Registry.UsedTags;
         }
 
+        [Obsolete]
         public IReadOnlyCollection<string> GetAllTypeStrings()
         {
-            return _typeStrings;
+            var set = new HashSet<string>();
+            foreach (var registryUsedType in Monitor.Registry.UsedTypes)
+            {
+                set.Add(registryUsedType.HumanizedName());
+            }
+            return set;
         }
     }
 }

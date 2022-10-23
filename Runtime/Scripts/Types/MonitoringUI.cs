@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Baracuda.Monitoring.Systems;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Baracuda.Monitoring
@@ -10,7 +11,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected virtual void OnEnable()
         {
-            MonitoringSystems.InternalUI.SetActiveMonitoringUI(this);
+            Monitor.UI.SetActiveMonitoringUI(this);
         }
 
         /// <summary>
@@ -18,7 +19,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected virtual void Start()
         {
-            MonitoringSystems.Manager.ProfilingCompleted += ManagerOnProfilingCompleted;
+            Monitor.Events.ProfilingCompleted += ManagerOnProfilingCompleted;
         }
 
         /// <summary>
@@ -26,13 +27,13 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected override void OnDestroy()
         {
-            MonitoringSystems.Manager.ProfilingCompleted -= ManagerOnProfilingCompleted;
-            MonitoringSystems.Manager.UnitCreated -= OnMonitorUnitCreated;
-            MonitoringSystems.Manager.UnitDisposed -= OnMonitorUnitDisposed;
+            Monitor.Events.ProfilingCompleted -= ManagerOnProfilingCompleted;
+            Monitor.Events.MonitorHandleCreated -= OnMonitorUnitCreated;
+            Monitor.Events.MonitorHandleDisposed -= OnMonitorUnitDisposed;
             base.OnDestroy();
         }
 
-        private void ManagerOnProfilingCompleted(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
+        private void ManagerOnProfilingCompleted(IReadOnlyList<IMonitorHandle> staticUnits, IReadOnlyList<IMonitorHandle> instanceUnits)
         {
 #if UNITY_EDITOR
             if (!Application.isPlaying)
@@ -41,8 +42,8 @@ namespace Baracuda.Monitoring
             }
 #endif
 
-            MonitoringSystems.Manager.UnitCreated += OnMonitorUnitCreated;
-            MonitoringSystems.Manager.UnitDisposed += OnMonitorUnitDisposed;
+            Monitor.Events.MonitorHandleCreated += OnMonitorUnitCreated;
+            Monitor.Events.MonitorHandleDisposed += OnMonitorUnitDisposed;
 
             for (var i = 0; i < staticUnits.Count; i++)
             {
@@ -54,7 +55,7 @@ namespace Baracuda.Monitoring
                 OnMonitorUnitCreated(instanceUnits[i]);
             }
 
-            Visible = MonitoringSystems.Settings.OpenDisplayOnLoad;
+            Visible = Monitor.Settings.OpenDisplayOnLoad;
         }
 
         /// <summary>
@@ -65,11 +66,11 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Use to add UI elements for the passed unit.
         /// </summary>
-        protected abstract void OnMonitorUnitCreated(IMonitorUnit unit);
+        protected abstract void OnMonitorUnitCreated(IMonitorHandle handle);
 
         /// <summary>
         /// Use to remove UI elements for the passed unit.
         /// </summary>
-        protected abstract void OnMonitorUnitDisposed(IMonitorUnit unit);
+        protected abstract void OnMonitorUnitDisposed(IMonitorHandle handle);
     }
 }

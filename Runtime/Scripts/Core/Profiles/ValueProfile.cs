@@ -1,6 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using Baracuda.Monitoring.Types;
 using Baracuda.Monitoring.Utilities.Extensions;
 using System;
@@ -11,22 +10,20 @@ namespace Baracuda.Monitoring.Profiles
 {
     internal abstract class ValueProfile<TTarget, TValue> : NotifiableProfile<TTarget, TValue> where TTarget : class
     {
-        #region Properties ---
+        #region Properties
 
         public bool SetAccessEnabled { get; }
         internal IsDirtyDelegate IsDirtyFunc { get; }
 
         #endregion
 
-        #region --- Fields ---
+        #region Fields
 
         public delegate bool IsDirtyDelegate(ref TValue lastValue, ref TValue newValue);
 
         #endregion
 
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Properties ---
+        #region Properties
 
         private readonly Func<TTarget, TValue, string> _instanceValueProcessorDelegate;
         private readonly Func<TValue, string> _staticValueProcessorDelegate;
@@ -45,9 +42,7 @@ namespace Baracuda.Monitoring.Profiles
 
         #endregion
 
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Ctor ---
+        #region Ctor
 
         protected ValueProfile(
             MemberInfo memberInfo,
@@ -83,21 +78,20 @@ namespace Baracuda.Monitoring.Profiles
 
             if (valueProcessorName != null)
             {
-                var valueProcessorFactory = MonitoringSystems.Resolve<IValueProcessorFactory>();
+                var valueProcessorFactory = Monitor.ProcessorFactory;
                 _instanceValueProcessorDelegate =
                     valueProcessorFactory.FindCustomInstanceProcessor<TTarget, TValue>(valueProcessorName, FormatData);
                 _staticValueProcessorDelegate =
                     valueProcessorFactory.FindCustomStaticProcessor<TTarget, TValue>(valueProcessorName, FormatData);
                 if (_instanceValueProcessorDelegate == null && _staticValueProcessorDelegate == null)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>()
-                        .LogValueProcessNotFound(valueProcessorName, unitTargetType);
+                    Monitor.Logger.LogValueProcessNotFound(valueProcessorName, unitTargetType);
                 }
             }
 
             if (_staticValueProcessorDelegate == null && _instanceValueProcessorDelegate == null)
             {
-                var valueProcessorFactory = MonitoringSystems.Resolve<IValueProcessorFactory>();
+                var valueProcessorFactory = Monitor.ProcessorFactory;
                 _fallbackValueProcessorDelegate = valueProcessorFactory.CreateProcessorForType<TValue>(FormatData);
             }
 
@@ -105,15 +99,11 @@ namespace Baracuda.Monitoring.Profiles
 
             if (TryGetMetaAttribute<MShowIfAttribute>(out var conditionalAttribute))
             {
-                ValidationFunc = (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>()
-                                     .CreateStaticValidator(conditionalAttribute, memberInfo)
-                                 ?? (MulticastDelegate) MonitoringSystems.Resolve<IValidatorFactory>()
-                                     .CreateStaticConditionalValidator<TValue>(conditionalAttribute, memberInfo)
-                                 ?? MonitoringSystems.Resolve<IValidatorFactory>()
-                                     .CreateInstanceValidator<TTarget>(conditionalAttribute, memberInfo);
+                ValidationFunc = (MulticastDelegate) Monitor.ValidatorFactory.CreateStaticValidator(conditionalAttribute, memberInfo)
+                                 ?? (MulticastDelegate) Monitor.ValidatorFactory.CreateStaticConditionalValidator<TValue>(conditionalAttribute, memberInfo)
+                                 ?? Monitor.ValidatorFactory.CreateInstanceValidator<TTarget>(conditionalAttribute, memberInfo);
 
-                ValidationEvent = MonitoringSystems.Resolve<IValidatorFactory>()
-                    .CreateEventValidator(conditionalAttribute, memberInfo);
+                ValidationEvent = Monitor.ValidatorFactory.CreateEventValidator(conditionalAttribute, memberInfo);
             }
         }
 

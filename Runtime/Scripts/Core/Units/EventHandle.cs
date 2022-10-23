@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace Baracuda.Monitoring.Units
 {
-    internal class EventUnit<TTarget, TDelegate> : MonitorUnit where TTarget : class where TDelegate : Delegate
+    internal class EventHandle<TTarget, TDelegate> : MonitorHandle where TTarget : class where TDelegate : Delegate
     {
         //--------------------------------------------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        internal EventUnit(
+        internal EventHandle(
             TTarget target,
             EventProfile<TTarget, TDelegate>.StateFormatDelegate stateFormatter,
             EventProfile<TTarget, TDelegate> eventProfile) : base(target, eventProfile)

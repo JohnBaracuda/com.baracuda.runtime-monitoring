@@ -1,11 +1,10 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using System;
+
 namespace Baracuda.Monitoring
 {
-    /// <summary>
-    /// Base interface for monitoring systems.
-    /// </summary>
-    /// <typeparam name="T">concrete interface for system</typeparam>
+    [Obsolete("This API will be removed in 4.0.0")]
     public interface IMonitoringSubsystem<T> where T : class, IMonitoringSubsystem<T>
     {
     }

@@ -1,35 +1,23 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 
 namespace Baracuda.Monitoring
 {
-    /// <summary>
-    /// Access to various monitoring utility methods.
-    /// </summary>
+    [Obsolete("Use Baracuda.Monitor.Registry instead! This API will be removed in 4.0.0")]
     public interface IMonitoringUtility : IMonitoringSubsystem<IMonitoringUtility>
     {
-        /// <summary>
-        /// Method returns true if the passed hash from the name of a font asset is used by a MFontNameAttribute and therefore
-        /// required by a monitoring unit. Used to dynamically load/unload required fonts.
-        /// </summary>
-        /// <param name="fontHash">The hash of the fonts name (string)</param>
-        [Pure] bool IsFontHashUsed(int fontHash);
+        [Obsolete("Use Baracuda.Monitor.Registry.UsedFonts instead! This API will be removed in 4.0.0")]
+        bool IsFontHashUsed(int fontHash);
 
-        /// <summary>
-        /// Get a list of <see cref="IMonitorUnit"/>s registered to the passed target object.
-        /// </summary>
-        [Pure] IMonitorUnit[] GetMonitorUnitsForTarget(object target);
+        [Obsolete("Use Baracuda.Monitor.Registry.UsedFonts instead! This API will be removed in 4.0.0")]
+        IMonitorHandle[] GetMonitorUnitsForTarget(object target);
 
-        /// <summary>
-        /// Get a list of all custom tags, applied by [MTag] attributes that can be used for filtering.
-        /// </summary>
-        [Pure] IReadOnlyCollection<string> GetAllTags();
+        [Obsolete("Use Baracuda.Monitor.Registry.UsedTags instead! This API will be removed in 4.0.0")]
+        IReadOnlyCollection<string> GetAllTags();
 
-        /// <summary>
-        /// Get a list of all monitored types for custom filtering.
-        /// </summary>
-        [Pure] IReadOnlyCollection<string> GetAllTypeStrings();
+        [Obsolete("Use Baracuda.Monitor.Registry.UsedTypes instead! This API will be removed in 4.0.0")]
+        IReadOnlyCollection<string> GetAllTypeStrings();
     }
 }

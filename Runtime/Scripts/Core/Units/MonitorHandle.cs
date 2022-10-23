@@ -1,6 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using Baracuda.Monitoring.Profiles;
 using Baracuda.Monitoring.Utilities.Extensions;
 using System;
@@ -11,7 +10,7 @@ namespace Baracuda.Monitoring.Units
     /// <summary>
     /// Object wrapping and handling the monitoring of a monitored member.
     /// </summary>
-    internal abstract class MonitorUnit : IDisposable, IMonitorUnit
+    internal abstract class MonitorHandle : IDisposable, IMonitorHandle
     {
         #region --- Delegates ---
 
@@ -67,11 +66,11 @@ namespace Baracuda.Monitoring.Units
                 {
                     if (value)
                     {
-                        _ticker.AddUpdateTicker(this);
+                        Monitor.Ticker.AddUpdateTicker(this);
                     }
                     else
                     {
-                        _ticker.RemoveUpdateTicker(this);
+                        Monitor.Ticker.RemoveUpdateTicker(this);
                     }
                 }
 
@@ -87,7 +86,6 @@ namespace Baracuda.Monitoring.Units
         protected const string Null = "<color=red>NULL</color>";
         private static int backingID;
         private bool _isActive = false;
-        private readonly IMonitoringTicker _ticker;
 
         #endregion
 
@@ -143,9 +141,8 @@ namespace Baracuda.Monitoring.Units
 
         #region --- Ctor ---
 
-        protected MonitorUnit(object target, IMonitorProfile profile)
+        protected MonitorHandle(object target, IMonitorProfile profile)
         {
-            _ticker = MonitoringSystems.Resolve<IMonitoringTicker>();
             Profile = profile;
             Target = target;
             if (target is UnityEngine.Object unityObject)
@@ -176,7 +173,7 @@ namespace Baracuda.Monitoring.Units
         {
             if (Profile.ReceiveTick)
             {
-                _ticker.RemoveUpdateTicker(this);
+                Monitor.Ticker.RemoveUpdateTicker(this);
             }
             RaiseDisposing();
 

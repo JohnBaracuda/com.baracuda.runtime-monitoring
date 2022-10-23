@@ -8,7 +8,7 @@ namespace Baracuda.Monitoring
     /// <summary>
     /// Access monitoring UI methods of the currently active UI instance.
     /// </summary>
-    public interface IMonitoringUI : IMonitoringSubsystem<IMonitoringUI>
+    public interface IMonitoringUI
     {
         /// <summary>
         /// Get or set the visibility of the current monitoring UI.
@@ -35,6 +35,11 @@ namespace Baracuda.Monitoring
         /// </summary>
         void ResetFilter();
 
+        /// <summary>
+        /// Set the active MonitoringUI
+        /// </summary>
+        void SetActiveMonitoringUI(MonitoringUI monitoringUI);
+
         //--------------------------------------------------------------------------------------------------------------
 
         #region Obsolete
@@ -52,10 +57,10 @@ namespace Baracuda.Monitoring
         [Obsolete("Use IMonitoringUI.Visible instead! This API will be removed in 4.0.0")]
         bool ToggleDisplay();
 
-        [Obsolete("Use IMonitoringUI.GetActive<T> instead! This API will be removed in 4.0.0")]
+        [Obsolete("Use IMonitoringUI.GetCurrent<T> instead! This API will be removed in 4.0.0")]
         MonitoringUIController GetActiveUIController();
 
-        [Obsolete("Use IMonitoringUI.GetActive<T> instead! This API will be removed in 4.0.0")]
+        [Obsolete("Use IMonitoringUI.GetCurrent<T> instead! This API will be removed in 4.0.0")]
         TUIController GetActiveUIController<TUIController>() where TUIController : MonitoringUIController;
 
         [Obsolete("This API will be removed in 4.0.0")]

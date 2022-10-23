@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Units
 {
-    internal sealed class MethodUnit<TTarget, TValue> : MonitorUnit, IGettableValue<MethodResult<TValue>> where TTarget : class
+    internal sealed class MethodHandle<TTarget, TValue> : MonitorHandle, IGettableValue<MethodResult<TValue>> where TTarget : class
     {
         //--------------------------------------------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ namespace Baracuda.Monitoring.Units
 
         #region --- Ctor ---
 
-        public MethodUnit(
+        public MethodHandle(
             TTarget target,
             Func<TTarget, MethodResult<TValue>> getValue,
             MethodProfile<TTarget, TValue> profile) : base(target, profile)

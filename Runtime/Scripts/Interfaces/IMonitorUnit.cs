@@ -7,7 +7,7 @@ namespace Baracuda.Monitoring
     /// <summary>
     /// Access internal handler of a monitored member.
     /// </summary>
-    public interface IMonitorUnit
+    public interface IMonitorHandle
     {
         /// <summary>
         /// Name of the monitored member.

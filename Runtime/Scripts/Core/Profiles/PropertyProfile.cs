@@ -16,12 +16,12 @@ namespace Baracuda.Monitoring.Profiles
         private readonly Action<TTarget, TValue> _setValueDelegate;
 
         /// <summary>
-        /// Create a new <see cref="PropertyUnit{TTarget,TValue}"/> based on this profile.
+        /// Create a new <see cref="PropertyHandle{TTarget,TValue}"/> based on this profile.
         /// </summary>
         /// <param name="target">Target object for the unit. Null if it is a static unit.</param>
-        internal override MonitorUnit CreateUnit(object target)
+        internal override MonitorHandle CreateUnit(object target)
         {
-            return new PropertyUnit<TTarget, TValue>(
+            return new PropertyHandle<TTarget, TValue>(
                 (TTarget) target,
                 _getValueDelegate,
                 _setValueDelegate,

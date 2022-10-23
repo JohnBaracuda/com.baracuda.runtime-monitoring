@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Baracuda.Monitoring.Systems
 {
@@ -482,12 +483,21 @@ namespace Baracuda.Monitoring.Systems
         /// <summary>
         /// Get the settings asset or create a new instance of it.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public static MonitoringSettings FindOrCreateSettingsAsset() =>
-            current ? current : current =
-                Resources.LoadAll<MonitoringSettings>(string.Empty).FirstOrDefault() ?? CreateAsset() ?? throw new Exception(
-                    $"{nameof(ScriptableObject)}: {nameof(MonitoringSettings)} was not found and cannot be created!");
+        public static MonitoringSettings Singleton => FindOrCreateSettingsAsset();
+
+        /// <summary>
+        /// Get the settings asset or create a new instance of it.
+        /// </summary>
+        public static MonitoringSettings FindOrCreateSettingsAsset()
+        {
+            if (current)
+            {
+                return current;
+            }
+            current = Resources.LoadAll<MonitoringSettings>(string.Empty).FirstOrDefault() ?? CreateAsset();
+            Assert.IsNotNull(current);
+            return current;
+        }
 
         private static MonitoringSettings current;
 

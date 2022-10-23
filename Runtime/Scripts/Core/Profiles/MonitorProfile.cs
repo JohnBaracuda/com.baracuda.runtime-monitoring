@@ -1,6 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using Baracuda.Monitoring.Types;
 using Baracuda.Monitoring.Units;
 using Baracuda.Monitoring.Utilities.Extensions;
@@ -112,11 +111,9 @@ namespace Baracuda.Monitoring.Profiles
                 }
             }
 
-            var utility = MonitoringSystems.Resolve<IMonitoringUtilityInternal>();
-
             if (TryGetMetaAttribute<MFontNameAttribute>(out var fontAttribute))
             {
-                utility.AddFontHash(fontAttribute.FontHash);
+                MonitoringRegistry.Singleton.AddUsedFont(fontAttribute.FontName);
             }
 
             if (TryGetMetaAttribute<MVisibleAttribute>(out var enabledAttribute))
@@ -161,7 +158,7 @@ namespace Baracuda.Monitoring.Profiles
             {
                 var readableString = MonitoredMemberType.HumanizedName();
                 tags.Add(readableString);
-                utility.AddTypeString(readableString);
+                MonitoringRegistry.Singleton.AddUsedType(MonitoredMemberType);
             }
 
             if (settings.FilterTags)
@@ -172,7 +169,7 @@ namespace Baracuda.Monitoring.Profiles
                     foreach (var tag in optionsAttribute.Tags)
                     {
                         customTags.Add(tag);
-                        utility.AddTag(tag);
+                        MonitoringRegistry.Singleton.AddUsedTag(tag);
                         tags.Add(tag);
                     }
                 }
@@ -181,7 +178,7 @@ namespace Baracuda.Monitoring.Profiles
                     foreach (var tag in memberTags.Tags)
                     {
                         customTags.Add(tag);
-                        utility.AddTag(tag);
+                        MonitoringRegistry.Singleton.AddUsedTag(tag);
                         tags.Add(tag);
                     }
                 }
@@ -190,7 +187,7 @@ namespace Baracuda.Monitoring.Profiles
                     foreach (var tag in classTags.Tags)
                     {
                         customTags.Add(tag);
-                        utility.AddTag(tag);
+                        MonitoringRegistry.Singleton.AddUsedTag(tag);
                         tags.Add(tag);
                     }
                 }
@@ -208,11 +205,11 @@ namespace Baracuda.Monitoring.Profiles
         #region Factory
 
         /// <summary>
-        /// Creates a <see cref="MonitorUnit"/> with the <see cref="MonitorProfile"/>.
+        /// Creates a <see cref="MonitorHandle"/> with the <see cref="MonitorProfile"/>.
         /// </summary>
         /// <param name="target">The target of the unit. Null if static</param>
         /// <returns></returns>
-        internal abstract MonitorUnit CreateUnit(object target);
+        internal abstract MonitorHandle CreateUnit(object target);
 
         #endregion
 

@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Baracuda.Monitoring
@@ -13,50 +14,34 @@ namespace Baracuda.Monitoring
         /// Register an object that is monitored during runtime.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void BeginMonitoring<T>(this T target) where T : class
+        {
+            Monitor.BeginMonitoring(target);
+        }
+
+        /// <summary>
+        /// Unregister an object that is monitored during runtime.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void EndMonitoring<T>(this T target) where T : class
+        {
+            Monitor.EndMonitoring(target);
+        }
+
+        #region Obsolete
+
+        [Obsolete("Use BeginMonitoring instead! This API will be removed in 4.0.0")]
         public static void RegisterMonitor<T>(this T target) where T : class
         {
-            if (MonitoringSystems.Initialized)
-            {
-                MonitoringSystems.Manager.RegisterTarget(target);
-            }
-            else
-            {
-                MonitoringSystems.__RegisterTarget(target);
-            }
+            Monitor.BeginMonitoring(target);
         }
 
-        /// <summary>
-        /// Unregister an object that is monitored during runtime.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("Use BeginMonitoring instead! This API will be removed in 4.0.0")]
         public static void UnregisterMonitor<T>(this T target) where T : class
         {
-            if (MonitoringSystems.Initialized)
-            {
-                MonitoringSystems.Manager.UnregisterTarget(target);
-            }
-            else
-            {
-                MonitoringSystems.__UnregisterTarget(target);
-            }
+            Monitor.EndMonitoring(target);
         }
 
-        /// <summary>
-        /// Register an object that is monitored during runtime.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void BeginMonitor<T>(this T target) where T : class
-        {
-            MonitoringSystems.Manager.RegisterTarget(target);
-        }
-
-        /// <summary>
-        /// Unregister an object that is monitored during runtime.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void EndMonitor<T>(this T target) where T : class
-        {
-            MonitoringSystems.Manager.UnregisterTarget(target);
-        }
+        #endregion
     }
 }

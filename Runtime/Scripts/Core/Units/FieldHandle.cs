@@ -6,7 +6,7 @@ using System;
 
 namespace Baracuda.Monitoring.Units
 {
-    internal sealed class FieldUnit<TTarget, TValue> : ValueUnit<TTarget, TValue> where TTarget : class
+    internal sealed class FieldHandle<TTarget, TValue> : ValueHandle<TTarget, TValue> where TTarget : class
     {
         //--------------------------------------------------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ namespace Baracuda.Monitoring.Units
 
         #region --- Ctr ---
 
-        internal FieldUnit(
+        internal FieldHandle(
             TTarget target,
             Func<TTarget, TValue> getValue,
             Action<TTarget, TValue> setValue,

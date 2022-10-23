@@ -1,6 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -8,7 +7,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Systems
 {
-    internal sealed class MonitoringLogging : IMonitoringLogger
+    internal sealed class MonitoringLogger
     {
         private readonly LoggingLevel _processorNotFoundLoggingLevel;
         private readonly LoggingLevel _invalidProcessorSignatureLoggingLevel;
@@ -17,8 +16,9 @@ namespace Baracuda.Monitoring.Systems
         private readonly LoggingLevel _badImageFormatLevel;
         private readonly LoggingLevel _defaultLevel;
 
-        internal MonitoringLogging(IMonitoringSettings settings)
+        internal MonitoringLogger()
         {
+            var settings = Monitor.Settings;
             _processorNotFoundLoggingLevel = settings.LogProcessorNotFoundException;
             _invalidProcessorSignatureLoggingLevel = settings.LogInvalidProcessorSignatureException;
             _threadAbortedLevel = settings.LogThreadAbortException;

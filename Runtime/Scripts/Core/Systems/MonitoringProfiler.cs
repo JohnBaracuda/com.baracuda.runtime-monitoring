@@ -1,11 +1,11 @@
 // Copyright (c) 2022 Jonathan Lang
 #define UNITY_ASSERTIONS
 
-using Baracuda.Monitoring.Interfaces;
 using Baracuda.Monitoring.Profiles;
 using Baracuda.Monitoring.Types;
 using Baracuda.Monitoring.Utilities.Extensions;
 using Baracuda.Monitoring.Utilities.Reflection;
+using Baracuda.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +22,7 @@ namespace Baracuda.Monitoring.Systems
     /// Class responsible for creating <see cref="MonitorProfile"/>s for member found in custom assemblies that were
     /// flagged to be monitored by the use of a <see cref="MonitorAttribute"/>.
     /// </summary>
-    internal class MonitoringProfiler : IMonitoringProfiler
+    internal class MonitoringProfiler
     {
         #region Fields
 
@@ -61,9 +61,9 @@ namespace Baracuda.Monitoring.Systems
 
         #region Ctor
 
-        internal MonitoringProfiler(IMonitoringSettings settings)
+        internal MonitoringProfiler()
         {
-            _settings = settings;
+            _settings = Monitor.Settings;
         }
 
         #endregion
@@ -72,37 +72,36 @@ namespace Baracuda.Monitoring.Systems
 
         #region Profiling Task
 
-        public void BeginProfiling(CancellationToken ct)
-        {
-            if (MonitoringSystems.Settings.AsyncProfiling)
-            {
-                Task.Run(() => BeginProfilingAsync(ct), ct);
-            }
-            else
-            {
-                BeginProfilingAsync(ct).Wait(ct);
-            }
-        }
-
-        private async Task BeginProfilingAsync(CancellationToken ct)
+        public async Task<bool> ProfileAsync()
         {
             try
             {
-                var types = CreateAssemblyProfile(ct);
-                CreateMonitoringProfile(types, ct);
-                await MonitoringSystems.Resolve<IMonitoringManagerInternal>().CompleteProfilingAsync(_staticProfiles, _instanceProfiles, ct);
+                if (Monitor.Settings.AsyncProfiling)
+                {
+                    await Task.Run(() => ProfileThreadedAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
+                }
+                else
+                {
+                    ProfileThreadedAsync(Dispatcher.RuntimeToken).Wait(Dispatcher.RuntimeToken);
+                }
+
+                MonitoringRegistry.Singleton.RegisterProfiles(_instanceProfiles, _staticProfiles);
+                return true;
             }
             catch (OperationCanceledException oce)
             {
-                MonitoringSystems.Resolve<IMonitoringLogger>().LogOperationCancelledException(oce);
+                Monitor.Logger.LogOperationCancelledException(oce);
+                return false;
             }
             catch (ThreadAbortException tae)
             {
-                MonitoringSystems.Resolve<IMonitoringLogger>().LogThreadAbortedException(tae);
+                Monitor.Logger.LogThreadAbortedException(tae);
+                return false;
             }
             catch (Exception exception)
             {
-                MonitoringSystems.Resolve<IMonitoringLogger>().LogException(exception);
+                Monitor.Logger.LogException(exception);
+                return false;
             }
             finally
             {
@@ -113,11 +112,17 @@ namespace Baracuda.Monitoring.Systems
             }
         }
 
+        private async Task ProfileThreadedAsync(CancellationToken ct)
+        {
+            var types = await CreateAssemblyProfile(ct);
+            await CreateMonitoringProfile(types, ct);
+        }
+
         /*
          * Assembly & Profiling
          */
 
-        private Type[] CreateAssemblyProfile(CancellationToken ct)
+        private Task<Type[]> CreateAssemblyProfile(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -153,10 +158,10 @@ namespace Baracuda.Monitoring.Systems
                 }
             }
 
-            return typeCache.ToArray();
+            return Task.FromResult(typeCache.ToArray());
         }
 
-        private void CreateMonitoringProfile(Type[] types, CancellationToken ct)
+        private Task CreateMonitoringProfile(Type[] types, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -168,7 +173,7 @@ namespace Baracuda.Monitoring.Systems
                 {
                     if (methods[j].HasAttribute<GlobalValueProcessor>())
                     {
-                        MonitoringSystems.Resolve<IValueProcessorFactory>().AddGlobalValueProcessor(methods[j]);
+                        Monitor.ProcessorFactory.AddGlobalValueProcessor(methods[j]);
                     }
                 }
             }
@@ -238,6 +243,8 @@ namespace Baracuda.Monitoring.Systems
             }
 
             ct.ThrowIfCancellationRequested();
+
+            return Task.CompletedTask;
         }
 
         #endregion
@@ -259,11 +266,11 @@ namespace Baracuda.Monitoring.Systems
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogBadImageFormatException(badImageFormatException);
+                    Monitor.Logger.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogException(exception);
+                    Monitor.Logger.LogException(exception);
                 }
             }
         }
@@ -281,11 +288,11 @@ namespace Baracuda.Monitoring.Systems
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogBadImageFormatException(badImageFormatException);
+                    Monitor.Logger.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogException(exception);
+                    Monitor.Logger.LogException(exception);
                 }
             }
         }
@@ -303,11 +310,11 @@ namespace Baracuda.Monitoring.Systems
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogBadImageFormatException(badImageFormatException);
+                    Monitor.Logger.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogException(exception);
+                    Monitor.Logger.LogException(exception);
                 }
             }
         }
@@ -325,11 +332,11 @@ namespace Baracuda.Monitoring.Systems
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogBadImageFormatException(badImageFormatException);
+                    Monitor.Logger.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogException(exception);
+                    Monitor.Logger.LogException(exception);
                 }
             }
         }
@@ -744,11 +751,11 @@ namespace Baracuda.Monitoring.Systems
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogBadImageFormatException(badImageFormatException);
+                    Monitor.Logger.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogException(exception);
+                    Monitor.Logger.LogException(exception);
                 }
             }
         }
@@ -766,11 +773,11 @@ namespace Baracuda.Monitoring.Systems
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogBadImageFormatException(badImageFormatException);
+                    Monitor.Logger.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogException(exception);
+                    Monitor.Logger.LogException(exception);
                 }
             }
         }
@@ -788,11 +795,11 @@ namespace Baracuda.Monitoring.Systems
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogBadImageFormatException(badImageFormatException);
+                    Monitor.Logger.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogException(exception);
+                    Monitor.Logger.LogException(exception);
                 }
             }
         }
@@ -810,11 +817,11 @@ namespace Baracuda.Monitoring.Systems
                 }
                 catch (BadImageFormatException badImageFormatException)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogBadImageFormatException(badImageFormatException);
+                    Monitor.Logger.LogBadImageFormatException(badImageFormatException);
                 }
                 catch (Exception exception)
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>().LogException(exception);
+                    Monitor.Logger.LogException(exception);
                 }
             }
         }

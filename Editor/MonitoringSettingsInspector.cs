@@ -153,7 +153,7 @@ namespace Baracuda.Monitoring.Editor
 
                 if (_monitoringUIOverride.objectReferenceValue != null)
                 {
-                    if (Application.isPlaying && MonitoringSystems.UI.GetCurrent<MonitoringUI>() is Object targetObject)
+                    if (Application.isPlaying && Monitor.UI.GetCurrent<MonitoringUI>() is Object targetObject)
                     {
                         DrawInlinedUIControllerPrefab(targetObject);
                     }

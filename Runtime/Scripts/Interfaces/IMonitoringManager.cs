@@ -1,74 +1,39 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 
 namespace Baracuda.Monitoring
 {
-    /// <summary>
-    /// Delegate for profiling completed listener
-    /// </summary>
-    public delegate void ProfilingCompletedListener(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits);
 
-    /// <summary>
-    /// Core interface for accessing Runtime Monitoring functionality.
-    /// </summary>
+    [Obsolete("Use Monitor, MonitoringEvents and MonitoringRegistry instead! This API will be removed in 4.0.0")]
     public interface IMonitoringManager : IMonitoringSubsystem<IMonitoringManager>
     {
-        /// <summary>
-        /// Value indicated whether or not monitoring profiling has completed and monitoring is fully initialized.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
+        [Obsolete("Use Monitor.Initialized instead! This API will be removed in 4.0.0")]
         bool IsInitialized { get; }
 
-        /// <summary>
-        /// Event is invoked when profiling process for the current system has been completed.
-        /// Subscribing to this event will instantly invoke a callback if profiling has already completed.
-        /// </summary>
+        [Obsolete("Use Monitor.Events.ProfilingCompleted instead! This API will be removed in 4.0.0")]
         event ProfilingCompletedListener ProfilingCompleted;
 
-        /// <summary>
-        /// Event is called when a new <see cref="IMonitorUnit"/> was created.
-        /// </summary>
-        event Action<IMonitorUnit> UnitCreated;
+        [Obsolete("Use Monitor.Events.MonitorHandleCreated instead! This API will be removed in 4.0.0")]
+        event Action<IMonitorHandle> UnitCreated;
 
-        /// <summary>
-        /// Event is called when a <see cref="IMonitorUnit"/> was disposed.
-        /// </summary>
-        event Action<IMonitorUnit> UnitDisposed;
+        [Obsolete("Use Monitor.Events.MonitorHandleDisposed instead! This API will be removed in 4.0.0")]
+        event Action<IMonitorHandle> UnitDisposed;
 
-        /*
-         * Target Object Registration
-         */
-
-        /// <summary>
-        /// Register an object that is monitored during runtime.
-        /// </summary>
+        [Obsolete("Use Monitor.BeginMonitoring instead! This API will be removed in 4.0.0")]
         void RegisterTarget<T>(T target) where T : class;
 
-        /// <summary>
-        /// Unregister an object that is monitored during runtime.
-        /// </summary>
+        [Obsolete("Use Monitor.EndMonitoring instead! This API will be removed in 4.0.0")]
         void UnregisterTarget<T>(T target) where T : class;
 
-        /*
-         * Getter
-         */
+        [Obsolete("Use Monitor.Registry.GetMonitorHandles() instead! This API will be removed in 4.0.0")]
+        IReadOnlyList<IMonitorHandle> GetStaticUnits();
 
-        /// <summary>
-        /// Get a list of monitoring units for static targets.
-        /// </summary>
-        [Pure] IReadOnlyList<IMonitorUnit> GetStaticUnits();
+        [Obsolete("Use Monitor.Registry.GetMonitorHandles() instead! This API will be removed in 4.0.0")]
+        IReadOnlyList<IMonitorHandle> GetInstanceUnits();
 
-        /// <summary>
-        /// Get a list of monitoring units for instance targets.
-        /// </summary>
-        [Pure] IReadOnlyList<IMonitorUnit> GetInstanceUnits();
-
-        /// <summary>
-        /// Get a list of all monitoring units.
-        /// </summary>
-        [Pure] IReadOnlyList<IMonitorUnit> GetAllMonitoringUnits();
+        [Obsolete("Use Monitor.Registry.GetMonitorHandles() instead! This API will be removed in 4.0.0")]
+        IReadOnlyList<IMonitorHandle> GetAllMonitoringUnits();
     }
 }
