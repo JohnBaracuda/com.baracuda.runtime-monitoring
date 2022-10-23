@@ -40,8 +40,6 @@ namespace Baracuda.Monitoring
         /// </summary>
         void SetActiveMonitoringUI(MonitoringUI monitoringUI);
 
-        //--------------------------------------------------------------------------------------------------------------
-
         #region Obsolete
 
 

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 namespace Baracuda.Monitoring
 {
-
     [Obsolete("Use Monitor, MonitoringEvents and MonitoringRegistry instead! This API will be removed in 4.0.0")]
     public interface IMonitoringManager : IMonitoringSubsystem<IMonitoringManager>
     {

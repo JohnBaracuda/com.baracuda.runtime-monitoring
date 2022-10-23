@@ -2,25 +2,14 @@
 
 using Baracuda.Monitoring.Dummy;
 using Baracuda.Monitoring.Systems;
-using System.Collections.Generic;
 using UnityEngine;
 
 #pragma warning disable CS0067
 
 namespace Baracuda.Monitoring
 {
-    #region Delegates
-
     /// <summary>
-    /// Delegate for profiling completed listener
-    /// </summary>
-    public delegate void ProfilingCompletedListener(IReadOnlyList<IMonitorHandle> staticHandles,
-        IReadOnlyList<IMonitorHandle> instanceHandles);
-
-    #endregion
-
-    /// <summary>
-    /// Primary access to
+    /// Primary access to monitoring API and systems.
     /// </summary>
     public static class Monitor
     {
@@ -46,6 +35,7 @@ namespace Baracuda.Monitoring
             MonitoringRegistry.Singleton.UnregisterTargetInternal(target);
         }
 
+        //TODO: make lazy singletons?
         internal static MonitoringLogger Logger { get; }
         internal static MonitoringTicker Ticker { get; }
         internal static ValidatorFactory ValidatorFactory { get; }
