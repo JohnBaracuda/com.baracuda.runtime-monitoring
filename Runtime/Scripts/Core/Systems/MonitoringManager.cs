@@ -14,8 +14,8 @@ namespace Baracuda.Monitoring.Systems
         [Obsolete]
         public event ProfilingCompletedListener ProfilingCompleted
         {
-            add => Monitor.Events.ProfilingCompleted += value;
-            remove => Monitor.Events.ProfilingCompleted -= value;
+            add => Monitor.Events.__ProfilingCompleted += value;
+            remove => Monitor.Events.__ProfilingCompleted -= value;
         }
 
         [Obsolete]

@@ -1,6 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -44,19 +45,16 @@ namespace Baracuda.Monitoring.UIToolkit
 
         #endregion
 
-        //--------------------------------------------------------------------------------------------------------------
-
         #region Fields
-
 
         private readonly Dictionary<int, Font> _loadedFonts = new Dictionary<int, Font>();
 
         // ReSharper disable once CollectionNeverQueried.Local
-        private readonly Dictionary<IMonitorUnit, IMonitoringUIElement> _monitorUnitDisplays = new Dictionary<IMonitorUnit, IMonitoringUIElement>();
+        private readonly Dictionary<IMonitorHandle, IMonitoringUIElement> _monitorUnitDisplays = new Dictionary<IMonitorHandle, IMonitoringUIElement>();
 
         private UIDocument _uiDocument;
         private VisualElement _frame;
-        private bool _isVisible;
+        private bool _isVisible = true;
 
         private string[] _instanceUnitStyles = null;
         private string[] _instanceGroupStyles = null;
@@ -76,13 +74,12 @@ namespace Baracuda.Monitoring.UIToolkit
         {
             base.Awake();
 
-            var utility = MonitoringSystems.Resolve<IMonitoringUtility>();
             for (var i = 0; i < availableFonts.Length; i++)
             {
                 var fontAsset = availableFonts[i];
-                var hash = fontAsset.name.GetHashCode();
-                if (utility.IsFontHashUsed(hash))
+                if (Monitor.Registry.UsedFonts.Contains(fontAsset.name))
                 {
+                    var hash = fontAsset.name.GetHashCode();
                     _loadedFonts.Add(hash, fontAsset);
                 }
             }
@@ -128,17 +125,17 @@ namespace Baracuda.Monitoring.UIToolkit
         /// <summary>
         /// Use to add UI elements for the passed unit.
         /// </summary>
-        protected override void OnMonitorUnitCreated(IMonitorUnit unit)
+        protected override void OnMonitorHandleCreated(IMonitorHandle handle)
         {
-            _monitorUnitDisplays.Add(unit, new MonitoringUIElement(_frame, unit, this));
+            _monitorUnitDisplays.Add(handle, new MonitoringUIElement(_frame, handle, this));
         }
 
         /// <summary>
         /// Use to remove UI elements for the passed unit.
         /// </summary>
-        protected override void OnMonitorUnitDisposed(IMonitorUnit unit)
+        protected override void OnMonitorHandleDisposed(IMonitorHandle handle)
         {
-            _monitorUnitDisplays.Remove(unit);
+            _monitorUnitDisplays.Remove(handle);
         }
 
         #endregion

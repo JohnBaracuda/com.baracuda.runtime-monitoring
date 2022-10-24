@@ -10,7 +10,10 @@ namespace Baracuda.Monitoring.Units
     /// <summary>
     /// Object wrapping and handling the monitoring of a monitored member.
     /// </summary>
-    internal abstract class MonitorHandle : IDisposable, IMonitorHandle
+    internal abstract class MonitorHandle : IDisposable, IMonitorHandle,
+#pragma warning disable CS0618
+        IMonitorUnit
+#pragma warning restore CS0618
     {
         #region --- Delegates ---
 

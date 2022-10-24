@@ -236,7 +236,7 @@ namespace Baracuda.Monitoring.Systems
         /// <summary>
         /// Use to add UI elements for the passed unit.
         /// </summary>
-        protected override void OnMonitorUnitCreated(IMonitorHandle handle)
+        protected override void OnMonitorHandleCreated(IMonitorHandle handle)
         {
             OnUnitCreatedInternal(handle);
         }
@@ -244,7 +244,7 @@ namespace Baracuda.Monitoring.Systems
         /// <summary>
         /// Use to remove UI elements for the passed unit.
         /// </summary>
-        protected override void OnMonitorUnitDisposed(IMonitorHandle handle)
+        protected override void OnMonitorHandleDisposed(IMonitorHandle handle)
         {
             OnUnitDisposedInternal(handle);
         }

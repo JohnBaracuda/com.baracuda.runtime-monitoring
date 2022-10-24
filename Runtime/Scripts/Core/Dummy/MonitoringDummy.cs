@@ -33,6 +33,7 @@ namespace Baracuda.Monitoring.Dummy
         /// </summary>
         public event Action<IMonitorHandle> MonitorHandleDisposed;
 
+
         /// <summary>
         /// Get a list of monitoring units for static targets.
         /// </summary>
@@ -299,6 +300,16 @@ namespace Baracuda.Monitoring.Dummy
 
         [Obsolete]
         public bool IsInitialized { get; } = false;
+
+        [Obsolete]
+        event ProfilingCompletedDelegate IMonitoringEvents.ProfilingCompleted
+        {
+            add { }
+            remove { }
+        }
+
+        [Obsolete]
+        public event ProfilingCompletedListener __ProfilingCompleted;
 
         #endregion
     }

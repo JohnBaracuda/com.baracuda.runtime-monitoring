@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace Baracuda.Monitoring.TextMeshPro
     [RequireComponent(typeof(UIControllerComponents))]
     public class TMPMonitoringUI : MonitoringUI
     {
-        #region --- Inspector ---
+        #region Inspector
 
         [Header("Pooling")]
         [SerializeField] [Min(1)] private int initialElementPoolSize = 100;
@@ -32,7 +33,7 @@ namespace Baracuda.Monitoring.TextMeshPro
 
         #endregion
 
-        #region --- Fields ---
+        #region Fields
 
         private Stack<MonitoringUIElement> _uiElementPool;
         private Stack<MonitoringUIGroup> _uiGroupPool;
@@ -46,7 +47,7 @@ namespace Baracuda.Monitoring.TextMeshPro
 
         #endregion
 
-        #region --- Properties ---
+        #region Properties
 
         public TMP_FontAsset GetDefaultFontAsset() => defaultFont;
 
@@ -59,7 +60,7 @@ namespace Baracuda.Monitoring.TextMeshPro
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Setup ---
+        #region Setup
 
         protected override void Awake()
         {
@@ -77,14 +78,12 @@ namespace Baracuda.Monitoring.TextMeshPro
 
             ApplyStyleSettings();
 
-            var utility = MonitoringSystems.Resolve<IMonitoringUtility>();
-
             for (var i = 0; i < availableFonts.Length; i++)
             {
                 var fontAsset = availableFonts[i];
-                var hash = fontAsset.name.GetHashCode();
-                if (utility.IsFontHashUsed(hash))
+                if (Monitor.Registry.UsedFonts.Contains(fontAsset.name))
                 {
+                    var hash = fontAsset.name.GetHashCode();
                     _loadedFonts.Add(hash, fontAsset);
                 }
             }
@@ -96,7 +95,7 @@ namespace Baracuda.Monitoring.TextMeshPro
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Pooling ---
+        #region Pooling
 
         internal MonitoringUIElement GetElementFromPool()
         {
@@ -124,7 +123,7 @@ namespace Baracuda.Monitoring.TextMeshPro
 
         #endregion
 
-        #region --- Pooling Internal ---
+        #region Pooling Internal
 
         private void InitializeElementPool()
         {
@@ -186,28 +185,28 @@ namespace Baracuda.Monitoring.TextMeshPro
 
 
         /// <summary>
-        /// Use to add UI elements for the passed unit.
+        /// Use to add UI elements for the passed handle.
         /// </summary>
-        protected override void OnMonitorUnitCreated(IMonitorUnit unit)
+        protected override void OnMonitorHandleCreated(IMonitorHandle handle)
         {
-            var section = GetSection(unit.Profile.FormatData.Position);
-            section.AddChild(unit);
+            var section = GetSection(handle.Profile.FormatData.Position);
+            section.AddChild(handle);
         }
 
         /// <summary>
-        /// Use to remove UI elements for the passed unit.
+        /// Use to remove UI elements for the passed handle.
         /// </summary>
-        protected override void OnMonitorUnitDisposed(IMonitorUnit unit)
+        protected override void OnMonitorHandleDisposed(IMonitorHandle handle)
         {
-            var section = GetSection(unit.Profile.FormatData.Position);
-            section.RemoveChild(unit);
+            var section = GetSection(handle.Profile.FormatData.Position);
+            section.RemoveChild(handle);
         }
 
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Misc ---
+        #region Misc
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MonitoringUISection GetSection(UIPosition uiPosition)
@@ -231,7 +230,7 @@ namespace Baracuda.Monitoring.TextMeshPro
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Styling ---
+        #region Styling
 
 #if UNITY_EDITOR
         private void OnValidate()

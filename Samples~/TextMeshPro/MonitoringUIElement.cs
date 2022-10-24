@@ -18,7 +18,7 @@ namespace Baracuda.Monitoring.TextMeshPro
 
         private Action<string> _update;
         private Action<bool> _toggle;
-        private IMonitorUnit _monitorUnit;
+        private IMonitorHandle _monitorUnit;
 
         internal bool Enabled => _monitorUnit.Enabled;
         protected override int Order => _order;
@@ -34,14 +34,14 @@ namespace Baracuda.Monitoring.TextMeshPro
             _sortingOrder = backgroundCanvas.sortingOrder;
         }
 
-        public void Setup(IMonitorUnit monitorUnit)
+        public void Setup(IMonitorHandle handle)
         {
-            var controller = MonitoringSystems.UI.GetCurrent<TMPMonitoringUI>();
+            var controller = Monitor.UI.GetCurrent<TMPMonitoringUI>();
 
             Assert.IsNotNull(controller);
 
-            _monitorUnit = monitorUnit;
-            var format = monitorUnit.Profile.FormatData;
+            _monitorUnit = handle;
+            var format = handle.Profile.FormatData;
 
             tmpText.font = format.FontHash != 0
                 ? controller.GetFontAsset(format.FontHash)
@@ -64,10 +64,10 @@ namespace Baracuda.Monitoring.TextMeshPro
             tmpText.alignment = format.TextAlign.ToTextAlignmentOptions();
             _order = format.Order;
 
-            monitorUnit.ValueUpdated += _update;
-            monitorUnit.ActiveStateChanged += _toggle;
-            _update(monitorUnit.GetState());
-            _toggle(monitorUnit.Enabled);
+            handle.ValueUpdated += _update;
+            handle.ActiveStateChanged += _toggle;
+            _update(handle.GetState());
+            _toggle(handle.Enabled);
         }
 
         private void OnEnable()

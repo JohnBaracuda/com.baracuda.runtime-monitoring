@@ -1,4 +1,5 @@
 ﻿using Baracuda.Monitoring.Systems;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,8 +29,8 @@ namespace Baracuda.Monitoring
         protected override void OnDestroy()
         {
             Monitor.Events.ProfilingCompleted -= ManagerOnProfilingCompleted;
-            Monitor.Events.MonitorHandleCreated -= OnMonitorUnitCreated;
-            Monitor.Events.MonitorHandleDisposed -= OnMonitorUnitDisposed;
+            Monitor.Events.MonitorHandleCreated -= OnMonitorHandleCreated;
+            Monitor.Events.MonitorHandleDisposed -= OnMonitorHandleDisposed;
             base.OnDestroy();
         }
 
@@ -42,17 +43,17 @@ namespace Baracuda.Monitoring
             }
 #endif
 
-            Monitor.Events.MonitorHandleCreated += OnMonitorUnitCreated;
-            Monitor.Events.MonitorHandleDisposed += OnMonitorUnitDisposed;
+            Monitor.Events.MonitorHandleCreated += OnMonitorHandleCreated;
+            Monitor.Events.MonitorHandleDisposed += OnMonitorHandleDisposed;
 
             for (var i = 0; i < staticUnits.Count; i++)
             {
-                OnMonitorUnitCreated(staticUnits[i]);
+                OnMonitorHandleCreated(staticUnits[i]);
             }
 
             for (var i = 0; i < instanceUnits.Count; i++)
             {
-                OnMonitorUnitCreated(instanceUnits[i]);
+                OnMonitorHandleCreated(instanceUnits[i]);
             }
 
             Visible = Monitor.Settings.OpenDisplayOnLoad;
@@ -66,11 +67,32 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Use to add UI elements for the passed unit.
         /// </summary>
-        protected abstract void OnMonitorUnitCreated(IMonitorHandle handle);
+        protected virtual void OnMonitorHandleCreated(IMonitorHandle handle)
+        {
+#pragma warning disable CS0618
+            OnMonitorUnitCreated(handle as IMonitorUnit);
+#pragma warning restore CS0618
+        }
 
         /// <summary>
         /// Use to remove UI elements for the passed unit.
         /// </summary>
-        protected abstract void OnMonitorUnitDisposed(IMonitorHandle handle);
+        protected virtual void OnMonitorHandleDisposed(IMonitorHandle handle)
+        {
+#pragma warning disable CS0618
+            OnMonitorUnitDisposed(handle as IMonitorUnit);
+#pragma warning restore CS0618
+        }
+
+
+        [Obsolete("Use OnMonitorHandleCreated instead! This method will be removed in 4.0.0")]
+        protected virtual void OnMonitorUnitCreated(IMonitorUnit handle)
+        {
+        }
+
+        [Obsolete("Use OnMonitorHandleCreated instead! This method will be removed in 4.0.0")]
+        protected virtual void OnMonitorUnitDisposed(IMonitorUnit handle)
+        {
+        }
     }
 }

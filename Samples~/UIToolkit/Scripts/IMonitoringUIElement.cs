@@ -4,7 +4,7 @@ namespace Baracuda.Monitoring.UIToolkit
 {
     public interface IMonitoringUIElement
     {
-        IMonitorUnit Unit { get; }
+        IMonitorHandle Handle { get; }
         string[] Tags { get; }
     }
 }

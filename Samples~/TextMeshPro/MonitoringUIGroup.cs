@@ -23,7 +23,7 @@ namespace Baracuda.Monitoring.TextMeshPro
         private int _order = 0;
 
         private readonly List<MonitoringUIElement> _children = new List<MonitoringUIElement>(8);
-        private readonly Dictionary<IMonitorUnit, MonitoringUIElement> _unitUIElements = new Dictionary<IMonitorUnit, MonitoringUIElement>(32);
+        private readonly Dictionary<IMonitorHandle, MonitoringUIElement> _unitUIElements = new Dictionary<IMonitorHandle, MonitoringUIElement>(32);
 
         private void Awake()
         {
@@ -39,33 +39,33 @@ namespace Baracuda.Monitoring.TextMeshPro
             _order = 0;
         }
 
-        public void AddChild(IMonitorUnit monitorUnit)
+        public void AddChild(IMonitorHandle handle)
         {
             var unitUIElement = _controller.GetElementFromPool();
             unitUIElement.SetParent(_transform);
-            unitUIElement.SetActive(monitorUnit.Enabled);
-            unitUIElement.Setup(monitorUnit);
+            unitUIElement.SetActive(handle.Enabled);
+            unitUIElement.Setup(handle);
 
-            var formatData = monitorUnit.Profile.FormatData;
+            var formatData = handle.Profile.FormatData;
             _order = formatData.GroupOrder != 0 ? formatData.GroupOrder : _order;
             _children.Add(unitUIElement);
             _children.Sort(Comparison);
-            _unitUIElements.Add(monitorUnit, unitUIElement);
+            _unitUIElements.Add(handle, unitUIElement);
             ChildCount++;
 
             for (var i = 0; i < _children.Count; i++)
             {
                 _children[i].SetSiblingIndex(i + 1);
             }
-            monitorUnit.ActiveStateChanged += _checkVisibility;
+            handle.ActiveStateChanged += _checkVisibility;
             backgroundImage.color = formatData.GroupColor.GetValueOrDefault(backgroundImage.color);
-            CheckVisibility(monitorUnit.Enabled);
+            CheckVisibility(handle.Enabled);
         }
 
-        public void RemoveChild(IMonitorUnit monitorUnit)
+        public void RemoveChild(IMonitorHandle handle)
         {
-            var unitUIElement = _unitUIElements[monitorUnit];
-            _unitUIElements.Remove(monitorUnit);
+            var unitUIElement = _unitUIElements[handle];
+            _unitUIElements.Remove(handle);
             _children.Remove(unitUIElement);
             _controller.ReleaseElementToPool(unitUIElement);
             ChildCount--;
