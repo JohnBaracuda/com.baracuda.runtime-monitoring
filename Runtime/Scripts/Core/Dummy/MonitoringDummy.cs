@@ -209,7 +209,7 @@ namespace Baracuda.Monitoring.Dummy
         /// <summary>
         /// Get a list of <see cref="IMonitorHandle"/>s registered to the passed target object.
         /// </summary>
-        public IMonitorHandle[] GetMonitorUnitsForTarget<T>(T target) where T : class
+        public IMonitorHandle[] GetMonitorHandlesForTarget<T>(T target) where T : class
         {
             return Array.Empty<IMonitorHandle>();
         }

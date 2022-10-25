@@ -7,7 +7,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
 - Thread-Dispatcher will be removed as a dependency in a future release.
-- MonitoringSystems.cs will be removed and replaced by a single Monitor.cs class which will include most API calls and support for target registration during static intialization.
+
+## [3.3.0] - 2022-10-25
+
+### Changed
+- Refactored and reworked API to reduce complexity and improve accessibility.
+- Removed service locator pattern since it introduced a lot of complexity without offering any benefit.
+- Replaced Baracuda.Monitoring.MonitoringSystems.cs with Baracuda.Monitoring.Monitor
+- Improved static initialization.
+
+### Fixed
+- Fixed an issue that occured when registering a monitor target during static initialization / construction.
+
+### Deprecated (Removing in [4.0.0])
+- Baracuda.Monitoring.MonitoringSystems is now obsolete. Use Baracuda.Monitoring.Monitor instead!
+- MonitoringSystems.Initialized is now obsolete. Use Monitor.Initialized instead!
+- MonitoringSystems.Manager is now obsolete. Use Monitor, MonitoringEvents and MonitoringRegistry instead!
+- MonitoringSystems.Settings is now obsolete. Use Monitor.Settings instead!
+- MonitoringSystems.Utility is now obsolete. Use Baracuda.Monitor.Registry instead!
+- MonitoringSystems.UI is now obsolete. Use Monitor.UI instead!
+- MonitoringSystems.Resolve{T} is now obsolete. Use Baracuda.Monitoring.Monitor to access API instead!
+- MonitoringSystems.Register{T} is now obsolete. Use Baracuda.Monitoring.Monitor to access API instead!
+- MonitoringSystems.SystemNotRegisteredException is now obsolete. 
+- MonitoringExtensions.RegisterMonitor{T}(T target) is now obsolete. Use MonitoringExtensions.BeginMonitoring{T}(T target) instead!
+- MonitoringExtensions.UnregisterMonitor{T}(T target) is now obsolete. Use MonitoringExtensions.EndMonitoring{T}(T target) instead!
+- IMonitoringManager is now obsolete. 
+- IMonitoringManager.IsInitialized is now obsolete. Use Monitor.Initialized instead!
+- IMonitoringManager.ProfilingCompleted is now obsolete. Use Monitor.Events.ProfilingCompleted instead!
+- IMonitoringManager.UnitCreated is now obsolete. Use Monitor.Events.MonitorHandleCreated instead!
+- IMonitoringManager.UnitDisposed is now obsolete. Use Monitor.Events.MonitorHandleDisposed!
+- IMonitoringManager.RegisterTarget{T}(T target) is now obsolete. Use Monitor.BeginMonitoring instead!
+- IMonitoringManager.UnregisterTarget{T}(T target) is now obsolete. Use Monitor.EndMonitoring!
+- IMonitoringManager.GetStaticUnits() is now obsolete. Use Monitor.Registry.GetMonitorHandles(HandleTypes.Static) instead!
+- IMonitoringManager.GetInstanceUnits() is now obsolete. Use Monitor.Registry.GetMonitorHandles(HandleTypes.Instance) instead!
+- IMonitoringManager.GetAllMonitoringUnits() is now obsolete. Use Monitor.Registry.GetMonitorHandles() instead!
+- IMonitoringUtility is now obsolete. 
+- IMonitoringUtility.IsFontHashUsed(int fontHash) is now obsolete. Use Baracuda.Monitor.Registry.UsedFonts instead!
+- IMonitoringUtility.GetMonitorUnitsForTarget() is now obsolete. Use Baracuda.Monitor.Registry.GetMonitorHandlesForTarget instead!
+- IMonitoringUtility.GetAllTags() is now obsolete. Use Baracuda.Monitor.Registry.UsedTags instead!
+- IMonitoringUtility.GetAllTypeStrings() is now obsolete. Use Baracuda.Monitor.Registry.UsedTypes instead!
+- IMonitoringManager.IsFontHashUsed(int fontHash) is now obsolete. Use Baracuda.Monitor.Registry.UsedFonts instead!
+- IMonitoringManager.GetMonitorUnitsForTarget(object target) is now obsolete. Use Baracuda.Monitor.Registry.UsedFonts instead!
+- IMonitoringManager.GetAllTags() is now obsolete. Use Baracuda.Monitor.Registry.UsedTags instead!
+- IMonitoringManager.GetAllTypeStrings() is now obsolete. Use Baracuda.Monitor.Registry.UsedTypes instead!
+- IMonitorUnit is now obsolete. Use IMonitorHandle instead!
+- IMonitoringSubsystem{T} is now obsolete.
+- IMonitorHandle.TargetName is now obsolete. Use IMonitorHandle.DisplayName instead!
+- IMonitorSettings.UIController is now obsolete. Use MonitoringUIOverride instead!
+- IMonitorSettings.EnableMonitoring is now obsolete. Use IMonitoringSettings.IsMonitoringEnabled instead!
+- IMonitorSettings.AutoInstantiateUI is now obsolete.
+- ProfilingCompletedListener is now obsolete. Use ProfilingCompletedDelegate instead!
 
 
 ## [3.2.2] - 2022-10-21
@@ -29,7 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.2.0] - 2022-10-14
 
 ### Changed
-- Updated thread dispatcher version dependecy.
+- Updated thread dispatcher version dependency.
 
 
 ## [3.1.6] - 2022-10-13

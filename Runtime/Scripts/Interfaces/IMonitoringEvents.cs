@@ -23,7 +23,9 @@ namespace Baracuda.Monitoring
 
         [Obsolete("This event will be removed in 4.0.0")]
 #pragma warning disable CS0612
+#pragma warning disable CS0618
         event ProfilingCompletedListener __ProfilingCompleted;
+#pragma warning restore CS0618
 #pragma warning restore CS0612
     }
 }

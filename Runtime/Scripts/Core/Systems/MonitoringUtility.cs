@@ -25,7 +25,7 @@ namespace Baracuda.Monitoring.Systems
         [Obsolete]
         public IMonitorHandle[] GetMonitorUnitsForTarget(object target)
         {
-            return Monitor.Registry.GetMonitorUnitsForTarget(target);
+            return Monitor.Registry.GetMonitorHandlesForTarget(target);
         }
 
         [Obsolete]

@@ -61,12 +61,12 @@ namespace Baracuda.Monitoring
         /// Get a list of <see cref="IMonitorHandle"/>s registered to the passed target object.
         /// </summary>
         [Pure]
-        public IMonitorHandle[] GetMonitorUnitsForTarget<T>(T target) where T : class
+        public IMonitorHandle[] GetMonitorHandlesForTarget<T>(T target) where T : class
         {
             if (!Monitor.Initialized)
             {
                 Debug.LogWarning(
-                    $"Calling {nameof(GetMonitorUnitsForTarget)} before profiling has completed. " +
+                    $"Calling {nameof(GetMonitorHandlesForTarget)} before profiling has completed. " +
                     $"If you need to access units during initialization consider disabling async profiling in the monitoring settings!");
             }
 

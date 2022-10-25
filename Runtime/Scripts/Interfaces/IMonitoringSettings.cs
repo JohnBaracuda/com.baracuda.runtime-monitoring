@@ -255,7 +255,7 @@ namespace Baracuda.Monitoring
 
         #region Obsolete
 
-        [Obsolete("Use MonitoringUIPrefab instead! This API will be removed in 4.0.0")]
+        [Obsolete("Use MonitoringUIOverride instead! This API will be removed in 4.0.0")]
         MonitoringUIController UIController { get; }
 
         [Obsolete("Use IMonitoringSettings.IsMonitoringEnabled instead. This API will be removed in 4.0.0")]

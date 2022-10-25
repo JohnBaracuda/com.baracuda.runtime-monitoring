@@ -13,7 +13,7 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Get a list of <see cref="IMonitorHandle"/>s registered to the passed target object.
         /// </summary>
-        IMonitorHandle[] GetMonitorUnitsForTarget<T>(T target) where T : class;
+        IMonitorHandle[] GetMonitorHandlesForTarget<T>(T target) where T : class;
 
         /// <summary>
         /// Get a collection of used tags.

@@ -5,7 +5,7 @@ using System;
 
 namespace Baracuda.Monitoring
 {
-    [Obsolete]
+    [Obsolete("Use Baracuda.Monitoring.Monitor instead!")]
     public static class MonitoringSystems
     {
         [Obsolete("Use Monitor.Initialized instead! This API will be removed in 4.0.0")]

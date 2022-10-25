@@ -1002,12 +1002,12 @@ You can change all of the symbols mentioned above in the monitoring settings by 
 
 You can create a custom UI controller by following the steps below. You can take a look at the existing UI Controller implementations to get some reference. 
 
-+ Create a new class and inherit from ```MonitoringDisplayController```.
++ Create a new class and inherit from ```MonitoringUI```.
 + Implement the abstract methods and create custom UI logic. 
 + Add the script to a new GameObject and create a prefab of it.
 + Make sure to delete the GameObject from your scene.
-+ Open the settings by navigating to (menu: Tools > Monitoring > Settings).
-+ Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
++ Open the settings by navigating to (menu: Tools > Runtime Monitoring).
++ Reference your prefab as the ```MoniotoringUI``` in the Monitoring UI Override field.
 
 The following abstract member have to be implemented when inheriting from `MoniotoringUIController`.
 

@@ -13,10 +13,22 @@ namespace Baracuda.Monitoring
     /// </summary>
     public static class Monitor
     {
+        /// <summary>
+        /// Returns true once the system has been initialized.
+        /// </summary>
         public static bool Initialized { get; private set; }
+
+        /// <summary>
+        /// Access to the monitoring settings asset. (Edit settings via: Tools > Runtime Monitoring)
+        /// </summary>
         public static IMonitoringSettings Settings { get; }
+
         public static IMonitoringUI UI { get; }
         public static IMonitoringEvents Events { get; }
+
+        /// <summary>
+        /// Primary interface to access cached data.
+        /// </summary>
         public static IMonitoringRegistry Registry { get; }
 
         /// <summary>
@@ -35,7 +47,6 @@ namespace Baracuda.Monitoring
             MonitoringRegistry.Singleton.UnregisterTargetInternal(target);
         }
 
-        //TODO: make lazy singletons?
         internal static MonitoringLogger Logger { get; }
         internal static MonitoringTicker Ticker { get; }
         internal static ValidatorFactory ValidatorFactory { get; }
