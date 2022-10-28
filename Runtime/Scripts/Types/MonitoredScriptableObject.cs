@@ -14,7 +14,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected virtual void OnEnable()
         {
-            Monitor.BeginMonitoring(this);
+            Monitor.StartMonitoring(this);
         }
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected virtual void OnDisable()
         {
-            Monitor.EndMonitoring(this);
+            Monitor.StopMonitoring(this);
         }
     }
 }

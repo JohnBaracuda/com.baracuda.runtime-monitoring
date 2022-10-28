@@ -14,32 +14,32 @@ namespace Baracuda.Monitoring
         /// Register an object that is monitored during runtime.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void BeginMonitoring<T>(this T target) where T : class
+        public static void StartMonitoring<T>(this T target) where T : class
         {
-            Monitor.BeginMonitoring(target);
+            Monitor.StartMonitoring(target);
         }
 
         /// <summary>
         /// Unregister an object that is monitored during runtime.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void EndMonitoring<T>(this T target) where T : class
+        public static void StopMonitoring<T>(this T target) where T : class
         {
-            Monitor.EndMonitoring(target);
+            Monitor.StopMonitoring(target);
         }
 
         #region Obsolete
 
-        [Obsolete("Use BeginMonitoring instead! This API will be removed in 4.0.0")]
+        [Obsolete("Use StartMonitoring instead! This API will be removed in 4.0.0")]
         public static void RegisterMonitor<T>(this T target) where T : class
         {
-            Monitor.BeginMonitoring(target);
+            Monitor.StartMonitoring(target);
         }
 
-        [Obsolete("Use BeginMonitoring instead! This API will be removed in 4.0.0")]
+        [Obsolete("Use StopMonitoring instead! This API will be removed in 4.0.0")]
         public static void UnregisterMonitor<T>(this T target) where T : class
         {
-            Monitor.EndMonitoring(target);
+            Monitor.StopMonitoring(target);
         }
 
         #endregion

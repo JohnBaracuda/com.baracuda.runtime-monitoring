@@ -23,7 +23,14 @@ namespace Baracuda.Monitoring
         /// </summary>
         public static IMonitoringSettings Settings { get; }
 
+        /// <summary>
+        /// Access monitoring UI API.
+        /// </summary>
         public static IMonitoringUI UI { get; }
+
+        /// <summary>
+        /// Access monitoring event handlers.
+        /// </summary>
         public static IMonitoringEvents Events { get; }
 
         /// <summary>
@@ -34,7 +41,7 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Register an object that is monitored.
         /// </summary>
-        public static void BeginMonitoring<T>(T target) where T : class
+        public static void StartMonitoring<T>(T target) where T : class
         {
             MonitoringRegistry.Singleton.RegisterTargetInternal(target);
         }
@@ -42,7 +49,7 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Unregister an object that is monitored.
         /// </summary>
-        public static void EndMonitoring<T>(T target) where T : class
+        public static void StopMonitoring<T>(T target) where T : class
         {
             MonitoringRegistry.Singleton.UnregisterTargetInternal(target);
         }

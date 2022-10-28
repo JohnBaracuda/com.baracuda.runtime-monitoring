@@ -20,10 +20,10 @@ namespace Baracuda.Monitoring
         [Obsolete("Use Monitor.Events.MonitorHandleDisposed instead! This API will be removed in 4.0.0")]
         event Action<IMonitorHandle> UnitDisposed;
 
-        [Obsolete("Use Monitor.BeginMonitoring instead! This API will be removed in 4.0.0")]
+        [Obsolete("Use Monitor.StartMonitoring instead! This API will be removed in 4.0.0")]
         void RegisterTarget<T>(T target) where T : class;
 
-        [Obsolete("Use Monitor.EndMonitoring instead! This API will be removed in 4.0.0")]
+        [Obsolete("Use Monitor.StopMonitoring instead! This API will be removed in 4.0.0")]
         void UnregisterTarget<T>(T target) where T : class;
 
         [Obsolete("Use Monitor.Registry.GetMonitorHandles() instead! This API will be removed in 4.0.0")]

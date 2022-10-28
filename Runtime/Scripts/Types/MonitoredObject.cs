@@ -14,7 +14,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected MonitoredObject()
         {
-            Monitor.BeginMonitoring(this);
+            Monitor.StartMonitoring(this);
         }
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         public virtual void Dispose()
         {
-            Monitor.EndMonitoring(this);
+            Monitor.StopMonitoring(this);
         }
     }
 }

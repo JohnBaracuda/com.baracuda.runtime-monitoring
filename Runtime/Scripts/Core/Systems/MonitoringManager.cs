@@ -35,13 +35,13 @@ namespace Baracuda.Monitoring.Systems
         [Obsolete]
         public void RegisterTarget<T>(T target) where T : class
         {
-            Monitor.BeginMonitoring(target);
+            Monitor.StartMonitoring(target);
         }
 
         [Obsolete]
         public void UnregisterTarget<T>(T target) where T : class
         {
-            Monitor.EndMonitoring(target);
+            Monitor.StopMonitoring(target);
         }
 
         [Obsolete]

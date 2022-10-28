@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 namespace Baracuda.Monitoring
 {
     /// <summary>
-    /// Access monitoring UI methods of the currently active UI instance.
+    /// Access monitoring UI API.
     /// </summary>
     public interface IMonitoringUI
     {

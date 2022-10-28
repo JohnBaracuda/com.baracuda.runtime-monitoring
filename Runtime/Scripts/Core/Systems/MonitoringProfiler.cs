@@ -1,5 +1,4 @@
 // Copyright (c) 2022 Jonathan Lang
-#define UNITY_ASSERTIONS
 
 using Baracuda.Monitoring.Profiles;
 using Baracuda.Monitoring.Types;
@@ -78,11 +77,11 @@ namespace Baracuda.Monitoring.Systems
             {
                 if (Monitor.Settings.AsyncProfiling)
                 {
-                    await Task.Run(() => ProfileThreadedAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
+                    await Task.Run(() => ProfileInternalAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
                 }
                 else
                 {
-                    ProfileThreadedAsync(Dispatcher.RuntimeToken).Wait(Dispatcher.RuntimeToken);
+                    ProfileInternalAsync(Dispatcher.RuntimeToken).Wait(Dispatcher.RuntimeToken);
                 }
 
                 MonitoringRegistry.Singleton.RegisterProfiles(_instanceProfiles, _staticProfiles);
@@ -112,17 +111,17 @@ namespace Baracuda.Monitoring.Systems
             }
         }
 
-        private async Task ProfileThreadedAsync(CancellationToken ct)
+        private async Task ProfileInternalAsync(CancellationToken ct)
         {
-            var types = await CreateAssemblyProfile(ct);
-            await CreateMonitoringProfile(types, ct);
+            var types = await CreateAssemblyProfileAsync(ct);
+            await CreateMonitoringProfileAsync(types, ct);
         }
 
         /*
          * Assembly & Profiling
          */
 
-        private Task<Type[]> CreateAssemblyProfile(CancellationToken ct)
+        private Task<Type[]> CreateAssemblyProfileAsync(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -161,7 +160,7 @@ namespace Baracuda.Monitoring.Systems
             return Task.FromResult(typeCache.ToArray());
         }
 
-        private Task CreateMonitoringProfile(Type[] types, CancellationToken ct)
+        private Task CreateMonitoringProfileAsync(Type[] types, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 

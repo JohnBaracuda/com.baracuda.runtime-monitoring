@@ -14,7 +14,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected virtual void Awake()
         {
-            Monitor.BeginMonitoring(this);
+            Monitor.StartMonitoring(this);
         }
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected virtual void OnDestroy()
         {
-            Monitor.EndMonitoring(this);
+            Monitor.StopMonitoring(this);
         }
     }
 }

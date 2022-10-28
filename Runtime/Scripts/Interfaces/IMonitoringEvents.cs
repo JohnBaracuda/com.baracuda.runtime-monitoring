@@ -2,6 +2,9 @@
 
 namespace Baracuda.Monitoring
 {
+    /// <summary>
+    /// Access monitoring event handlers.
+    /// </summary>
     public interface IMonitoringEvents
     {
         /// <summary>

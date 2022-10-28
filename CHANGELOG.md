@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed service locator pattern since it introduced a lot of complexity without offering any benefit.
 - Replaced Baracuda.Monitoring.MonitoringSystems.cs with Baracuda.Monitoring.Monitor
 - Improved static initialization.
+- Updated documentation.
 
 ### Fixed
 - Fixed an issue that occured when registering a monitor target during static initialization / construction.

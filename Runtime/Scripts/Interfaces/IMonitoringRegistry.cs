@@ -21,7 +21,7 @@ namespace Baracuda.Monitoring
         IReadOnlyCollection<string> UsedTags { get; }
 
         /// <summary>
-        /// Get a collection of used fonts.
+        /// Get a collection of used font names.
         /// </summary>
         IReadOnlyCollection<string> UsedFonts { get; }
 
