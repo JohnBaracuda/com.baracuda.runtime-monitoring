@@ -75,15 +75,17 @@ namespace Baracuda.Monitoring.Utilities.Extensions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsGenericIEnumerable(this Type type, bool excludeStrings = false)
+        public static bool IsGenericIEnumerable(this Type type, out Type elementType)
         {
-            if (excludeStrings && type.IsString())
+            if (type.IsString())
             {
+                elementType = null;
                 return false;
             }
 
             if (type.IsGenericType && type.IsInterface && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
+                elementType = null;
                 return true;
             }
 
@@ -92,10 +94,12 @@ namespace Baracuda.Monitoring.Utilities.Extensions
                 var interfaceType = type.GetInterfaces()[i];
                 if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                 {
+                    elementType = interfaceType.GetGenericArguments()[0];
                     return true;
                 }
             }
 
+            elementType = null;
             return false;
         }
 

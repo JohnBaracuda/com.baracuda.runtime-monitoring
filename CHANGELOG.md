@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed an issue that occured when registering a monitor target during static initialization / construction.
+- Fixed an issue when monitoring a non generic type with a generic IEnumerable interface.
 
 ### Deprecated (Removing in [4.0.0])
 - Baracuda.Monitoring.MonitoringSystems is now obsolete. Use Baracuda.Monitoring.Monitor instead!

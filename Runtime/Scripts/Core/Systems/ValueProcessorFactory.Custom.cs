@@ -170,16 +170,16 @@ namespace Baracuda.Monitoring.Systems
                 #region IEnumerable<T> ---
 
                 // IEnumerable<T> processor
-                if (valueType.IsGenericIEnumerable(true))
+                if (valueType.IsGenericIEnumerable(out var elementType))
                 {
                     // check that the signature of the processor method is compatible with the generic type definition
                     // of the IEnumerable<T>s generic type definition.
                     if (parameterInfos.Length == 1 &&
-                        parameterInfos[0].ParameterType == valueType.GetGenericArguments()[0])
+                        parameterInfos[0].ParameterType == elementType)
                     {
                         // create a generic method to create the generic processor
                         var delegateCreationMethod = genericIEnumerableProcessorMethod
-                            .MakeGenericMethod(valueType, valueType.GetGenericArguments()[0]);
+                            .MakeGenericMethod(valueType, elementType);
 
                         // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
                         var func = delegateCreationMethod
