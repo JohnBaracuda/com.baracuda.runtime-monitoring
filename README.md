@@ -8,10 +8,10 @@ Runtime Monitoring is an easy way to monitor the value or state of C# members du
 ![Last Commit](https://img.shields.io/github/last-commit/johnBaracuda/com.baracuda.runtime-monitoring)
 
 #### ⚠️ Attention!
-> I develop Runtime Monitoring during my spare time which means that I can only do limited QA. 
-> If you encounter any errors, I ask for your understanding and to create an Issue which provides as
-> much information as possible. Also note that this tool is still under active development and some 
-> updates with major reworks of the system are planned for the future.
+> Runtime Monitoring is developed by me in my spare time, which means I can only do limited QA.
+> If you have any questions, feature requests or encounter any issues, feel free to contact me directly and/or open an Issue on GitHub.
+> Please keep in mind that I am developing this tool by myself and that any additional information will help me a lot, 
+> especially when reporting a bug. 
 
 &nbsp;
 ## Table of Contents
@@ -307,7 +307,7 @@ public class Player : MonitoredBehaviour
 {
     [Monitor] private int health;
     
-    // Just Remember to call base.Awake and base.OnDestroy if you override these methods.
+    // Remember to call base.Awake and base.OnDestroy.
     protected override void Awake()
     {
         base.Awake();
