@@ -8,7 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
 - Thread-Dispatcher will be removed as a dependency in a future release.
 
-## [3.3.0] - 2022-10-30
+## [3.3.0] - 2022-10-29
+
+### Known Issues
+- Monitoring structs that implement IEnumerable or IEnumerable<T> are not monitored like a collection. 
 
 ### Added
 - Added better error handling for Editor and Debug builds.
@@ -16,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Refactored and reworked API to reduce complexity and improve accessibility.
 - Removed service locator pattern since it introduced a lot of complexity without offering any benefit.
-- Replaced Baracuda.Monitoring.MonitoringSystems.cs with Baracuda.Monitoring.Monitor
+- Replaced Baracuda.Monitoring.MonitoringSystems with Baracuda.Monitoring.Monitor
 - Improved static initialization.
 - Updated documentation.
 
