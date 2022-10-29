@@ -8,7 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
 - Thread-Dispatcher will be removed as a dependency in a future release.
 
-## [3.3.0] - 2022-10-25
+## [3.3.0] - 2022-10-30
+
+### Added
+- Added better error handling for Editor and Debug builds.
 
 ### Changed
 - Refactored and reworked API to reduce complexity and improve accessibility.

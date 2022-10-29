@@ -1,5 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
+using Baracuda.Monitoring.Types;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -25,6 +26,14 @@ namespace Baracuda.Monitoring.Systems
             _defaultLevel = settings.LogUnknownExceptions;
             _operationCancelledLevel = settings.LogOperationCanceledException;
             _badImageFormatLevel = settings.LogBadImageFormatException;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Log(string message, LogType logType, bool stackTrace = true)
+        {
+            var format = $"{"[Monitoring]".ColorizeString(new Color(1f, 0.67f, 0f))} {message}";
+            var option = stackTrace ? LogOption.None : LogOption.NoStacktrace;
+            Debug.LogFormat(logType, option, null, format, Array.Empty<object>());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -15,7 +15,7 @@ namespace Baracuda.Monitoring.Systems
         //--------------------------------------------------------------------------------------------------------------
 
         private readonly List<IMonitorHandle> _activeTickReceiver = new List<IMonitorHandle>(64);
-        private event Action ValidationTick;
+        private readonly List<Action> _validationReceiver = new List<Action>(64);
 
         private static float updateTimer;
         private static bool tickEnabled;
@@ -58,7 +58,7 @@ namespace Baracuda.Monitoring.Systems
                 }
 
                 UpdateTick();
-                ValidationTick?.Invoke();
+                ValidationTick();
             };
         }
         private void Tick(float deltaTime)
@@ -69,25 +69,66 @@ namespace Baracuda.Monitoring.Systems
             }
 
             updateTimer += deltaTime;
-            if (updateTimer > .05f)
+            if (updateTimer <= .05f)
             {
-                updateTimer = 0;
-                UpdateTick();
-
-                if (ValidationTickEnabled)
-                {
-                    ValidationTick?.Invoke();
-                }
+                return;
             }
+
+            updateTimer = 0;
+            UpdateTick();
+            ValidationTick();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateTick()
         {
+#if DEBUG
+            for (var i = 0; i < _activeTickReceiver.Count; i++)
+            {
+                var monitorHandle = _activeTickReceiver[i];
+                try
+                {
+                    monitorHandle.Refresh();
+                }
+                catch (Exception exception)
+                {
+                    Monitor.Logger.Log($"Error when refreshing {monitorHandle}\n(see next log for more information)", LogType.Error, false);
+                    Monitor.Logger.LogException(exception);
+                    monitorHandle.Enabled = false;
+                }
+            }
+#else
             for (var i = 0; i < _activeTickReceiver.Count; i++)
             {
                 _activeTickReceiver[i].Refresh();
             }
+#endif
+        }
+
+        private void ValidationTick()
+        {
+            if (!ValidationTickEnabled)
+            {
+                return;
+            }
+#if DEBUG
+            try
+            {
+                for (var i = 0; i < _validationReceiver.Count; i++)
+                {
+                    _validationReceiver[i]();
+                }
+            }
+            catch (Exception exception)
+            {
+                Monitor.Logger.LogException(exception);
+            }
+#else
+            for (var i = 0; i < _validationReceiver.Count; i++)
+            {
+                _validationReceiver[i]();
+            }
+#endif
         }
 
         public void AddUpdateTicker(IMonitorHandle handle)
@@ -102,12 +143,12 @@ namespace Baracuda.Monitoring.Systems
 
         public void AddValidationTicker(Action tickAction)
         {
-            ValidationTick += tickAction;
+            _validationReceiver.Add(tickAction);
         }
 
         public void RemoveValidationTicker(Action tickAction)
         {
-            ValidationTick -= tickAction;
+            _validationReceiver.Remove(tickAction);
         }
     }
 }

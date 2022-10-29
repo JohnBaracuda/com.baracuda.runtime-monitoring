@@ -17,7 +17,7 @@ namespace Baracuda.Monitoring.Units
     /// <typeparam name="TValue"></typeparam>
     internal abstract class ValueHandle<TTarget, TValue> : MonitorHandle, ISettableValue<TValue>, IGettableValue<TValue> where TTarget : class
     {
-        #region --- Fields ---
+        #region Fields
 
         protected readonly StringDelegate CompiledValueProcessor;
 
@@ -37,7 +37,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Ctor ---
+        #region Ctor
 
         internal ValueHandle(TTarget target,
             Func<TTarget, TValue> getValue,
@@ -96,7 +96,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Value Processor ---
+        #region Value Processor
 
         private StringDelegate CompileValueProcessor(Func<TValue, string> func)
         {
@@ -107,7 +107,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Update ---
+        #region Update
 
         public override void Refresh()
         {
@@ -124,7 +124,7 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
-        #region --- Validation ---
+        #region Validation
 
         private void SetEnabled(bool enabled)
         {
@@ -135,12 +135,23 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Get ---
+        #region Get
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string GetState()
         {
+#if DEBUG
+            try
+            {
+                return CompiledValueProcessor();
+            }
+            catch (Exception exception)
+            {
+                return exception.Message;
+            }
+#else
             return CompiledValueProcessor();
+#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -163,7 +174,7 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
-        #region --- Set ---
+        #region Set
 
         public void SetValue(TValue value)
         {
@@ -194,7 +205,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- IDisosable ---
+        #region IDisosable
 
         public override void Dispose()
         {

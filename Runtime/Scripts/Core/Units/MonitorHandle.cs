@@ -1,7 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using Baracuda.Monitoring.Profiles;
-using Baracuda.Monitoring.Utilities.Extensions;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -15,13 +14,13 @@ namespace Baracuda.Monitoring.Units
         IMonitorUnit
 #pragma warning restore CS0618
     {
-        #region --- Delegates ---
+        #region Delegates
 
         protected delegate string StringDelegate();
 
         #endregion
 
-        #region --- Properties ---
+        #region Properties
 
         /// <summary>
         /// Name of the monitored member.
@@ -84,7 +83,7 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
-        #region --- Fields ---
+        #region Fields
 
         protected const string Null = "<color=red>NULL</color>";
         private static int backingID;
@@ -92,7 +91,7 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
-        #region --- Unit State ---
+        #region Unit State
 
         /// <summary>
         /// Force the unit to update its state. This will invoke a <see cref="ValueUpdated"/> event.
@@ -103,7 +102,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Events ---
+        #region Events
 
         /// <summary>
         /// Event is invoked when the value of the unit has changed.
@@ -124,7 +123,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Raise ---
+        #region Raise
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void RaiseValueChanged(string value)
@@ -142,7 +141,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Ctor ---
+        #region Ctor
 
         protected MonitorHandle(object target, IMonitorProfile profile)
         {
@@ -170,7 +169,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Overrides & Interfaces ---
+        #region Overrides & Interfaces
 
         public virtual void Dispose()
         {
@@ -186,15 +185,14 @@ namespace Baracuda.Monitoring.Units
 
         public override string ToString()
         {
-            return GetType().HumanizedName();
+            return $"[{Profile.DeclaringType}.{Name}]";
         }
 
         #endregion
 
         #region Obsolete
 
-        [Obsolete]
-        public string TargetName { get; }
+        [Obsolete] public string TargetName => DisplayName;
 
         #endregion
     }
