@@ -24,12 +24,12 @@ namespace Baracuda.Monitoring.Modules
 
         private void OnEnable()
         {
-            this.RegisterMonitor();
+            Monitor.StartMonitoring(this);
         }
 
         private void OnDisable()
         {
-            this.UnregisterMonitor();
+            Monitor.StopMonitoring(this);
         }
     }
 }

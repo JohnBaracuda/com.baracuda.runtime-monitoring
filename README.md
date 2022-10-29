@@ -8,45 +8,43 @@ Runtime Monitoring is an easy way to monitor the value or state of C# members du
 ![Last Commit](https://img.shields.io/github/last-commit/johnBaracuda/com.baracuda.runtime-monitoring)
 
 #### ⚠️ Attention!
-> Runtime Monitoring has recently undergone some **Major** structural changes. Therefore parts of this documentation may not be up to date. Please be aware of this and stay tuned for updates. Also, don't forget to remove old versions from your project if you're updating Runtime Monitoring! :)
+> I develop Runtime Monitoring during my spare time which means that I can only do limited QA. 
+> If you encounter any errors, I ask for your understanding and to create an Issue which provides as
+> much information as possible. Also note that this tool is still under active development and some 
+> updates with major reworks of the system are planned for the future.
 
 &nbsp;
 ## Table of Contents
 
 - [Basics](#getting-started)
- 	- [Installation & Updates](#installation-and-updates)
-	- [Getting Started](#getting-started)
-	- [Customized Setup](#customized-setup)
-	- [License](#license)
-	- [Technical Information](#technical-information)
-	- [Feature List](#features)
+    - [Installation & Updates](#installation-and-updates)
+    - [Getting Started](#getting-started)
+    - [Customized Setup](#customized-setup)
+    - [License](#license)
+    - [Technical Information](#technical-information)
+    - [Feature List](#features)
 - [Monitoring Member](#monitoring-member)
-	- [Instanced & Static Member](#instanced-and-static-member)
-	- [Monitoring Fields & Properties](#monitoring-fields-and-properties)
-	- [Monitoring Events](#monitoring-events)
-	- [Monitoring Methods](#monitoring-methods)
+    - [Instanced & Static Member](#instanced-and-static-member)
+    - [Monitoring Fields & Properties](#monitoring-fields-and-properties)
+    - [Monitoring Events](#monitoring-events)
+    - [Monitoring Methods](#monitoring-methods)
 - [Attributes](#attributes)
-	- [Value Processor](#value-processor)
-	- [Value Processor (Global)](#global-value-processor)
-	- [Conditional Display](#conditional-display)
-	- [Update Event](#update-event)
+    - [Value Processor](#value-processor)
+    - [Value Processor (Global)](#global-value-processor)
+    - [Conditional Display](#conditional-display)
+    - [Update Event](#update-event)
 - [Monitoring UI](#monitoring-ui)
-	- [UI Formatting](#ui-formatting)
-	- [UI Filtering](#ui-filtering)
-	- [Custom UI Controller](#custom-ui-controller)
+    - [UI Formatting](#ui-formatting)
+    - [UI Filtering](#ui-filtering)
 - [Systems and API](#systems-and-api)
-	- [Monitoring Manager](#monitoring-manager)
-	- [Monitoring UI](#monitoring-ui)
-	- [Monitoring Settings](#monitoring-settings)
-	- [Monitoring Utility](#monitoring-utility)
-	- [Monitor Unit](#monitor-unit)
-	- [Monitor Profile](#monitor-profile)
+    - [Monitoring UI](#monitoring-ui-api)
+    - [Monitoring Events](#monitoring-events)
+    - [Monitoring Registry](#monitoring-registry)
+    - [Monitoring Settings](#monitoring-settings)
 - [Compatibility](#compatibility)
-	- [Runtime](#runtime-compatibility)
-	- [Platform](#platform-compatibility)
 - [Optimizations](#optimizations)
-- [FAQ: Frequently Asked Questions](#frequently-asked-questions)
-- [Support Me ❤️](#support-me)
+- [FAQ](#frequently-asked-questions)
+- [Support Me ❤](#support-me)
 
 
 
@@ -133,16 +131,17 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(this);
-	// Or use this extension method:
-	this.RegisterMonitor();
+        Monitor.StartMonitoring(this);
+        // Or use this extension method:
+        this.StartMonitoring();
     }
 
     private void OnDestroy()
     {
-        MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(this);
+            
+        Monitor.StopMonitoring(this);
         // Or use this extension method:
-	this.UnregisterMonitor();
+        this.StopMonitoring();
     }
 }
 
@@ -243,8 +242,8 @@ Download and import Runtime Monitoring. To setup a different UI Controller (IMGU
 + Monitor the state of an Event.
 + Monitor the return value & out parameter of a Method.
 + Monitor static and instance member.
-+ Display Collections in a readable way. (Not just ToString)
-+ Chose one of three available UI solution presets.
++ Display Collections in a readable way.
++ Chose one of three available UI solution presets from samples.
 + IMGUI support (default).
 + TextMeshPro based uGUI support.
 + UIToolkit support.
@@ -253,13 +252,8 @@ Download and import Runtime Monitoring. To setup a different UI Controller (IMGU
 + Custom control of how monitored members are displayed.
 + Works both asynchronous and synchronous (WebGL supported).
 + Mono & IL2CPP support.
-+ Clean open source code faithful to C# conventions & best practices.
-+ Global value processor. (like property drawer)
 + Drag & drop example modules. (FPSMonitor, ConsoleMonitor etc.)
 + Draw conditions. (only show value if true, not null etc.)
-+ Many more features. 
-
-
 
 
 
@@ -293,16 +287,16 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(target);
+        Monitor.StartMonitoring(target);
         // Or use this extension method:
-        this.RegisterMonitor();
+        this.StartMonitoring();
     }
 
     private void OnDestroy()
     {
-        MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(target);
+        Monitor.StopMonitoring(target);
         // Or use this extension method:
-        this.UnregisterMonitor();
+        this.StopMonitoring();
     }
 }
 ```
@@ -312,7 +306,7 @@ public class Player : MonoBehaviour
 public class Player : MonitoredBehaviour
 {
     [Monitor] private int health;
-	
+    
     // Just Remember to call base.Awake and base.OnDestroy if you override these methods.
     protected override void Awake()
     {
@@ -472,7 +466,7 @@ Use Attributes to customize the monitoring process & display of your member. The
 `[MFontName]`           | Pass the name of a custom font style that will be used for the monitored member.|
 `[MGroupName]`           | Set the group for the monitored member. |
 `[MGroupElement]`           | Whether or not the monitored member should be wrapped in a group. |
-`[MShowIndexer]`  | If the monitored member is a collection, determine if the index of individual elements should be displayed or not. |
+`[MShowIndex]`  | If the monitored member is a collection, determine if the index of individual elements should be displayed or not. |
 `[MElementIndent]`  | The indent of individual elements of a displayed collection. |
 `[MPosition]`  | The preferred position of an individual monitored member on the canvas. |
 `[MTextAlign]`  | Horizontal text align. |
@@ -763,16 +757,13 @@ public void ContinueGame()
 &nbsp;
 # Monitoring UI
 
-Use the `IMonitoringUI` API to access the active MonitoringUIController and set properties like visibility, filtering etc.
+Use `Baracuda.Monitoring.Monitor.UI`to access `IMonitoringUI` API.
 
 Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
 :---         |:-                                        
-`void Show()`|Show the monitoring UI overlay.|
-`void Hide()`|Hide the monitoring UI overlay.|
-`void ToggleDisplay()`|Toggle the visibility of the active monitoring display.|
-`bool IsVisible()`|True if monitoring UI is visible.|
-`T GetActiveUIController<T>()`|Get the currently active MonitoringUIController casted to a concrete implementation.|
-`void CreateMonitoringUI()`|Create a MonitoringUIController instance if there is none already. Disable 'Auto Instantiate UI' in the Monitoring Settings and use this method for more control over the timing in which the MonitoringUIController is instantiated. |
+`bool Visible`|Get or set the visibility of the current monitoring UI|
+`T GetCurrent<T>()`|Get the current monitoring UI instance|
+`void SetActiveMonitoringUI(MonitoringUI monitoringUI)`|Set the active MonitoringUI|
 `void ApplyFilter(string filter)`|Filter displayed units by their name, tags etc. [more](#ui-filtering)|
 `void ResetFilter()`|Reset active filter. [more](#ui-filtering)|
 `event Action<bool> VisibleStateChanged()`|Event invoked when the monitoring UI became visible or invisible.|
@@ -795,7 +786,7 @@ Formatting attributes can be used to apply custom styling options on how a monit
 `[MFontName]`           | Pass the name of a custom font style that will be used for the monitored member.|
 `[MGroupName]`           | Set the group for the monitored member. |
 `[MGroupElement]`           | Whether or not the monitored member should be wrapped in a group. |
-`[MShowIndexer]`  | If the monitored member is a collection, determine if the index of individual elements should be displayed or not. |
+`[MShowIndex]`  | If the monitored member is a collection, determine if the index of individual elements should be displayed or not. |
 `[MElementIndent]`  | The indent of individual elements of a displayed collection. |
 `[MPosition]`  | The preferred position of an individual monitored member on the canvas. |
 `[MTextAlign]`  | Horizontal text align. |
@@ -833,58 +824,58 @@ private float pi = 3.14159265359;
 ```c#
 class MyClass 
 {
-	[Monitor]
-	[MFormat("0.000")]
-	[MFontSize(16)]
-	[MPosition(UIPosition.UpperRight)]
-	[MGroupElement(false)]
-	[MTag("Gameplay")]
-	pubic int value1;
-	
-	[Monitor]
-	[MFormat("0.000")]
-	[MFontSize(16)]
-	[MPosition(UIPosition.UpperRight)]
-	[MGroupElement(false)]
-	[MTag("Gameplay")]
-	pubic int value2;
-	
-	[Monitor]
-	[MFormat("0.000")]
-	[MFontSize(16)]
-	[MPosition(UIPosition.UpperRight)]
-	[MGroupElement(false)]
-	[MTag("Gameplay")]
-	pubic int value3;
+    [Monitor]
+    [MFormat("0.000")]
+    [MFontSize(16)]
+    [MPosition(UIPosition.UpperRight)]
+    [MGroupElement(false)]
+    [MTag("Gameplay")]
+    pubic int value1;
+    
+    [Monitor]
+    [MFormat("0.000")]
+    [MFontSize(16)]
+    [MPosition(UIPosition.UpperRight)]
+    [MGroupElement(false)]
+    [MTag("Gameplay")]
+    pubic int value2;
+    
+    [Monitor]
+    [MFormat("0.000")]
+    [MFontSize(16)]
+    [MPosition(UIPosition.UpperRight)]
+    [MGroupElement(false)]
+    [MTag("Gameplay")]
+    pubic int value3;
 }
 ```
 
 ```c#
 public class MyFromatting : MOptionsAttribute
 {
-	public MyFromatting()
-	{
-		Format = "0.00";
-		FontSize = 16;
-		Position = UIPosition.UpperRight;
-		GroupElement = false;
-		Tags = new string[] {"Gameplay"};
-	}
+    public MyFromatting()
+    {
+        Format = "0.00";
+        FontSize = 16;
+        Position = UIPosition.UpperRight;
+        GroupElement = false;
+        Tags = new string[] {"Gameplay"};
+    }
 }
 
 class MyClass
 {
-	[Monitor]
-	[MyFromatting]
-	pubic int value1;
-	
-	[Monitor]
-	[MyFromatting]
-	pubic int value2;
-	
-	[Monitor]
-	[MyFromatting]
-	pubic int value3;
+    [Monitor]
+    [MyFromatting]
+    pubic int value1;
+    
+    [Monitor]
+    [MyFromatting]
+    pubic int value2;
+    
+    [Monitor]
+    [MyFromatting]
+    pubic int value3;
 }
 
 ```
@@ -902,17 +893,17 @@ class MyFromatting : MAttributeCollection
 
 class MyClass 
 {
-	[Monitor]
-	[MyFromatting]
-	pubic int value1;
-	
-	[Monitor]
-	[MyFromatting]
-	pubic int value2;
-	
-	[Monitor]
-	[MyFromatting]
-	pubic int value3;
+    [Monitor]
+    [MyFromatting]
+    pubic int value1;
+    
+    [Monitor]
+    [MyFromatting]
+    pubic int value2;
+    
+    [Monitor]
+    [MyFromatting]
+    pubic int value3;
 }
 ```
 
@@ -924,14 +915,14 @@ class MyClass
 [MTag("Gameplay")]
 class MyClass 
 {
-	[Monitor]
-	pubic int value1;
+    [Monitor]
+    pubic int value1;
 
-	[Monitor]
-	pubic int value2;
-	
-	[Monitor]
-	pubic int value3;
+    [Monitor]
+    pubic int value2;
+    
+    [Monitor]
+    pubic int value3;
 }
 ```
 
@@ -964,11 +955,13 @@ Filter Tags | Enable filtering using tags applied by the `[MTag]` attribute. [mo
 
 ### Filter API
 ```c#
+using Baracuda.Monitoring;
+
 // Apply filter. (This filter will only show fields and properties)
-MonitoringSystems.Resolve<IMonitorUI>().ApplyFilter("Field & Property");
+Monitor.UI.ApplyFilter("Field & Property");
 
 // Reset filter.
-MonitoringSystems.Resolve<IMonitorUI>().ResetFilter();
+Monitor.UI.ResetFilter();
 ```
 
 &nbsp;
@@ -993,156 +986,117 @@ You can change all of the symbols mentioned above in the monitoring settings by 
 ![example](https://johnbaracuda.com/media/img/monitoring/Example_filter_01.png)
 
 
-
-
-
-
-&nbsp; 
-## Custom UI Controller
-
-You can create a custom UI controller by following the steps below. You can take a look at the existing UI Controller implementations to get some reference. 
-
-+ Create a new class and inherit from ```MonitoringDisplayController```.
-+ Implement the abstract methods and create custom UI logic. 
-+ Add the script to a new GameObject and create a prefab of it.
-+ Make sure to delete the GameObject from your scene.
-+ Open the settings by navigating to (menu: Tools > Monitoring > Settings).
-+ Set your prefab as the active controller in the ```Moniotoring UI Controller``` field.
-
-The following abstract member have to be implemented when inheriting from `MoniotoringUIController`.
-
-Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
-:---         |:-                                        
-`bool IsVisible()`|Return true if the UI is active and false if it is not active.|
-`void ShowMonitoringUI()`|Activate / show the UI.|
-`void HideMonitoringUI()`|Deactivate / hide the UI.|
-`void OnUnitCreated(IMonitorUnit unit)`|Use to add UI elements for the passed unit.|
-`void OnUnitDisposed(IMonitorUnit unit)`|Use to remove UI elements for the passed unit.|
-
 &nbsp;
 # Systems and API
 
-Get the interface for a monitoring system by calling ```MonitoringSystems.Resolve<TInterface>()```. Or accessing the cached interface directly e.g. ```MonitoringSystems.Manger```
+The `Monitor` class (`Baracuda.Monitoring.Monitor`) is the primary access point to access monitoring systems and API.
 
-System Interface    | Description |        
-:--                 |:-                                              
-`IMonitoringManager`   | Core access point for the system. Contains initialization and unit registry. [more](#monitoring-manager)|
-`IMonitoringUI`       | Access the active monitoring UI. [more](#monitoring-ui) |
-`IMonitoringSettigns`  | Access current configuration of the plugin. |
-`IMonitoringUtility`   | Interface providing various uncategorized utility access points. [more](#monitoring-utility) |
+`bool Initialized { get; }`
+> Returns true once the system has been fully initialized. This might take some time after playmode has been entered depending on whether or not threaded profiling has been enabled in the settings or not.
+
+`IMonitoringUI UI { get; }`
+> Access API to control the monitoring UI.
+ 
+`IMonitoringSettigns Settings { get; }`
+> Access to the monitoring settings asset. (Edit settings via: Tools > Runtime Monitoring)
+
+`IMonitoringEvents Events { get; }`
+> Access monitoring event handlers.
+
+`IMonitoringRegistry Registry { get; }`
+> Primary interface to access cached data.
+
+`void StartMonitoring<T>(T target) where T : class`
+> Register an object that is monitored.
+
+`void StopMonitoring<T>(T target) where T : class`
+> Unregister an object that is monitored.
 
 ```c#
 //Example how to get / resolve a monitoring system interface.
-IMonitoringUI monitoringUI = MonitoringSystems.Resolve<IMonitoringUI>();
+IMonitoringUI monitoringUI = Monitor.UI
 ```
 
 ### Type Interfaces
 
 Important internally used types implement interfaces that should make it more easy to work with and extend this tool. These interfaces are especially used when creating a custom UI controller.
 
-Type Interface    | Description |        
-:--                 |:-                                              
-`IMonitorUnit` |Internally used handle for instances of a monitored member. [more](#monitoring-manager)|
-`IMonitorProfile` |Internally used profile describing a monitored member. [more](#monitoring-ui) |
+`IMonitorHandle` 
+> Internally used handle for instances of a monitored member
+
+`IMonitorProfile` 
+> Internally used profile describing a monitored member
 
 
 
 &nbsp;
-## Monitoring Manager
+## Monitoring UI API
 
-The `IMonitoringManager` interface provides core access points.
+Use `Baracuda.Monitoring.UI` to access UI API via the `IMonitoringUI` interface.
 
-Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
-:---         |:-                                        
-`bool IsInitialized { get; }`|Value indicated whether or not monitoring profiling has completed and monitoring is fully initialized.|
-`event ProfilingCompletedListener ProfilingCompleted`|Event is invoked when profiling process for the current system has been completed. Subscribing to this event will instantly invoke a callback if profiling has already completed.|
-`event Action<IMonitorUnit> UnitCreated`|Event is called when a new MonitorUnit was created. |
-`event Action<IMonitorUnit> UnitDisposed`|Event is called when a MonitorUnit was disposed.|
-`void RegisterTarget<T>(T target) where T : class`|Register an object that is monitored during runtime.|
-`void UnregisterTarget<T>(T target) where T : class`|Unregister an object that is monitored during runtime.|
-`ReadOnlyList<IMonitorUnit> GetStaticUnits();`|Get a list of MonitorUnits for static targets.|
-`ReadOnlyList<IMonitorUnit> GetInstanceUnits();`|Get a list of MonitorUnits for instance targets.|
-`ReadOnlyList<IMonitorUnit> GetAllMonitoringUnits();`|Get a list of all MonitorUnits.|
+`bool Visible`
+> Get or set the visibility of the UI.
+
+`event Action<bool> VisibleStateChanged()`
+> Event invoked when the monitoring UI became visible or invisible.
+
+`T GetCurrent<T>()`
+> Get the currently active MonitoringUIController casted to a concrete implementation.
+
+`void ApplyFilter(string filter)`
+> Filter displayed units by their name, tags etc. [more](#ui-filtering)
+
+`void ResetFilter()`
+> Reset active filter. [more](#ui-filtering)
+
+
+
+&nbsp;
+## Monitoring Events
+
+Use `Baracuda.Monitoring.Events` to access monitoring event handlers via the `IMonitorEvents` interface.
+
+`event ProfilingCompletedDelegate ProfilingCompleted`
+> Event is invoked when profiling process for the current system has been completed. Subscribing to this event will instantly invoke a callback if profiling has already completed.
+
+`event Action<IMonitorHandle> MonitorHandleCreated`
+> Event is called when a new MonitorHandle was created. 
+
+`event Action<IMonitorHandle> MonitorHandleDisposed`
+> Event is called when a MonitorHandle was disposed.
+
+
+
+&nbsp;
+## Monitoring Registry
+
+Use `Baracuda.Monitoring.Registry` to access cached data via the `IMonitoringRegistry` interface.
+
+`IReadOnlyList<IMonitorHandle> GetMonitorHandles(HandleTypes handleTypes);`<br>
+> Get a list of monitoring handles for all targets.
+
+`IMonitorHandle[] GetMonitorHandlesForTarget<T>(T target) where T : class`
+> Get a list of IMonitorHandles registered to the passed target object.
+
+`IReadOnlyCollection<string> UsedTags { get; }`
+> Get a list of all custom tags, applied by `[MTag]` attributes that can be used for filtering.
+
+`IReadOnlyCollection<string> UsedFonts { get; }`
+> Get a collection of used font names.
+
+`IReadOnlyCollection<Type> UsedTypes { get; }`
+> Get a collection of monitored types.
 
 
 
 &nbsp;
 ## Monitoring Settings
 
-Use the `IMonitoringSettigns` API can be used to access the current configuration set in the monitoring settings window. This API is readonly and mostly used by internal processes. So far it is available for transparency reasons only.
+
+Use `Baracuda.Monitoring.Settings` to access active settings via the `IMonitoringSettings` interface.
+You can configure and access the settings file via (menu: Tools > Runtime Monitoring)
 
 ![example](https://johnbaracuda.com/media/img/monitoring/Example_settings_01.png)
-
-
-&nbsp;
-## Monitoring UI API
-
-Use the `IMonitoringUI` API to access the active MonitoringUIController and set properties like visibility, filtering etc.   [more](#monitoring-ui)
-
-Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
-:---         |:-                                        
-`bool Visible`|Get or set the visiblility of the UI.|
-`event Action<bool> VisibleStateChanged()`|Event invoked when the monitoring UI became visible or invisible.|
-`T GetCurrent<T>()`|Get the currently active MonitoringUIController casted to a concrete implementation.|
-`void ApplyFilter(string filter)`|Filter displayed units by their name, tags etc. [more](#ui-filtering)|
-`void ResetFilter()`|Reset active filter. [more](#ui-filtering)|
-
-
-
-&nbsp;
-## Monitoring Utility
-
-The `IMonitoringUtility` interface provides a variety of uncategorized utility functions. 
-
-Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
-:---         |:-                                        
-`bool IsFontHashUsed(int fontHash)`|Returns true if the passed hash from the name of a font asset is used by a MFontAttribute and therefore required by a monitoring unit. Used to dynamically load/unload required fonts.|
-`IMonitorUnit[] GetMonitorUnitsForTarget(object target)`|Get a list of IMonitorUnits registered to the passed target object.|
-`IReadOnlyCollection<string> GetAllTags()`| Get a list of all custom tags, applied by `[MTag]` attributes that can be used for filtering.|
-
-
-
-&nbsp;
-## Monitor Unit
-
-The  `IMonitorUnit` interface offers access points to the internally used handle for instances of a monitored member. 
-
-Interface&#160;Member&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
-:---         |:-                                        
-`string Name { get; }`|Readable display name.|
-`object Target { get; }`|The target object of the monitored member. Null if static.|
-`IMonitorProfile Profile { get; }`|Profile describing the monitored member. [more](#monitor-profile) |
-`bool Enabled { get; set; }`|The active state of the unit. Only enabled units are updated and displayed.|
-`int UniqueID { get; }`|Unique Id|
-`event Action<bool> ActiveStateChanged`|Event is invoked when the units active state has changed.|
-`event Action<string> ValueUpdated`|Event is invoked when the value of the monitored member has changed.|
-`event Action Disposing`|Event is invoked when the unit is being disposed.|
-`void Refresh()`|Force the monitored member to update its state.|
-`string GetState()`|Get the current value or state of the monitored member as a formatted string.|
-
-
-
-&nbsp;
-## Monitor Profile
-
-The  `IMonitorProfile` interface offers access points to the internally used profile describing a monitored member. It contains cached reflection and formatting data.  
-
-Interface&#160;Membe&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;| Description                                                           |        
-:---         |:-                                        
-`MonitorAttribute Attribute { get; }`|Instance of the attribute that is used to flag the target member to be monitored.|
-`MemberInfo MemberInfo { get; }`|Member info of the monitored member.|
-`UnitType UnitType { get; }`|The type of the member (either field, property, event or method)|
-`bool ReceiveTick { get; }`|True if the unit receives a custom tick event.|
-`Type UnitTargetType { get; }`|The declaring type of the monitored member.|
-`Type UnitValueType { get; }`|The type of the monitored member.|
-`bool IsStatic { get; }`|Indicates if monitored member is static or non static.|
-`IFormatData FormatData { get; }`|Contains information about label, font and more formatting data.|
-`string[] Tags { get; }`|Additional meta data for filtering.|
-` T GetMetaAttribute<T>()`|The monitoring profiler caches every additional attribute that inherits from MonitoringMetaAttribute on the profile. You can access these custom attributes during runtime using this method without using reflection.|
-`bool TryGetMetaAttribute<T>(out T attribute)`|Try to get a MonitoringMetaAttribute.|
-
-
-
 
 
 
@@ -1197,15 +1151,9 @@ public void RemoveName(string name)
 ```
 
 
-### Transform
-Monitored Transforms are another type that have the potential to create a lot of garbage. A simple thing you could do to reduce overhead is to control the Transform.hasChanged flag on the Transform itself. The monitoring unit/handler will check the flag and only raise an update event if the flag is set to true. (which it is unless changed manually) Unity is not controlling Transform.hasChanged.
-
-
-
 
 &nbsp;
 # Frequently Asked Questions
-
 
 
 &nbsp;
@@ -1215,36 +1163,10 @@ Set the **Enable Monitoring** field in the **Monitoring Settings** to **EditorOn
 
 
 
-
-
 &nbsp;
 ### How can I uninstall the tool?
 
 You can just remove the plugin by deleting the folder Assets/Baracuda. 
-
-
-
-
-&nbsp;
-### Are there any planned features?
-
-+ Add to OpenUPM
-+ Monitoring Editor Window for edit time monitoring.
-+ Monitored collection type with "dirty" flag. (Optimization)
-+ Option to create "virtual" units during runtime.
-+ Tutorial how to use.
-+ Guide how to create a custom UI Controller.
-+ Guide how to customize UI.
-
-
-
-&nbsp;
-### What is Thread Dispatcher?
-
-Thread Dispatcher is another free & open source tool I developed to to pass the execution of a Delegate, Coroutine or Task from a background thread to the main thread, and await its completion or result on the calling thread as needed. Runtime Monitoring optionally uses a background thread for initial assembly profiling & setup processes. You can find more information about it on its [GitHub Repository](https://github.com/JohnBaracuda/com.baracuda.thread-dispatcher),  its [Documentation](https://johnbaracuda.com/dispatcher.html) and its page on the [Asset Store](https://assetstore.unity.com/packages/slug/202421). I would also appreciate if you would leave a ❤️ or a ⭐on its page because it is also something I spent a lot of time working on.
-
-
-
 
 &nbsp;
 ## Support Me

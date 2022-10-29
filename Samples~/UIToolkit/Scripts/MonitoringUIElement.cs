@@ -13,13 +13,12 @@ namespace Baracuda.Monitoring.UIToolkit
 {
     public class MonitoringUIElement : Label, IMonitoringUIElement, IOrder
     {
-        #region --- Fields: Instance & Static ---
+        #region Fields: Instance & Static
 
         private static readonly Dictionary<object, VisualElement> objectGroups = new Dictionary<object, VisualElement>();
         private static readonly Dictionary<string, VisualElement> namedGroups = new Dictionary<string, VisualElement>();
 
-        private static IMonitoringSettings Settings =>
-            settings != null ? settings : settings = MonitoringSystems.Resolve<IMonitoringSettings>();
+        private static IMonitoringSettings Settings => settings != null ? settings : settings = Monitor.Settings;
 
         private static IMonitoringSettings settings;
         private VisualElement _parent;
@@ -38,9 +37,9 @@ namespace Baracuda.Monitoring.UIToolkit
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Properties ---
+        #region Properties
 
-        public IMonitorUnit Unit { get; }
+        public IMonitorHandle Handle { get; }
         public string[] Tags { get; }
         public int Order { get; }
 
@@ -48,34 +47,34 @@ namespace Baracuda.Monitoring.UIToolkit
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- UI Element Creation ---
+        #region UI Element Creation
 
         /// <summary>
         /// Creating a new Monitor Unit UI Element
         /// </summary>
-        internal MonitoringUIElement(VisualElement rootVisualElement, IMonitorUnit monitorUnit, IStyleProvider provider)
+        internal MonitoringUIElement(VisualElement rootVisualElement, IMonitorHandle monitorHandle, IStyleProvider provider)
         {
             var tags = ListPool<string>.Get();
-            tags.Add(monitorUnit.Name);
-            tags.AddRange(monitorUnit.Profile.Tags);
+            tags.Add(monitorHandle.Name);
+            tags.AddRange(monitorHandle.Profile.Tags);
             Tags = tags.ToArray();
 
             ListPool<string>.Release(tags);
 
-            Unit = monitorUnit;
-            Unit.ValueUpdated += UpdateGUI;
-            Unit.Disposing += OnDisposing;
-            Unit.ActiveStateChanged += UpdateActiveState;
+            Handle = monitorHandle;
+            Handle.ValueUpdated += UpdateGUI;
+            Handle.Disposing += OnDisposing;
+            Handle.ActiveStateChanged += UpdateActiveState;
 
-            var profile = monitorUnit.Profile;
+            var profile = monitorHandle.Profile;
             var formatData = profile.FormatData;
             pickingMode = PickingMode.Ignore;
 
             Order = formatData.Order;
 
-            if (Unit.Profile.FormatData.FontSize > 0)
+            if (Handle.Profile.FormatData.FontSize > 0)
             {
-                style.fontSize = Unit.Profile.FormatData.FontSize;
+                style.fontSize = Handle.Profile.FormatData.FontSize;
             }
 
             // Add custom styles set via attribute
@@ -100,20 +99,20 @@ namespace Baracuda.Monitoring.UIToolkit
 
             style.unityFontDefinition = new StyleFontDefinition(font);
 
-            if (monitorUnit.Profile.IsStatic)
+            if (monitorHandle.Profile.IsStatic)
             {
                 SetupStaticUnit(rootVisualElement, profile, provider);
             }
             else
             {
-                SetupInstanceUnit(rootVisualElement, monitorUnit, profile, provider);
+                SetupInstanceHandle(rootVisualElement, monitorHandle, profile, provider);
             }
 
-            UpdateGUI(Unit.GetState());
-            UpdateActiveState(Unit.Enabled);
+            UpdateGUI(Handle.GetState());
+            UpdateActiveState(Handle.Enabled);
         }
 
-        private void SetupInstanceUnit(VisualElement rootVisualElement, IMonitorUnit monitorUnit, IMonitorProfile profile, IStyleProvider provider)
+        private void SetupInstanceHandle(VisualElement rootVisualElement, IMonitorHandle monitorHandle, IMonitorProfile profile, IStyleProvider provider)
         {
             for (var i = 0; i < provider.InstanceUnitStyles.Length; i++)
             {
@@ -167,7 +166,7 @@ namespace Baracuda.Monitoring.UIToolkit
                         namedGroups.Add(profile.FormatData.Group, _parent);
                     }
 
-                    _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
+                    _parent ??= rootVisualElement.Q<VisualElement>(Handle.Profile.FormatData.Position.AsString());
                     _parent.Add(this);
 
                     if (_parent is OrderedVisualElement orderParent && profile.FormatData.GroupOrder != 0)
@@ -183,7 +182,7 @@ namespace Baracuda.Monitoring.UIToolkit
                 }
                 else
                 {
-                    if (!objectGroups.TryGetValue(monitorUnit.Target, out _parent))
+                    if (!objectGroups.TryGetValue(monitorHandle.Target, out _parent))
                     {
                         // Add styles to parent
                         _parent = new OrderedVisualElement
@@ -203,12 +202,12 @@ namespace Baracuda.Monitoring.UIToolkit
                         // Add styles to label
                         stringBuilder.Clear();
                         stringBuilder.Append(profile.DeclaringType.Name);
-                        if (profile.DeclaringType.Name != monitorUnit.TargetName)
+                        if (profile.DeclaringType.Name != monitorHandle.DisplayName)
                         {
                             stringBuilder.Append(' ');
                             stringBuilder.Append('|');
                             stringBuilder.Append(' ');
-                            stringBuilder.Append(monitorUnit.TargetName);
+                            stringBuilder.Append(monitorHandle.DisplayName);
                         }
                         var label = new Label(stringBuilder.ToString());
 
@@ -219,10 +218,10 @@ namespace Baracuda.Monitoring.UIToolkit
 
                         _parent.Add(label);
                         rootVisualElement.Q<VisualElement>(profile.FormatData.Position.AsString()).Add(_parent);
-                        objectGroups.Add(monitorUnit.Target, _parent);
+                        objectGroups.Add(monitorHandle.Target, _parent);
                     }
 
-                    _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
+                    _parent ??= rootVisualElement.Q<VisualElement>(Handle.Profile.FormatData.Position.AsString());
                     _parent.Add(this);
 
                     if (_parent is OrderedVisualElement orderParent && profile.FormatData.GroupOrder != 0)
@@ -297,7 +296,7 @@ namespace Baracuda.Monitoring.UIToolkit
                     namedGroups.Add(profile.FormatData.Group, _parent);
                 }
 
-                _parent ??= rootVisualElement.Q<VisualElement>(Unit.Profile.FormatData.Position.AsString());
+                _parent ??= rootVisualElement.Q<VisualElement>(Handle.Profile.FormatData.Position.AsString());
                 _parent.Add(this);
 
                 if (_parent is OrderedVisualElement orderParent && profile.FormatData.GroupOrder != 0)
@@ -326,28 +325,28 @@ namespace Baracuda.Monitoring.UIToolkit
 
         private void OnDisposing()
         {
-            Unit.ValueUpdated -= UpdateGUI;
-            Unit.Disposing -= OnDisposing;
-            Unit.ActiveStateChanged -= UpdateActiveState;
+            Handle.ValueUpdated -= UpdateGUI;
+            Handle.Disposing -= OnDisposing;
+            Handle.ActiveStateChanged -= UpdateActiveState;
             _parent = null;
 
             RemoveFromHierarchy();
 
-            if (Unit.Profile.FormatData.Group != null)
+            if (Handle.Profile.FormatData.Group != null)
             {
-                if (namedGroups.TryGetValue(Unit.Profile.FormatData.Group, out _parent))
+                if (namedGroups.TryGetValue(Handle.Profile.FormatData.Group, out _parent))
                 {
                     if (_parent.childCount <= 1)
                     {
                         _parent.RemoveFromHierarchy();
-                        namedGroups.Remove(Unit.Profile.FormatData.Group);
+                        namedGroups.Remove(Handle.Profile.FormatData.Group);
                     }
                 }
             }
-            if  (objectGroups.TryGetValue(Unit.Target, out _parent) && _parent.childCount <= 1)
+            if (objectGroups.TryGetValue(Handle.Target, out _parent) && _parent.childCount <= 1)
             {
                 _parent.RemoveFromHierarchy();
-                objectGroups.Remove(Unit.Target);
+                objectGroups.Remove(Handle.Target);
             }
         }
 

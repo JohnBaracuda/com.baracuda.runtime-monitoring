@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Baracuda.Monitoring.Systems
 {
@@ -16,157 +17,163 @@ namespace Baracuda.Monitoring.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Func<TValue, string> CreateTypeSpecificProcessorInternal<TValue>(IFormatData formatData)
         {
-            var type = typeof(TValue);
-
-            // Global predefined value processor for type
-            if (_globalValueProcessors.TryGetValue(type, out var globalProcessor)
-                && globalProcessor is Func<IFormatData, TValue, string> typeSpecificGlobal)
+            try
             {
-                return (value) => typeSpecificGlobal(formatData, value);
-            }
+                var type = typeof(TValue);
 
-            if (type == typeof(Transform))
-            {
-                return (Func<TValue, string>) (Delegate) TransformProcessor(formatData);
-            }
-
-            if (type == typeof(bool))
-            {
-                return (Func<TValue, string>) (Delegate) CreateBooleanProcessor(formatData);
-            }
-
-            if (type == typeof(bool[]))
-            {
-                return (Func<TValue, string>) (Delegate) BooleanArrayProcessor(formatData);
-            }
-
-            // Dictionary<TKey, TValue>
-            if (type.IsGenericIDictionary() && !type.IsValueType)
-            {
-                try
+                // Global predefined value processor for type
+                if (_globalValueProcessors.TryGetValue(type, out var globalProcessor)
+                    && globalProcessor is Func<IFormatData, TValue, string> typeSpecificGlobal)
                 {
-                    var keyType = type.GetGenericArguments()[0];
-                    var valueType = type.GetGenericArguments()[1];
-                    var genericMethod = createDictionaryProcessorMethod.MakeGenericMethod(keyType, valueType);
-                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[] {formatData});
+                    return (value) => typeSpecificGlobal(formatData, value);
                 }
+
+                if (type == typeof(Transform))
+                {
+                    return (Func<TValue, string>) (Delegate) TransformProcessor(formatData);
+                }
+
+                if (type == typeof(bool))
+                {
+                    return (Func<TValue, string>) (Delegate) CreateBooleanProcessor(formatData);
+                }
+
+                if (type == typeof(bool[]))
+                {
+                    return (Func<TValue, string>) (Delegate) BooleanArrayProcessor(formatData);
+                }
+
+                // Dictionary<TKey, TValue>
+                if (type.IsGenericIDictionary() && !type.IsValueType)
+                {
+                    try
+                    {
+                        var keyType = type.GetGenericArguments()[0];
+                        var valueType = type.GetGenericArguments()[1];
+                        var genericMethod = createDictionaryProcessorMethod.MakeGenericMethod(keyType, valueType);
+                        return (Func<TValue, string>) genericMethod.Invoke(null, new object[] {formatData});
+                    }
 #pragma warning disable CS0618
-                //IL2CPP runtime does throw this exception!
-                catch (ExecutionEngineException engineException)
+                    //IL2CPP runtime does throw this exception!
+                    catch (ExecutionEngineException engineException)
 #pragma warning restore CS0618
-                {
-                    Debug.LogException(engineException);
+                    {
+                        Debug.LogWarning(engineException);
+                    }
                 }
-            }
 
-            // IEnumerable<bool>
-            if (type.HasInterface<IEnumerable<bool>>() && !type.IsValueType)
-            {
-                return (Func<TValue, string>) (Delegate) EnumerableBooleanProcessor(formatData);
-            }
-
-            if (type.IsArray)
-            {
-                try
+                // IEnumerable<bool>
+                if (type.HasInterface<IEnumerable<bool>>() && !type.IsValueType)
                 {
-                    var elementType = type.GetElementType();
-
-                    Debug.Assert(elementType != null, nameof(elementType) + " != null");
-
-                    var genericMethod = elementType.IsValueType ? createValueTypeArrayMethod.MakeGenericMethod(elementType) : createReferenceTypeArrayMethod.MakeGenericMethod(elementType);
-
-                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[]{formatData});
+                    return (Func<TValue, string>) (Delegate) EnumerableBooleanProcessor(formatData);
                 }
+
+                if (type.IsArray)
+                {
+                    try
+                    {
+                        var elementType = type.GetElementType();
+
+                        Debug.Assert(elementType != null, nameof(elementType) + " != null");
+
+                        var genericMethod = elementType.IsValueType ? createValueTypeArrayMethod.MakeGenericMethod(elementType) : createReferenceTypeArrayMethod.MakeGenericMethod(elementType);
+
+                        return (Func<TValue, string>) genericMethod.Invoke(null, new object[] {formatData});
+                    }
 #pragma warning disable CS0618
-                //IL2CPP runtime does throw this exception!
-                catch (ExecutionEngineException engineException)
+                    //IL2CPP runtime does throw this exception!
+                    catch (ExecutionEngineException engineException)
 #pragma warning restore CS0618
-                {
-                    Debug.LogException(engineException);
+                    {
+                        Debug.LogWarning(engineException);
+                    }
                 }
-            }
 
-            // IEnumerable<T>
-            if (type.IsGenericIEnumerable(true) && !type.IsValueType)
-            {
-                try
+                // IEnumerable<T>
+                if (type.IsGenericIEnumerable(out var element) && !type.IsValueType)
                 {
-                    var elementType = type.GetElementType() ?? type.GetGenericArguments()[0];
-                    var genericMethod = createGenericIEnumerableMethod.MakeGenericMethod(elementType);
-                    return (Func<TValue, string>) genericMethod.Invoke(null, new object[] {formatData});
-                }
+                    try
+                    {
+                        var genericMethod = createGenericIEnumerableMethod.MakeGenericMethod(element);
+                        return (Func<TValue, string>) genericMethod.Invoke(null, new object[] {formatData});
+                    }
 #pragma warning disable CS0618
-                //IL2CPP runtime does throw this exception!
-                catch (ExecutionEngineException engineException)
+                    //IL2CPP runtime does throw this exception!
+                    catch (ExecutionEngineException engineException)
 #pragma warning restore CS0618
+                    {
+                        Debug.LogWarning(engineException);
+                    }
+                }
+
+                if (type.IsIEnumerable(true) && !type.IsValueType)
                 {
-                    Debug.LogException(engineException);
+                    return (Func<TValue, string>) (Delegate) EnumerableProcessor(formatData, type);
+                }
+
+                if (type == typeof(Quaternion))
+                {
+                    return (Func<TValue, string>) (Delegate) QuaternionProcessor(formatData);
+                }
+
+                if (type == typeof(Vector3))
+                {
+                    return (Func<TValue, string>) (Delegate) Vector3Processor(formatData);
+                }
+
+                if (type == typeof(Vector2))
+                {
+                    return (Func<TValue, string>) (Delegate) Vector2Processor(formatData);
+                }
+
+                if (type == typeof(Color))
+                {
+                    return (Func<TValue, string>) (Delegate) ColorProcessor(formatData);
+                }
+
+                if (type == typeof(Color32))
+                {
+                    return (Func<TValue, string>) (Delegate) Color32Processor(formatData);
+                }
+
+                if (type.HasInterface<IFormattable>() && formatData.Format != null)
+                {
+                    return FormattedProcessor<TValue>(formatData);
+                }
+
+                if (type.IsSubclassOf(typeof(Object)))
+                {
+                    return (Func<TValue, string>) (Delegate) UnityEngineObjectProcessor(formatData);
+                }
+
+                if (type.IsInt32())
+                {
+                    return (Func<TValue, string>) (Delegate) Int32Processor(formatData);
+                }
+
+                if (type.IsInt64())
+                {
+                    return (Func<TValue, string>) (Delegate) Int64Processor(formatData);
+                }
+
+                if (type.IsSingle())
+                {
+                    return (Func<TValue, string>) (Delegate) SingleProcessor(formatData);
+                }
+
+                if (type.IsDouble())
+                {
+                    return (Func<TValue, string>) (Delegate) DoubleProcessor(formatData);
+                }
+
+                if (type.IsValueType)
+                {
+                    return ValueTypeProcessor<TValue>(formatData);
                 }
             }
-
-            if (type.IsIEnumerable(true) && !type.IsValueType)
+            catch (Exception exception)
             {
-                return (Func<TValue, string>) (Delegate) EnumerableProcessor(formatData, type);
-            }
-
-            if (type == typeof(Quaternion))
-            {
-                return (Func<TValue, string>) (Delegate) QuaternionProcessor(formatData);
-            }
-
-            if (type == typeof(Vector3))
-            {
-                return (Func<TValue, string>) (Delegate) Vector3Processor(formatData);
-            }
-
-            if (type == typeof(Vector2))
-            {
-                return (Func<TValue, string>) (Delegate) Vector2Processor(formatData);
-            }
-
-            if (type == typeof(Color))
-            {
-                return (Func<TValue, string>) (Delegate) ColorProcessor(formatData);
-            }
-
-            if (type == typeof(Color32))
-            {
-                return (Func<TValue, string>) (Delegate) Color32Processor(formatData);
-            }
-
-            if (type.HasInterface<IFormattable>() && formatData.Format != null)
-            {
-                return FormattedProcessor<TValue>(formatData);
-            }
-
-            if (type.IsSubclassOf(typeof(UnityEngine.Object)))
-            {
-                return (Func<TValue, string>) (Delegate) UnityEngineObjectProcessor(formatData);
-            }
-
-            if (type.IsInt32())
-            {
-                return (Func<TValue, string>) (Delegate) Int32Processor(formatData);
-            }
-
-            if (type.IsInt64())
-            {
-                return (Func<TValue, string>) (Delegate) Int64Processor(formatData);
-            }
-
-            if (type.IsSingle())
-            {
-                return (Func<TValue, string>) (Delegate) SingleProcessor(formatData);
-            }
-
-            if (type.IsDouble())
-            {
-                return (Func<TValue, string>) (Delegate) DoubleProcessor(formatData);
-            }
-
-            if (type.IsValueType)
-            {
-                return ValueTypeProcessor<TValue>(formatData);
+                Debug.LogWarning($"[Monitoring] Exception during ValueProcessor creation: {exception}");
             }
 
             // Everything else that is a reference type.

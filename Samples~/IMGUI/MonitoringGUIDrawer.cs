@@ -17,7 +17,7 @@ namespace Baracuda.Monitoring.IMGUI
     {
         #region Type Definitions
 
-         [Serializable]
+        [Serializable]
         public struct MarginOrPadding
         {
             public float top;
@@ -49,12 +49,12 @@ namespace Baracuda.Monitoring.IMGUI
 
             private readonly StringBuilder _stringBuilder = new StringBuilder(100);
 
-            public GUIElement(IMonitorUnit unit, MonitoringGUIDrawer ctx)
+            public GUIElement(IMonitorHandle handle, MonitoringGUIDrawer ctx)
             {
-                unit.ActiveStateChanged += SetActive;
-                Enabled = unit.Enabled;
-                Format = unit.Profile.FormatData;
-                ID = unit.UniqueID;
+                handle.ActiveStateChanged += SetActive;
+                Enabled = handle.Enabled;
+                Format = handle.Profile.FormatData;
+                ID = handle.UniqueID;
 
                 Order = Format.Order;
 
@@ -63,11 +63,11 @@ namespace Baracuda.Monitoring.IMGUI
                 if (Format.TextColor.HasValue)
                 {
                     _textColor = ColorUtility.ToHtmlStringRGB(Format.TextColor.Value);
-                    unit.ValueUpdated += UpdateColorized;
+                    handle.ValueUpdated += UpdateColorized;
                 }
                 else
                 {
-                    unit.ValueUpdated += Update;
+                    handle.ValueUpdated += Update;
                 }
 
                 if (TryGetValueValidated(backgroundTexturePool, backgroundColor, out var texture))
@@ -102,11 +102,11 @@ namespace Baracuda.Monitoring.IMGUI
 
                 if (Format.TextColor.HasValue)
                 {
-                    UpdateColorized(unit.GetState());
+                    UpdateColorized(handle.GetState());
                 }
                 else
                 {
-                    Update(unit.GetState());
+                    Update(handle.GetState());
                 }
             }
 
@@ -219,14 +219,12 @@ namespace Baracuda.Monitoring.IMGUI
         {
             base.Awake();
 
-            var utility = MonitoringSystems.Resolve<IMonitoringUtility>();
-
             for (var i = 0; i < availableFonts.Length; i++)
             {
                 var fontAsset = availableFonts[i];
-                var hash = fontAsset.name.GetHashCode();
-                if (utility.IsFontHashUsed(hash))
+                if (Monitor.Registry.UsedFonts.Contains(fontAsset.name))
                 {
+                    var hash = fontAsset.name.GetHashCode();
                     _loadedFonts.Add(hash, fontAsset);
                 }
             }
@@ -242,17 +240,17 @@ namespace Baracuda.Monitoring.IMGUI
         /// <summary>
         /// Use to add UI elements for the passed unit.
         /// </summary>
-        protected override void OnMonitorUnitCreated(IMonitorUnit unit)
+        protected override void OnMonitorHandleCreated(IMonitorHandle handle)
         {
-            OnUnitCreatedInternal(unit);
+            OnUnitCreatedInternal(handle);
         }
 
         /// <summary>
         /// Use to remove UI elements for the passed unit.
         /// </summary>
-        protected override void OnMonitorUnitDisposed(IMonitorUnit unit)
+        protected override void OnMonitorHandleDisposed(IMonitorHandle handle)
         {
-            OnUnitDisposedInternal(unit);
+            OnUnitDisposedInternal(handle);
         }
 
         protected override void Start()
@@ -564,45 +562,45 @@ namespace Baracuda.Monitoring.IMGUI
         #region Unit Creating / Disposal
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void OnUnitCreatedInternal(IMonitorUnit unit)
+        private void OnUnitCreatedInternal(IMonitorHandle handle)
         {
-            switch (unit.Profile.FormatData.Position)
+            switch (handle.Profile.FormatData.Position)
             {
                 case UIPosition.UpperLeft:
-                    _unitsUpperLeft.Add(new GUIElement(unit, this));
+                    _unitsUpperLeft.Add(new GUIElement(handle, this));
                     _unitsUpperLeft.Sort(GUIElement.Comparison);
                     break;
                 case UIPosition.UpperRight:
-                    _unitsUpperRight.Add(new GUIElement(unit, this));
+                    _unitsUpperRight.Add(new GUIElement(handle, this));
                     _unitsUpperRight.Sort(GUIElement.Comparison);
                     break;
                 case UIPosition.LowerLeft:
-                    _unitsLowerLeft.Add(new GUIElement(unit, this));
+                    _unitsLowerLeft.Add(new GUIElement(handle, this));
                     _unitsLowerLeft.Sort(GUIElement.Comparison);
                     break;
                 case UIPosition.LowerRight:
-                    _unitsLowerRight.Add(new GUIElement(unit, this));
+                    _unitsLowerRight.Add(new GUIElement(handle, this));
                     _unitsLowerRight.Sort(GUIElement.Comparison);
                     break;
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void OnUnitDisposedInternal(IMonitorUnit unit)
+        private void OnUnitDisposedInternal(IMonitorHandle handle)
         {
-            switch (unit.Profile.FormatData.Position)
+            switch (handle.Profile.FormatData.Position)
             {
                 case UIPosition.UpperLeft:
-                    _unitsUpperLeft.Remove(_unitsUpperLeft.First(element => element.ID == unit.UniqueID));
+                    _unitsUpperLeft.Remove(_unitsUpperLeft.First(element => element.ID == handle.UniqueID));
                     break;
                 case UIPosition.UpperRight:
-                    _unitsUpperRight.Remove(_unitsUpperRight.First(element => element.ID == unit.UniqueID));
+                    _unitsUpperRight.Remove(_unitsUpperRight.First(element => element.ID == handle.UniqueID));
                     break;
                 case UIPosition.LowerLeft:
-                    _unitsLowerLeft.Remove(_unitsLowerLeft.First(element => element.ID == unit.UniqueID));
+                    _unitsLowerLeft.Remove(_unitsLowerLeft.First(element => element.ID == handle.UniqueID));
                     break;
                 case UIPosition.LowerRight:
-                    _unitsLowerRight.Remove(_unitsLowerRight.First(element => element.ID == unit.UniqueID));
+                    _unitsLowerRight.Remove(_unitsLowerRight.First(element => element.ID == handle.UniqueID));
                     break;
             }
         }

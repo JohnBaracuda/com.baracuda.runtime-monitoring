@@ -53,8 +53,10 @@ namespace Baracuda.Monitoring.Systems
 
 
 
-        internal ValueProcessorFactory(IMonitoringSettings settings)
+        internal ValueProcessorFactory()
         {
+            var settings = Monitor.Settings;
+
             _xColor = $"<color=#{ColorUtility.ToHtmlStringRGB(settings.XColor)}>";
             _yColor = $"<color=#{ColorUtility.ToHtmlStringRGB(settings.YColor)}>";
             _zColor = $"<color=#{ColorUtility.ToHtmlStringRGB(settings.ZColor)}>";

@@ -1,6 +1,5 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using System;
 
 namespace Baracuda.Monitoring.Types
@@ -16,7 +15,7 @@ namespace Baracuda.Monitoring.Types
 
         private OutParameterHandleT(IFormatData formatData)
         {
-            _processor = MonitoringSystems.Resolve<IValueProcessorFactory>().CreateProcessorForType<TValue>(formatData);
+            _processor = Monitor.ProcessorFactory.CreateProcessorForType<TValue>(formatData);
         }
 
         public override string ToString()

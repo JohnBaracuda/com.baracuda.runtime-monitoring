@@ -1,6 +1,5 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using Baracuda.Monitoring.Types;
 using Baracuda.Monitoring.Units;
 using Baracuda.Monitoring.Utilities.Extensions;
@@ -54,8 +53,7 @@ namespace Baracuda.Monitoring.Systems
 
                 if (!parameterInfos.Any())
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>()
-                        .LogInvalidProcessorSignature(processor, declaringType);
+                    Monitor.Logger.LogInvalidProcessorSignature(processor, declaringType);
                     return null;
                 }
 
@@ -172,16 +170,16 @@ namespace Baracuda.Monitoring.Systems
                 #region IEnumerable<T> ---
 
                 // IEnumerable<T> processor
-                if (valueType.IsGenericIEnumerable(true))
+                if (valueType.IsGenericIEnumerable(out var elementType))
                 {
                     // check that the signature of the processor method is compatible with the generic type definition
                     // of the IEnumerable<T>s generic type definition.
                     if (parameterInfos.Length == 1 &&
-                        parameterInfos[0].ParameterType == valueType.GetGenericArguments()[0])
+                        parameterInfos[0].ParameterType == elementType)
                     {
                         // create a generic method to create the generic processor
                         var delegateCreationMethod = genericIEnumerableProcessorMethod
-                            .MakeGenericMethod(valueType, valueType.GetGenericArguments()[0]);
+                            .MakeGenericMethod(valueType, elementType);
 
                         // create a delegate of type: <Func<TValue, string>> by invoking the delegateCreationMethod
                         var func = delegateCreationMethod
@@ -243,8 +241,7 @@ namespace Baracuda.Monitoring.Systems
 
                 if (!parameterInfos.Any())
                 {
-                    MonitoringSystems.Resolve<IMonitoringLogger>()
-                        .LogInvalidProcessorSignature(processor, declaringType);
+                    Monitor.Logger.LogInvalidProcessorSignature(processor, declaringType);
                     return null;
                 }
 
@@ -439,7 +436,7 @@ namespace Baracuda.Monitoring.Systems
         /// a custom value processor with a signature<br/>
         /// </summary>
         /// <param name="processor">the <see cref="MethodInfo"/> of the previously validated processor</param>
-        /// <param name="name">the name of the <see cref="ValueUnit{TTarget,TValue}"/></param>
+        /// <param name="name">the name of the <see cref="ValueHandle{TTarget,TValue}"/></param>
         /// <typeparam name="TInput">the exact argument/input type of the processors method. This type must be assignable from <see cref="IList{TElement}"/></typeparam>
         /// <typeparam name="TElement">the element type of the IList</typeparam>
         /// <returns></returns>

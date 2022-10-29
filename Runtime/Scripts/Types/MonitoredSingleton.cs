@@ -11,14 +11,14 @@ namespace Baracuda.Monitoring
         protected override void Awake()
         {
             base.Awake();
-            MonitoringSystems.Manager.RegisterTarget(this);
+            Monitor.StartMonitoring(this);
         }
 
         /// <inheritdoc />
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            MonitoringSystems.Manager.UnregisterTarget(this);
+            Monitor.StopMonitoring(this);
         }
     }
 }

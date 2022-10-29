@@ -14,7 +14,7 @@ namespace Baracuda.Monitoring.Modules
     [MTag("Console")]
     public class ConsoleMonitor : MonitorModuleBase
     {
-        #region --- Static ---
+        #region Static
 
         private static readonly Queue<string> messageLogCache = new Queue<string>(30);
         private static string lastLogStacktrace;
@@ -31,7 +31,7 @@ namespace Baracuda.Monitoring.Modules
 
         #endregion
 
-        #region --- Inspector ---
+        #region Inspector
 
         [Header("Display Options")]
         [Min(1)]
@@ -42,7 +42,7 @@ namespace Baracuda.Monitoring.Modules
 
         #endregion
 
-        #region --- Monitored Values ---
+        #region Monitored Values
 
         [MonitorProperty]
         [MOrder(-1000)]
@@ -66,7 +66,7 @@ namespace Baracuda.Monitoring.Modules
 
         #endregion
 
-        #region --- API ---
+        #region API
 
         /// <summary>
         /// Clear the console display and cache.
@@ -80,7 +80,7 @@ namespace Baracuda.Monitoring.Modules
 
         #endregion
 
-        #region --- Event Methods ---
+        #region Event Methods
 
         /// <inheritdoc />
         protected override void Awake()
@@ -107,7 +107,7 @@ namespace Baracuda.Monitoring.Modules
 
         #endregion
 
-        #region --- Message Log Caching ---
+        #region Message Log Caching
 
 #if UNITY_WEBGL
         static ConsoleMonitor()
@@ -189,7 +189,7 @@ namespace Baracuda.Monitoring.Modules
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Misc ---
+        #region Misc
 
         private static Color GetColor(LogType logType)
         {

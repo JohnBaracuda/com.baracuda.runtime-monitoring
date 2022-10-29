@@ -29,28 +29,27 @@ namespace Baracuda.Example.Scripts
             playerInput.ToggleMonitoring += OnToggleMonitoring;
             playerInput.ClearConsole += ConsoleMonitor.Clear;
 
-            MonitoringSystems.Manager.ProfilingCompleted += OnProfilingCompleted;
+            Monitor.Events.ProfilingCompleted += OnProfilingCompleted;
         }
 
-        private void OnProfilingCompleted(IReadOnlyList<IMonitorUnit> monitorUnits, IReadOnlyList<IMonitorUnit> readOnlyList)
+        private void OnProfilingCompleted(IReadOnlyList<IMonitorHandle> monitorUnits, IReadOnlyList<IMonitorHandle> readOnlyList)
         {
-            var monitoringSettings = MonitoringSystems.Settings;
-            var utils = MonitoringSystems.Utility;
+            var monitoringSettings = Monitor.Settings;
 
-            foreach (var customTag in utils.GetAllTags())
+            foreach (var customTag in Monitor.Registry.UsedTags)
             {
                 Instantiate(buttonPrefab, tagButtonContainer).Filter = $"{monitoringSettings.FilterTagsSymbol}{customTag}";
             }
 
-            foreach (var typeString in utils.GetAllTypeStrings())
+            foreach (var typeString in Monitor.Registry.UsedTypes)
             {
-                Instantiate(buttonPrefab, typeStringButtonContainer).Filter = typeString;
+                Instantiate(buttonPrefab, typeStringButtonContainer).Filter = typeString.Name;
             }
         }
 
         private void OnToggleMonitoring()
         {
-            MonitoringSystems.UI.Visible = !MonitoringSystems.UI.Visible;
+            Monitor.UI.Visible = !Monitor.UI.Visible;
         }
 
         private void OnToggleFilter(InputMode inputMode)
@@ -62,11 +61,11 @@ namespace Baracuda.Example.Scripts
         {
             if (string.IsNullOrWhiteSpace(input))
             {
-                MonitoringSystems.Resolve<IMonitoringUI>().ResetFilter();
+                Monitor.UI.ResetFilter();
             }
             else
             {
-                MonitoringSystems.Resolve<IMonitoringUI>().ApplyFilter(input);
+                Monitor.UI.ApplyFilter(input);
             }
         }
     }

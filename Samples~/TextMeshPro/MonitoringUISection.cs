@@ -21,8 +21,8 @@ namespace Baracuda.Monitoring.TextMeshPro
         private readonly Dictionary<object, MonitoringUIGroup> _targetedGroups =
             new Dictionary<object, MonitoringUIGroup>();
 
-        private readonly Dictionary<IMonitorUnit, MonitoringUIElement> _unitUIElements =
-            new Dictionary<IMonitorUnit, MonitoringUIElement>(32);
+        private readonly Dictionary<IMonitorHandle, MonitoringUIElement> _unitUIElements =
+            new Dictionary<IMonitorHandle, MonitoringUIElement>(32);
 
         private readonly List<MonitoringUIBase> _children = new List<MonitoringUIBase>();
         private static readonly StringBuilder stringBuilder = new StringBuilder(64);
@@ -39,19 +39,19 @@ namespace Baracuda.Monitoring.TextMeshPro
 
         //--------------------------------------------------------------------------------------------------------------
 
-        internal void AddChild(IMonitorUnit monitorUnit)
+        internal void AddChild(IMonitorHandle handle)
         {
-            if (TryGetGroupForNewUnit(monitorUnit, out var uiGroup))
+            if (TryGetGroupForNewUnit(handle, out var uiGroup))
             {
-                uiGroup.AddChild(monitorUnit);
+                uiGroup.AddChild(handle);
             }
             else
             {
                 var unitUIElement = _controller.GetElementFromPool();
                 unitUIElement.SetParent(_transform);
-                unitUIElement.SetActive(monitorUnit.Enabled);
-                unitUIElement.Setup(monitorUnit);
-                _unitUIElements.Add(monitorUnit, unitUIElement);
+                unitUIElement.SetActive(handle.Enabled);
+                unitUIElement.Setup(handle);
+                _unitUIElements.Add(handle, unitUIElement);
                 _children.Add(unitUIElement);
             }
 
@@ -62,9 +62,9 @@ namespace Baracuda.Monitoring.TextMeshPro
             }
         }
 
-        internal void RemoveChild(IMonitorUnit monitorUnit)
+        internal void RemoveChild(IMonitorHandle monitorHandle)
         {
-            var profile = monitorUnit.Profile;
+            var profile = monitorHandle.Profile;
             var format = profile.FormatData;
             var groupName = format.Group;
             if (profile.FormatData.AllowGrouping)
@@ -73,7 +73,7 @@ namespace Baracuda.Monitoring.TextMeshPro
                 if (profile.IsStatic)
                 {
                     uiGroup = _namedGroups[groupName];
-                    uiGroup.RemoveChild(monitorUnit);
+                    uiGroup.RemoveChild(monitorHandle);
                     if (uiGroup.ChildCount != 0)
                     {
                         return;
@@ -84,44 +84,43 @@ namespace Baracuda.Monitoring.TextMeshPro
                 }
                 else
                 {
-                    if (!_targetedGroups.TryGetValue(monitorUnit.Target, out uiGroup))
+                    if (!_targetedGroups.TryGetValue(monitorHandle.Target, out uiGroup))
                     {
                         return;
                     }
-                    //uiGroup = _targetedGroups[monitorUnit.Target];
-                    uiGroup.RemoveChild(monitorUnit);
+                    uiGroup.RemoveChild(monitorHandle);
                     if (uiGroup.ChildCount != 0)
                     {
                         return;
                     }
-                    _targetedGroups.Remove(monitorUnit.Target);
+                    _targetedGroups.Remove(monitorHandle.Target);
                     _children.Remove(uiGroup);
                     _controller.ReleaseGroupToPool(uiGroup);
                 }
             }
             else
             {
-                var unitUIElement = _unitUIElements[monitorUnit];
-                _unitUIElements.Remove(monitorUnit);
+                var unitUIElement = _unitUIElements[monitorHandle];
+                _unitUIElements.Remove(monitorHandle);
                 _children.Remove(unitUIElement);
                 _controller.ReleaseElementToPool(unitUIElement);
             }
         }
 
-        private bool TryGetGroupForNewUnit(IMonitorUnit monitorUnit, out MonitoringUIGroup uiGroup)
+        private bool TryGetGroupForNewUnit(IMonitorHandle monitorHandle, out MonitoringUIGroup uiGroup)
         {
-            if (!monitorUnit.Profile.FormatData.AllowGrouping)
+            if (!monitorHandle.Profile.FormatData.AllowGrouping)
             {
                 uiGroup = null;
                 return false;
             }
 
-            uiGroup = GetGroupForUnit(monitorUnit);
+            uiGroup = GetGroupForUnit(monitorHandle);
 
             return true;
         }
 
-        private MonitoringUIGroup GetGroupForUnit(IMonitorUnit monitorUnit)
+        private MonitoringUIGroup GetGroupForUnit(IMonitorHandle monitorUnit)
         {
             var profile = monitorUnit.Profile;
             var format = profile.FormatData;
@@ -147,12 +146,12 @@ namespace Baracuda.Monitoring.TextMeshPro
 
                 stringBuilder.Clear();
                 stringBuilder.Append(profile.DeclaringType.Name);
-                if (profile.DeclaringType.Name != monitorUnit.TargetName)
+                if (profile.DeclaringType.Name != monitorUnit.DisplayName)
                 {
                     stringBuilder.Append(' ');
                     stringBuilder.Append('|');
                     stringBuilder.Append(' ');
-                    stringBuilder.Append(monitorUnit.TargetName);
+                    stringBuilder.Append(monitorUnit.DisplayName);
                 }
                 uiGroup = MakeGroup(stringBuilder.ToString());
                 _targetedGroups.Add(monitorUnit.Target, uiGroup);

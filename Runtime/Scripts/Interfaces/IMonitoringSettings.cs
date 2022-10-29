@@ -8,7 +8,7 @@ namespace Baracuda.Monitoring
     /// <summary>
     /// Interface to access settings of for the monitoring system.
     /// </summary>
-    public interface IMonitoringSettings : IMonitoringSubsystem<IMonitoringSettings>
+    public interface IMonitoringSettings
     {
         /// <summary>
         /// When enabled, the monitoring system is active, otherwise dummy systems are in place to prevent API calls from
@@ -255,7 +255,7 @@ namespace Baracuda.Monitoring
 
         #region Obsolete
 
-        [Obsolete("Use MonitoringUIPrefab instead! This API will be removed in 4.0.0")]
+        [Obsolete("Use MonitoringUIOverride instead! This API will be removed in 4.0.0")]
         MonitoringUIController UIController { get; }
 
         [Obsolete("Use IMonitoringSettings.IsMonitoringEnabled instead. This API will be removed in 4.0.0")]

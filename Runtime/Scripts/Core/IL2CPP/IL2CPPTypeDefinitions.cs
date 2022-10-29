@@ -88,7 +88,7 @@ namespace Baracuda.Monitoring.IL2CPP
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void TypeDefField<TDeclaring, TMonitored>() where TDeclaring : class
         {
-            var unit = Activator.CreateInstance<FieldUnit<TDeclaring, TMonitored>>();
+            var unit = Activator.CreateInstance<FieldHandle<TDeclaring, TMonitored>>();
             var profile = Activator.CreateInstance<FieldProfile<TDeclaring, TMonitored>>();
             DeclareThrow(unit);
             DeclareThrow(profile);
@@ -101,7 +101,7 @@ namespace Baracuda.Monitoring.IL2CPP
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void TypeDefProperty<TDeclaring, TMonitored>() where TDeclaring : class
         {
-            var unit = Activator.CreateInstance<PropertyUnit<TDeclaring, TMonitored>>();
+            var unit = Activator.CreateInstance<PropertyHandle<TDeclaring, TMonitored>>();
             var profile = Activator.CreateInstance<PropertyProfile<TDeclaring, TMonitored>>();
             DeclareThrow(unit);
             DeclareThrow(profile);
@@ -114,7 +114,7 @@ namespace Baracuda.Monitoring.IL2CPP
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void TypeDefEvent<TDeclaring, TMonitored>() where TDeclaring : class where TMonitored : Delegate
         {
-            var unit = Activator.CreateInstance<EventUnit<TDeclaring, TMonitored>>();
+            var unit = Activator.CreateInstance<EventHandle<TDeclaring, TMonitored>>();
             var profile = Activator.CreateInstance<EventProfile<TDeclaring, TMonitored>>();
             DeclareThrow(unit);
             DeclareThrow(profile);
@@ -129,7 +129,7 @@ namespace Baracuda.Monitoring.IL2CPP
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void TypeDefMethod<TDeclaring>() where TDeclaring : class
         {
-            var unit = Activator.CreateInstance<MethodUnit<TDeclaring, Void>>();
+            var unit = Activator.CreateInstance<MethodHandle<TDeclaring, Void>>();
             var profile = Activator.CreateInstance<MethodProfile<TDeclaring, Void>>();
             DeclareThrow(unit);
             DeclareThrow(profile);
@@ -142,7 +142,7 @@ namespace Baracuda.Monitoring.IL2CPP
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void TypeDefMethod<TDeclaring, TMonitored>() where TDeclaring : class
         {
-            var unit = Activator.CreateInstance<MethodUnit<TDeclaring, TMonitored>>();
+            var unit = Activator.CreateInstance<MethodHandle<TDeclaring, TMonitored>>();
             var profile = Activator.CreateInstance<MethodProfile<TDeclaring, TMonitored>>();
             DeclareThrow(unit);
             DeclareThrow(profile);

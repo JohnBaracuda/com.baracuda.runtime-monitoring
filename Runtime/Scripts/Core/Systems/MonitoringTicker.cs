@@ -1,6 +1,5 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using Baracuda.Monitoring.Types;
 using System;
 using System.Collections.Generic;
@@ -9,27 +8,27 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Systems
 {
-    internal class MonitoringTicker : IMonitoringTicker
+    internal class MonitoringTicker
     {
         public bool ValidationTickEnabled { get; set; } = true;
 
         //--------------------------------------------------------------------------------------------------------------
 
-        private readonly List<IMonitorUnit> _activeTickReceiver = new List<IMonitorUnit>(64);
-        private event Action ValidationTick;
+        private readonly List<IMonitorHandle> _activeTickReceiver = new List<IMonitorHandle>(64);
+        private readonly List<Action> _validationReceiver = new List<Action>(64);
 
         private static float updateTimer;
         private static bool tickEnabled;
 
         //--------------------------------------------------------------------------------------------------------------
 
-        internal MonitoringTicker(IMonitoringManager monitoringManager)
+        internal MonitoringTicker()
         {
-            monitoringManager.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
-            this.RegisterMonitor();
+            Monitor.Events.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
+            Monitor.StartMonitoring(this);
         }
 
-        private void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorUnit> staticUnits, IReadOnlyList<IMonitorUnit> instanceUnits)
+        private void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorHandle> staticUnits, IReadOnlyList<IMonitorHandle> instanceUnits)
         {
 #if UNITY_EDITOR
             if (!Application.isPlaying)
@@ -42,15 +41,15 @@ namespace Baracuda.Monitoring.Systems
 
             UnityEngine.Object.DontDestroyOnLoad(sceneHook);
 
-            sceneHook.gameObject.hideFlags = MonitoringSystems.Settings.ShowRuntimeMonitoringObject
+            sceneHook.gameObject.hideFlags = Monitor.Settings.ShowRuntimeMonitoringObject
                 ? HideFlags.None
                 : HideFlags.HideInHierarchy;
 
             sceneHook.LateUpdateEvent += Tick;
 
-            tickEnabled = MonitoringSystems.UI.Visible;
+            tickEnabled = Monitor.UI.Visible;
 
-            MonitoringSystems.UI.VisibleStateChanged += visible =>
+            Monitor.UI.VisibleStateChanged += visible =>
             {
                 tickEnabled = visible;
                 if (!visible)
@@ -59,7 +58,7 @@ namespace Baracuda.Monitoring.Systems
                 }
 
                 UpdateTick();
-                ValidationTick?.Invoke();
+                ValidationTick();
             };
         }
         private void Tick(float deltaTime)
@@ -70,45 +69,86 @@ namespace Baracuda.Monitoring.Systems
             }
 
             updateTimer += deltaTime;
-            if (updateTimer > .05f)
+            if (updateTimer <= .05f)
             {
-                updateTimer = 0;
-                UpdateTick();
-
-                if (ValidationTickEnabled)
-                {
-                    ValidationTick?.Invoke();
-                }
+                return;
             }
+
+            updateTimer = 0;
+            UpdateTick();
+            ValidationTick();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateTick()
         {
+#if DEBUG
+            for (var i = 0; i < _activeTickReceiver.Count; i++)
+            {
+                var monitorHandle = _activeTickReceiver[i];
+                try
+                {
+                    monitorHandle.Refresh();
+                }
+                catch (Exception exception)
+                {
+                    Monitor.Logger.Log($"Error when refreshing {monitorHandle}\n(see next log for more information)", LogType.Warning, false);
+                    Monitor.Logger.LogException(exception);
+                    monitorHandle.Enabled = false;
+                }
+            }
+#else
             for (var i = 0; i < _activeTickReceiver.Count; i++)
             {
                 _activeTickReceiver[i].Refresh();
             }
+#endif
         }
 
-        public void AddUpdateTicker(IMonitorUnit unit)
+        private void ValidationTick()
         {
-            _activeTickReceiver.Add(unit);
+            if (!ValidationTickEnabled)
+            {
+                return;
+            }
+#if DEBUG
+            try
+            {
+                for (var i = 0; i < _validationReceiver.Count; i++)
+                {
+                    _validationReceiver[i]();
+                }
+            }
+            catch (Exception exception)
+            {
+                Monitor.Logger.LogException(exception);
+            }
+#else
+            for (var i = 0; i < _validationReceiver.Count; i++)
+            {
+                _validationReceiver[i]();
+            }
+#endif
         }
 
-        public void RemoveUpdateTicker(IMonitorUnit unit)
+        public void AddUpdateTicker(IMonitorHandle handle)
         {
-            _activeTickReceiver.Remove(unit);
+            _activeTickReceiver.Add(handle);
+        }
+
+        public void RemoveUpdateTicker(IMonitorHandle handle)
+        {
+            _activeTickReceiver.Remove(handle);
         }
 
         public void AddValidationTicker(Action tickAction)
         {
-            ValidationTick += tickAction;
+            _validationReceiver.Add(tickAction);
         }
 
         public void RemoveValidationTicker(Action tickAction)
         {
-            ValidationTick -= tickAction;
+            _validationReceiver.Remove(tickAction);
         }
     }
 }

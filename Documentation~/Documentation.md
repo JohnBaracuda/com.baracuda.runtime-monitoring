@@ -93,14 +93,14 @@ public class Player : MonoBehaviour
     {
         MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(this);
 	// Or use this extension method:
-	this.RegisterMonitor();
+	this.StartMonitoring();
     }
 
     private void OnDestroy()
     {
         MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(this);
         // Or use this extension method:
-	this.UnregisterMonitor();
+	thisStopMonitoring();
     }
 }
 
@@ -262,14 +262,14 @@ public class Player : MonoBehaviour
     {
         MonitoringSystems.Resolve<IMonitoringManager>().RegisterTarget(target);
         // Or use this extension method:
-        this.RegisterMonitor();
+        this.StartMonitoring();
     }
 
     private void OnDestroy()
     {
         MonitoringSystems.Resolve<IMonitoringManager>().UnregisterTarget(target);
         // Or use this extension method:
-        this.UnregisterMonitor();
+        thisStopMonitoring();
     }
 }
 ```

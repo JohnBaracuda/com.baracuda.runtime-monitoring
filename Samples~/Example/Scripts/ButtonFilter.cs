@@ -19,22 +19,20 @@ namespace Baracuda.Example.Scripts
             }
         }
         private string _filter;
-        private IMonitoringUI _monitoringUI;
 
         private void Awake()
         {
-            _monitoringUI = MonitoringSystems.Resolve<IMonitoringUI>();
             _filter = GetComponentInChildren<Text>().text;
 
             var button = GetComponent<Button>();
 
             if (isReset)
             {
-                button.onClick.AddListener(() => _monitoringUI.ResetFilter());
+                button.onClick.AddListener(() => Monitor.UI.ResetFilter());
             }
             else
             {
-                button.onClick.AddListener(() => _monitoringUI.ApplyFilter(Filter));
+                button.onClick.AddListener(() => Monitor.UI.ApplyFilter(Filter));
             }
         }
     }

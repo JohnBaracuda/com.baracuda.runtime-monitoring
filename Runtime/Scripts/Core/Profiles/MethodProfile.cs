@@ -1,6 +1,5 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Interfaces;
 using Baracuda.Monitoring.Types;
 using Baracuda.Monitoring.Units;
 using Baracuda.Monitoring.Utilities.Extensions;
@@ -22,15 +21,15 @@ namespace Baracuda.Monitoring.Profiles
             MonitorProfileCtorArgs args) : base(methodInfo, attribute, typeof(TTarget), typeof(TValue),
             MemberType.Method, args)
         {
-            var valueProcessor = MonitoringSystems.Resolve<IValueProcessorFactory>().CreateProcessorForType<TValue>(FormatData);
+            var valueProcessor = Monitor.ProcessorFactory.CreateProcessorForType<TValue>(FormatData);
 
             var parameter = CreateParameterArray(methodInfo, attribute);
             _getValueDelegate = CreateGetDelegate(methodInfo, parameter, valueProcessor, FormatData, args.Settings);
         }
 
-        internal override MonitorUnit CreateUnit(object target)
+        internal override MonitorHandle CreateUnit(object target)
         {
-            return new MethodUnit<TTarget, TValue>((TTarget) target, _getValueDelegate, this);
+            return new MethodHandle<TTarget, TValue>((TTarget) target, _getValueDelegate, this);
         }
 
         //--------------------------------------------------------------------------------------------------------------

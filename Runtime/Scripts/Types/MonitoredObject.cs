@@ -14,14 +14,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         protected MonitoredObject()
         {
-            if (MonitoringSystems.Initialized)
-            {
-                MonitoringSystems.Manager.RegisterTarget(this);
-            }
-            else
-            {
-                MonitoringSystems.__RegisterTarget(this);
-            }
+            Monitor.StartMonitoring(this);
         }
 
         /// <summary>
@@ -29,14 +22,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         public virtual void Dispose()
         {
-            if (MonitoringSystems.Initialized)
-            {
-                MonitoringSystems.Manager.UnregisterTarget(this);
-            }
-            else
-            {
-                MonitoringSystems.__UnregisterTarget(this);
-            }
+            Monitor.StopMonitoring(this);
         }
     }
 }

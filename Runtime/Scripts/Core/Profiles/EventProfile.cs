@@ -32,12 +32,12 @@ namespace Baracuda.Monitoring.Profiles
         private readonly Action<TTarget, Delegate> _remove;
 
         /// <summary>
-        /// Create a new <see cref="EventUnit{TTarget, TValue}"/> based on this profile.
+        /// Create a new <see cref="EventHandle{TTarget,TDelegate}"/> based on this profile.
         /// </summary>
         /// <param name="target">Target object for the unit. Null if it is a static unit.</param>
-        internal override MonitorUnit CreateUnit(object target)
+        internal override MonitorHandle CreateUnit(object target)
         {
-            return new EventUnit<TTarget, TDelegate>((TTarget) target, _formatState, this);
+            return new EventHandle<TTarget, TDelegate>((TTarget) target, _formatState, this);
         }
 
         private EventProfile(EventInfo eventInfo, MonitorAttribute attribute, MonitorProfileCtorArgs args)
