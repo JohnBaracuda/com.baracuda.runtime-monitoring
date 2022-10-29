@@ -42,7 +42,6 @@ namespace Baracuda.Monitoring
 
         #region Obsolete
 
-
         [Obsolete("Use IMonitoringUI.Visible instead! This API will be removed in 4.0.0")]
         [Pure] bool IsVisible();
 

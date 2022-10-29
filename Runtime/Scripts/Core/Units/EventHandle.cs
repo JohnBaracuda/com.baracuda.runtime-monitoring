@@ -8,18 +8,12 @@ namespace Baracuda.Monitoring.Units
 {
     internal class EventHandle<TTarget, TDelegate> : MonitorHandle where TTarget : class where TDelegate : Delegate
     {
-        //--------------------------------------------------------------------------------------------------------------
-
-        #region --- Fields ---
-
         private readonly EventProfile<TTarget, TDelegate>.StateFormatDelegate _stateFormatter;
         private readonly EventProfile<TTarget, TDelegate> _eventProfile;
         private readonly TTarget _target;
 
         private readonly Delegate _eventHandler;
         private int _invokeCounter;
-
-        #endregion
 
         //--------------------------------------------------------------------------------------------------------------
 

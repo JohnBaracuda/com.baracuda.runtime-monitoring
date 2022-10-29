@@ -92,7 +92,7 @@ namespace Baracuda.Monitoring.Systems
                 }
                 catch (Exception exception)
                 {
-                    Monitor.Logger.Log($"Error when refreshing {monitorHandle}\n(see next log for more information)", LogType.Error, false);
+                    Monitor.Logger.Log($"Error when refreshing {monitorHandle}\n(see next log for more information)", LogType.Warning, false);
                     Monitor.Logger.LogException(exception);
                     monitorHandle.Enabled = false;
                 }

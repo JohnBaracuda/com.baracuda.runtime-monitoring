@@ -31,7 +31,7 @@ namespace Baracuda.Monitoring.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Log(string message, LogType logType, bool stackTrace = true)
         {
-            var format = $"{"[Monitoring]".ColorizeString(new Color(1f, 0.67f, 0f))} {message}";
+            var format = $"{"[Monitoring]".ColorizeString(new Color(0.5f, 0.53f, 1f))} {message}";
             var option = stackTrace ? LogOption.None : LogOption.NoStacktrace;
             Debug.LogFormat(logType, option, null, format, Array.Empty<object>());
         }

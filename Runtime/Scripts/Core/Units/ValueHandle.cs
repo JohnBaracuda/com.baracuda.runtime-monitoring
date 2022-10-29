@@ -19,7 +19,7 @@ namespace Baracuda.Monitoring.Units
     {
         #region Fields
 
-        protected readonly StringDelegate CompiledValueProcessor;
+        protected readonly StringDelegate ProcessValue;
 
         private readonly TTarget _target;
         private readonly Func<TTarget, TValue> _getValue;
@@ -48,10 +48,44 @@ namespace Baracuda.Monitoring.Units
             ValueProfile<TTarget, TValue> profile) : base(target, profile)
         {
             _target = target;
+#if DEBUG
+            _getValue = (value) =>
+            {
+                try
+                {
+                    return getValue(value);
+                }
+                catch (Exception exception)
+                {
+                    Monitor.Logger.Log($"Exception when calling {nameof(GetValue)} in {this}\n(see next log for more information)", LogType.Warning, false);
+                    Monitor.Logger.LogException(exception);
+                    Enabled = false;
+                    return default;
+                }
+            };
+
+            if (setValue != null)
+            {
+                _setValue = (targetArg, valueArg) =>
+                {
+                    try
+                    {
+                        setValue(targetArg, valueArg);
+                    }
+                    catch (Exception exception)
+                    {
+                        Monitor.Logger.Log($"Exception when calling {nameof(SetValue)} in {this}\n(see next log for more information)", LogType.Warning, false);
+                        Monitor.Logger.LogException(exception);
+                        Enabled = false;
+                    }
+                };
+            }
+#else
             _getValue = getValue;
             _setValue = setValue;
+#endif
 
-            CompiledValueProcessor = CompileValueProcessor(valueProcessor);
+            ProcessValue = CompileValueProcessor(valueProcessor);
 
             _checkIsDirty = profile.IsDirtyFunc;
 
@@ -140,18 +174,7 @@ namespace Baracuda.Monitoring.Units
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string GetState()
         {
-#if DEBUG
-            try
-            {
-                return CompiledValueProcessor();
-            }
-            catch (Exception exception)
-            {
-                return exception.Message;
-            }
-#else
-            return CompiledValueProcessor();
-#endif
+            return ProcessValue();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

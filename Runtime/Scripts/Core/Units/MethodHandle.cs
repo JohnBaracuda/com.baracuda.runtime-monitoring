@@ -12,9 +12,8 @@ namespace Baracuda.Monitoring.Units
     {
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Fields ---
+        #region Fields
 
-        private readonly MethodProfile<TTarget, TValue> _methodProfile;
         private readonly TTarget _target;
         private readonly Func<TTarget, MethodResult<TValue>> _getValue;
 
@@ -24,7 +23,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Ctor ---
+        #region Ctor
 
         public MethodHandle(
             TTarget target,
@@ -32,8 +31,24 @@ namespace Baracuda.Monitoring.Units
             MethodProfile<TTarget, TValue> profile) : base(target, profile)
         {
             _target = target;
-            _methodProfile = profile;
+#if DEBUG
+            _getValue = (value) =>
+            {
+                try
+                {
+                    return getValue(value);
+                }
+                catch (Exception exception)
+                {
+                    Monitor.Logger.Log($"Exception when calling {nameof(GetValue)} in {this}\n(see next log for more information)", LogType.Warning, false);
+                    Monitor.Logger.LogException(exception);
+                    Enabled = false;
+                    return default;
+                }
+            };
+#else
             _getValue = getValue;
+#endif
 
             if (profile.CustomUpdateEventAvailable)
             {
@@ -50,7 +65,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Update ---
+        #region Update
 
         public override void Refresh()
         {
@@ -62,7 +77,7 @@ namespace Baracuda.Monitoring.Units
 
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- Get ---
+        #region Get
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string GetState()
