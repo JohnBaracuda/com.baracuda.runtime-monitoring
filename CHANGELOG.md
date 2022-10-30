@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added a filtering editor window: (menu: Tools > Runtime Monitoring > Filter Window)
 - Added Documentation in multiple file formats to samples.
+- MonitoringMetaAttributes can now be applied to interfaces.
 
 ### Changed
 - Settings are now accessed via: (menu: Tools > Runtime Monitoring > Settings)
