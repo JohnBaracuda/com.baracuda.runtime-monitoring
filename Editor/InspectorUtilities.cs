@@ -8,17 +8,9 @@ namespace Baracuda.Monitoring.Editor
 {
     internal static class InspectorUtilities
     {
-        private static string Copyright { get; } = "© 2022 Jonathan Lang";
-        private static string Documentation { get; } = "https://johnbaracuda.com/monitoring.html";
-        private static string Repository { get; } = "https://github.com/johnbaracuda/com.baracuda.runtime-monitoring";
-        private static string Website { get; } = "https://johnbaracuda.com/";
-
-        internal static GUIStyle RichTextStyle()
-        {
-            var style = GUI.skin.GetStyle("Label");
-            style.richText = true;
-            return style;
-        }
+        private const string Copyright = "© 2022 Jonathan Lang";
+        private const string Repository = "https://github.com/johnbaracuda/com.baracuda.runtime-monitoring";
+        private const string Website = "https://johnbaracuda.com/";
 
         internal static void DrawLine(bool spaceBefore = true)
         {
@@ -39,15 +31,6 @@ namespace Baracuda.Monitoring.Editor
 
         public static void DrawWeblinksWithLabel()
         {
-            // Documentation
-            GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Documentation", GUILayout.Width(EditorGUIUtility.labelWidth));
-            if (GUILayout.Button(Documentation))
-            {
-                Application.OpenURL(Documentation);
-            }
-            GUILayout.EndHorizontal();
-
             // Repository
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Repository", GUILayout.Width(EditorGUIUtility.labelWidth));

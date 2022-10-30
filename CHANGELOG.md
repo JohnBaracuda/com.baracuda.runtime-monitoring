@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
 - Thread-Dispatcher will be removed as a dependency in a future release.
 
+
+## [3.4.0] - 2022-10-30
+
+### Added
+- Added a filtering editor window: (menu: Tools > Runtime Monitoring > Filter Window)
+- Added Documentation in multiple file formats to samples.
+
+### Changed
+- Settings are now accessed via: (menu: Tools > Runtime Monitoring > Settings)
+- Changed multiple property types in IMonitoringRegistry from returning an IReadOnlyCollection to returning an IReadOnlyList.
+
+
 ## [3.3.0] - 2022-10-29
 
 ### Known Issues

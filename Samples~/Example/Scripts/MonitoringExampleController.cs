@@ -38,12 +38,12 @@ namespace Baracuda.Example.Scripts
 
             foreach (var customTag in Monitor.Registry.UsedTags)
             {
-                Instantiate(buttonPrefab, tagButtonContainer).Filter = $"{monitoringSettings.FilterTagsSymbol}{customTag}";
+                Instantiate(buttonPrefab, tagButtonContainer).Filter = $"{monitoringSettings.FilterTagsSymbol.ToString()}{customTag}";
             }
 
-            foreach (var typeString in Monitor.Registry.UsedTypes)
+            foreach (var typeString in Monitor.Registry.UsedTypeNames)
             {
-                Instantiate(buttonPrefab, typeStringButtonContainer).Filter = typeString.Name;
+                Instantiate(buttonPrefab, typeStringButtonContainer).Filter = typeString;
             }
         }
 

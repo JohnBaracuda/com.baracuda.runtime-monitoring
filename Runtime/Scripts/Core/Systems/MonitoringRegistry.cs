@@ -21,9 +21,10 @@ namespace Baracuda.Monitoring
         private Dictionary<Type, List<MonitorProfile>> _instanceMonitorProfiles;
         private List<MonitorProfile> _staticProfiles;
 
-        private readonly HashSet<string> _usedTags = new HashSet<string>();
-        private readonly HashSet<string> _usedFonts = new HashSet<string>();
-        private readonly HashSet<Type> _usedTypes = new HashSet<Type>();
+        private readonly List<string> _usedTags = new List<string>();
+        private readonly List<string> _usedFonts = new List<string>();
+        private readonly List<string> _usedTypeNames = new List<string>();
+        private readonly List<Type> _usedTypes = new List<Type>();
 
         private readonly List<MonitorHandle> _staticMonitorHandles = new List<MonitorHandle>(128);
         private readonly List<MonitorHandle> _instanceMonitorHandles = new List<MonitorHandle>(128);
@@ -86,9 +87,10 @@ namespace Baracuda.Monitoring
             return returnValue;
         }
 
-        public IReadOnlyCollection<string> UsedTags => _usedTags;
-        public IReadOnlyCollection<string> UsedFonts => _usedFonts;
-        public IReadOnlyCollection<Type> UsedTypes => _usedTypes;
+        public IReadOnlyList<string> UsedTags => _usedTags;
+        public IReadOnlyList<string> UsedFonts => _usedFonts;
+        public IReadOnlyList<Type> UsedTypes => _usedTypes;
+        public IReadOnlyList<string> UsedTypeNames => _usedTypeNames;
 
         #endregion
 
@@ -96,17 +98,18 @@ namespace Baracuda.Monitoring
 
         internal void AddUsedTag(string tag)
         {
-            _usedTags.Add(tag);
+            _usedTags.AddUnique(tag);
         }
 
         internal void AddUsedFont(string font)
         {
-            _usedFonts.Add(font);
+            _usedFonts.AddUnique(font);
         }
 
         internal void AddUsedType(Type type)
         {
-            _usedTypes.Add(type);
+            _usedTypes.AddUnique(type);
+            _usedTypeNames.AddUnique(type.HumanizedName());
         }
 
 
