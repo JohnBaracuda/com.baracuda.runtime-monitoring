@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// Set a elements order in its UI group.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MOrderAttribute : MonitoringMetaAttribute
     {
         /// <summary>

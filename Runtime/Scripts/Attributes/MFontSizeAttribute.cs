@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// Set the fontsize for the UI.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MFontSizeAttribute : MonitoringMetaAttribute
     {
         /// <summary>

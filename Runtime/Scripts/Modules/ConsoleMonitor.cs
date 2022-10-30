@@ -11,7 +11,9 @@ namespace Baracuda.Monitoring.Modules
     /// <summary>
     /// Custom class showcasing how the monitoring system can be used to create a simple console log display.
     /// </summary>
+#if MONITORING_EXAMPLES
     [MTag("Console")]
+#endif
     public class ConsoleMonitor : MonitorModuleBase
     {
         #region Static

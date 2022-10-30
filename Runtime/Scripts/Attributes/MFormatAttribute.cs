@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// Custom format string used to display the members value if possible.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MFormatAttribute : MonitoringMetaAttribute
     {
         /// <summary>

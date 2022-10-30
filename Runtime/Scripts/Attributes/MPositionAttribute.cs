@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// The preferred position of an individual UIElement on the canvas.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MPositionAttribute : MonitoringMetaAttribute
     {
         /// <summary>

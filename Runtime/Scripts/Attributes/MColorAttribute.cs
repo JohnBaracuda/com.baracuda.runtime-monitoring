@@ -10,7 +10,7 @@ namespace Baracuda.Monitoring
     /// Base type for attributes to set custom color values.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
+    [AttributeUsage(Targets, AllowMultiple = true)]
     public abstract class MColorAttribute : MonitoringMetaAttribute
     {
         /// <summary>
