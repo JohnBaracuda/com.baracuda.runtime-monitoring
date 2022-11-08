@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Documentation.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="runtime-monitoring">Runtime Monitoring</h1>
+<p>Runtime Monitoring is an easy way to monitor the value or state of C# members during runtime. Just add the <code>[Monitor]</code> attribute to a field, property, event or method and get its value or state displayed automatically in a customizable and extendable UI.</p>
+<p><a href="https://openupm.com/packages/com.baracuda.runtime-monitoring/"><img src="https://img.shields.io/npm/v/com.baracuda.runtime-monitoring?label=openupm&amp;registry_uri=https://package.openupm.com" alt="openupm"></a>
+<img src="https://img.shields.io/github/v/release/johnBaracuda/com.baracuda.runtime-monitoring?sort=semver" alt="Release">
+<img src="https://img.shields.io/github/last-commit/johnBaracuda/com.baracuda.runtime-monitoring" alt="Last Commit"></p>
+<h4 id="%E2%9A%A0%EF%B8%8F-attention">⚠️ Attention!</h4>
+<blockquote>
+<p>Runtime Monitoring is developed by me in my spare time, which means I can only do limited QA.
+If you have any questions, feature requests or encounter any issues, feel free to contact me directly and/or open an Issue on GitHub.
+Please keep in mind that I am developing this tool by myself and that any additional information will help me a lot,
+especially when reporting a bug.</p>
+</blockquote>
+<p> </p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#getting-started">Basics</a>
+<ul>
+<li><a href="#installation-and-updates">Installation &amp; Updates</a></li>
+<li><a href="#getting-started">Getting Started</a></li>
+<li><a href="#customized-setup">Customized Setup</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#technical-information">Technical Information</a></li>
+<li><a href="#features">Feature List</a></li>
+</ul>
+</li>
+<li><a href="#monitoring-member">Monitoring Member</a>
+<ul>
+<li><a href="#instanced-and-static-member">Instanced &amp; Static Member</a></li>
+<li><a href="#monitoring-fields-and-properties">Monitoring Fields &amp; Properties</a></li>
+<li><a href="#monitoring-events">Monitoring Events</a></li>
+<li><a href="#monitoring-methods">Monitoring Methods</a></li>
+</ul>
+</li>
+<li><a href="#attributes">Attributes</a>
+<ul>
+<li><a href="#value-processor">Value Processor</a></li>
+<li><a href="#global-value-processor">Value Processor (Global)</a></li>
+<li><a href="#conditional-display">Conditional Display</a></li>
+<li><a href="#update-event">Update Event</a></li>
+</ul>
+</li>
+<li><a href="#monitoring-ui">Monitoring UI</a>
+<ul>
+<li><a href="#ui-formatting">UI Formatting</a></li>
+<li><a href="#ui-filtering">UI Filtering</a></li>
+</ul>
+</li>
+<li><a href="#systems-and-api">Systems and API</a>
+<ul>
+<li><a href="#monitoring-ui-api">Monitoring UI</a></li>
+<li><a href="#monitoring-events">Monitoring Events</a></li>
+<li><a href="#monitoring-registry">Monitoring Registry</a></li>
+<li><a href="#monitoring-settings">Monitoring Settings</a></li>
+</ul>
+</li>
+<li><a href="#optimizations">Optimizations</a></li>
+<li><a href="#frequently-asked-questions">FAQ</a></li>
+<li><a href="#support-me">Support Me ❤</a></li>
+</ul>
+<p> </p>
+<h2 id="installation-and-updates">Installation and Updates</h2>
+<h4 id="%E2%9A%A0%EF%B8%8F-important-for-version-updates">⚠️ Important for version updates!</h4>
+<blockquote>
+<p>Don't forget to remove the old version from the project before importing the new one when updating Runtime Monitoring! This is especially important when updating to version 3.0.0.</p>
+</blockquote>
+<h3 id="option-1-install-via-open-upm-recommended-openupm">Option 1. <strong>Install via Open UPM (recommended)</strong> <a href="https://openupm.com/packages/com.baracuda.runtime-monitoring/"><img src="https://img.shields.io/npm/v/com.baracuda.runtime-monitoring?label=openupm&amp;registry_uri=https://package.openupm.com" alt="openupm"></a></h3>
+<ul>
+<li>open <kbd>Edit/Project Settings/Package Manager</kbd></li>
+<li>add a new Scoped Registry:</li>
+</ul>
+<pre><code>• Name: OpenUPM
+• URL:  https://package.openupm.com
+• Scope(s): com.baracuda
+</code></pre>
+<ul>
+<li>click <kbd>Save</kbd></li>
+<li>open <kbd>Window/Package Manager</kbd></li>
+<li>click <kbd>+</kbd></li>
+<li>click <kbd>Add package by name...</kbd></li>
+<li>paste and <kbd>Add</kbd>  <code>com.baracuda.runtime-monitoring</code></li>
+<li>this will automatically install <code>com.baracuda.thread-dispatcher</code> as a dependecy</li>
+<li>take a look at <a href="#customized-setup">Setup</a> to see what comes next</li>
+</ul>
+<h4 id="option-2-install-via-git-url">Option 2. Install via Git URL</h4>
+<ul>
+<li>open <kbd>Window/Package Manager</kbd></li>
+<li>click <kbd>+</kbd></li>
+<li>click <kbd>Add package from git URL</kbd></li>
+<li>paste and <kbd>Add</kbd> <code>https://github.com/JohnBaracuda/com.baracuda.thread-dispatcher.git</code> (dependency)</li>
+<li>paste and <kbd>Add</kbd> <code>https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring.git</code></li>
+<li>take a look at <a href="#customized-setup">Setup</a> to see what comes next</li>
+</ul>
+<h4 id="option-3-get-runtime-monitoring-from-the-asset-store">Option 3. Get Runtime Monitoring from the <a href="https://u3d.as/2QxJ">Asset Store</a></h4>
+<h4 id="option-4-download-a-kbdunitypackagekbd-from-releases">Option 4. Download a <kbd>.unitypackage</kbd> from <a href="https://github.com/JohnBaracuda/com.baracuda.runtime-monitoring/releases">Releases</a></h4>
+<p> </p>
+<blockquote>
+<p>If you like runtime monitoring, consider leaving a good review on the Asset Store regardless of which installation method you chose.</p>
+</blockquote>
+<p> </p>
+<p><a href="https://www.youtube.com/watch?v=Ir4KPjykYUM"><img src="https://johnBaracuda.com/media/img/monitoring/Thumbnail.png" alt="YouTube Preview"></a></p>
+<p> </p>
+<h1 id="getting-started">Getting Started</h1>
+<pre class="hljs"><code><div><span class="hljs-keyword">using</span> Baracuda.Monitoring;
+
+<span class="hljs-comment">// Monitor any field, property, event or method during runtime!</span>
+
+[<span class="hljs-meta">Monitor</span>]
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> healthPoints;
+
+[<span class="hljs-meta">Monitor</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> HealthPoints { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>; }
+
+[<span class="hljs-meta">Monitor</span>]
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">GetHealthPoints</span>(<span class="hljs-params"></span>)</span> =&gt; healthPoints;
+
+[<span class="hljs-meta">Monitor</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">event</span> Action OnHealthChanged;
+
+</div></code></pre>
+<blockquote>
+<p>⚠️ When monitoring instance (non static) member, objects of these classes must be registered when they are created and unregistered when they are destroyed. <a href="#instanced-and-static-member">Learn More</a></p>
+</blockquote>
+<pre class="hljs"><code><div>
+<span class="hljs-comment">// Register &amp; unregister objects with members you want to monitor.</span>
+<span class="hljs-comment">// This process can be simplified / automated (Take a look at Monitoring Objects)</span>
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Player</span> : <span class="hljs-title">MonoBehaviour</span>
+{
+    [<span class="hljs-meta">Monitor</span>]
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> healthPoints;
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Awake</span>(<span class="hljs-params"></span>)</span>
+    {
+        Monitor.StartMonitoring(<span class="hljs-keyword">this</span>);
+        <span class="hljs-comment">// Or use this extension method:</span>
+        <span class="hljs-keyword">this</span>.StartMonitoring();
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnDestroy</span>(<span class="hljs-params"></span>)</span>
+    {
+            
+        Monitor.StopMonitoring(<span class="hljs-keyword">this</span>);
+        <span class="hljs-comment">// Or use this extension method:</span>
+        <span class="hljs-keyword">this</span>.StopMonitoring();
+    }
+}
+
+</div></code></pre>
+<pre class="hljs"><code><div>
+<span class="hljs-comment">// Monitor static member as well as instance member</span>
+
+[<span class="hljs-meta">Monitor</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">string</span> playerName;
+
+[<span class="hljs-meta">Monitor</span>]
+<span class="hljs-keyword">protected</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">bool</span> IsPlayerAlive { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+[<span class="hljs-meta">Monitor</span>]
+<span class="hljs-keyword">internal</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">event</span> Action&lt;<span class="hljs-keyword">int</span>&gt; OnScoreChanged;
+
+
+<span class="hljs-comment">// Use conditions to determine if a member is displayed or not.</span>
+
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MShowIf(Condition.CollectionNotEmpty)</span>]
+<span class="hljs-keyword">private</span> Stack&lt;<span class="hljs-keyword">string</span>&gt; errorMessages { <span class="hljs-keyword">get</span>; }
+
+
+<span class="hljs-comment">// Reduce update overhead by providing an update event.</span>
+
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MUpdateEvent(nameof(OnPlayerSpawn))</span>]
+<span class="hljs-keyword">public</span> Vector3 LastSpawnPosition { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">event</span> Action&lt;Vector3&gt; OnPlayerSpawn;
+
+
+<span class="hljs-comment">// Use processor methods to customize how the value is displayed.</span>
+
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MValueProcessor(nameof(IsAliveProcessor))</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> IsAlive { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>; }
+
+<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">string</span> <span class="hljs-title">IsAliveProcessor</span>(<span class="hljs-params"><span class="hljs-keyword">bool</span> <span class="hljs-keyword">value</span></span>)</span> =&gt; <span class="hljs-keyword">value</span>? <span class="hljs-string">"Alive"</span> : <span class="hljs-string">"Dead"</span>;
+
+
+<span class="hljs-comment">// Monitor out parameter value.</span>
+
+[<span class="hljs-meta">MonitorMethod</span>]
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">TryGetPlayer</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> playerId, <span class="hljs-keyword">out</span> <span class="hljs-keyword">var</span> player</span>)</span>
+{
+    <span class="hljs-comment">// ...</span>
+}
+</div></code></pre>
+<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_runtime_01.png" alt="basic example"></p>
+<p> </p>
+<h2 id="customized-setup">Customized Setup</h2>
+<blockquote>
+<p>Note that since version 3.0.0, Runtime Monitoring is a UPM package and therefore immutable. Use the samples section in the package manager window to import UI resorces for IMGUI, TextMeshPro and UIToolkit. Parts of this documentation will be updated soon.</p>
+</blockquote>
+<p>Download and import Runtime Monitoring. To setup a different UI Controller (IMGUI, TMP or UIToolkit) follow these optional steps:</p>
+<ul>
+<li>Open the settings by navigating to (menu: Tools &gt; Runtime Monitoring &gt; Settings).</li>
+<li>Depending on the Unity version and your preferences, import and optional UIController package.</li>
+<li>Set the prefab as the active UI Controller.</li>
+<li>The inspector of the set UI Controller object will be inlined and can be edited from the settings window.</li>
+</ul>
+<blockquote>
+<p>If you drag and drop a UIController asset into your scene, this controller will be used instead.
+ </p>
+</blockquote>
+<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_06.png" alt="basic example"></p>
+<p> </p>
+<h2 id="license">License</h2>
+<p><a href="https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE">MIT</a> You can use this tool for anything you want, including commercial products, as long as you're not just selling my work or using it for some other morally questionable or condemnable act.</p>
+<p> </p>
+<h2 id="technical-information">Technical Information</h2>
+<ul>
+<li>Unity Version: <b>2019.4</b> (for UIToolkit <b>2020.1</b>) <br/></li>
+<li>Scripting Backend: <b>Mono &amp; IL2CPP</b></li>
+<li>API Compatibility: <b>.NET Standard 2.0 or .NET 4.x</b></li>
+<li>Asset Version: <a href="https://openupm.com/packages/com.baracuda.runtime-monitoring/"><img src="https://img.shields.io/npm/v/com.baracuda.runtime-monitoring?label=openupm&amp;registry_uri=https://package.openupm.com" alt="openupm"></a> <img src="https://img.shields.io/github/v/release/johnBaracuda/com.baracuda.runtime-monitoring?sort=semver" alt="Release"></li>
+</ul>
+<p> </p>
+<h2 id="features">Features</h2>
+<ul>
+<li>Monitor the value of a Field.</li>
+<li>Monitor the return value of a Property.</li>
+<li>Monitor the state of an Event.</li>
+<li>Monitor the return value &amp; out parameter of a Method.</li>
+<li>Monitor static and instance member.</li>
+<li>Display Collections in a readable way.</li>
+<li>Chose one of three available UI solution presets from samples.</li>
+<li>IMGUI support (default).</li>
+<li>TextMeshPro based uGUI support.</li>
+<li>UIToolkit support.</li>
+<li>Detached UI Interface for custom UI solutions.</li>
+<li>Apply filter to displayed units.</li>
+<li>Custom control of how monitored members are displayed.</li>
+<li>Works both asynchronous and synchronous (WebGL supported).</li>
+<li>Mono &amp; IL2CPP support.</li>
+<li>Drag &amp; drop example modules. (FPSMonitor, ConsoleMonitor etc.)</li>
+<li>Draw conditions. (only show value if true, not null etc.)</li>
+</ul>
+<p> </p>
+<h1 id="monitoring-member">Monitoring Member</h1>
+<p>Place the <code>[Monitor]</code> attribute an a field, property, event or method and get its value or state monitored in a customizable UI during runtime. When monitoring non static (instances), you have to register the monitored target, as shown in the next point. Other than that there is not much to it. Just try it out yourself.</p>
+<p> 
+<img src="https://johnbaracuda.com/media/img/monitoring/Example_member_01.png" alt="example"></p>
+<blockquote>
+<p>Note that the PlayerMovement class in this example is calling <code>this.RegisterMonitor()</code> in its Awake and <code>this.UnregisterMonitor</code> in its OnDestory method.</p>
+</blockquote>
+<p> </p>
+<h2 id="instanced-and-static-member">Instanced and Static Member</h2>
+<p>When monitoring non static member of a class, instances of these classes must be registered when they are created and unregistered when they are destroyed. This process can be automated or simplified, either by creating a custom Factory system that will create/instantiate objects and register them automatically, or by inheriting from a base type that will automatically register and unregister instances. You can use the following predefined base types for this purpose.</p>
+<ul>
+<li><code>MonitoredBehaviour : MonoBehaviour</code></li>
+<li><code>MonitoredSingleton&lt;T&gt; : MonoBehaviour where T : MonoBehaviour</code></li>
+<li><code>MonitoredScriptableObject : ScriptableObject</code></li>
+<li><code>MonitoredObject : object, IDisposable</code></li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-keyword">using</span> Baracuda.Monitoring;
+
+<span class="hljs-comment">// Monitored instance must be registered / unregistered.</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Player</span> : <span class="hljs-title">MonoBehaviour</span>
+{
+    [<span class="hljs-meta">Monitor</span>] <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> health;
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Awake</span>(<span class="hljs-params"></span>)</span>
+    {
+        Monitor.StartMonitoring(target);
+        <span class="hljs-comment">// Or use this extension method:</span>
+        <span class="hljs-keyword">this</span>.StartMonitoring();
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnDestroy</span>(<span class="hljs-params"></span>)</span>
+    {
+        Monitor.StopMonitoring(target);
+        <span class="hljs-comment">// Or use this extension method:</span>
+        <span class="hljs-keyword">this</span>.StopMonitoring();
+    }
+}
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment">// Simplified by inheriting from MonitoredBehaviour.</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Player</span> : <span class="hljs-title">MonitoredBehaviour</span>
+{
+    [<span class="hljs-meta">Monitor</span>] <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> health;
+    
+    <span class="hljs-comment">// Remember to call base.Awake and base.OnDestroy.</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Awake</span>(<span class="hljs-params"></span>)</span>
+    {
+        <span class="hljs-keyword">base</span>.Awake();
+    }
+    
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnDestroy</span>(<span class="hljs-params"></span>)</span>
+    {
+        <span class="hljs-keyword">base</span>.OnDestroy();
+    }
+}
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-keyword">using</span> Baracuda.Monitoring;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GameManager</span>
+{
+    <span class="hljs-comment">// Static member are always monitored!</span>
+    [<span class="hljs-meta">Monitor</span>]
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> GameState GameState { <span class="hljs-keyword">get</span>; }
+}
+</div></code></pre>
+<p> </p>
+<h2 id="monitoring-fields-and-properties">Monitoring Fields and Properties</h2>
+<p>Monitoring fields and properties is almost identical, differing only in their technical implementations. Just place the Monitor, MonitorField or MonitorProperty on either a field or a property and get its value displayed <a href="#instanced-and-static-member">automatically</a> .  Multiple types like Booleans, Collections, Vectors etc. are also displayed in a readable way. To customize how a monitored value is displayed you can use a <a href="#value-processor">Value Processor</a> and utilize a variety of additional  <a href="#ui-formatting">formatting</a> attributes.</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">using</span> Baracuda.Monitoring;
+
+[<span class="hljs-meta">MonitorField</span>] 
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> <span class="hljs-keyword">value</span>;
+
+[<span class="hljs-meta">MonitorProperty</span>] 
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> Value { <span class="hljs-keyword">get</span>; }
+</div></code></pre>
+<p> </p>
+<h2 id="monitoring-events">Monitoring Events</h2>
+<p>Use the <code>[Monitor]</code> or <code>[MonitorEvent]</code> attributes to monitor the state of an event. The <code>[MonitorEvent]</code> attribute accepts additional arguments to customize how the event is displayed.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Property</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>ShowSubscriberCount</code></td>
+<td style="text-align:left">When enabled, the subscriber count of the event is displayed.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ShowInvokeCounter</code></td>
+<td style="text-align:left">When enabled, the invoke count of the event is displayed. (Can be incorrect when async profiling is enabled!)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ShowSubscriberInfo</code></td>
+<td style="text-align:left">When enabled, every subscribed delegate is displayed.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ShowEventSignature</code></td>
+<td style="text-align:left">When enabled, display the signature of the event.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ShowEventHistory</code></td>
+<td style="text-align:left">When enabled, the arguments of the last x amount of invocations is displayed. (Planned feature)</td>
+</tr>
+</tbody>
+</table>
+<pre class="hljs"><code><div>[<span class="hljs-meta">Monitor</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">event</span> Action OnGameStarted;
+
+[<span class="hljs-meta">Monitor</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">event</span> Action&lt;T&gt; OnValueChanged;
+
+[<span class="hljs-meta">Monitor</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">event</span> GameStateDelegate OnGameStateChanged;
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">delegate</span> <span class="hljs-keyword">void</span> <span class="hljs-title">GameStateDelegate</span>(<span class="hljs-params">GameState gameState</span>)</span>;
+
+
+<span class="hljs-comment">// If you want to monitor how ofter an event is invoked without displaying every subscriber.</span>
+[<span class="hljs-meta">MonitorEvent(ShowInvokeCounter = true, ShowSubscriberInfo = false)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">event</span> Action&lt;Player&gt; OnPlayerSpawn;
+</div></code></pre>
+<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_event_03.png" alt="example"></p>
+<p> </p>
+<h2 id="monitoring-methods">Monitoring Methods</h2>
+<p>A method can be monitored like a field or property with the additional feature that their out parameters are monitored too. Default parameter values can be set by passing them to the constructor of the <code>[MonitorMethod]</code> attribute. Even methods that return void can be monitored if they have at least one out parameter. Default and <a href="#global-value-processor">Global Value Processor</a> are applied to monitored out parameters, meaning that collections, vectors etc. assigned via out parameter are displayed in a readable way and not just formatted with ToString().</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">using</span> Baracuda.Monitoring;
+
+[<span class="hljs-meta">Monitor</span>]
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> <span class="hljs-title">GetName</span>(<span class="hljs-params"></span>)</span>
+{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">"Hello World"</span>;
+}
+
+[<span class="hljs-meta">MonitorMethod(3, 5)</span>]
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">Multiply</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> lhs, <span class="hljs-keyword">int</span> rhs</span>)</span>
+{
+    <span class="hljs-comment">// Displayed value will be 15;</span>
+    <span class="hljs-keyword">return</span> lhs * rhs;
+}
+
+[<span class="hljs-meta">MonitorMethod</span>]
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">TryGetPlayer</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> playerIndex, <span class="hljs-keyword">out</span> Player player</span>)</span>
+{
+    <span class="hljs-comment">// Method will be called and both the return value and the out parameter player are monitored.</span>
+    <span class="hljs-comment">//...</span>
+}
+
+[<span class="hljs-meta">MonitorMethod</span>]
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Populate</span>(<span class="hljs-params"><span class="hljs-keyword">out</span> Vector3[] verts</span>)</span>
+{
+    <span class="hljs-comment">// verts will be displayed in a readable way.</span>
+    <span class="hljs-comment">//...</span>
+}
+</div></code></pre>
+<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_method_01.png" alt="example"></p>
+<blockquote>
+<p>This example additionally shows that out parameters are formatted too.</p>
+</blockquote>
+<p> </p>
+<h1 id="attributes">Attributes</h1>
+<p>Use Attributes to customize the monitoring process &amp; display of your member. The attributes provided are divided into three broad categories, first the &quot;Monitoring Attributes&quot; to determine which C# member to monitor, second the &quot;Meta Attributes&quot; to customize how a member is monitored and third other attributes used for various purposes.</p>
+<h3 id="monitoring-attributes">Monitoring Attributes</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Attribute</th>
+<th style="text-align:left">Base Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>[Monitor]</code></td>
+<td style="text-align:left">Attribute</td>
+<td style="text-align:left">Monitor a field, property, event or method</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MonitorValue]</code></td>
+<td style="text-align:left">MonitorAttribute</td>
+<td style="text-align:left">Monitor a field or property</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MonitorProperty]</code></td>
+<td style="text-align:left">MonitorValueAttribute</td>
+<td style="text-align:left">Monitor a property</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MonitorField]</code></td>
+<td style="text-align:left">MonitorValueAttribute</td>
+<td style="text-align:left">Monitor a field</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MonitorEvent]</code></td>
+<td style="text-align:left">MonitorAttribute</td>
+<td style="text-align:left">Monitor an event</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MonitorMethod]</code></td>
+<td style="text-align:left">MonitorAttribute</td>
+<td style="text-align:left">Monitor a method</td>
+</tr>
+</tbody>
+</table>
+<h3 id="meta-attributes">Meta Attributes</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Attribute</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>[MUpdateEvent]</code></td>
+<td style="text-align:left">Set an event that will trigger an refresh/update (<a href="#update-event">more</a>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MValueProcessor]</code></td>
+<td style="text-align:left">Set a method that will process the value before it is displayed as a string (<a href="#value-processor">more</a>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MShowIf]</code></td>
+<td style="text-align:left">Set custom validation logic  (<a href="#conditional-display">more</a>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MEnabled]</code></td>
+<td style="text-align:left">Set the default enabled state of the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MTag]</code></td>
+<td style="text-align:left">Set optional tags used for filtering</td>
+</tr>
+</tbody>
+</table>
+<h3 id="meta-attributes-formatting">Meta Attributes (<a href="#ui-formatting">Formatting</a>)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Attribute</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>[MOptions]</code></td>
+<td style="text-align:left">Contains (almost) all of the options below.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MFormat]</code></td>
+<td style="text-align:left">Custom format string used to display the members value if possible.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MLabel]</code></td>
+<td style="text-align:left">Custom label for the member (otherwise humanized name).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MFontSize]</code></td>
+<td style="text-align:left">Set the font size for the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MFontName]</code></td>
+<td style="text-align:left">Pass the name of a custom font style that will be used for the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MGroupName]</code></td>
+<td style="text-align:left">Set the group for the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MGroupElement]</code></td>
+<td style="text-align:left">Whether or not the monitored member should be wrapped in a group.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MShowIndex]</code></td>
+<td style="text-align:left">If the monitored member is a collection, determine if the index of individual elements should be displayed or not.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MElementIndent]</code></td>
+<td style="text-align:left">The indent of individual elements of a displayed collection.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MPosition]</code></td>
+<td style="text-align:left">The preferred position of an individual monitored member on the canvas.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MTextAlign]</code></td>
+<td style="text-align:left">Horizontal text align.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MOrder]</code></td>
+<td style="text-align:left">Relative vertical order of the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MGroupOrder]</code></td>
+<td style="text-align:left">Relative vertical order of the group of the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MRichText]</code></td>
+<td style="text-align:left">Override local RichText settings.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MTextColor]</code></td>
+<td style="text-align:left">Set the text color for the element.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MBackgroundColor]</code></td>
+<td style="text-align:left">Set the background color for the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MGroupColor]</code></td>
+<td style="text-align:left">Set the background color for the group of the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MStyle]</code></td>
+<td style="text-align:left">UIToolkit only. Provide optional style names.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="other-attributes">Other Attributes</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Attribute</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>[GlobalValueProcessor]</code></td>
+<td style="text-align:left">Declare a method as a global value processor for a specific type (<a href="#value-processor">more</a>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[DisableMonitoring]</code></td>
+<td style="text-align:left">Disable monitoring for the target class or assembly</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<h2 id="value-processor">Value Processor</h2>
+<p>You can add the MValueProcessorAttribute to a monitored field, porperty or method to gain more control of its string representation. Use the attribute to pass the name of a method that will be used to parse the current value to a string. The value processor method must accept a value of the monitored members type, can be both static and non static (when monitoring a non non static member) and must return a string.</p>
+<pre class="hljs"><code><div>[<span class="hljs-meta">MValueProcessor(nameof(IsAliveProcessor))</span>]
+[<span class="hljs-meta">Monitor</span>] 
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">bool</span> isAlive;
+
+<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">string</span> <span class="hljs-title">IsAliveProcessor</span>(<span class="hljs-params"><span class="hljs-keyword">bool</span> isAliveValue</span>)</span>
+{
+    <span class="hljs-keyword">return</span> isAliveValue ? <span class="hljs-string">"Player is Alive"</span> : <span class="hljs-string">"Player is Dead!"</span>;
+}
+</div></code></pre>
+<pre class="hljs"><code><div>[<span class="hljs-meta">MValueProcessor(nameof(IListProcessor))</span>] 
+[<span class="hljs-meta">Monitor</span>] <span class="hljs-keyword">private</span> IList&lt;<span class="hljs-keyword">string</span>&gt; names = <span class="hljs-keyword">new</span> <span class="hljs-keyword">string</span>[] {<span class="hljs-string">"Gordon"</span>, <span class="hljs-string">"Alyx"</span>, <span class="hljs-string">"Barney"</span>};
+
+<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">string</span> <span class="hljs-title">IListProcessor</span>(<span class="hljs-params">IList&lt;<span class="hljs-keyword">string</span>&gt; elements</span>)</span>
+{
+    <span class="hljs-keyword">var</span> str = <span class="hljs-keyword">string</span>.Empty;
+    <span class="hljs-keyword">foreach</span> (<span class="hljs-keyword">var</span> name <span class="hljs-keyword">in</span> elements)
+    {
+        str += name;
+        str += <span class="hljs-string">"\n"</span>;
+    }
+    <span class="hljs-keyword">return</span> str;
+}
+</div></code></pre>
+<p> </p>
+<blockquote>
+<p>This example demonstrates how to create a simple progress bar with the help of a value processor. Note that this code is already relatively optimized.</p>
+</blockquote>
+<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_valueprocessor_01.png" alt="example"></p>
+<p> </p>
+<h3 id="static-value-processor">Static Value Processor</h3>
+<p>Static processor methods can have certain overloads for objects that implement generic collection interfaces, which allow you to process the value of individual elements of the collection instead of the whole collection all at once.</p>
+<pre class="hljs"><code><div><span class="hljs-comment">//IList&lt;T&gt; ValueProcessor</span>
+[<span class="hljs-meta">MValueProcessor(nameof(IListProcessor))</span>] 
+[<span class="hljs-meta">Monitor</span>] <span class="hljs-keyword">private</span> IList&lt;<span class="hljs-keyword">string</span>&gt; names = <span class="hljs-keyword">new</span> <span class="hljs-keyword">string</span>[] {<span class="hljs-string">"Gordon"</span>, <span class="hljs-string">"Alyx"</span>, <span class="hljs-string">"Barney"</span>};
+
+<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">string</span> <span class="hljs-title">IListProcessor</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> element</span>)</span>
+{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">$"The name is <span class="hljs-subst">{element}</span>"</span>;
+}
+
+[<span class="hljs-meta">MValueProcessor(nameof(IListProcessorWithIndex))</span>] 
+[<span class="hljs-meta">Monitor</span>] <span class="hljs-keyword">private</span> IList&lt;<span class="hljs-keyword">string</span>&gt; Names =&gt; names;
+
+<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">string</span> <span class="hljs-title">IListProcessorWithIndex</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> element, <span class="hljs-keyword">int</span> index</span>)</span>
+{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">$"The name at index <span class="hljs-subst">{index}</span> is <span class="hljs-subst">{element}</span>"</span>;
+}
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment">//IDictionary&lt;TKey, TValue&gt; ValueProcessor</span>
+[<span class="hljs-meta">MValueProcessor(nameof(IDictionaryProcessor))</span>]
+[<span class="hljs-meta">Monitor</span>] <span class="hljs-keyword">private</span> IDictionary&lt;<span class="hljs-keyword">string</span>, <span class="hljs-keyword">bool</span>&gt; isAliveDictionary = <span class="hljs-keyword">new</span> Dictionary&lt;<span class="hljs-keyword">string</span>, <span class="hljs-keyword">bool</span>&gt;
+{
+    {<span class="hljs-string">"Bondrewd"</span>, <span class="hljs-literal">true</span>}, 
+    {<span class="hljs-string">"Lyza"</span>, <span class="hljs-literal">false</span>}
+};
+
+<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">string</span> <span class="hljs-title">IDictionaryProcessor</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> name, <span class="hljs-keyword">bool</span> isAlive</span>)</span>
+{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">$"<span class="hljs-subst">{name}</span> is <span class="hljs-subst">{(isAlive ? <span class="hljs-string">"alive"</span> : <span class="hljs-string">"dead"</span>)}</span>"</span>;
+}
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment">//IEnumerable&lt;T&gt; ValueProcessor</span>
+[<span class="hljs-meta">MValueProcessor(nameof(IEnumerableValueProcessor))</span>]
+[<span class="hljs-meta">Monitor</span>] 
+<span class="hljs-keyword">private</span> IEnumerable&lt;<span class="hljs-keyword">int</span>&gt; randomNumbers = <span class="hljs-keyword">new</span> List&lt;<span class="hljs-keyword">int</span>&gt;
+{
+    <span class="hljs-number">1</span>, <span class="hljs-number">43</span>, <span class="hljs-number">14</span>, <span class="hljs-number">65</span>, <span class="hljs-number">23</span>, <span class="hljs-number">174</span>, <span class="hljs-number">16</span>, <span class="hljs-number">2</span>, <span class="hljs-number">786</span>, <span class="hljs-number">4</span>, <span class="hljs-number">89</span>
+};
+
+<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">string</span> <span class="hljs-title">IEnumerableValueProcessor</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> number</span>)</span>
+{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">$"<span class="hljs-subst">{number}</span> is <span class="hljs-subst">{((number &amp; <span class="hljs-number">1</span>) == <span class="hljs-number">0</span>? <span class="hljs-string">"Even"</span> : <span class="hljs-string">"Odd"</span>)}</span>"</span>;
+}
+</div></code></pre>
+<p> </p>
+<h2 id="global-value-processor">Global Value Processor</h2>
+<p>You can declare a static method as a global value processor that is then used to process the value for every monitored member of the given type (instanced value processors will still be preferred). The value processor method must have a valid signature, meaning that is has to accept the monitored type as a fist or second argument, can optionally accept an IFormatData object as a first argument and must return a string.</p>
+<pre class="hljs"><code><div>
+<span class="hljs-comment">// Custom type</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">struct</span> Version
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">short</span> Major;
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">short</span> Minor;
+}
+
+[<span class="hljs-meta">GlobalValueProcessor</span>]
+<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">string</span> <span class="hljs-title">GlobalValueProcessorVersion</span>(<span class="hljs-params">Version version</span>)</span>
+{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">$"Version: <span class="hljs-subst">{version.Major}</span>.<span class="hljs-subst">{version.Minor}</span>"</span>;
+}
+
+[<span class="hljs-meta">GlobalValueProcessor</span>]
+<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">string</span> <span class="hljs-title">GlobalValueProcessorVersion</span>(<span class="hljs-params">IFormatData ctx, Version version</span>)</span>
+{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">$"<span class="hljs-subst">{ctx.Label}</span>: <span class="hljs-subst">{version.Major}</span>.<span class="hljs-subst">{version.Minor}</span>"</span>;
+}
+
+</div></code></pre>
+<p> </p>
+<h2 id="conditional-display">Conditional Display</h2>
+<p>You can use the MShowIfAttribute to define conditions that control if a monitored value is displayed or not. Note that the value will still be monitored but not drawn, meaning that fields, properties, events &amp; methods will still be accessed. There are three different ways to validate if the targeted member is displayed or not.</p>
+<h3 id="validated-by-condition">Validated by Condition</h3>
+<p>Set a condition for the monitored value that when met will display the monitored value. This is useful to display important debugging information only when it is necessary.</p>
+<pre class="hljs"><code><div>
+<span class="hljs-comment">// Queue will only be displayed if there are errors. (Queue is not empty)</span>
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MShowIf(Condition.CollectionNotEmpty)</span>]
+<span class="hljs-keyword">private</span> Queue&lt;<span class="hljs-keyword">string</span>&gt; errorCache;
+
+<span class="hljs-comment">// Property will only be displayed if Network is not available. (false)</span>
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MShowIf(Condition.False)</span>]
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">bool</span> NetworkAvailable { <span class="hljs-keyword">get</span>; }
+
+<span class="hljs-comment">// Property will only be displayed if MainCamera is not available or set. (null)</span>
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MShowIf(Condition.Null)</span>]
+<span class="hljs-keyword">private</span> Camera MainCamera { <span class="hljs-keyword">get</span>; }
+
+</div></code></pre>
+<h3 id="validated-by-comparison">Validated by Comparison</h3>
+<p>Very similar to <a href="#validated-by-condition">Validated by Condition</a> but more dynamic. Pass in another object value and determine a comparison type that is then used on the current value of the monitored member and the value passed as an argument. If the comparison evaluates to be true, the member will be displayed.</p>
+<pre class="hljs"><code><div>
+<span class="hljs-comment">// Will only be displayed if the errorCode is 404</span>
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MShowIf(Comparison.Equals, 404)</span>]
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> errorCode;
+
+<span class="hljs-comment">// Will only be displayed more than one player is active.</span>
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MShowIf(Comparison.Greater, 1)</span>]
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> ActivePlayerCount { <span class="hljs-keyword">get</span>; }
+
+</div></code></pre>
+<h3 id="validated-by-member">Validated by Member</h3>
+<p>Very dynamic way of determining if a member is displayed or not. Pass in the name of a field, property, method or event.</p>
+<ul>
+<li>Passed fields, properties and methods must return a Boolean that determines if the member is displayed or not.</li>
+<li>Passed methods can also accept the current value of the monitored member and use its for a more dynamic evaluation.</li>
+<li>Passed events must be <code>Action&lt;bool&gt;</code> and can be used to toggle the display of the member</li>
+</ul>
+<pre class="hljs"><code><div>
+<span class="hljs-comment">// Will only be displayed if the field 'monitor' is true.</span>
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MShowIf(monitor)</span>]
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">bool</span> IsAlive {<span class="hljs-keyword">get</span>;}
+
+[<span class="hljs-meta">SerializeField</span>] <span class="hljs-keyword">private</span> <span class="hljs-keyword">bool</span> monitor = <span class="hljs-literal">true</span>;
+
+
+<span class="hljs-comment">// Will only be displayed if the property 'IsDebug' is true.</span>
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MShowIf(monitor)</span>]
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">bool</span> IsAlive {<span class="hljs-keyword">get</span>;}
+
+pubic <span class="hljs-keyword">static</span> <span class="hljs-keyword">bool</span> IsDebug { <span class="hljs-keyword">get</span>; }
+
+
+<span class="hljs-comment">// Will only be displayed if the method 'Validate' returns true.</span>
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MShowIf(Validate)</span>]
+<span class="hljs-keyword">private</span> Entity ActiveTarget {<span class="hljs-keyword">get</span>;}
+
+<span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">Validate</span>(<span class="hljs-params">Entity target</span>)</span>
+{
+    <span class="hljs-keyword">return</span> target != <span class="hljs-literal">null</span> &amp;&amp; <span class="hljs-keyword">this</span>.IsActive;
+}
+
+</div></code></pre>
+<p> </p>
+<h2 id="update-event">Update Event</h2>
+<p>When monitoring a field or a property (Value units) you can provide an 'OnValueChanged' event that will tell the monitored unit that the state of the member has changed.</p>
+<p>This event can either be an <code>Action</code> or an <code>Action&lt;T&gt;</code>, with T being the type of the monitored field or property. Note that once a valid update event was provided the unit will not be evaluated during an update cycle anymore, unless  <code>UpdateOptions</code> are explicitly set to <code>UpdateOptions.Auto</code> or <code>UpdateOptions.FrameUpdate</code>.</p>
+<p>Passing an event will slightly reduce performance overhead for values or member that you know will update rarely. It is however not required.</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> healthPoints;
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">event</span> Action&lt;<span class="hljs-keyword">int</span>&gt; OnHealthChanged;
+
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MUpdateEvent(nameof(OnHealthChanged))</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> HealthPoints 
+{
+    <span class="hljs-keyword">get</span> =&gt; healthPoints;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>
+    {
+        healthPoints = <span class="hljs-keyword">value</span>;
+        OnHealthChanged?.Invoke(healthPoints);
+    }
+}
+</div></code></pre>
+<pre class="hljs"><code><div>[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MUpdateEvent(nameof(OnGameStateChanged))</span>]
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">bool</span> isGamePaused;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">event</span> Action OnGameStateChanged;
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PauseGame</span>(<span class="hljs-params"></span>)</span>
+{
+    isGamePaused = <span class="hljs-literal">true</span>;
+    OnGameStateChanged?.Invoke();
+}
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ContinueGame</span>(<span class="hljs-params"></span>)</span>
+{
+    isGamePaused = <span class="hljs-literal">false</span>;
+    OnGameStateChanged?.Invoke();
+}
+</div></code></pre>
+<p> </p>
+<h1 id="monitoring-ui">Monitoring UI</h1>
+<p>Use <code>Baracuda.Monitoring.Monitor.UI</code>to access <code>IMonitoringUI</code> API.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Member                                                           </th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>bool Visible</code></td>
+<td style="text-align:left">Get or set the visibility of the current monitoring UI</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>T GetCurrent&lt;T&gt;()</code></td>
+<td style="text-align:left">Get the current monitoring UI instance</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>void SetActiveMonitoringUI(MonitoringUI monitoringUI)</code></td>
+<td style="text-align:left">Set the active MonitoringUI</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>void ApplyFilter(string filter)</code></td>
+<td style="text-align:left">Filter displayed units by their name, tags etc. <a href="#ui-filtering">more</a></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>void ResetFilter()</code></td>
+<td style="text-align:left">Reset active filter. <a href="#ui-filtering">more</a></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>event Action&lt;bool&gt; VisibleStateChanged()</code></td>
+<td style="text-align:left">Event invoked when the monitoring UI became visible or invisible.</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<h2 id="ui-formatting">UI Formatting</h2>
+<p>Formatting attributes can be used to apply custom styling options on how a monitored member is displayed. There are multiple ways to <a href="#reducing-boiler-plate-code">reduce boiler plate code</a>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Attribute</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>[MOptions]</code></td>
+<td style="text-align:left">Contains (almost) all of the options below.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MFormat]</code></td>
+<td style="text-align:left">Custom format string used to display the members value if possible.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MLabel]</code></td>
+<td style="text-align:left">Custom label for the member (otherwise humanized name).</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MFontSize]</code></td>
+<td style="text-align:left">Set the font size for the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MFontName]</code></td>
+<td style="text-align:left">Pass the name of a custom font style that will be used for the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MGroupName]</code></td>
+<td style="text-align:left">Set the group for the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MGroupElement]</code></td>
+<td style="text-align:left">Whether or not the monitored member should be wrapped in a group.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MShowIndex]</code></td>
+<td style="text-align:left">If the monitored member is a collection, determine if the index of individual elements should be displayed or not.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MElementIndent]</code></td>
+<td style="text-align:left">The indent of individual elements of a displayed collection.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MPosition]</code></td>
+<td style="text-align:left">The preferred position of an individual monitored member on the canvas.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MTextAlign]</code></td>
+<td style="text-align:left">Horizontal text align.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MOrder]</code></td>
+<td style="text-align:left">Relative vertical order of the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MGroupOrder]</code></td>
+<td style="text-align:left">Relative vertical order of the group of the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MRichText]</code></td>
+<td style="text-align:left">Override local RichText settings.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MTextColor]</code></td>
+<td style="text-align:left">Set the text color for the element.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MBackgroundColor]</code></td>
+<td style="text-align:left">Set the background color for the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MGroupColor]</code></td>
+<td style="text-align:left">Set the background color for the group of the monitored member.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MStyle]</code></td>
+<td style="text-align:left">UIToolkit only. Provide optional style names.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>[MAttributeCollection]</code></td>
+<td style="text-align:left">Can be used to create custom preset attributes to reduce boiler plate code.</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>[MOptions]</code> attribute contains almost all of the other options. Individual attributes will override settings passed with the <code>[MOptions]</code> attribute but depending on you preferences you can either use multiple attributes or just the <code>[MOptions]</code> attribute.</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Will be displayed as "Value: 3.141"</span>
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MOptions(Format = <span class="hljs-meta-string">"0.000"</span>, FontSize = 16)</span>]
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">float</span> pi = <span class="hljs-number">3.14159265359</span>;
+
+<span class="hljs-comment">// Effectively the same as</span>
+[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MFormat(<span class="hljs-meta-string">"0.000"</span>)</span>]
+[<span class="hljs-meta">MFontSize(16)</span>]
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">float</span> pi = <span class="hljs-number">3.14159265359</span>;
+</div></code></pre>
+<h3 id="reducing-boiler-plate-code">Reducing Boiler Plate Code</h3>
+<ul>
+<li>Creating a custom attribute and inheriting from <code>MOptionsAttribute</code> will let you use the constructor of the custom attribute to set multiple values. The attribute can then be used on multiple monitored members to apply its settings.</li>
+<li>Any formatting or meta attribute applied to a class is also applied to every monitored member declared within it. Attributes directly applied to a member within such a class will always override the class scoped values meaning that you can still apply individual options to members within such a class. The <code>[MTag]</code> attribute is the only attribute that will is not overridden but added. This means that tags applied to a class scope will apply to every monitored member of that class even if these members have a custom tag attribute themselves.</li>
+<li>Any formatting or meta attribute applied to a custom attribute that inherits from <code>[MAttributeCollection]</code>  will be added to monitored member with that custom attribute. This is a similar way like the fist option of this list but does not require overriding a constructor. It acts more like a bridge or proxy.</li>
+</ul>
+<blockquote>
+<p>The code segments below all do the same but with different approaches.</p>
+</blockquote>
+<pre class="hljs"><code><div><span class="hljs-keyword">class</span> <span class="hljs-title">MyClass</span> 
+{
+    [<span class="hljs-meta">Monitor</span>]
+    [<span class="hljs-meta">MFormat(<span class="hljs-meta-string">"0.000"</span>)</span>]
+    [<span class="hljs-meta">MFontSize(16)</span>]
+    [<span class="hljs-meta">MPosition(UIPosition.UpperRight)</span>]
+    [<span class="hljs-meta">MGroupElement(false)</span>]
+    [<span class="hljs-meta">MTag(<span class="hljs-meta-string">"Gameplay"</span>)</span>]
+    pubic <span class="hljs-keyword">int</span> value1;
+    
+    [<span class="hljs-meta">Monitor</span>]
+    [<span class="hljs-meta">MFormat(<span class="hljs-meta-string">"0.000"</span>)</span>]
+    [<span class="hljs-meta">MFontSize(16)</span>]
+    [<span class="hljs-meta">MPosition(UIPosition.UpperRight)</span>]
+    [<span class="hljs-meta">MGroupElement(false)</span>]
+    [<span class="hljs-meta">MTag(<span class="hljs-meta-string">"Gameplay"</span>)</span>]
+    pubic <span class="hljs-keyword">int</span> value2;
+    
+    [<span class="hljs-meta">Monitor</span>]
+    [<span class="hljs-meta">MFormat(<span class="hljs-meta-string">"0.000"</span>)</span>]
+    [<span class="hljs-meta">MFontSize(16)</span>]
+    [<span class="hljs-meta">MPosition(UIPosition.UpperRight)</span>]
+    [<span class="hljs-meta">MGroupElement(false)</span>]
+    [<span class="hljs-meta">MTag(<span class="hljs-meta-string">"Gameplay"</span>)</span>]
+    pubic <span class="hljs-keyword">int</span> value3;
+}
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyFromatting</span> : <span class="hljs-title">MOptionsAttribute</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyFromatting</span>(<span class="hljs-params"></span>)</span>
+    {
+        Format = <span class="hljs-string">"0.00"</span>;
+        FontSize = <span class="hljs-number">16</span>;
+        Position = UIPosition.UpperRight;
+        GroupElement = <span class="hljs-literal">false</span>;
+        Tags = <span class="hljs-keyword">new</span> <span class="hljs-keyword">string</span>[] {<span class="hljs-string">"Gameplay"</span>};
+    }
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title">MyClass</span>
+{
+    [<span class="hljs-meta">Monitor</span>]
+    [<span class="hljs-meta">MyFromatting</span>]
+    pubic <span class="hljs-keyword">int</span> value1;
+    
+    [<span class="hljs-meta">Monitor</span>]
+    [<span class="hljs-meta">MyFromatting</span>]
+    pubic <span class="hljs-keyword">int</span> value2;
+    
+    [<span class="hljs-meta">Monitor</span>]
+    [<span class="hljs-meta">MyFromatting</span>]
+    pubic <span class="hljs-keyword">int</span> value3;
+}
+
+</div></code></pre>
+<pre class="hljs"><code><div>
+[<span class="hljs-meta">MFormat(<span class="hljs-meta-string">"0.000"</span>)</span>]
+[<span class="hljs-meta">MFontSize(16)</span>]
+[<span class="hljs-meta">MPosition(UIPosition.UpperRight)</span>]
+[<span class="hljs-meta">MGroupElement(false)</span>]
+[<span class="hljs-meta">MTag(<span class="hljs-meta-string">"Gameplay"</span>)</span>]
+<span class="hljs-keyword">class</span> <span class="hljs-title">MyFromatting</span> : <span class="hljs-title">MAttributeCollection</span>
+{
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title">MyClass</span> 
+{
+    [<span class="hljs-meta">Monitor</span>]
+    [<span class="hljs-meta">MyFromatting</span>]
+    pubic <span class="hljs-keyword">int</span> value1;
+    
+    [<span class="hljs-meta">Monitor</span>]
+    [<span class="hljs-meta">MyFromatting</span>]
+    pubic <span class="hljs-keyword">int</span> value2;
+    
+    [<span class="hljs-meta">Monitor</span>]
+    [<span class="hljs-meta">MyFromatting</span>]
+    pubic <span class="hljs-keyword">int</span> value3;
+}
+</div></code></pre>
+<pre class="hljs"><code><div>[<span class="hljs-meta">MFormat(<span class="hljs-meta-string">"0.000"</span>)</span>]
+[<span class="hljs-meta">MFontSize(16)</span>]
+[<span class="hljs-meta">MPosition(UIPosition.UpperRight)</span>]
+[<span class="hljs-meta">MGroupElement(false)</span>]
+[<span class="hljs-meta">MTag(<span class="hljs-meta-string">"Gameplay"</span>)</span>]
+<span class="hljs-keyword">class</span> <span class="hljs-title">MyClass</span> 
+{
+    [<span class="hljs-meta">Monitor</span>]
+    pubic <span class="hljs-keyword">int</span> value1;
+
+    [<span class="hljs-meta">Monitor</span>]
+    pubic <span class="hljs-keyword">int</span> value2;
+    
+    [<span class="hljs-meta">Monitor</span>]
+    pubic <span class="hljs-keyword">int</span> value3;
+}
+</div></code></pre>
+<p>When applying multiple formatting attributes either directly on the monitored member or via proxy, it may happen that the same attribute is applied with different values. In this case there is a clear structure which attribute will be used.</p>
+<ol>
+<li>Directly applied to the monitored member.</li>
+<li>Applied to the monitored member by <code>[MOptions]</code></li>
+<li>Applied to the monitored member by a custom <code>[MAttributeCollection]</code></li>
+<li>Directly applied to the monitored members class.</li>
+<li>Applied to the monitored members class by <code>[MOptions]</code></li>
+<li>Applied to the monitored members class by a custom <code>[MAttributeCollection]</code></li>
+</ol>
+<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_formatting_01.png" alt="example"></p>
+<blockquote>
+<p>Note that this is for display purposes only. There is no need to apply that many formatting options to every monitored member. Formatting is 100% optional.</p>
+</blockquote>
+<p> </p>
+<h2 id="ui-filtering">UI Filtering</h2>
+<p>You can filter the currently displayed elements using the monitoring filter API from <code>IMonitoringUI</code>. Or by using the Filter Editor window (menu: Tools &gt; Runtime Monitoring &gt; Filter Window)
+Filtering will check for a variety of matches. If you want more explicit filtering you can disable most of these checks by navigating to
+(menu: Tools &gt; Runtime Monitoring &gt; Settings: Filtering). You can also use the settings to determine if filtering should be case sensitive or case insensitive. By default filtering is case insensitive!</p>
+<p><img src="https://johnbaracuda.com/media/img/monitoring/filter-editor-window.png" alt="example"></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Optional Filter</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Filter Label</td>
+<td style="text-align:left">Enable filtering using the displayed label. (case insensitive) This option is the most intuitive.</td>
+</tr>
+<tr>
+<td style="text-align:left">Filter Static or Instance</td>
+<td style="text-align:left">Filter for static or non static member with <em>static</em> or <em>instance</em></td>
+</tr>
+<tr>
+<td style="text-align:left">Filter Type</td>
+<td style="text-align:left">Enable filtering using the name of the type of the monitored member. (e.g. <em>bool</em>, <em>int</em>, <em>queue</em> etc.)</td>
+</tr>
+<tr>
+<td style="text-align:left">Filter Declaring Type</td>
+<td style="text-align:left">Enable filtering using the name of the members declaring type. (e.g. <em>MonoBehaviour</em>, <em>Player</em>, <em>GameController</em> etc.)</td>
+</tr>
+<tr>
+<td style="text-align:left">Filter Member Type</td>
+<td style="text-align:left">Enable filtering using the member type (<em>Field</em>, <em>Property</em>, <em>Event</em>, <em>Method</em>)</td>
+</tr>
+<tr>
+<td style="text-align:left">Filter Tags</td>
+<td style="text-align:left">Enable filtering using tags applied by the <code>[MTag]</code> attribute. <a href="#attributes">more</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="filter-api">Filter API</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">using</span> Baracuda.Monitoring;
+
+<span class="hljs-comment">// Apply filter. (This filter will only show fields and properties)</span>
+Monitor.UI.ApplyFilter(<span class="hljs-string">"Field &amp; Property"</span>);
+
+<span class="hljs-comment">// Reset filter.</span>
+Monitor.UI.ResetFilter();
+</div></code></pre>
+<p> </p>
+<h4 id="absolute-filtering">Absolute Filtering</h4>
+<blockquote>
+<p>Filter stating with a <code>@</code> are always case sensitive and only use the actual name of the monitored member.</p>
+</blockquote>
+<h4 id="tag-only-filtering">Tag only Filtering</h4>
+<blockquote>
+<p>Filter stating with a <code>$</code> only use tags applied with the custom <code>[MTag]</code> attribute. <a href="#attributes">more</a></p>
+</blockquote>
+<h4 id="combining-filters">Combining Filters</h4>
+<blockquote>
+<p>Use a  <code>&amp;</code> symbol to combine multiple filters.</p>
+</blockquote>
+<h4 id="negation-filter">Negation Filter</h4>
+<blockquote>
+<p>Append an <code>!</code> to the beginning of a filter to negate it.</p>
+</blockquote>
+<p> 
+You can change all of the symbols mentioned above in the monitoring settings by navigating to (menu: Tools &gt; Runtime Monitoring &gt; Settings: Filtering).</p>
+<p> </p>
+<blockquote>
+<p>This example shows a custom filtering setup in the example scene.</p>
+</blockquote>
+<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_filter_01.png" alt="example"></p>
+<p> </p>
+<h1 id="systems-and-api">Systems and API</h1>
+<p>The <code>Monitor</code> class (<code>Baracuda.Monitoring.Monitor</code>) is the primary access point to access monitoring systems and API.</p>
+<p><code>bool Initialized { get; }</code></p>
+<blockquote>
+<p>Returns true once the system has been fully initialized. This might take some time after playmode has been entered depending on whether or not threaded profiling has been enabled in the settings or not.</p>
+</blockquote>
+<p><code>IMonitoringUI UI { get; }</code></p>
+<blockquote>
+<p>Access API to control the monitoring UI.</p>
+</blockquote>
+<p><code>IMonitoringSettigns Settings { get; }</code></p>
+<blockquote>
+<p>Access to the monitoring settings asset. Edit settings via (menu: Tools &gt; Runtime Monitoring &gt; Settings)</p>
+</blockquote>
+<p><code>IMonitoringEvents Events { get; }</code></p>
+<blockquote>
+<p>Access monitoring event handlers.</p>
+</blockquote>
+<p><code>IMonitoringRegistry Registry { get; }</code></p>
+<blockquote>
+<p>Primary interface to access cached data.</p>
+</blockquote>
+<p><code>void StartMonitoring&lt;T&gt;(T target) where T : class</code></p>
+<blockquote>
+<p>Register an object that is monitored.</p>
+</blockquote>
+<p><code>void StopMonitoring&lt;T&gt;(T target) where T : class</code></p>
+<blockquote>
+<p>Unregister an object that is monitored.</p>
+</blockquote>
+<pre class="hljs"><code><div><span class="hljs-comment">//Example how to get / resolve a monitoring system interface.</span>
+IMonitoringUI monitoringUI = Monitor.UI
+</div></code></pre>
+<h3 id="type-interfaces">Type Interfaces</h3>
+<p>Important internally used types implement interfaces that should make it more easy to work with and extend this tool. These interfaces are especially used when creating a custom UI controller.</p>
+<p><code>IMonitorHandle</code></p>
+<blockquote>
+<p>Internally used handle for instances of a monitored member</p>
+</blockquote>
+<p><code>IMonitorProfile</code></p>
+<blockquote>
+<p>Internally used profile describing a monitored member</p>
+</blockquote>
+<p> </p>
+<h2 id="monitoring-ui-api">Monitoring UI API</h2>
+<p>Use <code>Baracuda.Monitoring.UI</code> to access UI API via the <code>IMonitoringUI</code> interface.</p>
+<p><code>bool Visible</code></p>
+<blockquote>
+<p>Get or set the visibility of the UI.</p>
+</blockquote>
+<p><code>event Action&lt;bool&gt; VisibleStateChanged()</code></p>
+<blockquote>
+<p>Event invoked when the monitoring UI became visible or invisible.</p>
+</blockquote>
+<p><code>T GetCurrent&lt;T&gt;()</code></p>
+<blockquote>
+<p>Get the currently active MonitoringUIController casted to a concrete implementation.</p>
+</blockquote>
+<p><code>void ApplyFilter(string filter)</code></p>
+<blockquote>
+<p>Filter displayed units by their name, tags etc. <a href="#ui-filtering">more</a></p>
+</blockquote>
+<p><code>void ResetFilter()</code></p>
+<blockquote>
+<p>Reset active filter. <a href="#ui-filtering">more</a></p>
+</blockquote>
+<p> </p>
+<h2 id="monitoring-events">Monitoring Events</h2>
+<p>Use <code>Baracuda.Monitoring.Events</code> to access monitoring event handlers via the <code>IMonitorEvents</code> interface.</p>
+<p><code>event ProfilingCompletedDelegate ProfilingCompleted</code></p>
+<blockquote>
+<p>Event is invoked when profiling process for the current system has been completed. Subscribing to this event will instantly invoke a callback if profiling has already completed.</p>
+</blockquote>
+<p><code>event Action&lt;IMonitorHandle&gt; MonitorHandleCreated</code></p>
+<blockquote>
+<p>Event is called when a new MonitorHandle was created.</p>
+</blockquote>
+<p><code>event Action&lt;IMonitorHandle&gt; MonitorHandleDisposed</code></p>
+<blockquote>
+<p>Event is called when a MonitorHandle was disposed.</p>
+</blockquote>
+<p> </p>
+<h2 id="monitoring-registry">Monitoring Registry</h2>
+<p>Use <code>Baracuda.Monitoring.Registry</code> to access cached data via the <code>IMonitoringRegistry</code> interface.</p>
+<p><code>IReadOnlyList&lt;IMonitorHandle&gt; GetMonitorHandles(HandleTypes handleTypes);</code><br></p>
+<blockquote>
+<p>Get a list of monitoring handles for all targets.</p>
+</blockquote>
+<p><code>IMonitorHandle[] GetMonitorHandlesForTarget&lt;T&gt;(T target) where T : class</code></p>
+<blockquote>
+<p>Get a list of IMonitorHandles registered to the passed target object.</p>
+</blockquote>
+<p><code>IReadOnlyList&lt;string&gt; UsedTags { get; }</code></p>
+<blockquote>
+<p>Get a list of all custom tags, applied by <code>[MTag]</code> attributes that can be used for filtering.</p>
+</blockquote>
+<p><code>IReadOnlyList&lt;string&gt; UsedFonts { get; }</code></p>
+<blockquote>
+<p>Get a collection of used font names.</p>
+</blockquote>
+<p><code>IReadOnlyList&lt;Type&gt; UsedTypes { get; }</code></p>
+<blockquote>
+<p>Get a collection of monitored types.</p>
+</blockquote>
+<p><code>IReadOnlyList&lt;string&gt; UsedTypeNames { get; }</code></p>
+<blockquote>
+<p>Get a collection of monitored type names converted to a readable string.</p>
+</blockquote>
+<p> </p>
+<h2 id="monitoring-settings">Monitoring Settings</h2>
+<p>Use <code>Baracuda.Monitoring.Settings</code> to access active settings via the <code>IMonitoringSettings</code> interface.
+You can configure and access the settings file via (menu: Tools &gt; Runtime Monitoring &gt; Settings)</p>
+<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_settings_01.png" alt="example"></p>
+<p> </p>
+<h2 id="runtime-compatibility">Runtime Compatibility</h2>
+<p>Both Mono and IL2CPP runtimes are supported. RTM is making extensive use of dynamic type and method creation during its profiling process. In order to create these types, IL2CPP requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the necessary information to generate everything it needs during runtime. You can manually create this list form the settings window.</p>
+<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_08.png" alt="example"></p>
+<p> </p>
+<h2 id="optimizations">Optimizations</h2>
+<p>In general RTM tries to be as optimized as possible by reducing allocations where ever possible and by doing a lot of the heavy work during the initial profiling. However due to the nature of some types and the creation of strings, allocations cannot be prevented. If performance is a sensitive aspect of your project, here are some tips and tricks to keep in mind.</p>
+<h3 id="reference-types--value-types">Reference Types &amp; Value Types</h3>
+<p>Since there is no easy way to check whether the actual value of a reference type has changed when it is evaluated, a monitored Reference Type is processed with ToString() each time it is evaluated. This, by default happens either every Update or Tick cycle and may generate a lot of garbage in a very short time, without much scope for automatic optimization. For this reason, it is recommended to pass an UpdateEvent for the monitored value whenever possible to reduce memory allocations. Of course, this shouldn't matter much if you're only debugging one value, but could be detrimental if you want to keep monitoring your member in a release or shipped build. The same is not true for monitored Value Types, as these are compared to a cached value to ensure that an update event and a string creation is only triggered when the value has actually changed.</p>
+<h3 id="collections">Collections</h3>
+<p>Because collections are Reference Types the same applies here but on an even greater scale. Pass an update event when ever possible if you intend to monitor a collection over a longer period. Now because the example below requires a lot of boiler plate code I would not recommend this if you just want to quickly debug the values of a collection. I also want to mention that a better solution is planned and WIP.</p>
+<pre class="hljs"><code><div>[<span class="hljs-meta">Monitor</span>]
+[<span class="hljs-meta">MUpdateEvent(nameof(OnNamesChanged))</span>]
+<span class="hljs-keyword">public</span> List&lt;<span class="hljs-keyword">string</span>&gt; Names = <span class="hljs-keyword">new</span> List&lt;<span class="hljs-keyword">string</span>&gt;() {<span class="hljs-string">"Riebeckite"</span>, <span class="hljs-string">"Prisoner"</span>, <span class="hljs-string">"Feldspar"</span>};
+
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">event</span> Action OnNamesChanged;
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">AddName</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> name</span>)</span>
+{
+    Names.Add(name);
+    OnNamesChanged();
+}
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">RemoveName</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> name</span>)</span>
+{
+    Names.Remove(name);
+    OnNamesChanged();
+}
+</div></code></pre>
+<p> </p>
+<h1 id="frequently-asked-questions">Frequently Asked Questions</h1>
+<p> </p>
+<h3 id="how-can-i-disable-the-tool-in-a-release">How can I disable the tool in a release?</h3>
+<p>Set the <strong>Enable Monitoring</strong> field in the <strong>Monitoring Settings</strong> to <strong>EditorOnly</strong> This will install dummy systems in a build.</p>
+<p> </p>
+<h3 id="how-can-i-uninstall-the-tool">How can I uninstall the tool?</h3>
+<p>You can just remove the plugin by deleting the folder Assets/Baracuda.</p>
+<p> </p>
+<h2 id="support-me">Support Me</h2>
+<p>I spend a lot of time working on this and other free assets to make sure as many people as possible can use my tools regardless of their financial status. Any kind of support I get helps me keep doing this, so consider leaving a star ⭐ making a donation or follow me on my socials to support me ❤️</p>
+<ul>
+<li><a href="https://www.paypal.com/paypalme/johnbaracuda">Donation (PayPal.me)</a></li>
+<li><a href="https://linktr.ee/JohnBaracuda">Linktree</a></li>
+<li><a href="https://twitter.com/JohnBaracuda">Twitter</a></li>
+<li><a href="https://johnbaracuda.itch.io/">Itch</a></li>
+</ul>
+
+</body>
+</html>

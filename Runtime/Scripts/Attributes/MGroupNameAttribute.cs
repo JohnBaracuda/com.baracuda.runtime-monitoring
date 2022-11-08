@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// Manually set the group for the element.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MGroupNameAttribute : MonitoringMetaAttribute
     {
         /// <summary>

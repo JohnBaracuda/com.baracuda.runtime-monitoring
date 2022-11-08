@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// Add tags to a monitored unit that can be used to provide additional meta data and filtering options for UI.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MTagAttribute : MonitoringMetaAttribute
     {
         /// <summary>

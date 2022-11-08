@@ -10,7 +10,7 @@ namespace Baracuda.Monitoring
     /// FontName assets must be registered to the UI Controller.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MFontNameAttribute : MonitoringMetaAttribute
     {
         /// <summary>

@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// Determine the text color for the displayed value.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MTextColorAttribute : MColorAttribute
     {
         /// <summary>

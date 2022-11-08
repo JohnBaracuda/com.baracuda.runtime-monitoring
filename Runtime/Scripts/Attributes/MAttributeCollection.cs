@@ -7,7 +7,7 @@ namespace Baracuda.Monitoring
     /// Inherit from this attribute to use it as a proxy to create custom attributes that wrap multiple monitoring attributes.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(MonitoringMetaAttribute.Targets)]
     public abstract class MAttributeCollection : Attribute
     {
     }

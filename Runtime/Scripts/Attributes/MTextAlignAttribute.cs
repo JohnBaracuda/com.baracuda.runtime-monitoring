@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// Horizontal Text Align
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MTextAlignAttribute : MonitoringMetaAttribute
     {
         /// <summary>

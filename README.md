@@ -8,10 +8,10 @@ Runtime Monitoring is an easy way to monitor the value or state of C# members du
 ![Last Commit](https://img.shields.io/github/last-commit/johnBaracuda/com.baracuda.runtime-monitoring)
 
 #### ⚠️ Attention!
-> I develop Runtime Monitoring during my spare time which means that I can only do limited QA. 
-> If you encounter any errors, I ask for your understanding and to create an Issue which provides as
-> much information as possible. Also note that this tool is still under active development and some 
-> updates with major reworks of the system are planned for the future.
+> Runtime Monitoring is developed by me in my spare time, which means I can only do limited QA.
+> If you have any questions, feature requests or encounter any issues, feel free to contact me directly and/or open an Issue on GitHub.
+> Please keep in mind that I am developing this tool by myself and that any additional information will help me a lot, 
+> especially when reporting a bug. 
 
 &nbsp;
 ## Table of Contents
@@ -41,7 +41,6 @@ Runtime Monitoring is an easy way to monitor the value or state of C# members du
     - [Monitoring Events](#monitoring-events)
     - [Monitoring Registry](#monitoring-registry)
     - [Monitoring Settings](#monitoring-settings)
-- [Compatibility](#compatibility)
 - [Optimizations](#optimizations)
 - [FAQ](#frequently-asked-questions)
 - [Support Me ❤](#support-me)
@@ -207,7 +206,7 @@ public bool TryGetPlayer(int playerId, out var player)
 > Note that since version 3.0.0, Runtime Monitoring is a UPM package and therefore immutable. Use the samples section in the package manager window to import UI resorces for IMGUI, TextMeshPro and UIToolkit. Parts of this documentation will be updated soon.
 
 Download and import Runtime Monitoring. To setup a different UI Controller (IMGUI, TMP or UIToolkit) follow these optional steps:
-+ Open the settings by navigating to (menu: Tools > RuntimeMonitoring > Settings).
++ Open the settings by navigating to (menu: Tools > Runtime Monitoring > Settings).
 + Depending on the Unity version and your preferences, import and optional UIController package.
 + Set the prefab as the active UI Controller.
 + The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
@@ -307,7 +306,7 @@ public class Player : MonitoredBehaviour
 {
     [Monitor] private int health;
     
-    // Just Remember to call base.Awake and base.OnDestroy if you override these methods.
+    // Remember to call base.Awake and base.OnDestroy.
     protected override void Awake()
     {
         base.Awake();
@@ -942,7 +941,12 @@ When applying multiple formatting attributes either directly on the monitored me
 
 &nbsp;
 ## UI Filtering
-You can filter the currently displayed elements using the monitoring filter API from `IMonitoringUI` . Filtering will check for a variety of matches. If you want more explicit filtering you can disable most of these checks by navigating to (menu: Tools > Monitoring > Settings > Filtering). You can also use the settings to determine if filtering should be case sensitive or case insensitive. By default filtering is case insensitive! 
+You can filter the currently displayed elements using the monitoring filter API from `IMonitoringUI`. Or by using the Filter Editor window (menu: Tools > Runtime Monitoring > Filter Window)
+Filtering will check for a variety of matches. If you want more explicit filtering you can disable most of these checks by navigating to 
+(menu: Tools > Runtime Monitoring > Settings: Filtering). You can also use the settings to determine if filtering should be case sensitive or case insensitive. By default filtering is case insensitive! 
+
+![example](https://johnbaracuda.com/media/img/monitoring/filter-editor-window.png)
+
 
 Optional Filter    | Description |        
 :--                 |:-                                              
@@ -965,23 +969,23 @@ Monitor.UI.ResetFilter();
 ```
 
 &nbsp;
-### Absolute Filtering
-Filter stating with a `@` are always case sensitive and only use the actual name of the monitored member.
+#### Absolute Filtering
+> Filter stating with a `@` are always case sensitive and only use the actual name of the monitored member.
 
-### Tag only Filtering
-Filter stating with a `$` only use tags applied with the custom `[MTag]` attribute. [more](#attributes)
+#### Tag only Filtering
+> Filter stating with a `$` only use tags applied with the custom `[MTag]` attribute. [more](#attributes)
 
-### Combining Filters 
-Use a  `&` symbol to combine multiple filters.
+#### Combining Filters 
+> Use a  `&` symbol to combine multiple filters.
 
-### Negation Filter
-Append an `!` to the beginning of a filter to negate it. 
-
-&nbsp;
-You can change all of the symbols mentioned above in the monitoring settings by navigating to (menu: Tools > RuntimeMonitoring > Settings > Filtering).
+#### Negation Filter
+> Append an `!` to the beginning of a filter to negate it. 
 
 &nbsp;
-> This example shows a custom filtering setup in the example scene. I would recommend to test it yourself.
+You can change all of the symbols mentioned above in the monitoring settings by navigating to (menu: Tools > Runtime Monitoring > Settings: Filtering).
+
+&nbsp;
+> This example shows a custom filtering setup in the example scene.
 
 ![example](https://johnbaracuda.com/media/img/monitoring/Example_filter_01.png)
 
@@ -998,7 +1002,7 @@ The `Monitor` class (`Baracuda.Monitoring.Monitor`) is the primary access point 
 > Access API to control the monitoring UI.
  
 `IMonitoringSettigns Settings { get; }`
-> Access to the monitoring settings asset. (Edit settings via: Tools > Runtime Monitoring)
+> Access to the monitoring settings asset. Edit settings via (menu: Tools > Runtime Monitoring > Settings)
 
 `IMonitoringEvents Events { get; }`
 > Access monitoring event handlers.
@@ -1078,14 +1082,17 @@ Use `Baracuda.Monitoring.Registry` to access cached data via the `IMonitoringReg
 `IMonitorHandle[] GetMonitorHandlesForTarget<T>(T target) where T : class`
 > Get a list of IMonitorHandles registered to the passed target object.
 
-`IReadOnlyCollection<string> UsedTags { get; }`
+`IReadOnlyList<string> UsedTags { get; }`
 > Get a list of all custom tags, applied by `[MTag]` attributes that can be used for filtering.
 
-`IReadOnlyCollection<string> UsedFonts { get; }`
+`IReadOnlyList<string> UsedFonts { get; }`
 > Get a collection of used font names.
 
-`IReadOnlyCollection<Type> UsedTypes { get; }`
+`IReadOnlyList<Type> UsedTypes { get; }`
 > Get a collection of monitored types.
+ 
+`IReadOnlyList<string> UsedTypeNames { get; }`
+> Get a collection of monitored type names converted to a readable string.
 
 
 
@@ -1094,15 +1101,10 @@ Use `Baracuda.Monitoring.Registry` to access cached data via the `IMonitoringReg
 
 
 Use `Baracuda.Monitoring.Settings` to access active settings via the `IMonitoringSettings` interface.
-You can configure and access the settings file via (menu: Tools > Runtime Monitoring)
+You can configure and access the settings file via (menu: Tools > Runtime Monitoring > Settings)
 
 ![example](https://johnbaracuda.com/media/img/monitoring/Example_settings_01.png)
 
-
-
-&nbsp;
-# Compatibility
-If you encounter any compatibility issues please create an Issue on GitHub.
 
 
 

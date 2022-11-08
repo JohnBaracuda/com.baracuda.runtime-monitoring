@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// If the member is a collection, determine if the index of individual elements should be displayed or not.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MShowIndexAttribute : MonitoringMetaAttribute
     {
         /// <summary>
@@ -27,7 +27,7 @@ namespace Baracuda.Monitoring
     }
 
     [Obsolete("Use MShowIndexAttribute instead! This class will be removed in 4.0.0")]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MShowIndexerAttribute : MShowIndexAttribute
     {
         [Obsolete("Use MShowIndexAttribute instead! This class will be removed in 4.0.0")]

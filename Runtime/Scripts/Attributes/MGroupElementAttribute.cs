@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// Whether or not the unit should be wrapped in an object or type group.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MGroupElementAttribute : MonitoringMetaAttribute
     {
         /// <summary>

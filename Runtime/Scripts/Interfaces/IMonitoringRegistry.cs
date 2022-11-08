@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2022 Jonathan Lang
+
+using System;
 using System.Collections.Generic;
 
 namespace Baracuda.Monitoring
@@ -18,16 +20,21 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// Get a collection of used tags.
         /// </summary>
-        IReadOnlyCollection<string> UsedTags { get; }
+        IReadOnlyList<string> UsedTags { get; }
 
         /// <summary>
         /// Get a collection of used font names.
         /// </summary>
-        IReadOnlyCollection<string> UsedFonts { get; }
+        IReadOnlyList<string> UsedFonts { get; }
 
         /// <summary>
         /// Get a collection of monitored types.
         /// </summary>
-        IReadOnlyCollection<Type> UsedTypes { get; }
+        IReadOnlyList<Type> UsedTypes { get; }
+
+        /// <summary>
+        /// Get a collection of monitored type names converted to a readable string.
+        /// </summary>
+        IReadOnlyList<string> UsedTypeNames { get; }
     }
 }

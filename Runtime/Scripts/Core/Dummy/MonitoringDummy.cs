@@ -217,17 +217,22 @@ namespace Baracuda.Monitoring.Dummy
         /// <summary>
         /// Get a collection of used tags.
         /// </summary>
-        public IReadOnlyCollection<string> UsedTags { get; } = Array.Empty<string>();
+        public IReadOnlyList<string> UsedTags { get; } = Array.Empty<string>();
 
         /// <summary>
         /// Get a collection of used fonts.
         /// </summary>
-        public IReadOnlyCollection<string> UsedFonts { get; } = Array.Empty<string>();
+        public IReadOnlyList<string> UsedFonts { get; } = Array.Empty<string>();
 
         /// <summary>
         /// Get a collection of monitored types.
         /// </summary>
-        public IReadOnlyCollection<Type> UsedTypes { get; } = Array.Empty<Type>();
+        public IReadOnlyList<Type> UsedTypes { get; } = Array.Empty<Type>();
+
+        /// <summary>
+        /// Get a collection of monitored types.
+        /// </summary>
+        public IReadOnlyList<string> UsedTypeNames { get; } = Array.Empty<string>();
 
         #endregion
 

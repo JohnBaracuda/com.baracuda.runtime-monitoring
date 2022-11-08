@@ -144,7 +144,7 @@ namespace Baracuda.Monitoring.Editor
                 EditorGUILayout.Space();
             }
 
-            if (Foldout["UI Controller"])
+            if (Foldout["UI Display"])
             {
                 EditorGUILayout.Space();
                 EditorGUILayout.PropertyField(_openDisplayOnLoad, new GUIContent("Visible On Load", _openDisplayOnLoad.tooltip));

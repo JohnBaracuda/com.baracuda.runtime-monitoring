@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// Custom label for the member.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MLabelAttribute : MonitoringMetaAttribute
     {
         /// <summary>

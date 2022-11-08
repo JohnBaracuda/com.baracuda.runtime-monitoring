@@ -9,7 +9,7 @@ namespace Baracuda.Monitoring
     /// Attribute contains multiple settings.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MOptionsAttribute : MonitoringMetaAttribute
     {
         /*

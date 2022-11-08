@@ -10,7 +10,7 @@ namespace Baracuda.Monitoring
     /// This property will only have an effect on collections.
     /// </summary>
     [Preserve]
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(Targets)]
     public class MElementIndentAttribute : MonitoringMetaAttribute
     {
         /// <summary>
