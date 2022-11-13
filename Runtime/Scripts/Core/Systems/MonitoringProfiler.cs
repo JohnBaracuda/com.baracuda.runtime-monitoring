@@ -84,7 +84,7 @@ namespace Baracuda.Monitoring.Systems
                     ProfileInternalAsync(Dispatcher.RuntimeToken).Wait(Dispatcher.RuntimeToken);
                 }
 
-                MonitoringRegistry.Singleton.RegisterProfiles(_instanceProfiles, _staticProfiles);
+                Monitor.InternalRegistry.RegisterProfiles(_instanceProfiles, _staticProfiles);
                 return true;
             }
             catch (OperationCanceledException oce)

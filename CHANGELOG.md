@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Thread-Dispatcher will be removed as a dependency in a future release.
 
 
+## [3.4.1] - 2022-11-13
+
+### Fixed
+- Runtime Monitoring now works properly with Disabled Domain and Scene reloads in Enter Play Mode Options.
+
+### Deprecated (Removing in [4.0.0])
+- ISettableValue is now deprecated.
+
+
 ## [3.4.0] - 2022-10-30
 
 ### Added

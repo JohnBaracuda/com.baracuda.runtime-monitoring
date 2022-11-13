@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace Baracuda.Monitoring.Systems
 {
-    internal sealed class MonitoringDisplay : LazySingleton<MonitoringDisplay>, IMonitoringUI
+    internal sealed class MonitoringDisplay : IMonitoringUI
     {
         #region Data
 

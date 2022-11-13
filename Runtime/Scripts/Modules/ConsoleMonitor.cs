@@ -24,10 +24,10 @@ namespace Baracuda.Monitoring.Modules
         private static int messageCacheSize = 10;
 
         private static readonly char[] trimValues = {'\r', '\n'};
-        private static readonly Color errorColor = new Color(1f, 0.5f, 0.52f);
-        private static readonly Color logColor = new Color(0.8f, 0.75f, 1f);
-        private static readonly Color warningColor = new Color(1f, 0.96f, 0.56f);
-        private static readonly Color stackTraceColor = new Color(0.65f, 0.7f, 0.75f);
+        private static Color ErrorColor => new Color(1f, 0.5f, 0.52f);
+        private static Color LogColor => new Color(0.8f, 0.75f, 1f);
+        private static Color WarningColor => new Color(1f, 0.96f, 0.56f);
+        private static Color StackTraceColor => new Color(0.65f, 0.7f, 0.75f);
 
         private static event Action UpdateDisplayedLogs;
 
@@ -121,6 +121,8 @@ namespace Baracuda.Monitoring.Modules
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Setup()
         {
+            messageLogCache.Clear();
+            lastLogStacktrace = null;
             Application.logMessageReceivedThreaded -= OnLogMessageReceived;
             Application.logMessageReceivedThreaded += OnLogMessageReceived;
         }
@@ -169,7 +171,7 @@ namespace Baracuda.Monitoring.Modules
             if (truncateStacktrace && stacktrace.Length > maxStacktraceLenght)
             {
                 sb.Append("<color=#");
-                sb.Append(ColorUtility.ToHtmlStringRGB(stackTraceColor));
+                sb.Append(ColorUtility.ToHtmlStringRGB(StackTraceColor));
                 sb.Append('>');
                 sb.Append(stacktrace.Substring(0, maxStacktraceLenght));
                 sb.Append("</color>");
@@ -178,7 +180,7 @@ namespace Baracuda.Monitoring.Modules
             else
             {
                 sb.Append("<color=#");
-                sb.Append(ColorUtility.ToHtmlStringRGB(stackTraceColor));
+                sb.Append(ColorUtility.ToHtmlStringRGB(StackTraceColor));
                 sb.Append('>');
                 sb.Append(stacktrace);
                 sb.Append("</color>");
@@ -198,15 +200,15 @@ namespace Baracuda.Monitoring.Modules
             switch (logType)
             {
                 case LogType.Log:
-                    return logColor;
+                    return LogColor;
                 case LogType.Error:
-                    return errorColor;
+                    return ErrorColor;
                 case LogType.Assert:
-                    return warningColor;
+                    return WarningColor;
                 case LogType.Warning:
-                    return warningColor;
+                    return WarningColor;
                 case LogType.Exception:
-                    return errorColor;
+                    return ErrorColor;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(logType), logType, null);
             }

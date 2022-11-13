@@ -15,7 +15,7 @@ namespace Baracuda.Monitoring.Units
     /// </summary>
     /// <typeparam name="TTarget"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    internal abstract class ValueHandle<TTarget, TValue> : MonitorHandle, ISettableValue<TValue>, IGettableValue<TValue> where TTarget : class
+    internal abstract class ValueHandle<TTarget, TValue> : MonitorHandle, IGettableValue<TValue> where TTarget : class
     {
         #region Fields
 
@@ -203,23 +203,6 @@ namespace Baracuda.Monitoring.Units
         {
             _setValue?.Invoke(_target, value);
             _lastValue = value;
-            var state = GetState();
-            RaiseValueChanged(state);
-        }
-
-        public void SetValue(object value)
-        {
-            _setValue?.Invoke(_target, (TValue) value);
-            _lastValue = (TValue) value;
-            var state = GetState();
-            RaiseValueChanged(state);
-        }
-
-        public void SetValueStruct<TStruct>(TStruct value) where TStruct : struct
-        {
-            var converted = value.ConvertFast<TStruct, TValue>();
-            _setValue?.Invoke(_target, converted);
-            _lastValue = converted;
             var state = GetState();
             RaiseValueChanged(state);
         }

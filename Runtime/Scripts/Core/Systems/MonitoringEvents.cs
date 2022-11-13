@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Baracuda.Monitoring
 {
-    internal class MonitoringEvents : LazySingleton<MonitoringEvents>, IMonitoringEvents
+    internal class MonitoringEvents : IMonitoringEvents
     {
         /// <summary>
         /// Event is invoked when profiling process for the current system has been completed.
@@ -59,7 +59,9 @@ namespace Baracuda.Monitoring
 
 #pragma warning disable CS0612
         [Obsolete]
+#pragma warning disable CS0618
         public event ProfilingCompletedListener __ProfilingCompleted
+#pragma warning restore CS0618
         {
             add
             {
@@ -90,7 +92,9 @@ namespace Baracuda.Monitoring
         }
 
         [Obsolete]
+#pragma warning disable CS0618
         private ProfilingCompletedListener __completed;
+#pragma warning restore CS0618
 #pragma warning restore CS0612
 
         #endregion

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Systems
 {
-    internal class MonitoringTicker
+    internal class MonitoringTicker : MonitoredObject
     {
         public bool ValidationTickEnabled { get; set; } = true;
 
@@ -25,7 +25,6 @@ namespace Baracuda.Monitoring.Systems
         internal MonitoringTicker()
         {
             Monitor.Events.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
-            Monitor.StartMonitoring(this);
         }
 
         private void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorHandle> staticUnits, IReadOnlyList<IMonitorHandle> instanceUnits)

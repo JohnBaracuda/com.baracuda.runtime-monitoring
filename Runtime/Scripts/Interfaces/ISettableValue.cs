@@ -1,31 +1,24 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
+using System;
+
 namespace Baracuda.Monitoring
 {
-    /// <summary>
-    /// Interface is not yet in use.
-    /// </summary>
+    [Obsolete("This API will be removed in 4.0.0")]
     public interface ISettableValue<in TValue> : ISettableValue
     {
-        /// <summary>
-        /// Interface is not yet in use.
-        /// </summary>
+        [Obsolete("This API will be removed in 4.0.0")]
         void SetValue(TValue value);
     }
 
-    /// <summary>
-    /// Interface is not yet in use.
-    /// </summary>
+    [Obsolete("This API will be removed in 4.0.0")]
     public interface ISettableValue
     {
-        /// <summary>
-        /// Interface is not yet in use.
-        /// </summary>
+
+        [Obsolete("This API will be removed in 4.0.0")]
         void SetValue(object value);
 
-        /// <summary>
-        /// Interface is not yet in use.
-        /// </summary>
+        [Obsolete("This API will be removed in 4.0.0")]
         void SetValueStruct<TStruct>(TStruct value) where TStruct : struct;
     }
 }

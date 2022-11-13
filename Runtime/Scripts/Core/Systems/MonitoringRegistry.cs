@@ -14,7 +14,7 @@ namespace Baracuda.Monitoring
 {
 #pragma warning disable CS0067
 
-    internal class MonitoringRegistry : LazySingleton<MonitoringRegistry>, IMonitoringRegistry
+    internal class MonitoringRegistry : IMonitoringRegistry
     {
         #region Data
 
@@ -34,6 +34,7 @@ namespace Baracuda.Monitoring
         private readonly List<object> _registeredTargets = new List<object>(256);
 
         #endregion
+
 
         #region Public
 
@@ -94,6 +95,7 @@ namespace Baracuda.Monitoring
 
         #endregion
 
+
         #region Internal
 
         internal void AddUsedTag(string tag)
@@ -140,10 +142,11 @@ namespace Baracuda.Monitoring
             _staticProfiles = staticProfiles;
             CreateInitialInstanceMonitorHandles();
             CreateStaticMonitorHandles();
-            MonitoringEvents.Singleton.RaiseProfilingCompleted(_staticMonitorHandles, _instanceMonitorHandles);
+            Monitor.InternalEvents.RaiseProfilingCompleted(_staticMonitorHandles, _instanceMonitorHandles);
         }
 
         #endregion
+
 
         #region Instance Monitor Handles
 
@@ -187,7 +190,7 @@ namespace Baracuda.Monitoring
                     units.Add(unit);
                     _instanceMonitorHandles.Add(unit);
                     _monitorHandles.Add(unit);
-                    MonitoringEvents.Singleton.RaiseMonitorHandleCreated(unit);
+                    Monitor.InternalEvents.RaiseMonitorHandleCreated(unit);
                 }
             }
 
@@ -214,13 +217,14 @@ namespace Baracuda.Monitoring
                 unit.Dispose();
                 _instanceMonitorHandles.Remove(unit);
                 _monitorHandles.Remove(unit);
-                MonitoringEvents.Singleton.RaiseMonitorHandleDisposed(unit);
+                Monitor.InternalEvents.RaiseMonitorHandleDisposed(unit);
             }
 
             _activeInstanceHandles.Remove(target);
         }
 
         #endregion
+
 
         #region Static Monitor Handles
 
@@ -237,6 +241,23 @@ namespace Baracuda.Monitoring
             var staticUnit = staticProfile.CreateUnit(null);
             _staticMonitorHandles.Add(staticUnit);
             _monitorHandles.Add(staticUnit);
+        }
+
+        #endregion
+
+
+        #region Ctor
+
+        internal MonitoringRegistry(MonitoringRegistry old)
+        {
+            if (old == null)
+            {
+                return;
+            }
+            foreach (var target in old._registeredTargets)
+            {
+                _registeredTargets.AddUnique(target);
+            }
         }
 
         #endregion

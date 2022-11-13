@@ -113,7 +113,7 @@ namespace Baracuda.Monitoring.Profiles
 
             if (TryGetMetaAttribute<MFontNameAttribute>(out var fontAttribute))
             {
-                MonitoringRegistry.Singleton.AddUsedFont(fontAttribute.FontName);
+                Monitor.InternalRegistry.AddUsedFont(fontAttribute.FontName);
             }
 
             if (TryGetMetaAttribute<MVisibleAttribute>(out var enabledAttribute))
@@ -158,7 +158,7 @@ namespace Baracuda.Monitoring.Profiles
             {
                 var readableString = MonitoredMemberType.HumanizedName();
                 tags.Add(readableString);
-                MonitoringRegistry.Singleton.AddUsedType(MonitoredMemberType);
+                Monitor.InternalRegistry.AddUsedType(MonitoredMemberType);
             }
 
             if (settings.FilterTags)
@@ -169,7 +169,7 @@ namespace Baracuda.Monitoring.Profiles
                     foreach (var tag in optionsAttribute.Tags)
                     {
                         customTags.Add(tag);
-                        MonitoringRegistry.Singleton.AddUsedTag(tag);
+                        Monitor.InternalRegistry.AddUsedTag(tag);
                         tags.Add(tag);
                     }
                 }
@@ -178,7 +178,7 @@ namespace Baracuda.Monitoring.Profiles
                     foreach (var tag in memberTags.Tags)
                     {
                         customTags.Add(tag);
-                        MonitoringRegistry.Singleton.AddUsedTag(tag);
+                        Monitor.InternalRegistry.AddUsedTag(tag);
                         tags.Add(tag);
                     }
                 }
@@ -187,7 +187,7 @@ namespace Baracuda.Monitoring.Profiles
                     foreach (var tag in classTags.Tags)
                     {
                         customTags.Add(tag);
-                        MonitoringRegistry.Singleton.AddUsedTag(tag);
+                        Monitor.InternalRegistry.AddUsedTag(tag);
                         tags.Add(tag);
                     }
                 }

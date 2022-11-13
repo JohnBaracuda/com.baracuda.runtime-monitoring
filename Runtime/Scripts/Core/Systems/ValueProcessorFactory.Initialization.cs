@@ -51,8 +51,6 @@ namespace Baracuda.Monitoring.Systems
          * Setup
          */
 
-
-
         internal ValueProcessorFactory()
         {
             var settings = Monitor.Settings;
