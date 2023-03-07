@@ -30,7 +30,8 @@ namespace Baracuda.Monitoring
         private readonly List<MonitorHandle> _instanceMonitorHandles = new List<MonitorHandle>(128);
         private readonly List<MonitorHandle> _monitorHandles = new List<MonitorHandle>(128);
 
-        private readonly Dictionary<object, MonitorHandle[]> _activeInstanceHandles = new Dictionary<object, MonitorHandle[]>();
+        private readonly Dictionary<object, MonitorHandle[]> _activeInstanceHandles =
+            new Dictionary<object, MonitorHandle[]>();
         private readonly List<object> _registeredTargets = new List<object>(256);
 
         #endregion
@@ -39,7 +40,7 @@ namespace Baracuda.Monitoring
         #region Public
 
         /// <summary>
-        /// Get a list of monitoring handles for all targets.
+        ///     Get a list of monitoring handles for all targets.
         /// </summary>
         [Pure]
         public IReadOnlyList<IMonitorHandle> GetMonitorHandles(HandleTypes handleTypes = HandleTypes.All)
@@ -60,7 +61,7 @@ namespace Baracuda.Monitoring
         }
 
         /// <summary>
-        /// Get a list of <see cref="IMonitorHandle"/>s registered to the passed target object.
+        ///     Get a list of <see cref="IMonitorHandle" />s registered to the passed target object.
         /// </summary>
         [Pure]
         public IMonitorHandle[] GetMonitorHandlesForTarget<T>(T target) where T : class
@@ -69,7 +70,7 @@ namespace Baracuda.Monitoring
             {
                 Debug.LogWarning(
                     $"Calling {nameof(GetMonitorHandlesForTarget)} before profiling has completed. " +
-                    $"If you need to access units during initialization consider disabling async profiling in the monitoring settings!");
+                    "If you need to access units during initialization consider disabling async profiling in the monitoring settings!");
             }
 
             var list = ListPool<IMonitorHandle>.Get();
@@ -114,7 +115,6 @@ namespace Baracuda.Monitoring
             _usedTypeNames.AddUnique(type.HumanizedName());
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void RegisterTargetInternal<T>(T target) where T : class
         {
@@ -136,7 +136,8 @@ namespace Baracuda.Monitoring
             _registeredTargets.Remove(target);
         }
 
-        internal void RegisterProfiles(Dictionary<Type, List<MonitorProfile>> instanceProfiles, List<MonitorProfile> staticProfiles)
+        internal void RegisterProfiles(Dictionary<Type, List<MonitorProfile>> instanceProfiles,
+            List<MonitorProfile> staticProfiles)
         {
             _instanceMonitorProfiles = instanceProfiles;
             _staticProfiles = staticProfiles;
@@ -200,6 +201,7 @@ namespace Baracuda.Monitoring
             {
                 _activeInstanceHandles.Add(target, units.ToArray());
             }
+
             ListPool<MemberInfo>.Release(guids);
             ListPool<MonitorHandle>.Release(units);
         }
@@ -254,6 +256,7 @@ namespace Baracuda.Monitoring
             {
                 return;
             }
+
             foreach (var target in old._registeredTargets)
             {
                 _registeredTargets.AddUnique(target);

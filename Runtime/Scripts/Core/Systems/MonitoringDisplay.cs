@@ -1,6 +1,5 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
-using Baracuda.Monitoring.Types;
 using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -17,6 +16,7 @@ namespace Baracuda.Monitoring.Systems
         private MonitoringUI _current;
 
         #endregion
+
 
         #region Setup
 
@@ -44,17 +44,20 @@ namespace Baracuda.Monitoring.Systems
             {
                 var gameObject = new GameObject("Monitoring UI");
                 gameObject.AddComponent<MonitoringUIFallback>();
-                gameObject.hideFlags = Monitor.Settings.ShowRuntimeMonitoringObject ? HideFlags.None : HideFlags.HideInHierarchy;
+                gameObject.hideFlags = Monitor.Settings.ShowRuntimeMonitoringObject
+                    ? HideFlags.None
+                    : HideFlags.HideInHierarchy;
                 Object.DontDestroyOnLoad(gameObject);
             }
         }
 
         #endregion
 
+
         #region Visiblity
 
         /// <summary>
-        /// Get or set the visibility of the current monitoring UI.
+        ///     Get or set the visibility of the current monitoring UI.
         /// </summary>
         public bool Visible
         {
@@ -75,10 +78,11 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         #region Current
 
         /// <summary>
-        /// Get the current monitoring UI instance
+        ///     Get the current monitoring UI instance
         /// </summary>
         public TMonitoringUI GetCurrent<TMonitoringUI>() where TMonitoringUI : MonitoringUI
         {
@@ -91,6 +95,7 @@ namespace Baracuda.Monitoring.Systems
             {
                 return;
             }
+
             if (_current != null)
             {
                 if (Monitor.Settings.AllowMultipleUIInstances)
@@ -102,11 +107,13 @@ namespace Baracuda.Monitoring.Systems
                     Object.Destroy(_current.gameObject);
                 }
             }
+
             _current = monitoringUI;
             VisibleStateChanged?.Invoke(Visible);
         }
 
         #endregion
+
 
         #region Filtering
 
@@ -225,6 +232,7 @@ namespace Baracuda.Monitoring.Systems
         }
 
         #endregion
+
 
         #region Oboslete
 

@@ -48,7 +48,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         public static void StartMonitoring<T>(T target) where T : class
         {
-            InternalRegistry.RegisterTargetInternal(target);
+            InternalRegistry?.RegisterTargetInternal(target);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Baracuda.Monitoring
         /// </summary>
         public static void StopMonitoring<T>(T target) where T : class
         {
-            InternalRegistry.UnregisterTargetInternal(target);
+            InternalRegistry?.UnregisterTargetInternal(target);
         }
 
         #endregion
@@ -117,6 +117,7 @@ namespace Baracuda.Monitoring
             {
                 Initialize();
             }
+
             if (Settings.IsMonitoringEnabled)
             {
                 var profiler = new MonitoringProfiler();
