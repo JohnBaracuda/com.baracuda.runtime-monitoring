@@ -12,9 +12,9 @@ namespace Baracuda.Monitoring.Systems
          * Fields
          */
 
-        private const string DEFAULT_INDENT = "  ";
-        private const int DEFAULT_INDENT_NUM = 2;
-        private const string NULL = "<color=red>NULL</color>";
+        private const string DefaultIndent = "  ";
+        private const int DefaultIndentNum = 2;
+        private const string Null = "null";
         private readonly string _xColor;
         private readonly string _yColor;
         private readonly string _zColor;

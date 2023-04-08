@@ -3,6 +3,7 @@
 using System;
 using System.Text;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Baracuda.Monitoring.Systems
 {
@@ -16,12 +17,12 @@ namespace Baracuda.Monitoring.Systems
         {
             var stringBuilder = new StringBuilder();
             var label = formatData.Label;
-            return (value) =>
+            return value =>
             {
                 stringBuilder.Clear();
                 stringBuilder.Append(label);
                 stringBuilder.Append(": ");
-                stringBuilder.Append(value?.ToString() ?? NULL);
+                stringBuilder.Append(value?.ToString() ?? Null);
                 return stringBuilder.ToString();
             };
         }
@@ -35,12 +36,12 @@ namespace Baracuda.Monitoring.Systems
             var stringBuilder = new StringBuilder();
             var label = formatData.Label;
             var format = formatData.Format;
-            return (value) =>
+            return value =>
             {
                 stringBuilder.Clear();
                 stringBuilder.Append(label);
                 stringBuilder.Append(": ");
-                stringBuilder.Append((value as IFormattable)?.ToString(format, null) ?? NULL);
+                stringBuilder.Append((value as IFormattable)?.ToString(format, null) ?? Null);
                 return stringBuilder.ToString();
             };
         }
@@ -49,31 +50,30 @@ namespace Baracuda.Monitoring.Systems
          * Unity Objects
          */
 
-        private static Func<UnityEngine.Object, string> UnityEngineObjectProcessor(IFormatData formatData)
+        private static Func<Object, string> UnityEngineObjectProcessor(IFormatData formatData)
         {
             var name = formatData.Label;
             var stringBuilder = new StringBuilder();
 
-            return (value) =>
+            return value =>
             {
                 stringBuilder.Clear();
                 stringBuilder.Append(name);
                 stringBuilder.Append(": ");
-                stringBuilder.Append((value != null ? value.ToString() : NULL));
+                stringBuilder.Append(value != null ? value.ToString() : Null);
                 return stringBuilder.ToString();
             };
         }
-
 
         private static Func<Transform, string> TransformProcessor(IFormatData formatData)
         {
             var sb = new StringBuilder();
             var name = formatData.Label;
-            var nullString = $"{name}: {NULL}";
+            var nullString = $"{name}: {Null}";
             var indentValue = CreateIndentValueForProfile(formatData) * 2;
             var cachedString = default(string);
 
-            return (transform) =>
+            return transform =>
             {
                 if (transform == null)
                 {

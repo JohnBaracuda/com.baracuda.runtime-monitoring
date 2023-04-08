@@ -1,6 +1,7 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Systems;
 using Baracuda.Monitoring.Types;
 using System;
 using System.Runtime.CompilerServices;
@@ -9,9 +10,9 @@ using UnityEngine;
 namespace Baracuda.Monitoring.Units
 {
     /// <summary>
-    /// Base type for units that monitor a value <br/>
-    /// <see cref="FieldHandle{TTarget,TValue}"/><br/>
-    /// <see cref="PropertyHandle{TTarget,TValue}"/>
+    ///     Base type for units that monitor a value <br />
+    ///     <see cref="FieldHandle{TTarget,TValue}" /><br />
+    ///     <see cref="PropertyHandle{TTarget,TValue}" />
     /// </summary>
     /// <typeparam name="TTarget"></typeparam>
     /// <typeparam name="TValue"></typeparam>
@@ -31,11 +32,13 @@ namespace Baracuda.Monitoring.Units
 
         private readonly ValueProfile<TTarget, TValue>.IsDirtyDelegate _checkIsDirty;
 
-        private TValue _lastValue = default;
+        private TValue _lastValue;
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Ctor
 
@@ -49,7 +52,7 @@ namespace Baracuda.Monitoring.Units
         {
             _target = target;
 #if DEBUG
-            _getValue = (value) =>
+            _getValue = value =>
             {
                 try
                 {
@@ -57,10 +60,12 @@ namespace Baracuda.Monitoring.Units
                 }
                 catch (Exception exception)
                 {
-                    Monitor.Logger.Log($"Exception when calling {nameof(GetValue)} in {this}\n(see next log for more information)", LogType.Warning, false);
+                    MonitoringLogger.Log(
+                        $"Exception when calling {nameof(GetValue)} in {this}\n(see next log for more information)",
+                        LogType.Warning, false);
                     Monitor.Logger.LogException(exception);
                     Enabled = false;
-                    return default;
+                    return default(TValue);
                 }
             };
 
@@ -74,7 +79,9 @@ namespace Baracuda.Monitoring.Units
                     }
                     catch (Exception exception)
                     {
-                        Monitor.Logger.Log($"Exception when calling {nameof(SetValue)} in {this}\n(see next log for more information)", LogType.Warning, false);
+                        MonitoringLogger.Log(
+                            $"Exception when calling {nameof(SetValue)} in {this}\n(see next log for more information)",
+                            LogType.Warning, false);
                         Monitor.Logger.LogException(exception);
                         Enabled = false;
                     }
@@ -128,7 +135,9 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Value Processor
 
@@ -139,7 +148,9 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Update
 
@@ -158,6 +169,7 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
+
         #region Validation
 
         private void SetEnabled(bool enabled)
@@ -167,7 +179,9 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Get
 
@@ -197,6 +211,7 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
+
         #region Set
 
         public void SetValue(TValue value)
@@ -209,7 +224,9 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region IDisosable
 

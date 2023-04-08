@@ -20,7 +20,7 @@ namespace Baracuda.Monitoring.Systems
         {
             var name = formatData.Label;
             var stringBuilder = new StringBuilder();
-            var nullString = $"{name}: {NULL}";
+            var nullString = $"{name}: {Null}";
             var indent = GetIndentStringForProfile(formatData);
 
             if (typeof(TKey).IsValueType)
@@ -28,7 +28,7 @@ namespace Baracuda.Monitoring.Systems
                 if (typeof(TValue).IsValueType)
                 {
                     return formatData.ShowIndex
-                        ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
+                        ? value =>
                         {
                             if (value == null)
                             {
@@ -39,7 +39,7 @@ namespace Baracuda.Monitoring.Systems
                             stringBuilder.Clear();
                             stringBuilder.Append(name);
 
-                            foreach (KeyValuePair<TKey, TValue> element in value)
+                            foreach (var element in value)
                             {
                                 stringBuilder.Append(Environment.NewLine);
                                 stringBuilder.Append(indent);
@@ -48,16 +48,16 @@ namespace Baracuda.Monitoring.Systems
                                 stringBuilder.Append(']');
                                 stringBuilder.Append(' ');
                                 stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key?.ToString());
+                                stringBuilder.Append(element.Key);
                                 stringBuilder.Append(',');
                                 stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value?.ToString());
+                                stringBuilder.Append(element.Value);
                                 stringBuilder.Append(']');
                             }
 
                             return stringBuilder.ToString();
-                        })
-                        : (value) =>
+                        }
+                        : value =>
                         {
                             if (value == null)
                             {
@@ -67,200 +67,191 @@ namespace Baracuda.Monitoring.Systems
                             stringBuilder.Clear();
                             stringBuilder.Append(name);
 
-                            foreach (KeyValuePair<TKey, TValue> element in value)
+                            foreach (var element in value)
                             {
                                 stringBuilder.Append(Environment.NewLine);
                                 stringBuilder.Append(indent);
                                 stringBuilder.Append(' ');
                                 stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key?.ToString());
+                                stringBuilder.Append(element.Key);
                                 stringBuilder.Append(',');
                                 stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value?.ToString());
+                                stringBuilder.Append(element.Value);
                                 stringBuilder.Append(']');
                             }
 
                             return stringBuilder.ToString();
                         };
                 }
-                else
-                {
-                    return formatData.ShowIndex
-                        ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
+                return formatData.ShowIndex
+                    ? value =>
+                    {
+                        if (value == null)
                         {
-                            if (value == null)
-                            {
-                                return nullString;
-                            }
+                            return nullString;
+                        }
 
-                            var index = 0;
-                            stringBuilder.Clear();
-                            stringBuilder.Append(name);
+                        var index = 0;
+                        stringBuilder.Clear();
+                        stringBuilder.Append(name);
 
-                            foreach (KeyValuePair<TKey, TValue> element in value)
-                            {
-                                stringBuilder.Append(Environment.NewLine);
-                                stringBuilder.Append(indent);
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(index++);
-                                stringBuilder.Append(']');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key?.ToString());
-                                stringBuilder.Append(',');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value?.ToString());
-                                stringBuilder.Append(']');
-                            }
-
-                            return stringBuilder.ToString();
-                        })
-                        : (value) =>
+                        foreach (var element in value)
                         {
-                            if (value == null)
-                            {
-                                return nullString;
-                            }
+                            stringBuilder.Append(Environment.NewLine);
+                            stringBuilder.Append(indent);
+                            stringBuilder.Append('[');
+                            stringBuilder.Append(index++);
+                            stringBuilder.Append(']');
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append('[');
+                            stringBuilder.Append(element.Key);
+                            stringBuilder.Append(',');
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append(element.Value);
+                            stringBuilder.Append(']');
+                        }
 
-                            stringBuilder.Clear();
-                            stringBuilder.Append(name);
+                        return stringBuilder.ToString();
+                    }
+                    : value =>
+                    {
+                        if (value == null)
+                        {
+                            return nullString;
+                        }
 
-                            foreach (KeyValuePair<TKey, TValue> element in value)
-                            {
-                                stringBuilder.Append(Environment.NewLine);
-                                stringBuilder.Append(indent);
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key?.ToString());
-                                stringBuilder.Append(',');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value?.ToString());
-                                stringBuilder.Append(']');
-                            }
+                        stringBuilder.Clear();
+                        stringBuilder.Append(name);
 
-                            return stringBuilder.ToString();
-                        };
-                }
+                        foreach (var element in value)
+                        {
+                            stringBuilder.Append(Environment.NewLine);
+                            stringBuilder.Append(indent);
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append('[');
+                            stringBuilder.Append(element.Key);
+                            stringBuilder.Append(',');
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append(element.Value);
+                            stringBuilder.Append(']');
+                        }
+
+                        return stringBuilder.ToString();
+                    };
             }
-            else
+            if (typeof(TValue).IsValueType)
             {
-                if (typeof(TValue).IsValueType)
-                {
-                    return formatData.ShowIndex
-                        ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
+                return formatData.ShowIndex
+                    ? value =>
+                    {
+                        if (value == null)
                         {
-                            if (value == null)
-                            {
-                                return nullString;
-                            }
+                            return nullString;
+                        }
 
-                            var index = 0;
-                            stringBuilder.Clear();
-                            stringBuilder.Append(name);
+                        var index = 0;
+                        stringBuilder.Clear();
+                        stringBuilder.Append(name);
 
-                            foreach (KeyValuePair<TKey, TValue> element in value)
-                            {
-                                stringBuilder.Append(Environment.NewLine);
-                                stringBuilder.Append(indent);
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(index++);
-                                stringBuilder.Append(']');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key?.ToString());
-                                stringBuilder.Append(',');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value?.ToString());
-                                stringBuilder.Append(']');
-                            }
-
-                            return stringBuilder.ToString();
-                        })
-                        : (value) =>
+                        foreach (var element in value)
                         {
-                            if (value == null)
-                            {
-                                return nullString;
-                            }
+                            stringBuilder.Append(Environment.NewLine);
+                            stringBuilder.Append(indent);
+                            stringBuilder.Append('[');
+                            stringBuilder.Append(index++);
+                            stringBuilder.Append(']');
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append('[');
+                            stringBuilder.Append(element.Key);
+                            stringBuilder.Append(',');
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append(element.Value);
+                            stringBuilder.Append(']');
+                        }
 
-                            stringBuilder.Clear();
-                            stringBuilder.Append(name);
-
-                            foreach (KeyValuePair<TKey, TValue> element in value)
-                            {
-                                stringBuilder.Append(Environment.NewLine);
-                                stringBuilder.Append(indent);
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key?.ToString());
-                                stringBuilder.Append(',');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value?.ToString());
-                                stringBuilder.Append(']');
-                            }
-
-                            return stringBuilder.ToString();
-                        };
-                }
-                else
-                {
-                    return formatData.ShowIndex
-                        ? (Func<IDictionary<TKey, TValue>, string>) ((value) =>
+                        return stringBuilder.ToString();
+                    }
+                    : value =>
+                    {
+                        if (value == null)
                         {
-                            if (value == null)
-                            {
-                                return nullString;
-                            }
+                            return nullString;
+                        }
 
-                            var index = 0;
-                            stringBuilder.Clear();
-                            stringBuilder.Append(name);
+                        stringBuilder.Clear();
+                        stringBuilder.Append(name);
 
-                            foreach (KeyValuePair<TKey, TValue> element in value)
-                            {
-                                stringBuilder.Append(Environment.NewLine);
-                                stringBuilder.Append(indent);
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(index++);
-                                stringBuilder.Append(']');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key?.ToString());
-                                stringBuilder.Append(',');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value?.ToString());
-                                stringBuilder.Append(']');
-                            }
-
-                            return stringBuilder.ToString();
-                        })
-                        : (value) =>
+                        foreach (var element in value)
                         {
-                            if (value == null)
-                            {
-                                return nullString;
-                            }
+                            stringBuilder.Append(Environment.NewLine);
+                            stringBuilder.Append(indent);
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append('[');
+                            stringBuilder.Append(element.Key);
+                            stringBuilder.Append(',');
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append(element.Value);
+                            stringBuilder.Append(']');
+                        }
 
-                            stringBuilder.Clear();
-                            stringBuilder.Append(name);
-
-                            foreach (KeyValuePair<TKey, TValue> element in value)
-                            {
-                                stringBuilder.Append(Environment.NewLine);
-                                stringBuilder.Append(indent);
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key?.ToString());
-                                stringBuilder.Append(',');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value?.ToString());
-                                stringBuilder.Append(']');
-                            }
-
-                            return stringBuilder.ToString();
-                        };
-                }
+                        return stringBuilder.ToString();
+                    };
             }
+            return formatData.ShowIndex
+                ? value =>
+                {
+                    if (value == null)
+                    {
+                        return nullString;
+                    }
+
+                    var index = 0;
+                    stringBuilder.Clear();
+                    stringBuilder.Append(name);
+
+                    foreach (var element in value)
+                    {
+                        stringBuilder.Append(Environment.NewLine);
+                        stringBuilder.Append(indent);
+                        stringBuilder.Append('[');
+                        stringBuilder.Append(index++);
+                        stringBuilder.Append(']');
+                        stringBuilder.Append(' ');
+                        stringBuilder.Append('[');
+                        stringBuilder.Append(element.Key);
+                        stringBuilder.Append(',');
+                        stringBuilder.Append(' ');
+                        stringBuilder.Append(element.Value);
+                        stringBuilder.Append(']');
+                    }
+
+                    return stringBuilder.ToString();
+                }
+                : value =>
+                {
+                    if (value == null)
+                    {
+                        return nullString;
+                    }
+
+                    stringBuilder.Clear();
+                    stringBuilder.Append(name);
+
+                    foreach (var element in value)
+                    {
+                        stringBuilder.Append(Environment.NewLine);
+                        stringBuilder.Append(indent);
+                        stringBuilder.Append(' ');
+                        stringBuilder.Append('[');
+                        stringBuilder.Append(element.Key);
+                        stringBuilder.Append(',');
+                        stringBuilder.Append(' ');
+                        stringBuilder.Append(element.Value);
+                        stringBuilder.Append(']');
+                    }
+
+                    return stringBuilder.ToString();
+                };
         }
     }
 }

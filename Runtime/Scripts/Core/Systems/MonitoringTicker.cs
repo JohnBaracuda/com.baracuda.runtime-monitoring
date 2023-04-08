@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Baracuda.Monitoring.Systems
 {
@@ -14,8 +15,8 @@ namespace Baracuda.Monitoring.Systems
 
         //--------------------------------------------------------------------------------------------------------------
 
-        private readonly List<IMonitorHandle> _activeTickReceiver = new List<IMonitorHandle>(64);
-        private readonly List<Action> _validationReceiver = new List<Action>(64);
+        private readonly List<IMonitorHandle> _activeTickReceiver = new(64);
+        private readonly List<Action> _validationReceiver = new(64);
 
         private static float updateTimer;
         private static bool tickEnabled;
@@ -27,7 +28,8 @@ namespace Baracuda.Monitoring.Systems
             Monitor.Events.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
         }
 
-        private void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorHandle> staticUnits, IReadOnlyList<IMonitorHandle> instanceUnits)
+        private void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorHandle> staticUnits,
+            IReadOnlyList<IMonitorHandle> instanceUnits)
         {
 #if UNITY_EDITOR
             if (!Application.isPlaying)
@@ -38,7 +40,7 @@ namespace Baracuda.Monitoring.Systems
 
             var sceneHook = new GameObject("Monitoring Scene Hook").AddComponent<SceneHook>();
 
-            UnityEngine.Object.DontDestroyOnLoad(sceneHook);
+            Object.DontDestroyOnLoad(sceneHook);
 
             sceneHook.gameObject.hideFlags = Monitor.Settings.ShowRuntimeMonitoringObject
                 ? HideFlags.None
@@ -60,6 +62,7 @@ namespace Baracuda.Monitoring.Systems
                 ValidationTick();
             };
         }
+
         private void Tick(float deltaTime)
         {
             if (!tickEnabled)
@@ -91,7 +94,8 @@ namespace Baracuda.Monitoring.Systems
                 }
                 catch (Exception exception)
                 {
-                    Monitor.Logger.Log($"Error when refreshing {monitorHandle}\n(see next log for more information)", LogType.Warning, false);
+                    MonitoringLogger.Log($"Error when refreshing {monitorHandle}\n(see next log for more information)",
+                        LogType.Warning, false);
                     Monitor.Logger.LogException(exception);
                     monitorHandle.Enabled = false;
                 }

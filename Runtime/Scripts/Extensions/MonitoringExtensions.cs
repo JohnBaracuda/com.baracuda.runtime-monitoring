@@ -6,12 +6,12 @@ using System.Runtime.CompilerServices;
 namespace Baracuda.Monitoring
 {
     /// <summary>
-    /// Contains monitoring extensions
+    ///     Contains monitoring extensions
     /// </summary>
     public static class MonitoringExtensions
     {
         /// <summary>
-        /// Register an object that is monitored during runtime.
+        ///     Register an object that is monitored during runtime.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StartMonitoring<T>(this T target) where T : class
@@ -20,13 +20,14 @@ namespace Baracuda.Monitoring
         }
 
         /// <summary>
-        /// Unregister an object that is monitored during runtime.
+        ///     Unregister an object that is monitored during runtime.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StopMonitoring<T>(this T target) where T : class
         {
             Monitor.StopMonitoring(target);
         }
+
 
         #region Obsolete
 

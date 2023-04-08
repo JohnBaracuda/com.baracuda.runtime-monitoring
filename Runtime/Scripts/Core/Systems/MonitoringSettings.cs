@@ -1,7 +1,6 @@
 // Copyright (c) 2022 Jonathan Lang
 
 using System;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -9,7 +8,7 @@ using UnityEngine.Assertions;
 namespace Baracuda.Monitoring.Systems
 {
     /// <summary>
-    /// Settings of the monitoring system.
+    ///     Settings of the monitoring system.
     /// </summary>
     public class MonitoringSettings : ScriptableObject, IMonitoringSettings
     {
@@ -18,45 +17,53 @@ namespace Baracuda.Monitoring.Systems
 #pragma warning disable CS0414
         [SerializeField] private EnabledState enableMonitoring = EnabledState.Enabled;
 
-        [Tooltip("When enabled, initial profiling will be processed asynchronous on a background thread. (Disabled for WebGL)")]
+        [Tooltip(
+            "When enabled, initial profiling will be processed asynchronous on a background thread. (Disabled for WebGL)")]
         [SerializeField] private bool asyncProfiling = true;
 
         [Tooltip("When enabled, the monitoring display will be opened as soon as profiling has completed.")]
         [SerializeField] private bool openDisplayOnLoad = true;
 
-        [Tooltip("When enabled, multiple UI instances are allowed simultaneously. Otherwise UI instances are destroyed if a new instance is instantiated / enabled." +
-                 "Enable this setting if you want to dynamically switch between e.g. a world-space and a screen-space UI.")]
-        [SerializeField] private bool allowMultipleUIInstances = false;
+        [Tooltip(
+            "When enabled, multiple UI instances are allowed simultaneously. Otherwise UI instances are destroyed if a new instance is instantiated / enabled." +
+            "Enable this setting if you want to dynamically switch between e.g. a world-space and a screen-space UI.")]
+        [SerializeField] private bool allowMultipleUIInstances;
 
         [Tooltip("Reference to the used MonitoringDisplay object.")]
-        [SerializeReference, SerializeField] private MonitoringUI monitoringUIOverride = null;
+        [SerializeReference] [SerializeField] private MonitoringUI monitoringUIOverride;
 
         #endregion
+
 
         #region Debug
 
         [Tooltip("When enabled, the monitoring runtime object is set visible in the hierarchy.")] [SerializeField]
-        private bool showRuntimeMonitoringObject = false;
+        private bool showRuntimeMonitoringObject;
 
         [Tooltip("BadImageFormatException is a rare exception that may occur during profiling.")]
         [SerializeField] private LoggingLevel logBadImageFormatException = LoggingLevel.None;
 
-        [Tooltip("OperationCanceledException is an exception that may occur when exiting playmode during profiling. It is used to abort the profiling background Task.")]
+        [Tooltip(
+            "OperationCanceledException is an exception that may occur when exiting playmode during profiling. It is used to abort the profiling background Task.")]
         [SerializeField] private LoggingLevel logOperationCanceledException = LoggingLevel.None;
 
-        [Tooltip("ThreadAbortException may occur if the thread, the profiling is running on is aborted for rare reasons.")]
+        [Tooltip(
+            "ThreadAbortException may occur if the thread, the profiling is running on is aborted for rare reasons.")]
         [SerializeField] private LoggingLevel logThreadAbortException = LoggingLevel.Warning;
 
         [Tooltip("Set the logging level of every unknown exception that may occur during profiling.")]
         [SerializeField] private LoggingLevel logUnknownExceptions = LoggingLevel.Exception;
 
-        [Tooltip("ProcessorNotFoundException may occur if the passed method name of a ValueProcessor cannot be found. This exception might occur after refactoring. For this reason usage of the nameof keyword is recommended when passing the name of a method.")]
+        [Tooltip(
+            "ProcessorNotFoundException may occur if the passed method name of a ValueProcessor cannot be found. This exception might occur after refactoring. For this reason usage of the nameof keyword is recommended when passing the name of a method.")]
         [SerializeField] private LoggingLevel logProcessorNotFoundException = LoggingLevel.Warning;
 
-        [Tooltip("InvalidProcessorSignatureException may occur if a method was passed as a custom ValueProcessor with an invalid signature.")]
+        [Tooltip(
+            "InvalidProcessorSignatureException may occur if a method was passed as a custom ValueProcessor with an invalid signature.")]
         [SerializeField] private LoggingLevel logInvalidProcessorSignatureException = LoggingLevel.Warning;
 
         #endregion
+
 
         #region Filtering
 
@@ -66,7 +73,8 @@ namespace Baracuda.Monitoring.Systems
         [SerializeField] private bool filterStaticOrInstance = true;
         [Tooltip("When enabled, the type name can be used for filtering. (e.g. int, float, string, etc.)")]
         [SerializeField] private bool filterType = true;
-        [Tooltip("When enabled, the members declaring type name can be used for filtering. (e.g. Player, MonoBehaviour etc.)")]
+        [Tooltip(
+            "When enabled, the members declaring type name can be used for filtering. (e.g. Player, MonoBehaviour etc.)")]
         [SerializeField] private bool filterDeclaringType = true;
         [Tooltip("When enabled, the member type can be used for filtering. (e.g. Field, Property, etc.)")]
         [SerializeField] private bool filterMemberType = true;
@@ -80,17 +88,19 @@ namespace Baracuda.Monitoring.Systems
         [SerializeField] private char filterAppendSymbol = '&';
         [Tooltip("Symbol can be used to negate a filter.")]
         [SerializeField] private char filterNegateSymbol = '!';
-        [Tooltip("Symbol can be used for absolute filtering, meaning that it is only searching for exact member names.")]
+        [Tooltip(
+            "Symbol can be used for absolute filtering, meaning that it is only searching for exact member names.")]
         [SerializeField] private char filterAbsoluteSymbol = '@';
         [Tooltip("Symbol can be used to tag filtering, meaning that it is only searching for custom tags.")]
         [SerializeField] private char filterTagsSymbol = '$';
 
         #endregion
 
+
         #region Formatting
 
         [Tooltip("When enabled, class names will be used as a prefix for displayed units")] [SerializeField]
-        private bool addClassName = false;
+        private bool addClassName;
 
         [Tooltip("This symbol will be used to separate units class names and their member names.")] [SerializeField]
         private char appendSymbol = '.';
@@ -109,6 +119,7 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         #region Color
 
         [Header("Color")]
@@ -116,34 +127,37 @@ namespace Baracuda.Monitoring.Systems
         [SerializeField] private Color falseColor = Color.red;
 
         [Header("Direction Color")]
-        [SerializeField] private Color xColor = new Color(0.41f, 0.38f, 1f);
-        [SerializeField] private Color yColor = new Color(0.49f, 1f, 0.53f);
-        [SerializeField] private Color zColor = new Color(1f, 0.38f, 0.35f);
-        [SerializeField] private Color wColor = new Color(0.6f, 0f, 1f);
+        [SerializeField] private Color xColor = new(0.41f, 0.38f, 1f);
+        [SerializeField] private Color yColor = new(0.49f, 1f, 0.53f);
+        [SerializeField] private Color zColor = new(1f, 0.38f, 0.35f);
+        [SerializeField] private Color wColor = new(0.6f, 0f, 1f);
 
         [Header("Types")]
-        [SerializeField] private Color classColor = new Color(0.49f, 0.49f, 1f);
-        [SerializeField] private Color eventColor = new Color(1f, 0.92f, 0.53f);
-        [SerializeField] private Color sceneNameColor = new Color(1f, 0.67f, 0.85f);
-        [SerializeField] private Color targetObjectColor = new Color(0.39f, 0.72f, 1f);
-        [SerializeField] private Color methodColor = new Color(0.56f, 0.98f, 0.53f);
-        [SerializeField] private Color outParameterColor = new Color(1f, 0.27f, 0.53f);
+        [SerializeField] private Color classColor = new(0.49f, 0.49f, 1f);
+        [SerializeField] private Color eventColor = new(1f, 0.92f, 0.53f);
+        [SerializeField] private Color sceneNameColor = new(1f, 0.67f, 0.85f);
+        [SerializeField] private Color targetObjectColor = new(0.39f, 0.72f, 1f);
+        [SerializeField] private Color methodColor = new(0.56f, 0.98f, 0.53f);
+        [SerializeField] private Color outParameterColor = new(1f, 0.27f, 0.53f);
 
         #endregion
+
 
         #region Assembly Settings
 
         [SerializeField]
-        [Tooltip("Assemblies with matching prefixes are ignored when creating a monitoring profile during initialization. Note that Unity, System and other core assemblies will always be ignored.")]
-        private string[] bannedAssemblyPrefixes = new string[]
+        [Tooltip(
+            "Assemblies with matching prefixes are ignored when creating a monitoring profile during initialization. Note that Unity, System and other core assemblies will always be ignored.")]
+        private string[] bannedAssemblyPrefixes =
         {
             "Assembly-Plugin",
-            "DOTween",
+            "DOTween"
         };
 
         [SerializeField]
-        [Tooltip("Assemblies with matching names are ignored when creating a monitoring profile during initialization. Note that Unity, System and other core assemblies will always be ignored.")]
-        private string[] bannedAssemblyNames = new string[]
+        [Tooltip(
+            "Assemblies with matching names are ignored when creating a monitoring profile during initialization. Note that Unity, System and other core assemblies will always be ignored.")]
+        private string[] bannedAssemblyNames =
         {
             "mscorlib",
             "UnityEngine",
@@ -260,23 +274,26 @@ namespace Baracuda.Monitoring.Systems
             "WebGLPlayerBuildProgram.Data",
             "ExCSS.Unity",
             "Unity.Cecil",
-            "JetBrains.Rider.Unity.Editor.Plugin.Net46.Repacked",
+            "JetBrains.Rider.Unity.Editor.Plugin.Net46.Repacked"
         };
 
         #endregion
+
 
         #region IL2CPP
 
         [Tooltip("When enabled, this object will listen to an IPreprocessBuildWithReport callback")]
         [SerializeField] private bool generateTypeDefinitionsOnBuild = true;
 
-        [Tooltip("Reference to the .cs file that will be used to automatically create type definitions for IL2CPP. This file should be located in Assembly-CSharp")]
-        [SerializeField] private TextAsset typeDefinitionsForIL2CPP = null;
+        [Tooltip(
+            "Reference to the .cs file that will be used to automatically create type definitions for IL2CPP. This file should be located in Assembly-CSharp")]
+        [SerializeField] private TextAsset typeDefinitionsForIL2CPP;
 
         [Tooltip("The IPreprocessBuildWithReport.callbackOrder of the AOT generation object.")]
-        [SerializeField] private int preprocessBuildCallbackOrder = 0;
+        [SerializeField] private int preprocessBuildCallbackOrder;
 
         #endregion
+
 
         #region Properties
 
@@ -286,7 +303,8 @@ namespace Baracuda.Monitoring.Systems
         /// <inheritdoc />
         public bool IsMonitoringEnabled =>
 #if UNITY_EDITOR
-            enableMonitoring == EnabledState.EditorOnly || enableMonitoring == EnabledState.Enabled || (int) enableMonitoring == 3;
+            enableMonitoring == EnabledState.EditorOnly || enableMonitoring == EnabledState.Enabled ||
+            (int) enableMonitoring == 3;
 #else
             enableMonitoring == EnabledState.Enabled || (int) enableMonitoring == 3;
 #endif
@@ -305,7 +323,6 @@ namespace Baracuda.Monitoring.Systems
         /*
          * UI Controller
          */
-
 
         /// <inheritdoc />
         public MonitoringUI MonitoringUIOverride => monitoringUIOverride;
@@ -419,7 +436,6 @@ namespace Baracuda.Monitoring.Systems
         /// <inheritdoc />
         public Color WColor => wColor;
 
-
         /// <inheritdoc />
         public Color MethodColor => methodColor;
 
@@ -441,7 +457,6 @@ namespace Baracuda.Monitoring.Systems
         /*
          * Assembly Settings
          */
-
 
         /// <inheritdoc />
         public string[] BannedAssemblyPrefixes => bannedAssemblyPrefixes;
@@ -478,15 +493,16 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         #region Asset Logic
 
         /// <summary>
-        /// Get the settings asset or create a new instance of it.
+        ///     Get the settings asset or create a new instance of it.
         /// </summary>
         public static MonitoringSettings Singleton => FindOrCreateSettingsAsset();
 
         /// <summary>
-        /// Get the settings asset or create a new instance of it.
+        ///     Get the settings asset or create a new instance of it.
         /// </summary>
         public static MonitoringSettings FindOrCreateSettingsAsset()
         {
@@ -503,23 +519,37 @@ namespace Baracuda.Monitoring.Systems
 
         private static MonitoringSettings CreateAsset()
         {
-         var asset = CreateInstance<MonitoringSettings>();
 #if UNITY_EDITOR
-            var path = $"Assets/Resources";
-            Directory.CreateDirectory(path);
-            var filePath = $"{path}/{nameof(MonitoringSettings)}.asset";
-            Debug.Log($"{nameof(MonitoringSettings)}: Creating new current at path:\n {filePath}");
+            UnityEditor.AssetDatabase.Refresh();
+            var guids = UnityEditor.AssetDatabase.FindAssets($"t:{typeof(MonitoringSettings)}");
+            for (var i = 0; i < guids.Length; i++)
+            {
+                var assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[i]);
+                var singleton = UnityEditor.AssetDatabase.LoadAssetAtPath<MonitoringSettings>(assetPath);
+                if (singleton != null)
+                {
+                    return singleton;
+                }
+            }
+
+            var asset = CreateInstance<MonitoringSettings>();
+            const string Path = "Assets/Resources";
+            var filePath = $"{Path}/{nameof(MonitoringSettings)}.asset";
+            Debug.Log($"[Runtime Monitoring] Creating new current at path: {filePath}");
+            UnityEditor.AssetDatabase.CreateFolder("Assets", "Resources");
             UnityEditor.AssetDatabase.CreateAsset(asset, filePath);
             UnityEditor.AssetDatabase.SaveAssets();
-#else
-            Debug.LogWarning($"Creating new instance of {nameof(MonitoringSettings)}");
-#endif
             return asset;
+#else
+            return CreateInstance<MonitoringSettings>();
+#endif
         }
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Obsolete
 

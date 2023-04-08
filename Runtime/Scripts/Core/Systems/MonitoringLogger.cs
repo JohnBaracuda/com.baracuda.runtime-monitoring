@@ -29,15 +29,15 @@ namespace Baracuda.Monitoring.Systems
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Log(string message, LogType logType, bool stackTrace = true)
+        public static void Log(string message, LogType logType, bool stackTrace = true)
         {
-            var format = $"{"[Monitoring]".ColorizeString(new Color(0.5f, 0.53f, 1f))} {message}";
+            var format = $"{"[Runtime Monitoring]".ColorizeString(new Color(0.5f, 0.53f, 1f))} {message}";
             var option = stackTrace ? LogOption.None : LogOption.NoStacktrace;
             Debug.LogFormat(logType, option, null, format, Array.Empty<object>());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void LogInternal(string message, LoggingLevel loggingLevel)
+        private static void LogInternal(string message, LoggingLevel loggingLevel)
         {
             switch (loggingLevel)
             {
@@ -55,7 +55,7 @@ namespace Baracuda.Monitoring.Systems
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void LogInternal(Exception exception, LoggingLevel loggingLevel)
+        private static void LogInternal(Exception exception, LoggingLevel loggingLevel)
         {
             switch (loggingLevel)
             {
@@ -96,13 +96,15 @@ namespace Baracuda.Monitoring.Systems
 
         public void LogValueProcessNotFound(string processor, Type type)
         {
-            var message = $"[ValueProcessor] Processor: {processor} in {type.Name} with a valid signature was not found! Note that only static methods are valid value processors";
+            var message =
+                $"[Runtime Monitoring] Processor: {processor} in {type.Name} with a valid signature was not found! Note that only static methods are valid value processors";
             LogInternal(message, _processorNotFoundLoggingLevel);
         }
 
         public void LogInvalidProcessorSignature(string processor, Type type)
         {
-            var message = $"[ValueProcessor] Processor: {processor} in {type.Name} does not have a valid value processor signature!";
+            var message =
+                $"[Runtime Monitoring] Processor: {processor} in {type.Name} does not have a valid value processor signature!";
             LogInternal(message, _invalidProcessorSignatureLoggingLevel);
         }
     }

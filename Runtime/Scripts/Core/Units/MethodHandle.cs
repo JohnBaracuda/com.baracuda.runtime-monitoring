@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2022 Jonathan Lang
 
 using Baracuda.Monitoring.Profiles;
+using Baracuda.Monitoring.Systems;
 using Baracuda.Monitoring.Types;
 using System;
 using System.Runtime.CompilerServices;
@@ -8,9 +9,11 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Units
 {
-    internal sealed class MethodHandle<TTarget, TValue> : MonitorHandle, IGettableValue<MethodResult<TValue>> where TTarget : class
+    internal sealed class MethodHandle<TTarget, TValue> : MonitorHandle, IGettableValue<MethodResult<TValue>>
+        where TTarget : class
     {
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Fields
 
@@ -21,7 +24,9 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Ctor
 
@@ -32,7 +37,7 @@ namespace Baracuda.Monitoring.Units
         {
             _target = target;
 #if DEBUG
-            _getValue = (value) =>
+            _getValue = value =>
             {
                 try
                 {
@@ -40,10 +45,12 @@ namespace Baracuda.Monitoring.Units
                 }
                 catch (Exception exception)
                 {
-                    Monitor.Logger.Log($"Exception when calling {nameof(GetValue)} in {this}\n(see next log for more information)", LogType.Warning, false);
+                    MonitoringLogger.Log(
+                        $"Exception when calling {nameof(GetValue)} in {this}\n(see next log for more information)",
+                        LogType.Warning, false);
                     Monitor.Logger.LogException(exception);
                     Enabled = false;
-                    return default;
+                    return default(MethodResult<TValue>);
                 }
             };
 #else
@@ -63,7 +70,9 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Update
 
@@ -75,7 +84,9 @@ namespace Baracuda.Monitoring.Units
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Get
 

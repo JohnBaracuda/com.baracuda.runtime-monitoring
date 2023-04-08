@@ -27,7 +27,7 @@ namespace Baracuda.Monitoring.Systems
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CreateIndentValueForProfile(IFormatData formatData)
         {
-            return formatData.ElementIndent >= 0 ? formatData.ElementIndent : DEFAULT_INDENT_NUM;
+            return formatData.ElementIndent >= 0 ? formatData.ElementIndent : DefaultIndentNum;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

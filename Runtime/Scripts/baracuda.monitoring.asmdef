@@ -1,8 +1,7 @@
 {
     "name": "baracuda.monitoring",
-    "references": [
-        "GUID:08af652e582824643b56d9fe5a5c0ecd"
-    ],
+    "rootNamespace": "",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

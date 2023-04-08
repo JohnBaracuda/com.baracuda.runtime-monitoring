@@ -68,6 +68,7 @@ namespace Baracuda.Monitoring.Systems
 
                 //----------------------------
 
+
                 #region Ilist<T> ---
 
                 // IList<T> processor
@@ -126,7 +127,9 @@ namespace Baracuda.Monitoring.Systems
 
                 #endregion
 
+
                 //----------------------------
+
 
                 #region IDictionary<TKey,TValue> ---
 
@@ -165,7 +168,9 @@ namespace Baracuda.Monitoring.Systems
 
                 #endregion
 
+
                 //----------------------------
+
 
                 #region IEnumerable<T> ---
 
@@ -195,6 +200,7 @@ namespace Baracuda.Monitoring.Systems
                 }
 
                 #endregion
+
 
                 //----------------------------
 
@@ -267,7 +273,9 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region IEnumerable ---
 
@@ -284,23 +292,23 @@ namespace Baracuda.Monitoring.Systems
                     (Func<TElement, string>) Delegate.CreateDelegate(typeof(Func<TElement, string>), processor);
 
                 // create a matching null string.
-                var nullString = $"{name}: {NULL}";
+                var nullString = $"{name}: {Null}";
 
                 // create a stringBuilder object to be used by the lambda.
                 var sb = new StringBuilder();
 
                 //Processor Code
-                return (value) =>
+                return value =>
                 {
                     // check that the passed value is not null.
-                    if ((object) value != null)
+                    if (value != null)
                     {
                         sb.Clear();
                         sb.Append(name);
-                        foreach (TElement element in value)
+                        foreach (var element in value)
                         {
                             sb.Append(Environment.NewLine);
-                            sb.Append(DEFAULT_INDENT);
+                            sb.Append(DefaultIndent);
                             sb.Append(enumerableDelegate(element));
                         }
 
@@ -320,6 +328,7 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         #region Dictionary ---
 
         private static readonly MethodInfo genericIDictionaryCreateMethod =
@@ -335,12 +344,12 @@ namespace Baracuda.Monitoring.Systems
                     (Func<TKey, TValue, string>) Delegate.CreateDelegate(typeof(Func<TKey, TValue, string>), processor);
 
                 // create a matching null string.
-                var nullString = $"{name}: {NULL}";
+                var nullString = $"{name}: {Null}";
 
                 // create a stringBuilder object to be used by the lambda.
                 var stringBuilder = new StringBuilder();
 
-                return (value) =>
+                return value =>
                 {
                     // check that the passed value is not null.
                     if (value != null)
@@ -348,10 +357,10 @@ namespace Baracuda.Monitoring.Systems
                         stringBuilder.Clear();
                         stringBuilder.Append(name);
 
-                        foreach (KeyValuePair<TKey, TValue> valuePair in value)
+                        foreach (var valuePair in value)
                         {
                             stringBuilder.Append(Environment.NewLine);
-                            stringBuilder.Append(DEFAULT_INDENT);
+                            stringBuilder.Append(DefaultIndent);
                             stringBuilder.Append(genericFunc(valuePair.Key, valuePair.Value));
                         }
 
@@ -371,6 +380,7 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         #region IList ---
 
         private static readonly MethodInfo genericIListWithoutIndexCreateMethod =
@@ -386,14 +396,15 @@ namespace Baracuda.Monitoring.Systems
                     (Func<TElement, string>) Delegate.CreateDelegate(typeof(Func<TElement, string>), processor);
 
                 // create a matching null string.
-                var nullString = $"{name}: {NULL}";
+                var nullString = $"{name}: {Null}";
 
                 // create a stringBuilder object to be used by the lambda.
                 var stringBuilder = new StringBuilder();
 
+
                 #region Processor Code ---
 
-                return (value) =>
+                return value =>
                 {
                     // check that the passed value is not null.
                     if (value != null)
@@ -401,10 +412,10 @@ namespace Baracuda.Monitoring.Systems
                         stringBuilder.Clear();
                         stringBuilder.Append(name);
 
-                        for (int i = 0; i < value.Count; i++)
+                        for (var i = 0; i < value.Count; i++)
                         {
                             stringBuilder.Append(Environment.NewLine);
-                            stringBuilder.Append(DEFAULT_INDENT);
+                            stringBuilder.Append(DefaultIndent);
                             stringBuilder.Append(listDelegate(value[i]));
                         }
 
@@ -426,18 +437,22 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         #region IList + Index ---
 
         private static readonly MethodInfo genericIListWithIndexCreateMethod =
             typeof(ValueProcessorFactory).GetMethod(nameof(CreateIListFuncWithIndexArgument), STATIC_FLAGS);
 
         /// <summary>
-        /// Creates a delegate that accepts an input of type <see cref="IList{TElement}"/> and returns a string, using
-        /// a custom value processor with a signature<br/>
+        ///     Creates a delegate that accepts an input of type <see cref="IList{TElement}" /> and returns a string, using
+        ///     a custom value processor with a signature<br />
         /// </summary>
-        /// <param name="processor">the <see cref="MethodInfo"/> of the previously validated processor</param>
-        /// <param name="name">the name of the <see cref="ValueHandle{TTarget,TValue}"/></param>
-        /// <typeparam name="TInput">the exact argument/input type of the processors method. This type must be assignable from <see cref="IList{TElement}"/></typeparam>
+        /// <param name="processor">the <see cref="MethodInfo" /> of the previously validated processor</param>
+        /// <param name="name">the name of the <see cref="ValueHandle{TTarget,TValue}" /></param>
+        /// <typeparam name="TInput">
+        ///     the exact argument/input type of the processors method. This type must be assignable from
+        ///     <see cref="IList{TElement}" />
+        /// </typeparam>
         /// <typeparam name="TElement">the element type of the IList</typeparam>
         /// <returns></returns>
         private static Func<TInput, string> CreateIListFuncWithIndexArgument<TInput, TElement>(MethodInfo processor,
@@ -451,24 +466,25 @@ namespace Baracuda.Monitoring.Systems
                         processor);
 
                 // create a matching null string.
-                var nullString = $"{name}: {NULL}";
+                var nullString = $"{name}: {Null}";
 
                 // create a stringBuilder object to be used by the lambda.
                 var stringBuilder = new StringBuilder();
 
+
                 #region Processor Code ---
 
-                return (value) =>
+                return value =>
                 {
                     // check that the passed value is not null.
                     if (value != null)
                     {
                         stringBuilder.Clear();
                         stringBuilder.Append(name);
-                        for (int i = 0; i < value.Count; i++)
+                        for (var i = 0; i < value.Count; i++)
                         {
                             stringBuilder.Append(Environment.NewLine);
-                            stringBuilder.Append(DEFAULT_INDENT);
+                            stringBuilder.Append(DefaultIndent);
                             stringBuilder.Append(listDelegate(value[i], i));
                         }
 

@@ -4,7 +4,6 @@ using Baracuda.Monitoring.Profiles;
 using Baracuda.Monitoring.Types;
 using Baracuda.Monitoring.Utilities.Extensions;
 using Baracuda.Monitoring.Utilities.Reflection;
-using Baracuda.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +11,14 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Debug = UnityEngine.Debug;
+using UnityEngine;
 using Void = Baracuda.Monitoring.Types.Void;
 
 namespace Baracuda.Monitoring.Systems
 {
     /// <summary>
-    /// Class responsible for creating <see cref="MonitorProfile"/>s for member found in custom assemblies that were
-    /// flagged to be monitored by the use of a <see cref="MonitorAttribute"/>.
+    ///     Class responsible for creating <see cref="MonitorProfile" />s for member found in custom assemblies that were
+    ///     flagged to be monitored by the use of a <see cref="MonitorAttribute" />.
     /// </summary>
     internal class MonitoringProfiler
     {
@@ -29,45 +28,77 @@ namespace Baracuda.Monitoring.Systems
          * Internal
          */
 
-        private readonly List<MonitorProfile> _staticProfiles = new List<MonitorProfile>();
-        private readonly Dictionary<Type, List<MonitorProfile>> _instanceProfiles = new Dictionary<Type, List<MonitorProfile>>();
+        private readonly List<MonitorProfile> _staticProfiles = new();
+        private readonly Dictionary<Type, List<MonitorProfile>> _instanceProfiles = new();
 
         /*
          * Private
          */
 
         private readonly List<(FieldInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
-            _genericFieldBaseTypes = new List<(FieldInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
+            _genericFieldBaseTypes = new();
 
         private readonly List<(PropertyInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
-            _genericPropertyBaseTypes = new List<(PropertyInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
+            _genericPropertyBaseTypes = new();
 
         private readonly List<(EventInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
-            _genericEventBaseTypes = new List<(EventInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
+            _genericEventBaseTypes = new();
 
         private readonly List<(MethodInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
-            _genericMethodBaseTypes = new List<(MethodInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
+            _genericMethodBaseTypes = new();
 
-
-        private const BindingFlags STATIC_FLAGS = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-        private const BindingFlags INSTANCE_FLAGS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+        private const BindingFlags StaticFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+        private const BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.Public |
+                                                   BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
         private readonly IMonitoringSettings _settings;
+        private static CancellationTokenSource cancellationTokenSource = new();
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Ctor
 
         internal MonitoringProfiler()
         {
             _settings = Monitor.Settings;
+            Application.quitting -= CancelAndResetRuntimeToken;
+            Application.quitting += CancelAndResetRuntimeToken;
+
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.playModeStateChanged += change =>
+            {
+                switch (change)
+                {
+                    case UnityEditor.PlayModeStateChange.ExitingEditMode:
+                    case UnityEditor.PlayModeStateChange.ExitingPlayMode:
+                        CancelAndResetRuntimeToken();
+                        break;
+                }
+            };
+#endif
         }
 
         #endregion
 
+
+        #region Cancellation
+
+        private static void CancelAndResetRuntimeToken()
+        {
+            cancellationTokenSource.Cancel();
+            cancellationTokenSource.Dispose();
+            cancellationTokenSource = new CancellationTokenSource();
+        }
+
+        #endregion
+
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Profiling Task
 
@@ -77,24 +108,25 @@ namespace Baracuda.Monitoring.Systems
             {
                 if (Monitor.Settings.AsyncProfiling)
                 {
-                    await Task.Run(() => ProfileInternalAsync(Dispatcher.RuntimeToken), Dispatcher.RuntimeToken);
+                    await Task.Run(() => ProfileInternalAsync(cancellationTokenSource.Token),
+                        cancellationTokenSource.Token);
                 }
                 else
                 {
-                    ProfileInternalAsync(Dispatcher.RuntimeToken).Wait(Dispatcher.RuntimeToken);
+                    ProfileInternalAsync(cancellationTokenSource.Token).Wait(cancellationTokenSource.Token);
                 }
 
                 Monitor.InternalRegistry.RegisterProfiles(_instanceProfiles, _staticProfiles);
                 return true;
             }
-            catch (OperationCanceledException oce)
+            catch (OperationCanceledException operationCanceledException)
             {
-                Monitor.Logger.LogOperationCancelledException(oce);
+                Monitor.Logger.LogOperationCancelledException(operationCanceledException);
                 return false;
             }
-            catch (ThreadAbortException tae)
+            catch (ThreadAbortException threadAbortException)
             {
-                Monitor.Logger.LogThreadAbortedException(tae);
+                Monitor.Logger.LogThreadAbortedException(threadAbortException);
                 return false;
             }
             catch (Exception exception)
@@ -167,7 +199,7 @@ namespace Baracuda.Monitoring.Systems
             // search for global value processors
             for (var i = 0; i < types.Length; i++)
             {
-                var methods = types[i].GetMethods(STATIC_FLAGS);
+                var methods = types[i].GetMethods(StaticFlags);
                 for (var j = 0; j < methods.Length; j++)
                 {
                     if (methods[j].HasAttribute<GlobalValueProcessor>())
@@ -180,10 +212,10 @@ namespace Baracuda.Monitoring.Systems
             // inspect static member
             for (var i = 0; i < types.Length; i++)
             {
-                var staticFields = types[i].GetFields(STATIC_FLAGS);
-                var staticProperties = types[i].GetProperties(STATIC_FLAGS);
-                var staticEvents = types[i].GetEvents(STATIC_FLAGS);
-                var staticMethods = types[i].GetMethods(STATIC_FLAGS);
+                var staticFields = types[i].GetFields(StaticFlags);
+                var staticProperties = types[i].GetProperties(StaticFlags);
+                var staticEvents = types[i].GetEvents(StaticFlags);
+                var staticMethods = types[i].GetMethods(StaticFlags);
 
                 InspectStaticFields(staticFields);
                 InspectStaticProperties(staticProperties);
@@ -196,10 +228,10 @@ namespace Baracuda.Monitoring.Systems
             // inspect instance member
             for (var i = 0; i < types.Length; i++)
             {
-                var instanceFields = types[i].GetFields(INSTANCE_FLAGS);
-                var instanceProperties = types[i].GetProperties(INSTANCE_FLAGS);
-                var instanceEvents = types[i].GetEvents(INSTANCE_FLAGS);
-                var instanceMethods = types[i].GetMethods(INSTANCE_FLAGS);
+                var instanceFields = types[i].GetFields(InstanceFlags);
+                var instanceProperties = types[i].GetProperties(InstanceFlags);
+                var instanceEvents = types[i].GetEvents(InstanceFlags);
+                var instanceMethods = types[i].GetMethods(InstanceFlags);
 
                 InspectInstanceFields(instanceFields);
                 InspectInstanceProperties(instanceProperties);
@@ -208,7 +240,6 @@ namespace Baracuda.Monitoring.Systems
             }
 
             ct.ThrowIfCancellationRequested();
-
 
             // post profile to find concrete implementations of cached generic base types that contain members
             // flagged to be monitored.
@@ -248,7 +279,9 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Instance: Inspection
 
@@ -342,7 +375,6 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
-        //---------
 
         #region Instance: Profiling
 
@@ -352,9 +384,11 @@ namespace Baracuda.Monitoring.Systems
             {
                 Debug.Assert(fieldInfo.DeclaringType != null, "fieldInfo.DeclaringType != null");
 
+                // ReSharper disable once PossibleNullReferenceException
                 if (fieldInfo.DeclaringType.IsValueType)
                 {
-                    Debug.LogWarning($"[Monitoring] Monitored member found in value type '{fieldInfo.DeclaringType.FullName}'. You can only monitor static members of value types!");
+                    Debug.LogWarning(
+                        $"[Monitoring] Monitored member found in value type '{fieldInfo.DeclaringType.FullName}'. You can only monitor static members of value types!");
                     return;
                 }
 
@@ -371,7 +405,7 @@ namespace Baracuda.Monitoring.Systems
                 var genericType = typeof(FieldProfile<,>).MakeGenericType(fieldInfo.DeclaringType, fieldInfo.FieldType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(InstanceFlags, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile = (MonitorProfile) CreateInstance(genericType, fieldInfo, attribute, args);
@@ -399,9 +433,11 @@ namespace Baracuda.Monitoring.Systems
             {
                 Debug.Assert(propertyInfo.DeclaringType != null, "propertyInfo.DeclaringType != null");
 
+                // ReSharper disable once PossibleNullReferenceException
                 if (propertyInfo.DeclaringType.IsValueType)
                 {
-                    Debug.LogWarning($"[Monitoring] Monitored member found in value type '{propertyInfo.DeclaringType.FullName}'. You can only monitor static members of value types!");
+                    Debug.LogWarning(
+                        $"[Monitoring] Monitored member found in value type '{propertyInfo.DeclaringType.FullName}'. You can only monitor static members of value types!");
                     return;
                 }
 
@@ -415,11 +451,11 @@ namespace Baracuda.Monitoring.Systems
                 }
 
                 // create a generic type definition.
-                var genericType = typeof(PropertyProfile<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
-
+                var genericType =
+                    typeof(PropertyProfile<,>).MakeGenericType(propertyInfo.DeclaringType, propertyInfo.PropertyType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(InstanceFlags, _settings);
 
                 // create a profile for the property using the the generic type and the attribute.
                 var profile = (MonitorProfile) CreateInstance(genericType, propertyInfo, attribute, args);
@@ -447,9 +483,11 @@ namespace Baracuda.Monitoring.Systems
             {
                 Debug.Assert(eventInfo.DeclaringType != null, "eventInfo.DeclaringType != null");
 
+                // ReSharper disable once PossibleNullReferenceException
                 if (eventInfo.DeclaringType.IsValueType)
                 {
-                    Debug.LogWarning($"[Monitoring] Monitored member found in value type '{eventInfo.DeclaringType.FullName}'. You can only monitor static members of value types!");
+                    Debug.LogWarning(
+                        $"[Monitoring] Monitored member found in value type '{eventInfo.DeclaringType.FullName}'. You can only monitor static members of value types!");
                     return;
                 }
 
@@ -463,11 +501,11 @@ namespace Baracuda.Monitoring.Systems
                 }
 
                 // create a generic type definition.
-                var genericType = typeof(EventProfile<,>).MakeGenericType(eventInfo.DeclaringType, eventInfo.EventHandlerType);
-
+                var genericType =
+                    typeof(EventProfile<,>).MakeGenericType(eventInfo.DeclaringType, eventInfo.EventHandlerType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(InstanceFlags, _settings);
 
                 // create a profile for the event. First parameter is the generic type definition.
                 var profile = (MonitorProfile) CreateInstance(genericType, eventInfo, attribute, args);
@@ -495,9 +533,11 @@ namespace Baracuda.Monitoring.Systems
             {
                 Debug.Assert(methodInfo.DeclaringType != null, "methodInfo.DeclaringType != null");
 
+                // ReSharper disable once PossibleNullReferenceException
                 if (methodInfo.DeclaringType.IsValueType)
                 {
-                    Debug.LogWarning($"[Monitoring] Monitored member found in value type '{methodInfo.DeclaringType.FullName}'. You can only monitor static members of value types!");
+                    Debug.LogWarning(
+                        $"[Monitoring] Monitored member found in value type '{methodInfo.DeclaringType.FullName}'. You can only monitor static members of value types!");
                     return;
                 }
 
@@ -512,16 +552,17 @@ namespace Baracuda.Monitoring.Systems
 
                 if (!methodInfo.HasReturnValueOrOutParameter())
                 {
-                    Debug.LogWarning($"Monitored Method {methodInfo.DeclaringType?.Name}.{methodInfo.Name} needs a return value or out parameter!");
+                    Debug.LogWarning(
+                        $"Monitored Method {methodInfo.DeclaringType?.Name}.{methodInfo.Name} needs a return value or out parameter!");
                     return;
                 }
 
                 // create a generic type definition.
-                var genericType = typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType, methodInfo.ReturnType.NotVoid(typeof(Void)));
-
+                var genericType = typeof(MethodProfile<,>).MakeGenericType(methodInfo.DeclaringType,
+                    methodInfo.ReturnType.NotVoid(typeof(Void)));
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(InstanceFlags, _settings);
 
                 // create a profile for the property using the the generic type and the attribute.
                 var profile = (MonitorProfile) CreateInstance(genericType, methodInfo, attribute, args);
@@ -546,6 +587,7 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         #region Instance: Profiling Generic Basetype Concretions
 
         // Methods in this region are called after every type has been profiled.
@@ -560,17 +602,18 @@ namespace Baracuda.Monitoring.Systems
             {
                 // everything must be concrete when creating the generic method/ctor bellow so we have to use
                 // magic by creating a concrete type, based on a concrete subtype of a generic base type.
-                var concreteFieldInfo = concreteSubtype.GetFieldIncludeBaseTypes(fieldInfo.Name, INSTANCE_FLAGS);
+                var concreteFieldInfo = concreteSubtype.GetFieldIncludeBaseTypes(fieldInfo.Name, InstanceFlags);
 
                 // create a generic type definition.
-                var concreteGenericType = typeof(FieldProfile<,>).MakeGenericType(concreteSubtype, concreteFieldInfo.FieldType);
+                var concreteGenericType =
+                    typeof(FieldProfile<,>).MakeGenericType(concreteSubtype, concreteFieldInfo.FieldType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(InstanceFlags, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile = (MonitorProfile) CreateInstance(concreteGenericType, concreteFieldInfo, attribute,
-                        args);
+                    args);
 
                 // cache the profile
                 if (_instanceProfiles.TryGetValue(concreteSubtype, out var profiles))
@@ -589,7 +632,6 @@ namespace Baracuda.Monitoring.Systems
             }
         }
 
-
         private void CreateInstancePropertyProfileForGenericBaseType(PropertyInfo propertyInfo,
             MonitorAttribute attribute, Type concreteSubtype)
         {
@@ -597,7 +639,8 @@ namespace Baracuda.Monitoring.Systems
             {
                 // everything must be concrete when creating the generic method/ctor bellow so we have to use
                 // magic by creating a concrete type, based on a concrete subtype of a generic base type.
-                var concretePropertyInfo = concreteSubtype.GetPropertyIncludeBaseTypes(propertyInfo.Name, INSTANCE_FLAGS);
+                var concretePropertyInfo =
+                    concreteSubtype.GetPropertyIncludeBaseTypes(propertyInfo.Name, InstanceFlags);
 
                 // REVIEW:
                 // If an object is registered that inherits from multiple generic types, multiple profiles with the same
@@ -615,7 +658,7 @@ namespace Baracuda.Monitoring.Systems
                     typeof(PropertyProfile<,>).MakeGenericType(concreteSubtype, concretePropertyInfo.PropertyType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(InstanceFlags, _settings);
 
                 // create a profile for the property using the the generic type and the attribute.
                 var profile =
@@ -646,13 +689,14 @@ namespace Baracuda.Monitoring.Systems
             {
                 // everything must be concrete when creating the generic method/ctor bellow so we have to use
                 // magic by creating a concrete type, based on a concrete subtype of a generic base type.
-                var concreteEventInfo = concreteSubtype.GetEventIncludeBaseTypes(eventInfo.Name, INSTANCE_FLAGS);
+                var concreteEventInfo = concreteSubtype.GetEventIncludeBaseTypes(eventInfo.Name, InstanceFlags);
 
                 // create a generic type definition.
-                var concreteGenericType = typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo.EventHandlerType);
+                var concreteGenericType =
+                    typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo.EventHandlerType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(InstanceFlags, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile =
@@ -675,13 +719,14 @@ namespace Baracuda.Monitoring.Systems
             }
         }
 
-        private void CreateInstanceMethodProfileForGenericBaseType(MethodInfo methodInfo, MonitorAttribute attribute, Type concreteSubtype)
+        private void CreateInstanceMethodProfileForGenericBaseType(MethodInfo methodInfo, MonitorAttribute attribute,
+            Type concreteSubtype)
         {
             try
             {
                 // everything must be concrete when creating the generic method/ctor bellow so we have to use
                 // magic by creating a concrete type, based on a concrete subtype of a generic base type.
-                var concreteMethodInfo = concreteSubtype.GetMethodIncludeBaseTypes(methodInfo.Name, INSTANCE_FLAGS);
+                var concreteMethodInfo = concreteSubtype.GetMethodIncludeBaseTypes(methodInfo.Name, InstanceFlags);
 
                 // REVIEW:
                 // If an object is registered that inherits from multiple generic types, multiple profiles with the same
@@ -699,7 +744,7 @@ namespace Baracuda.Monitoring.Systems
                     typeof(MethodProfile<,>).MakeGenericType(concreteSubtype, concreteMethodInfo.ReturnType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(INSTANCE_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(InstanceFlags, _settings);
 
                 // create a profile for the property using the the generic type and the attribute.
                 var profile = (MonitorProfile) CreateInstance(concreteGenericType, concreteMethodInfo, attribute, args);
@@ -723,6 +768,7 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         #region Profiling Helper
 
         private object CreateInstance<T1, T2, T3>(Type type, T1 arg1, T2 arg2, T3 arg3)
@@ -733,7 +779,9 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Static: Inspection
 
@@ -827,7 +875,6 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
-        //---------
 
         #region Static: Profiling
 
@@ -840,6 +887,8 @@ namespace Baracuda.Monitoring.Systems
                 // we cannot construct an object based on a generic type definition without having a concrete
                 // subtype as a template which is the reason why we are storing this profile in a special list and
                 // instantiate it for each subtype we find.
+
+                // ReSharper disable once PossibleNullReferenceException
                 if (fieldInfo.DeclaringType.IsGenericType)
                 {
                     _genericFieldBaseTypes.Add((fieldInfo, attribute, true));
@@ -854,7 +903,7 @@ namespace Baracuda.Monitoring.Systems
                 var genericType = typeof(FieldProfile<,>).MakeGenericType(declaringType, fieldInfo.FieldType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings, declaredStrut);
+                var args = new MonitorProfileCtorArgs(StaticFlags, _settings, declaredStrut);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile = (MonitorProfile) CreateInstance(genericType, fieldInfo, attribute, args);
@@ -879,6 +928,8 @@ namespace Baracuda.Monitoring.Systems
                 // we cannot construct an object based on a generic type definition without having a concrete
                 // subtype as a template which is the reason why we are storing this profile in a special list and
                 // instantiate it for each subtype we find.
+
+                // ReSharper disable once PossibleNullReferenceException
                 if (propertyInfo.DeclaringType.IsGenericType)
                 {
                     _genericPropertyBaseTypes.Add((propertyInfo, attribute, true));
@@ -889,10 +940,11 @@ namespace Baracuda.Monitoring.Systems
                 var declaringType = declaredInValueType ? typeof(ValueType) : propertyInfo.DeclaringType;
                 var declaredStrut = declaredInValueType ? propertyInfo.DeclaringType : null;
 
-                var genericType = typeof(PropertyProfile<,>).MakeGenericType(declaringType, propertyInfo.GetMethod.ReturnType);
+                var genericType =
+                    typeof(PropertyProfile<,>).MakeGenericType(declaringType, propertyInfo.GetMethod.ReturnType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings, declaredStrut);
+                var args = new MonitorProfileCtorArgs(StaticFlags, _settings, declaredStrut);
 
                 var profile = (MonitorProfile) CreateInstance(genericType, propertyInfo, attribute, args);
 
@@ -915,6 +967,8 @@ namespace Baracuda.Monitoring.Systems
                 // we cannot construct an object based on a generic type definition without having a concrete
                 // subtype as a template which is the reason why we are storing this profile in a special list and
                 // instantiate it for each subtype we find.
+
+                // ReSharper disable once PossibleNullReferenceException
                 if (eventInfo.DeclaringType.IsGenericType)
                 {
                     _genericEventBaseTypes.Add((eventInfo, attribute, true));
@@ -929,7 +983,7 @@ namespace Baracuda.Monitoring.Systems
                     typeof(EventProfile<,>).MakeGenericType(declaringType, eventInfo.EventHandlerType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings, declaredStrut);
+                var args = new MonitorProfileCtorArgs(StaticFlags, _settings, declaredStrut);
 
                 var profile = (MonitorProfile) CreateInstance(genericType, eventInfo, attribute, args);
                 _staticProfiles.Add(profile);
@@ -951,6 +1005,8 @@ namespace Baracuda.Monitoring.Systems
                 // we cannot construct an object based on a generic type definition without having a concrete
                 // subtype as a template which is the reason why we are storing this profile in a special list and
                 // instantiate it for each subtype we find.
+
+                // ReSharper disable once PossibleNullReferenceException
                 if (methodInfo.DeclaringType.IsGenericType)
                 {
                     _genericMethodBaseTypes.Add((methodInfo, attribute, true));
@@ -959,7 +1015,8 @@ namespace Baracuda.Monitoring.Systems
 
                 if (!methodInfo.HasReturnValueOrOutParameter())
                 {
-                    Debug.LogWarning($"Monitored Method {methodInfo.DeclaringType?.Name}.{methodInfo.Name} needs a return value or out parameter!");
+                    Debug.LogWarning(
+                        $"Monitored Method {methodInfo.DeclaringType?.Name}.{methodInfo.Name} needs a return value or out parameter!");
                     return;
                 }
 
@@ -968,10 +1025,11 @@ namespace Baracuda.Monitoring.Systems
                 var declaredStrut = declaredInValueType ? methodInfo.DeclaringType : null;
 
                 var genericType =
-                    typeof(MethodProfile<,>).MakeGenericType(declaringType, methodInfo.ReturnType.NotVoid(typeof(Void)));
+                    typeof(MethodProfile<,>).MakeGenericType(declaringType,
+                        methodInfo.ReturnType.NotVoid(typeof(Void)));
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings, declaredStrut);
+                var args = new MonitorProfileCtorArgs(StaticFlags, _settings, declaredStrut);
 
                 var profile = (MonitorProfile) CreateInstance(genericType, methodInfo, attribute, args);
                 _staticProfiles.Add(profile);
@@ -983,6 +1041,7 @@ namespace Baracuda.Monitoring.Systems
         }
 
         #endregion
+
 
         #region Static: Profiling Generic Basetype Concretions
 
@@ -1002,16 +1061,18 @@ namespace Baracuda.Monitoring.Systems
 
                 Debug.Assert(concreteBaseType != null, nameof(concreteBaseType) + " != null");
 
-                var concreteFieldInfo = concreteBaseType.GetField(fieldInfo.Name, STATIC_FLAGS);
+                // ReSharper disable once PossibleNullReferenceException
+                var concreteFieldInfo = concreteBaseType.GetField(fieldInfo.Name, StaticFlags);
 
                 Debug.Assert(concreteFieldInfo != null, nameof(concreteFieldInfo) + " != null");
 
+                // ReSharper disable once PossibleNullReferenceException
                 // create a generic type definition.
                 var concreteGenericType =
                     typeof(FieldProfile<,>).MakeGenericType(concreteSubtype, concreteFieldInfo.FieldType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(StaticFlags, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile =
@@ -1040,18 +1101,23 @@ namespace Baracuda.Monitoring.Systems
 
                 Debug.Assert(concreteBaseType != null, nameof(concreteBaseType) + " != null");
 
-                var concretePropertyInfo = concreteBaseType.GetProperty(propertyInfo.Name, STATIC_FLAGS);
+                // ReSharper disable once PossibleNullReferenceException
+                var concretePropertyInfo = concreteBaseType.GetProperty(propertyInfo.Name, StaticFlags);
 
                 Debug.Assert(concretePropertyInfo != null, nameof(concretePropertyInfo) + " != null");
 
+                // ReSharper disable once PossibleNullReferenceException
                 // create a generic type definition.
-                var concreteGenericType = typeof(PropertyProfile<,>).MakeGenericType(concreteSubtype, concretePropertyInfo.GetMethod.ReturnType);
+                var concreteGenericType =
+                    typeof(PropertyProfile<,>).MakeGenericType(concreteSubtype,
+                        concretePropertyInfo.GetMethod.ReturnType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(StaticFlags, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
-                var profile = (MonitorProfile) CreateInstance(concreteGenericType, concretePropertyInfo, attribute, args);
+                var profile =
+                    (MonitorProfile) CreateInstance(concreteGenericType, concretePropertyInfo, attribute, args);
 
                 // cache the profile and create an instance of with the static profile.
                 _staticProfiles.Add(profile);
@@ -1075,15 +1141,18 @@ namespace Baracuda.Monitoring.Systems
 
                 Debug.Assert(concreteBaseType != null, nameof(concreteBaseType) + " != null");
 
-                var concreteEventInfo = concreteBaseType.GetEvent(eventInfo.Name, STATIC_FLAGS);
+                // ReSharper disable once PossibleNullReferenceException
+                var concreteEventInfo = concreteBaseType.GetEvent(eventInfo.Name, StaticFlags);
 
                 Debug.Assert(concreteEventInfo != null, nameof(concreteEventInfo) + " != null");
 
+                // ReSharper disable once PossibleNullReferenceException
                 // create a generic type definition.
-                var concreteGenericType = typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo.EventHandlerType);
+                var concreteGenericType =
+                    typeof(EventProfile<,>).MakeGenericType(concreteSubtype, concreteEventInfo.EventHandlerType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(StaticFlags, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile = (MonitorProfile) CreateInstance(concreteGenericType, concreteEventInfo, attribute, args);
@@ -1110,15 +1179,18 @@ namespace Baracuda.Monitoring.Systems
 
                 Debug.Assert(concreteBaseType != null, nameof(concreteBaseType) + " != null");
 
-                var concreteMethodInfo = concreteBaseType.GetMethod(methodInfo.Name, STATIC_FLAGS);
+                // ReSharper disable once PossibleNullReferenceException
+                var concreteMethodInfo = concreteBaseType.GetMethod(methodInfo.Name, StaticFlags);
 
                 Debug.Assert(concreteMethodInfo != null, nameof(concreteMethodInfo) + " != null");
 
+                // ReSharper disable once PossibleNullReferenceException
                 // create a generic type definition.
-                var concreteGenericType = typeof(MethodProfile<,>).MakeGenericType(concreteSubtype, concreteMethodInfo.ReturnType);
+                var concreteGenericType =
+                    typeof(MethodProfile<,>).MakeGenericType(concreteSubtype, concreteMethodInfo.ReturnType);
 
                 // additional MonitorProfile arguments
-                var args = new MonitorProfileCtorArgs(STATIC_FLAGS, _settings);
+                var args = new MonitorProfileCtorArgs(StaticFlags, _settings);
 
                 // create a profile for the field using the the generic type and the attribute.
                 var profile = (MonitorProfile) CreateInstance(concreteGenericType, concreteMethodInfo, attribute, args);
@@ -1134,7 +1206,9 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Post Profining
 

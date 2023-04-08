@@ -6,7 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very complicated and error prone.
-- Thread-Dispatcher will be removed as a dependency in a future release.
+
+## [3.5.0] - 2023-04-08
+
+### Fixed
+- Fixed an invalid cast exception that happened in newer versions of unity.
+- Fixed an error that happened when creating an new monitoring settings asset during import.
+
+### Changed
+- Removed Thread Dispatcher (com.baracuda.thread-dispatcher) as a dependency.
+
 
 ## [3.4.2] - 2023-03-07
 

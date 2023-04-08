@@ -2,14 +2,13 @@
 
 using System;
 using System.Collections.Generic;
-using Baracuda.Threading;
 using System.Text;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Modules
 {
     /// <summary>
-    /// Custom class showcasing how the monitoring system can be used to create a simple console log display.
+    ///     Custom class showcasing how the monitoring system can be used to create a simple console log display.
     /// </summary>
 #if MONITORING_EXAMPLES
     [MTag("Console")]
@@ -18,31 +17,33 @@ namespace Baracuda.Monitoring.Modules
     {
         #region Static
 
-        private static readonly Queue<string> messageLogCache = new Queue<string>(30);
+        private static readonly Queue<string> messageLogCache = new(30);
         private static string lastLogStacktrace;
 
         private static int messageCacheSize = 10;
 
         private static readonly char[] trimValues = {'\r', '\n'};
-        private static Color ErrorColor => new Color(1f, 0.5f, 0.52f);
-        private static Color LogColor => new Color(0.8f, 0.75f, 1f);
-        private static Color WarningColor => new Color(1f, 0.96f, 0.56f);
-        private static Color StackTraceColor => new Color(0.65f, 0.7f, 0.75f);
+        private static Color ErrorColor => new(1f, 0.5f, 0.52f);
+        private static Color LogColor => new(0.8f, 0.75f, 1f);
+        private static Color WarningColor => new(1f, 0.96f, 0.56f);
+        private static Color StackTraceColor => new(0.65f, 0.7f, 0.75f);
 
         private static event Action UpdateDisplayedLogs;
 
         #endregion
+
 
         #region Inspector
 
         [Header("Display Options")]
         [Min(1)]
         [SerializeField] private int displayedMethodAmount = 10;
-        [SerializeField] private bool truncateStacktrace = false;
+        [SerializeField] private bool truncateStacktrace;
         [Range(100, 1000)]
         [SerializeField] private int maxStacktraceLenght = 400;
 
         #endregion
+
 
         #region Monitored Values
 
@@ -54,7 +55,6 @@ namespace Baracuda.Monitoring.Modules
         [MShowIf(Condition.CollectionNotEmpty)]
         [MUpdateEvent(nameof(UpdateDisplayedLogs))]
         private Queue<string> Console => messageLogCache;
-
 
         [Monitor]
         [MOrder(-1001)]
@@ -68,10 +68,11 @@ namespace Baracuda.Monitoring.Modules
 
         #endregion
 
+
         #region API
 
         /// <summary>
-        /// Clear the console display and cache.
+        ///     Clear the console display and cache.
         /// </summary>
         public static void Clear()
         {
@@ -81,6 +82,7 @@ namespace Baracuda.Monitoring.Modules
         }
 
         #endregion
+
 
         #region Event Methods
 
@@ -109,13 +111,14 @@ namespace Baracuda.Monitoring.Modules
 
         #endregion
 
+
         #region Message Log Caching
 
 #if UNITY_WEBGL
         static ConsoleMonitor()
         {
-            Application.logMessageReceivedThreaded -= OnLogMessageReceived;
-            Application.logMessageReceivedThreaded += OnLogMessageReceived;
+            Application.logMessageReceived -= OnLogMessageReceived;
+            Application.logMessageReceived += OnLogMessageReceived;
         }
 #else
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -123,12 +126,12 @@ namespace Baracuda.Monitoring.Modules
         {
             messageLogCache.Clear();
             lastLogStacktrace = null;
-            Application.logMessageReceivedThreaded -= OnLogMessageReceived;
-            Application.logMessageReceivedThreaded += OnLogMessageReceived;
+            Application.logMessageReceived -= OnLogMessageReceived;
+            Application.logMessageReceived += OnLogMessageReceived;
         }
 #endif
 
-        private static readonly StringBuilder logStringBuilder = new StringBuilder();
+        private static readonly StringBuilder logStringBuilder = new();
 
         private static void OnLogMessageReceived(string condition, string stacktrace, LogType type)
         {
@@ -155,7 +158,7 @@ namespace Baracuda.Monitoring.Modules
             }
 
             lastLogStacktrace = stacktrace.TrimEnd(trimValues);
-            UpdateDisplayedLogs.Dispatch();
+            UpdateDisplayedLogs?.Invoke();
         }
 
         private string StacktraceProcessor(string stacktrace)
@@ -191,7 +194,9 @@ namespace Baracuda.Monitoring.Modules
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Misc
 

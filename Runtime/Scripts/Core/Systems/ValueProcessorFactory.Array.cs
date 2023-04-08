@@ -11,17 +11,17 @@ namespace Baracuda.Monitoring.Systems
 {
     internal partial class ValueProcessorFactory
     {
-        #region Bool Array ---
+        #region Bool Array
 
         private Func<bool[], string> BooleanArrayProcessor(IFormatData formatData)
         {
             var name = formatData.Label;
-            var nullString = $"{name}: {NULL} (bool[])";
+            var nullString = $"{name}: {Null} (bool[])";
             var stringBuilder = new StringBuilder();
             var indent = GetIndentStringForProfile(formatData);
 
             return formatData.ShowIndex
-                ? (Func<bool[], string>) ((value) =>
+                ? value =>
                 {
                     if (value == null)
                     {
@@ -45,8 +45,8 @@ namespace Baracuda.Monitoring.Systems
                     }
 
                     return stringBuilder.ToString();
-                })
-                : (value) =>
+                }
+                : value =>
                 {
                     if (value == null)
                     {
@@ -70,9 +70,11 @@ namespace Baracuda.Monitoring.Systems
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
 
-        #region --- ReferenceType ---
+
+        #region ReferenceType
 
         private static readonly MethodInfo createReferenceTypeArrayMethod = typeof(ValueProcessorFactory)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
@@ -82,14 +84,14 @@ namespace Baracuda.Monitoring.Systems
         private static Func<T[], string> ReferenceTypeArrayProcessor<T>(IFormatData formatData)
         {
             var name = formatData.Label;
-            var nullString = $"{name}: {NULL}";
+            var nullString = $"{name}: {Null}";
             var stringBuilder = new StringBuilder();
             var indent = GetIndentStringForProfile(formatData);
 
             if (typeof(T).IsSubclassOrAssignable(typeof(Object)))
             {
                 return formatData.ShowIndex
-                    ? (Func<T[], string>) ((value) =>
+                    ? value =>
                     {
                         if (value == null)
                         {
@@ -108,12 +110,12 @@ namespace Baracuda.Monitoring.Systems
                             stringBuilder.Append('[');
                             stringBuilder.Append(index++);
                             stringBuilder.Append("]: ");
-                            stringBuilder.Append(element != null ? element.ToString() : NULL);
+                            stringBuilder.Append(element != null ? element.ToString() : Null);
                         }
 
                         return stringBuilder.ToString();
-                    })
-                    : (value) =>
+                    }
+                    : value =>
                     {
                         if (value == null)
                         {
@@ -127,69 +129,64 @@ namespace Baracuda.Monitoring.Systems
                         {
                             stringBuilder.Append(Environment.NewLine);
                             stringBuilder.Append(indent);
-                            stringBuilder.Append(element != null ? element.ToString() : NULL);
+                            stringBuilder.Append(element != null ? element.ToString() : Null);
                         }
 
                         return stringBuilder.ToString();
                     };
             }
-            else
+            if (formatData.ShowIndex)
             {
-                if (formatData.ShowIndex)
+                return value =>
                 {
-                    return (value) =>
+                    if (value == null)
                     {
-                        if (value == null)
-                        {
-                            return nullString;
-                        }
+                        return nullString;
+                    }
 
-                        var index = 0;
+                    var index = 0;
 
-                        stringBuilder.Clear();
-                        stringBuilder.Append(name);
+                    stringBuilder.Clear();
+                    stringBuilder.Append(name);
 
-                        foreach (var element in value)
-                        {
-                            stringBuilder.Append(Environment.NewLine);
-                            stringBuilder.Append(indent);
-                            stringBuilder.Append('[');
-                            stringBuilder.Append(index++);
-                            stringBuilder.Append("]: ");
-                            stringBuilder.Append(element?.ToString() ?? NULL);
-                        }
-
-                        return stringBuilder.ToString();
-                    };
-                }
-                else
-                {
-                    return (value) =>
+                    foreach (var element in value)
                     {
-                        if (value == null)
-                        {
-                            return nullString;
-                        }
+                        stringBuilder.Append(Environment.NewLine);
+                        stringBuilder.Append(indent);
+                        stringBuilder.Append('[');
+                        stringBuilder.Append(index++);
+                        stringBuilder.Append("]: ");
+                        stringBuilder.Append(element?.ToString() ?? Null);
+                    }
 
-                        stringBuilder.Clear();
-                        stringBuilder.Append(name);
-
-                        foreach (var element in value)
-                        {
-                            stringBuilder.Append(Environment.NewLine);
-                            stringBuilder.Append(indent);
-                            stringBuilder.Append(element?.ToString() ?? NULL);
-                        }
-
-                        return stringBuilder.ToString();
-                    };
-                }
+                    return stringBuilder.ToString();
+                };
             }
+            return value =>
+            {
+                if (value == null)
+                {
+                    return nullString;
+                }
+
+                stringBuilder.Clear();
+                stringBuilder.Append(name);
+
+                foreach (var element in value)
+                {
+                    stringBuilder.Append(Environment.NewLine);
+                    stringBuilder.Append(indent);
+                    stringBuilder.Append(element?.ToString() ?? Null);
+                }
+
+                return stringBuilder.ToString();
+            };
         }
 
         #endregion
 
-        #region --- ValueType ---
+
+        #region ValueType
 
         private static readonly MethodInfo createValueTypeArrayMethod = typeof(ValueProcessorFactory)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
@@ -199,12 +196,12 @@ namespace Baracuda.Monitoring.Systems
         private static Func<T[], string> ValueTypeArrayProcessor<T>(IFormatData formatData) where T : struct
         {
             var name = formatData.Label;
-            var nullString = $"{name}: {NULL}";
+            var nullString = $"{name}: {Null}";
             var stringBuilder = new StringBuilder();
             var indent = GetIndentStringForProfile(formatData);
 
             return formatData.ShowIndex
-                ? (Func<T[], string>) ((value) =>
+                ? value =>
                 {
                     if (value == null)
                     {
@@ -227,8 +224,8 @@ namespace Baracuda.Monitoring.Systems
                     }
 
                     return stringBuilder.ToString();
-                })
-                : (value) =>
+                }
+                : value =>
                 {
                     if (value == null)
                     {
