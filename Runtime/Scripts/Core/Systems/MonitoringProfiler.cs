@@ -28,31 +28,32 @@ namespace Baracuda.Monitoring.Systems
          * Internal
          */
 
-        private readonly List<MonitorProfile> _staticProfiles = new();
-        private readonly Dictionary<Type, List<MonitorProfile>> _instanceProfiles = new();
+        private readonly List<MonitorProfile> _staticProfiles = new List<MonitorProfile>();
+        private readonly Dictionary<Type, List<MonitorProfile>> _instanceProfiles =
+            new Dictionary<Type, List<MonitorProfile>>();
 
         /*
          * Private
          */
 
         private readonly List<(FieldInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
-            _genericFieldBaseTypes = new();
+            _genericFieldBaseTypes = new List<(FieldInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
 
         private readonly List<(PropertyInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
-            _genericPropertyBaseTypes = new();
+            _genericPropertyBaseTypes = new List<(PropertyInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
 
         private readonly List<(EventInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
-            _genericEventBaseTypes = new();
+            _genericEventBaseTypes = new List<(EventInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
 
         private readonly List<(MethodInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>
-            _genericMethodBaseTypes = new();
+            _genericMethodBaseTypes = new List<(MethodInfo fieldInfo, MonitorAttribute attribute, bool isStatic)>();
 
         private const BindingFlags StaticFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
         private const BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.Public |
                                                    BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
         private readonly IMonitoringSettings _settings;
-        private static CancellationTokenSource cancellationTokenSource = new();
+        private static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
         #endregion
 

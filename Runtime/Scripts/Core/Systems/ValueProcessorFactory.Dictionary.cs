@@ -27,8 +27,9 @@ namespace Baracuda.Monitoring.Systems
             {
                 if (typeof(TValue).IsValueType)
                 {
-                    return formatData.ShowIndex
-                        ? value =>
+                    if (formatData.ShowIndex)
+                    {
+                        return value =>
                         {
                             if (value == null)
                             {
@@ -56,35 +57,37 @@ namespace Baracuda.Monitoring.Systems
                             }
 
                             return stringBuilder.ToString();
-                        }
-                        : value =>
-                        {
-                            if (value == null)
-                            {
-                                return nullString;
-                            }
-
-                            stringBuilder.Clear();
-                            stringBuilder.Append(name);
-
-                            foreach (var element in value)
-                            {
-                                stringBuilder.Append(Environment.NewLine);
-                                stringBuilder.Append(indent);
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append('[');
-                                stringBuilder.Append(element.Key);
-                                stringBuilder.Append(',');
-                                stringBuilder.Append(' ');
-                                stringBuilder.Append(element.Value);
-                                stringBuilder.Append(']');
-                            }
-
-                            return stringBuilder.ToString();
                         };
+                    }
+                    return value =>
+                    {
+                        if (value == null)
+                        {
+                            return nullString;
+                        }
+
+                        stringBuilder.Clear();
+                        stringBuilder.Append(name);
+
+                        foreach (var element in value)
+                        {
+                            stringBuilder.Append(Environment.NewLine);
+                            stringBuilder.Append(indent);
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append('[');
+                            stringBuilder.Append(element.Key);
+                            stringBuilder.Append(',');
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append(element.Value);
+                            stringBuilder.Append(']');
+                        }
+
+                        return stringBuilder.ToString();
+                    };
                 }
-                return formatData.ShowIndex
-                    ? value =>
+                if (formatData.ShowIndex)
+                {
+                    return value =>
                     {
                         if (value == null)
                         {
@@ -112,37 +115,39 @@ namespace Baracuda.Monitoring.Systems
                         }
 
                         return stringBuilder.ToString();
-                    }
-                    : value =>
-                    {
-                        if (value == null)
-                        {
-                            return nullString;
-                        }
-
-                        stringBuilder.Clear();
-                        stringBuilder.Append(name);
-
-                        foreach (var element in value)
-                        {
-                            stringBuilder.Append(Environment.NewLine);
-                            stringBuilder.Append(indent);
-                            stringBuilder.Append(' ');
-                            stringBuilder.Append('[');
-                            stringBuilder.Append(element.Key);
-                            stringBuilder.Append(',');
-                            stringBuilder.Append(' ');
-                            stringBuilder.Append(element.Value);
-                            stringBuilder.Append(']');
-                        }
-
-                        return stringBuilder.ToString();
                     };
+                }
+                return value =>
+                {
+                    if (value == null)
+                    {
+                        return nullString;
+                    }
+
+                    stringBuilder.Clear();
+                    stringBuilder.Append(name);
+
+                    foreach (var element in value)
+                    {
+                        stringBuilder.Append(Environment.NewLine);
+                        stringBuilder.Append(indent);
+                        stringBuilder.Append(' ');
+                        stringBuilder.Append('[');
+                        stringBuilder.Append(element.Key);
+                        stringBuilder.Append(',');
+                        stringBuilder.Append(' ');
+                        stringBuilder.Append(element.Value);
+                        stringBuilder.Append(']');
+                    }
+
+                    return stringBuilder.ToString();
+                };
             }
             if (typeof(TValue).IsValueType)
             {
-                return formatData.ShowIndex
-                    ? value =>
+                if (formatData.ShowIndex)
+                {
+                    return value =>
                     {
                         if (value == null)
                         {
@@ -170,35 +175,37 @@ namespace Baracuda.Monitoring.Systems
                         }
 
                         return stringBuilder.ToString();
-                    }
-                    : value =>
-                    {
-                        if (value == null)
-                        {
-                            return nullString;
-                        }
-
-                        stringBuilder.Clear();
-                        stringBuilder.Append(name);
-
-                        foreach (var element in value)
-                        {
-                            stringBuilder.Append(Environment.NewLine);
-                            stringBuilder.Append(indent);
-                            stringBuilder.Append(' ');
-                            stringBuilder.Append('[');
-                            stringBuilder.Append(element.Key);
-                            stringBuilder.Append(',');
-                            stringBuilder.Append(' ');
-                            stringBuilder.Append(element.Value);
-                            stringBuilder.Append(']');
-                        }
-
-                        return stringBuilder.ToString();
                     };
+                }
+                return value =>
+                {
+                    if (value == null)
+                    {
+                        return nullString;
+                    }
+
+                    stringBuilder.Clear();
+                    stringBuilder.Append(name);
+
+                    foreach (var element in value)
+                    {
+                        stringBuilder.Append(Environment.NewLine);
+                        stringBuilder.Append(indent);
+                        stringBuilder.Append(' ');
+                        stringBuilder.Append('[');
+                        stringBuilder.Append(element.Key);
+                        stringBuilder.Append(',');
+                        stringBuilder.Append(' ');
+                        stringBuilder.Append(element.Value);
+                        stringBuilder.Append(']');
+                    }
+
+                    return stringBuilder.ToString();
+                };
             }
-            return formatData.ShowIndex
-                ? value =>
+            if (formatData.ShowIndex)
+            {
+                return value =>
                 {
                     if (value == null)
                     {
@@ -226,32 +233,33 @@ namespace Baracuda.Monitoring.Systems
                     }
 
                     return stringBuilder.ToString();
-                }
-                : value =>
-                {
-                    if (value == null)
-                    {
-                        return nullString;
-                    }
-
-                    stringBuilder.Clear();
-                    stringBuilder.Append(name);
-
-                    foreach (var element in value)
-                    {
-                        stringBuilder.Append(Environment.NewLine);
-                        stringBuilder.Append(indent);
-                        stringBuilder.Append(' ');
-                        stringBuilder.Append('[');
-                        stringBuilder.Append(element.Key);
-                        stringBuilder.Append(',');
-                        stringBuilder.Append(' ');
-                        stringBuilder.Append(element.Value);
-                        stringBuilder.Append(']');
-                    }
-
-                    return stringBuilder.ToString();
                 };
+            }
+            return value =>
+            {
+                if (value == null)
+                {
+                    return nullString;
+                }
+
+                stringBuilder.Clear();
+                stringBuilder.Append(name);
+
+                foreach (var element in value)
+                {
+                    stringBuilder.Append(Environment.NewLine);
+                    stringBuilder.Append(indent);
+                    stringBuilder.Append(' ');
+                    stringBuilder.Append('[');
+                    stringBuilder.Append(element.Key);
+                    stringBuilder.Append(',');
+                    stringBuilder.Append(' ');
+                    stringBuilder.Append(element.Value);
+                    stringBuilder.Append(']');
+                }
+
+                return stringBuilder.ToString();
+            };
         }
     }
 }

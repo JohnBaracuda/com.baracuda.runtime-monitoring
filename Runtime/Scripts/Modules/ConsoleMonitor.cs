@@ -17,16 +17,16 @@ namespace Baracuda.Monitoring.Modules
     {
         #region Static
 
-        private static readonly Queue<string> messageLogCache = new(30);
+        private static readonly Queue<string> messageLogCache = new Queue<string>(30);
         private static string lastLogStacktrace;
 
         private static int messageCacheSize = 10;
 
         private static readonly char[] trimValues = {'\r', '\n'};
-        private static Color ErrorColor => new(1f, 0.5f, 0.52f);
-        private static Color LogColor => new(0.8f, 0.75f, 1f);
-        private static Color WarningColor => new(1f, 0.96f, 0.56f);
-        private static Color StackTraceColor => new(0.65f, 0.7f, 0.75f);
+        private static Color ErrorColor => new Color(1f, 0.5f, 0.52f);
+        private static Color LogColor => new Color(0.8f, 0.75f, 1f);
+        private static Color WarningColor => new Color(1f, 0.96f, 0.56f);
+        private static Color StackTraceColor => new Color(0.65f, 0.7f, 0.75f);
 
         private static event Action UpdateDisplayedLogs;
 
@@ -131,7 +131,7 @@ namespace Baracuda.Monitoring.Modules
         }
 #endif
 
-        private static readonly StringBuilder logStringBuilder = new();
+        private static readonly StringBuilder logStringBuilder = new StringBuilder();
 
         private static void OnLogMessageReceived(string condition, string stacktrace, LogType type)
         {

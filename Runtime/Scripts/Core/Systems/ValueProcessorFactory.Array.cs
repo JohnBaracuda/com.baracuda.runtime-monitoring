@@ -20,8 +20,9 @@ namespace Baracuda.Monitoring.Systems
             var stringBuilder = new StringBuilder();
             var indent = GetIndentStringForProfile(formatData);
 
-            return formatData.ShowIndex
-                ? value =>
+            if (formatData.ShowIndex)
+            {
+                return value =>
                 {
                     if (value == null)
                     {
@@ -45,27 +46,28 @@ namespace Baracuda.Monitoring.Systems
                     }
 
                     return stringBuilder.ToString();
-                }
-                : value =>
-                {
-                    if (value == null)
-                    {
-                        return nullString;
-                    }
-
-                    stringBuilder.Clear();
-                    stringBuilder.Append(name);
-
-                    for (var i = 0; i < value.Length; i++)
-                    {
-                        var element = value[i];
-                        stringBuilder.Append(Environment.NewLine);
-                        stringBuilder.Append(indent);
-                        stringBuilder.Append(element ? _trueColored : _falseColored);
-                    }
-
-                    return stringBuilder.ToString();
                 };
+            }
+            return value =>
+            {
+                if (value == null)
+                {
+                    return nullString;
+                }
+
+                stringBuilder.Clear();
+                stringBuilder.Append(name);
+
+                for (var i = 0; i < value.Length; i++)
+                {
+                    var element = value[i];
+                    stringBuilder.Append(Environment.NewLine);
+                    stringBuilder.Append(indent);
+                    stringBuilder.Append(element ? _trueColored : _falseColored);
+                }
+
+                return stringBuilder.ToString();
+            };
         }
 
         #endregion
@@ -90,8 +92,9 @@ namespace Baracuda.Monitoring.Systems
 
             if (typeof(T).IsSubclassOrAssignable(typeof(Object)))
             {
-                return formatData.ShowIndex
-                    ? value =>
+                if (formatData.ShowIndex)
+                {
+                    return value =>
                     {
                         if (value == null)
                         {
@@ -114,26 +117,27 @@ namespace Baracuda.Monitoring.Systems
                         }
 
                         return stringBuilder.ToString();
-                    }
-                    : value =>
-                    {
-                        if (value == null)
-                        {
-                            return nullString;
-                        }
-
-                        stringBuilder.Clear();
-                        stringBuilder.Append(name);
-
-                        foreach (var element in value)
-                        {
-                            stringBuilder.Append(Environment.NewLine);
-                            stringBuilder.Append(indent);
-                            stringBuilder.Append(element != null ? element.ToString() : Null);
-                        }
-
-                        return stringBuilder.ToString();
                     };
+                }
+                return value =>
+                {
+                    if (value == null)
+                    {
+                        return nullString;
+                    }
+
+                    stringBuilder.Clear();
+                    stringBuilder.Append(name);
+
+                    foreach (var element in value)
+                    {
+                        stringBuilder.Append(Environment.NewLine);
+                        stringBuilder.Append(indent);
+                        stringBuilder.Append(element != null ? element.ToString() : Null);
+                    }
+
+                    return stringBuilder.ToString();
+                };
             }
             if (formatData.ShowIndex)
             {
@@ -200,8 +204,9 @@ namespace Baracuda.Monitoring.Systems
             var stringBuilder = new StringBuilder();
             var indent = GetIndentStringForProfile(formatData);
 
-            return formatData.ShowIndex
-                ? value =>
+            if (formatData.ShowIndex)
+            {
+                return value =>
                 {
                     if (value == null)
                     {
@@ -224,26 +229,27 @@ namespace Baracuda.Monitoring.Systems
                     }
 
                     return stringBuilder.ToString();
-                }
-                : value =>
-                {
-                    if (value == null)
-                    {
-                        return nullString;
-                    }
-
-                    stringBuilder.Clear();
-                    stringBuilder.Append(name);
-
-                    foreach (var element in value)
-                    {
-                        stringBuilder.Append(Environment.NewLine);
-                        stringBuilder.Append(indent);
-                        stringBuilder.Append(element.ToString());
-                    }
-
-                    return stringBuilder.ToString();
                 };
+            }
+            return value =>
+            {
+                if (value == null)
+                {
+                    return nullString;
+                }
+
+                stringBuilder.Clear();
+                stringBuilder.Append(name);
+
+                foreach (var element in value)
+                {
+                    stringBuilder.Append(Environment.NewLine);
+                    stringBuilder.Append(indent);
+                    stringBuilder.Append(element.ToString());
+                }
+
+                return stringBuilder.ToString();
+            };
         }
 
         #endregion

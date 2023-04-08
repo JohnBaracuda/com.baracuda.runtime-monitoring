@@ -127,18 +127,18 @@ namespace Baracuda.Monitoring.Systems
         [SerializeField] private Color falseColor = Color.red;
 
         [Header("Direction Color")]
-        [SerializeField] private Color xColor = new(0.41f, 0.38f, 1f);
-        [SerializeField] private Color yColor = new(0.49f, 1f, 0.53f);
-        [SerializeField] private Color zColor = new(1f, 0.38f, 0.35f);
-        [SerializeField] private Color wColor = new(0.6f, 0f, 1f);
+        [SerializeField] private Color xColor = new Color(0.41f, 0.38f, 1f);
+        [SerializeField] private Color yColor = new Color(0.49f, 1f, 0.53f);
+        [SerializeField] private Color zColor = new Color(1f, 0.38f, 0.35f);
+        [SerializeField] private Color wColor = new Color(0.6f, 0f, 1f);
 
         [Header("Types")]
-        [SerializeField] private Color classColor = new(0.49f, 0.49f, 1f);
-        [SerializeField] private Color eventColor = new(1f, 0.92f, 0.53f);
-        [SerializeField] private Color sceneNameColor = new(1f, 0.67f, 0.85f);
-        [SerializeField] private Color targetObjectColor = new(0.39f, 0.72f, 1f);
-        [SerializeField] private Color methodColor = new(0.56f, 0.98f, 0.53f);
-        [SerializeField] private Color outParameterColor = new(1f, 0.27f, 0.53f);
+        [SerializeField] private Color classColor = new Color(0.49f, 0.49f, 1f);
+        [SerializeField] private Color eventColor = new Color(1f, 0.92f, 0.53f);
+        [SerializeField] private Color sceneNameColor = new Color(1f, 0.67f, 0.85f);
+        [SerializeField] private Color targetObjectColor = new Color(0.39f, 0.72f, 1f);
+        [SerializeField] private Color methodColor = new Color(0.56f, 0.98f, 0.53f);
+        [SerializeField] private Color outParameterColor = new Color(1f, 0.27f, 0.53f);
 
         #endregion
 

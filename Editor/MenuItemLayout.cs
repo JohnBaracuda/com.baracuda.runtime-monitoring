@@ -1,19 +1,18 @@
 // Copyright (c) 2022 Jonathan Lang
 
-using UnityEditor;
 using UnityEngine;
 
 namespace Baracuda.Monitoring.Editor
 {
     internal class MenuItemLayout : MonoBehaviour
     {
-        [MenuItem("Tools/Runtime Monitoring/Settings", priority = 2405)]
+        [UnityEditor.MenuItem("Window/Runtime Monitoring/Settings", priority = 12405)]
         private static void OpenMonitorSettingsWindow()
         {
             MonitoringSettingsWindow.Open();
         }
 
-        [MenuItem("Tools/Runtime Monitoring/Filter Window", priority = 2406)]
+        [UnityEditor.MenuItem("Window/Runtime Monitoring/Filter Window", priority = 12406)]
         private static void OpenFiltersWindow()
         {
             MonitoringFilterWindow.Open();

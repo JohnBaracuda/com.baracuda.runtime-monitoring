@@ -15,8 +15,8 @@ namespace Baracuda.Monitoring.Systems
 
         //--------------------------------------------------------------------------------------------------------------
 
-        private readonly List<IMonitorHandle> _activeTickReceiver = new(64);
-        private readonly List<Action> _validationReceiver = new(64);
+        private readonly List<IMonitorHandle> _activeTickReceiver = new List<IMonitorHandle>(64);
+        private readonly List<Action> _validationReceiver = new List<Action>(64);
 
         private static float updateTimer;
         private static bool tickEnabled;
