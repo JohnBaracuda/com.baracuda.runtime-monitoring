@@ -2,6 +2,8 @@
 
 using Baracuda.Monitoring.Dummy;
 using Baracuda.Monitoring.Systems;
+using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 #pragma warning disable CS0067
@@ -9,42 +11,42 @@ using UnityEngine;
 namespace Baracuda.Monitoring
 {
     /// <summary>
-    /// Primary access to monitoring API and systems.
+    ///     Primary access to monitoring API and systems.
     /// </summary>
 #if UNITY_EDITOR
-    [UnityEditor.InitializeOnLoad]
+    [UnityEditor.InitializeOnLoadAttribute]
 #endif
     public static class Monitor
     {
         #region API
 
         /// <summary>
-        /// Returns true once the system has been initialized.
+        ///     Returns true once the system has been initialized.
         /// </summary>
         public static bool Initialized { get; private set; }
 
         /// <summary>
-        /// Access to the monitoring settings asset. (Edit settings via: Tools > Runtime Monitoring)
+        ///     Access to the monitoring settings asset. (Edit settings via: Tools > Runtime Monitoring)
         /// </summary>
         public static IMonitoringSettings Settings { get; private set; }
 
         /// <summary>
-        /// Access monitoring UI API.
+        ///     Access monitoring UI API.
         /// </summary>
         public static IMonitoringUI UI { get; private set; }
 
         /// <summary>
-        /// Access monitoring event handlers.
+        ///     Access monitoring event handlers.
         /// </summary>
         public static IMonitoringEvents Events { get; private set; }
 
         /// <summary>
-        /// Primary interface to access cached data.
+        ///     Primary interface to access cached data.
         /// </summary>
         public static IMonitoringRegistry Registry { get; private set; }
 
         /// <summary>
-        /// Register an object that is monitored.
+        ///     Register an object that is monitored.
         /// </summary>
         public static void StartMonitoring<T>(T target) where T : class
         {
@@ -52,7 +54,7 @@ namespace Baracuda.Monitoring
         }
 
         /// <summary>
-        /// Unregister an object that is monitored.
+        ///     Unregister an object that is monitored.
         /// </summary>
         public static void StopMonitoring<T>(T target) where T : class
         {
@@ -81,6 +83,35 @@ namespace Baracuda.Monitoring
         static Monitor()
         {
             Application.quitting += OnApplicationQuit;
+
+#if UNITY_EDITOR
+            async Task WaitWhile(Func<bool> condition)
+            {
+                while (condition())
+                {
+                    await Task.Delay(25);
+                }
+            }
+
+            bool IsImport()
+            {
+                return UnityEditor.EditorApplication.isCompiling || UnityEditor.EditorApplication.isUpdating;
+            }
+
+            if (IsImport())
+            {
+                var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+                WaitWhile(IsImport).ContinueWith(task =>
+                {
+                    if (task.IsFaulted)
+                    {
+                        return;
+                    }
+                    Initialize();
+                }, scheduler);
+                return;
+            }
+#endif
             Initialize();
         }
 
