@@ -129,7 +129,7 @@ namespace Baracuda.Monitoring.Units
                 }
 
                 _validationTick = () => Enabled = _validateFunc();
-                Monitor.Ticker.AddValidationTicker(_validationTick);
+                Monitor.MonitoringUpdateEvents.AddValidationTicker(_validationTick);
             }
         }
 
@@ -240,7 +240,7 @@ namespace Baracuda.Monitoring.Units
 
             if (_validationTick != null)
             {
-                Monitor.Ticker.RemoveValidationTicker(_validationTick);
+                Monitor.MonitoringUpdateEvents.RemoveValidationTicker(_validationTick);
             }
         }
 

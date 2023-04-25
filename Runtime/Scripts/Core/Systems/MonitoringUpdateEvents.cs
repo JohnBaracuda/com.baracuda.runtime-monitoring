@@ -5,13 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Object = UnityEngine.Object;
 
 namespace Baracuda.Monitoring.Systems
 {
-    internal class MonitoringTicker : MonitoredObject
+    internal class MonitoringUpdateEvents : MonitoredObject
     {
-        public bool ValidationTickEnabled { get; set; } = true;
+        public bool ValidationUpdateEnabled { get; set; } = true;
 
         //--------------------------------------------------------------------------------------------------------------
 
@@ -19,11 +20,11 @@ namespace Baracuda.Monitoring.Systems
         private readonly List<Action> _validationReceiver = new List<Action>(64);
 
         private static float updateTimer;
-        private static bool tickEnabled;
+        private static bool updateEnabled;
 
         //--------------------------------------------------------------------------------------------------------------
 
-        internal MonitoringTicker()
+        internal MonitoringUpdateEvents()
         {
             Monitor.Events.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
         }
@@ -31,12 +32,7 @@ namespace Baracuda.Monitoring.Systems
         private void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorHandle> staticUnits,
             IReadOnlyList<IMonitorHandle> instanceUnits)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                throw new Exception("Application must be in playmode!");
-            }
-#endif
+            Assert.IsTrue(Application.isPlaying, "Application must be in playmode!");
 
             var sceneHook = new GameObject("Monitoring Scene Hook").AddComponent<SceneHook>();
 
@@ -48,11 +44,11 @@ namespace Baracuda.Monitoring.Systems
 
             sceneHook.LateUpdateEvent += Tick;
 
-            tickEnabled = Monitor.UI.Visible;
+            updateEnabled = Monitor.UI.Visible;
 
             Monitor.UI.VisibleStateChanged += visible =>
             {
-                tickEnabled = visible;
+                updateEnabled = visible;
                 if (!visible)
                 {
                     return;
@@ -65,7 +61,7 @@ namespace Baracuda.Monitoring.Systems
 
         private void Tick(float deltaTime)
         {
-            if (!tickEnabled)
+            if (!updateEnabled)
             {
                 return;
             }
@@ -110,7 +106,7 @@ namespace Baracuda.Monitoring.Systems
 
         private void ValidationTick()
         {
-            if (!ValidationTickEnabled)
+            if (!ValidationUpdateEnabled)
             {
                 return;
             }

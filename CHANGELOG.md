@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very
   complicated and error prone.
 
+## [3.5.1] - 2023-04-26
+
+### Fixed
+
+- Fixed a NullReferenceException that occured when exiting playmode.
+- Fixed runtime NullReferenceExceptions in MonitoringRegistry caused by race conditions during initialization.
+
 ## [3.5.0] - 2023-04-08
 
 ### Fixed

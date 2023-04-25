@@ -123,7 +123,7 @@ namespace Baracuda.Monitoring.Systems
         public void ApplyFilter(string filterString)
         {
             _activeFilter = filterString;
-            Monitor.Ticker.ValidationTickEnabled = false;
+            Monitor.MonitoringUpdateEvents.ValidationUpdateEnabled = false;
 
             var settings = Monitor.Settings;
             var and = settings.FilterAppendSymbol;
@@ -222,7 +222,7 @@ namespace Baracuda.Monitoring.Systems
             }
 
             _activeFilter = null;
-            Monitor.Ticker.ValidationTickEnabled = true;
+            Monitor.MonitoringUpdateEvents.ValidationUpdateEnabled = true;
             var units = Monitor.Registry.GetMonitorHandles();
             for (var i = 0; i < units.Count; i++)
             {

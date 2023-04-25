@@ -42,6 +42,7 @@ namespace Baracuda.Monitoring.Profiles
 
         #endregion
 
+
         #region Fields
 
         private readonly Dictionary<Type, MonitoringMetaAttribute> _metaAttributes =
@@ -49,7 +50,9 @@ namespace Baracuda.Monitoring.Profiles
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Ctor
 
@@ -84,7 +87,9 @@ namespace Baracuda.Monitoring.Profiles
                 }
             }
             // Member attribute collection
-            foreach (var metaAttribute in memberAttributeCollectionType?.GetCustomAttributes<MonitoringMetaAttribute>(true) ?? Enumerable.Empty<MonitoringMetaAttribute>())
+            foreach (var metaAttribute in
+                     memberAttributeCollectionType?.GetCustomAttributes<MonitoringMetaAttribute>(true) ??
+                     Enumerable.Empty<MonitoringMetaAttribute>())
             {
                 var key = metaAttribute is MOptionsAttribute ? typeof(MOptionsAttribute) : metaAttribute.GetType();
                 if (!_metaAttributes.ContainsKey(key))
@@ -102,7 +107,9 @@ namespace Baracuda.Monitoring.Profiles
                 }
             }
             // Class attribute collection.
-            foreach (var metaAttribute in classAttributeCollectionType?.GetCustomAttributes<MonitoringMetaAttribute>(true) ?? Enumerable.Empty<MonitoringMetaAttribute>())
+            foreach (var metaAttribute in
+                     classAttributeCollectionType?.GetCustomAttributes<MonitoringMetaAttribute>(true) ??
+                     Enumerable.Empty<MonitoringMetaAttribute>())
             {
                 var key = metaAttribute is MOptionsAttribute ? typeof(MOptionsAttribute) : metaAttribute.GetType();
                 if (!_metaAttributes.ContainsKey(key))
@@ -200,12 +207,14 @@ namespace Baracuda.Monitoring.Profiles
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Factory
 
         /// <summary>
-        /// Creates a <see cref="MonitorHandle"/> with the <see cref="MonitorProfile"/>.
+        ///     Creates a <see cref="MonitorHandle" /> with the <see cref="MonitorProfile" />.
         /// </summary>
         /// <param name="target">The target of the unit. Null if static</param>
         /// <returns></returns>
@@ -213,7 +222,9 @@ namespace Baracuda.Monitoring.Profiles
 
         #endregion
 
+
         //--------------------------------------------------------------------------------------------------------------
+
 
         #region Reflection Fields
 

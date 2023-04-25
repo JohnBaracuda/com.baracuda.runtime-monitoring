@@ -67,13 +67,15 @@ namespace Baracuda.Monitoring
         #region Internal
 
         internal static MonitoringLogger Logger { get; private set; }
-        internal static MonitoringTicker Ticker { get; private set; }
+        internal static MonitoringUpdateEvents MonitoringUpdateEvents { get; private set; }
         internal static ValidatorFactory ValidatorFactory { get; private set; }
         internal static ValueProcessorFactory ProcessorFactory { get; private set; }
 
         internal static MonitoringRegistry InternalRegistry { get; private set; }
         internal static MonitoringDisplay InternalUI { get; private set; }
         internal static MonitoringEvents InternalEvents { get; private set; }
+
+        private static bool isConstructed;
 
         #endregion
 
@@ -89,7 +91,7 @@ namespace Baracuda.Monitoring
             {
                 while (condition())
                 {
-                    await Task.Delay(25);
+                    await Task.Delay(10);
                 }
             }
 
@@ -107,16 +109,21 @@ namespace Baracuda.Monitoring
                     {
                         return;
                     }
-                    Initialize();
+                    Construct();
                 }, scheduler);
                 return;
             }
 #endif
-            Initialize();
+            Construct();
         }
 
-        private static void Initialize()
+        private static void Construct()
         {
+            if (isConstructed)
+            {
+                return;
+            }
+
             Settings = MonitoringSettings.Singleton;
 
             if (Settings.IsMonitoringEnabled)
@@ -125,12 +132,13 @@ namespace Baracuda.Monitoring
                 InternalRegistry = new MonitoringRegistry(InternalRegistry);
                 InternalUI = new MonitoringDisplay();
                 Events = InternalEvents;
-                Ticker = new MonitoringTicker();
+                MonitoringUpdateEvents = new MonitoringUpdateEvents();
                 Logger = new MonitoringLogger();
                 ValidatorFactory = new ValidatorFactory();
                 ProcessorFactory = new ValueProcessorFactory();
                 UI = InternalUI;
                 Registry = InternalRegistry;
+                isConstructed = true;
             }
             else
             {
@@ -138,17 +146,14 @@ namespace Baracuda.Monitoring
                 Registry = dummy;
                 Events = dummy;
                 UI = dummy;
+                isConstructed = true;
             }
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static async void InitializeProfiling()
         {
-            if (!Initialized)
-            {
-                Initialize();
-            }
-
+            Construct();
             if (Settings.IsMonitoringEnabled)
             {
                 var profiler = new MonitoringProfiler();
@@ -158,8 +163,9 @@ namespace Baracuda.Monitoring
 
         private static void OnApplicationQuit()
         {
-            Ticker.Dispose();
+            MonitoringUpdateEvents?.Dispose();
             Initialized = false;
+            isConstructed = false;
         }
 
         #endregion

@@ -162,6 +162,7 @@ namespace Baracuda.Monitoring
         private void CreateInstanceMonitorHandles(object target, Type type)
         {
             var validTypes = type.GetBaseTypes(true, true);
+
             // create a new array to cache the units instances that will be created.
             var units = ListPool<MonitorHandle>.Get();
             var guids = ListPool<MemberInfo>.Get();
