@@ -21,6 +21,10 @@ namespace Baracuda.Monitoring.Systems
             "When enabled, initial profiling will be processed asynchronous on a background thread. (Disabled for WebGL)")]
         [SerializeField] private bool asyncProfiling = true;
 
+        [Tooltip(
+            "When enabled, monitoring is updated even if Time.timeScale is below 0.05")]
+        [SerializeField] private bool updatesWithLowTimeScale = false;
+        
         [Tooltip("When enabled, the monitoring display will be opened as soon as profiling has completed.")]
         [SerializeField] private bool openDisplayOnLoad = true;
 
@@ -320,6 +324,9 @@ namespace Baracuda.Monitoring.Systems
             false;
 #endif
 
+        /// <inheritdoc />
+        public bool UpdatesWithLowTimeScale => updatesWithLowTimeScale;
+        
         /*
          * UI Controller
          */
