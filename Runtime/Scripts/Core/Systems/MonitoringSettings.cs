@@ -3,14 +3,13 @@
 using System;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Baracuda.Monitoring.Systems
 {
     /// <summary>
     ///     Settings of the monitoring system.
     /// </summary>
-    public class MonitoringSettings : ScriptableObject, IMonitoringSettings
+    public class MonitoringSettings : ScriptableObject, IMonitoringSettings, ISerializationCallbackReceiver
     {
         #region General
 
@@ -23,8 +22,8 @@ namespace Baracuda.Monitoring.Systems
 
         [Tooltip(
             "When enabled, monitoring is updated even if Time.timeScale is below 0.05")]
-        [SerializeField] private bool updatesWithLowTimeScale = false;
-        
+        [SerializeField] private bool updatesWithLowTimeScale;
+
         [Tooltip("When enabled, the monitoring display will be opened as soon as profiling has completed.")]
         [SerializeField] private bool openDisplayOnLoad = true;
 
@@ -326,7 +325,7 @@ namespace Baracuda.Monitoring.Systems
 
         /// <inheritdoc />
         public bool UpdatesWithLowTimeScale => updatesWithLowTimeScale;
-        
+
         /*
          * UI Controller
          */
@@ -501,31 +500,31 @@ namespace Baracuda.Monitoring.Systems
         #endregion
 
 
-        #region Asset Logic
+        #region Singleton
 
         /// <summary>
-        ///     Get the settings asset or create a new instance of it.
+        ///     Get the settings if it exists.
         /// </summary>
-        public static MonitoringSettings Singleton => FindOrCreateSettingsAsset();
-
-        /// <summary>
-        ///     Get the settings asset or create a new instance of it.
-        /// </summary>
-        public static MonitoringSettings FindOrCreateSettingsAsset()
+        public static MonitoringSettings Singleton
         {
-            if (current)
-            {
-                return current;
-            }
-            current = Resources.LoadAll<MonitoringSettings>(string.Empty).FirstOrDefault() ?? CreateAsset();
-            Assert.IsNotNull(current);
-            return current;
+            get => singleton
+                ? singleton
+                : singleton = Resources.LoadAll<MonitoringSettings>(string.Empty).FirstOrDefault();
+            private set => singleton = value;
         }
 
-        private static MonitoringSettings current;
+        private static MonitoringSettings singleton;
 
-        private static MonitoringSettings CreateAsset()
+        /// <summary>
+        ///     Get the settings asset or create a new instance of it.
+        /// </summary>
+        public static MonitoringSettings CreateSettingsAsset()
         {
+            if (Singleton)
+            {
+                return Singleton;
+            }
+
 #if UNITY_EDITOR
             UnityEditor.AssetDatabase.Refresh();
             var guids = UnityEditor.AssetDatabase.FindAssets($"t:{typeof(MonitoringSettings)}");
@@ -539,16 +538,17 @@ namespace Baracuda.Monitoring.Systems
                 }
             }
 
-            var asset = CreateInstance<MonitoringSettings>();
+            Singleton = CreateInstance<MonitoringSettings>();
             const string Path = "Assets/Resources";
             var filePath = $"{Path}/{nameof(MonitoringSettings)}.asset";
-            Debug.Log($"[Runtime Monitoring] Creating new current at path: {filePath}");
+            Debug.Log($"[Runtime Monitoring] Creating new instance at path: {filePath}");
             UnityEditor.AssetDatabase.CreateFolder("Assets", "Resources");
-            UnityEditor.AssetDatabase.CreateAsset(asset, filePath);
+            UnityEditor.AssetDatabase.CreateAsset(Singleton, filePath);
             UnityEditor.AssetDatabase.SaveAssets();
-            return asset;
+            return Singleton;
 #else
-            return CreateInstance<MonitoringSettings>();
+            Singleton = CreateInstance<MonitoringSettings>();
+            return Singleton;
 #endif
         }
 
@@ -570,5 +570,17 @@ namespace Baracuda.Monitoring.Systems
         public bool AutoInstantiateUI { get; } = false;
 
         #endregion
+
+
+        public void OnBeforeSerialize()
+        {
+            Debug.Log("Before");
+        }
+
+        public void OnAfterDeserialize()
+        {
+            Debug.Log("After");
+            Singleton = this;
+        }
     }
 }

@@ -54,7 +54,6 @@ namespace Baracuda.Monitoring.Systems
             }
         }
 
-        // ReSharper disable Unity.PerformanceAnalysis
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void LogInternal(Exception exception, LoggingLevel loggingLevel)
         {

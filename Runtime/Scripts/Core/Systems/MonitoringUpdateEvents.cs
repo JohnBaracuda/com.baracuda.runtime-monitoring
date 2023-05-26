@@ -3,18 +3,17 @@
 using Baracuda.Monitoring.Types;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Object = UnityEngine.Object;
 
 namespace Baracuda.Monitoring.Systems
 {
-    internal class MonitoringUpdateEvents : MonitoredObject
+    internal class MonitoringUpdateEvents
     {
-        public bool ValidationUpdateEnabled { get; set; } = true;
+        #region Fields And Properties
 
-        //--------------------------------------------------------------------------------------------------------------
+        public bool ValidationUpdateEnabled { get; set; } = true;
 
         private readonly List<IMonitorHandle> _activeTickReceiver = new List<IMonitorHandle>(64);
         private readonly List<Action> _validationReceiver = new List<Action>(64);
@@ -22,12 +21,40 @@ namespace Baracuda.Monitoring.Systems
         private static float updateTimer;
         private static bool updateEnabled;
 
-        //--------------------------------------------------------------------------------------------------------------
+        #endregion
+
+
+        #region Internal API
+
+        internal void AddUpdateTicker(IMonitorHandle handle)
+        {
+            _activeTickReceiver.Add(handle);
+        }
+
+        internal void RemoveUpdateTicker(IMonitorHandle handle)
+        {
+            _activeTickReceiver.Remove(handle);
+        }
+
+        internal void AddValidationTicker(Action tickAction)
+        {
+            _validationReceiver.Add(tickAction);
+        }
+
+        internal void RemoveValidationTicker(Action tickAction)
+        {
+            _validationReceiver.Remove(tickAction);
+        }
 
         internal MonitoringUpdateEvents()
         {
             Monitor.Events.ProfilingCompleted += MonitoringEventsOnProfilingCompleted;
         }
+
+        #endregion
+
+
+        #region Update
 
         private void MonitoringEventsOnProfilingCompleted(IReadOnlyList<IMonitorHandle> staticUnits,
             IReadOnlyList<IMonitorHandle> instanceUnits)
@@ -77,7 +104,6 @@ namespace Baracuda.Monitoring.Systems
             ValidationTick();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateTick()
         {
 #if DEBUG
@@ -130,24 +156,6 @@ namespace Baracuda.Monitoring.Systems
 #endif
         }
 
-        public void AddUpdateTicker(IMonitorHandle handle)
-        {
-            _activeTickReceiver.Add(handle);
-        }
-
-        public void RemoveUpdateTicker(IMonitorHandle handle)
-        {
-            _activeTickReceiver.Remove(handle);
-        }
-
-        public void AddValidationTicker(Action tickAction)
-        {
-            _validationReceiver.Add(tickAction);
-        }
-
-        public void RemoveValidationTicker(Action tickAction)
-        {
-            _validationReceiver.Remove(tickAction);
-        }
+        #endregion
     }
 }

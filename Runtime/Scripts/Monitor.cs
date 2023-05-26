@@ -2,8 +2,6 @@
 
 using Baracuda.Monitoring.Dummy;
 using Baracuda.Monitoring.Systems;
-using System;
-using System.Threading.Tasks;
 using UnityEngine;
 
 #pragma warning disable CS0067
@@ -75,7 +73,7 @@ namespace Baracuda.Monitoring
         internal static MonitoringDisplay InternalUI { get; private set; }
         internal static MonitoringEvents InternalEvents { get; private set; }
 
-        private static bool isConstructed;
+        private static volatile bool isConstructed;
 
         #endregion
 
@@ -87,34 +85,10 @@ namespace Baracuda.Monitoring
             Application.quitting += OnApplicationQuit;
 
 #if UNITY_EDITOR
-            async Task WaitWhile(Func<bool> condition)
-            {
-                while (condition())
-                {
-                    await Task.Delay(10);
-                }
-            }
-
-            bool IsImport()
-            {
-                return UnityEditor.EditorApplication.isCompiling || UnityEditor.EditorApplication.isUpdating;
-            }
-
-            if (IsImport())
-            {
-                var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-                WaitWhile(IsImport).ContinueWith(task =>
-                {
-                    if (task.IsFaulted)
-                    {
-                        return;
-                    }
-                    Construct();
-                }, scheduler);
-                return;
-            }
-#endif
+            UnityEditor.EditorApplication.delayCall += Construct;
+#else
             Construct();
+#endif
         }
 
         private static void Construct()
@@ -123,10 +97,11 @@ namespace Baracuda.Monitoring
             {
                 return;
             }
+            isConstructed = true;
 
             Settings = MonitoringSettings.Singleton;
 
-            if (Settings.IsMonitoringEnabled)
+            if (Settings != null && Settings.IsMonitoringEnabled)
             {
                 InternalEvents = new MonitoringEvents();
                 InternalRegistry = new MonitoringRegistry(InternalRegistry);
@@ -138,7 +113,6 @@ namespace Baracuda.Monitoring
                 ProcessorFactory = new ValueProcessorFactory();
                 UI = InternalUI;
                 Registry = InternalRegistry;
-                isConstructed = true;
             }
             else
             {
@@ -146,14 +120,14 @@ namespace Baracuda.Monitoring
                 Registry = dummy;
                 Events = dummy;
                 UI = dummy;
-                isConstructed = true;
             }
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static async void InitializeProfiling()
+        private static async void Initialize()
         {
             Construct();
+
             if (Settings.IsMonitoringEnabled)
             {
                 var profiler = new MonitoringProfiler();
@@ -163,7 +137,6 @@ namespace Baracuda.Monitoring
 
         private static void OnApplicationQuit()
         {
-            MonitoringUpdateEvents?.Dispose();
             Initialized = false;
             isConstructed = false;
         }
