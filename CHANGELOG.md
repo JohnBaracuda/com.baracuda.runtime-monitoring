@@ -10,6 +10,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very
   complicated and error prone.
 
+
+## [3.5.2] - 2023-05-26
+
+### Fixed
+
+- Fixed an import issue that created multiple Resources folder.
+
+### Added
+
+- Added the option to allow updating monitors even when Time.timeScale is below 0.05
+
+### Changed
+
+- Moved settings access from Window/Runtime Monitoring to Tools/Runtime Monitoring
+
+
+
 ## [3.5.1] - 2023-04-26
 
 ### Fixed

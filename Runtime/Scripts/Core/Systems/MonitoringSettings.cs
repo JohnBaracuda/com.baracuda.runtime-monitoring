@@ -531,10 +531,10 @@ namespace Baracuda.Monitoring.Systems
             for (var i = 0; i < guids.Length; i++)
             {
                 var assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[i]);
-                var singleton = UnityEditor.AssetDatabase.LoadAssetAtPath<MonitoringSettings>(assetPath);
-                if (singleton != null)
+                Singleton = UnityEditor.AssetDatabase.LoadAssetAtPath<MonitoringSettings>(assetPath);
+                if (Singleton)
                 {
-                    return singleton;
+                    return Singleton;
                 }
             }
 
@@ -550,6 +550,15 @@ namespace Baracuda.Monitoring.Systems
             Singleton = CreateInstance<MonitoringSettings>();
             return Singleton;
 #endif
+        }
+
+        public void OnBeforeSerialize()
+        {
+        }
+
+        public void OnAfterDeserialize()
+        {
+            Singleton = this;
         }
 
         #endregion
@@ -570,17 +579,5 @@ namespace Baracuda.Monitoring.Systems
         public bool AutoInstantiateUI { get; } = false;
 
         #endregion
-
-
-        public void OnBeforeSerialize()
-        {
-            Debug.Log("Before");
-        }
-
-        public void OnAfterDeserialize()
-        {
-            Debug.Log("After");
-            Singleton = this;
-        }
     }
 }

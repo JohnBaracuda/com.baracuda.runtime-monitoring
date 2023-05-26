@@ -8,10 +8,10 @@ Runtime Monitoring is an easy way to monitor the value or state of C# members du
 ![Last Commit](https://img.shields.io/github/last-commit/johnBaracuda/com.baracuda.runtime-monitoring)
 
 #### ⚠️ Attention!
-> Runtime Monitoring is developed by me in my spare time, which means I can only do limited QA.
-> If you have any questions, feature requests or encounter any issues, feel free to contact me directly and/or open an Issue on GitHub.
-> Please keep in mind that I am developing this tool by myself and that any additional information will help me a lot, 
-> especially when reporting a bug. 
+> I am developing this tool during my limited spare time, so bear in mind that I can only do limited QA.
+> If you have feedback or run into issues, the best way to reach out is by opening an issue on GitHub. 
+> Your questions, suggestions, or bug reports there really help me improve the tool. Please remember, 
+> it's just me here, so any extra information about bugs is extra useful. Thanks for understanding!"
 
 &nbsp;
 ## Table of Contents
@@ -206,7 +206,7 @@ public bool TryGetPlayer(int playerId, out var player)
 > Note that since version 3.0.0, Runtime Monitoring is a UPM package and therefore immutable. Use the samples section in the package manager window to import UI resorces for IMGUI, TextMeshPro and UIToolkit. Parts of this documentation will be updated soon.
 
 Download and import Runtime Monitoring. To setup a different UI Controller (IMGUI, TMP or UIToolkit) follow these optional steps:
-+ Open the settings by navigating to (menu: Window > Runtime Monitoring > Settings).
++ Open the settings by navigating to (menu: Tools > Runtime Monitoring > Settings).
 + Depending on the Unity version and your preferences, import and optional UIController package.
 + Set the prefab as the active UI Controller.
 + The inspector of the set UI Controller object will be inlined and can be edited from the settings window.
@@ -941,9 +941,9 @@ When applying multiple formatting attributes either directly on the monitored me
 
 &nbsp;
 ## UI Filtering
-You can filter the currently displayed elements using the monitoring filter API from `IMonitoringUI`. Or by using the Filter Editor window (menu: Window > Runtime Monitoring > Filter Window)
+You can filter the currently displayed elements using the monitoring filter API from `IMonitoringUI`. Or by using the Filter Editor window (menu: Tools > Runtime Monitoring > Filter Window)
 Filtering will check for a variety of matches. If you want more explicit filtering you can disable most of these checks by navigating to 
-(menu: Window > Runtime Monitoring > Settings: Filtering). You can also use the settings to determine if filtering should be case sensitive or case insensitive. By default filtering is case insensitive! 
+(menu: Tools > Runtime Monitoring > Settings: Filtering). You can also use the settings to determine if filtering should be case sensitive or case insensitive. By default filtering is case insensitive! 
 
 ![example](https://johnbaracuda.com/media/img/monitoring/filter-editor-window.png)
 
@@ -982,7 +982,7 @@ Monitor.UI.ResetFilter();
 > Append an `!` to the beginning of a filter to negate it. 
 
 &nbsp;
-You can change all of the symbols mentioned above in the monitoring settings by navigating to (menu: Window > Runtime Monitoring > Settings: Filtering).
+You can change all of the symbols mentioned above in the monitoring settings by navigating to (menu: Tools > Runtime Monitoring > Settings: Filtering).
 
 &nbsp;
 > This example shows a custom filtering setup in the example scene.
@@ -1002,7 +1002,7 @@ The `Monitor` class (`Baracuda.Monitoring.Monitor`) is the primary access point 
 > Access API to control the monitoring UI.
  
 `IMonitoringSettigns Settings { get; }`
-> Access to the monitoring settings asset. Edit settings via (menu: Window > Runtime Monitoring > Settings)
+> Access to the monitoring settings asset. Edit settings via (menu: Tools > Runtime Monitoring > Settings)
 
 `IMonitoringEvents Events { get; }`
 > Access monitoring event handlers.
@@ -1101,7 +1101,7 @@ Use `Baracuda.Monitoring.Registry` to access cached data via the `IMonitoringReg
 
 
 Use `Baracuda.Monitoring.Settings` to access active settings via the `IMonitoringSettings` interface.
-You can configure and access the settings file via (menu: Window > Runtime Monitoring > Settings)
+You can configure and access the settings file via (menu: Tools > Runtime Monitoring > Settings)
 
 ![example](https://johnbaracuda.com/media/img/monitoring/Example_settings_01.png)
 
