@@ -32,6 +32,11 @@ namespace Baracuda.Monitoring
         bool AsyncProfiling { get; }
 
         /// <summary>
+        /// When enabled, monitoring is updated even if Time.timeScale is below 0.05
+        /// </summary>
+        bool UpdatesWithLowTimeScale { get;  }
+        
+        /// <summary>
         /// When enabled, the monitoring display will be opened as soon as profiling has completed.
         /// </summary>
         bool OpenDisplayOnLoad { get; }

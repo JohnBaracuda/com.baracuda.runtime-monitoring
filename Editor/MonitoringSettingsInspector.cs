@@ -28,6 +28,7 @@ namespace Baracuda.Monitoring.Editor
         private UnityEditor.SerializedProperty _enableMonitoring;
         private UnityEditor.SerializedProperty _openDisplayOnLoad;
         private UnityEditor.SerializedProperty _asyncProfiling;
+        private UnityEditor.SerializedProperty _updatesWithLowTimeScale;
         private UnityEditor.SerializedProperty _monitoringUIOverride;
         private UnityEditor.SerializedProperty _allowMultipleUIInstances;
 
@@ -151,6 +152,7 @@ namespace Baracuda.Monitoring.Editor
                 UnityEditor.EditorGUILayout.PropertyField(_enableMonitoring);
                 UnityEditor.EditorGUILayout.PropertyField(_asyncProfiling,
                     new GUIContent("Multi Thread Profiling", _asyncProfiling.tooltip));
+                UnityEditor.EditorGUILayout.PropertyField(_updatesWithLowTimeScale);
                 UnityEditor.EditorGUILayout.Space();
 
                 UnityEditor.EditorGUILayout.PropertyField(_openDisplayOnLoad,

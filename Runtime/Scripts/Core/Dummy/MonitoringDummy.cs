@@ -147,6 +147,7 @@ namespace Baracuda.Monitoring.Dummy
         public bool IsEditorOnly { get; } = false;
         public bool AllowMultipleUIInstances { get; } = false;
         public bool AsyncProfiling { get; } = false;
+        public bool UpdatesWithLowTimeScale { get; } = false;
         public bool OpenDisplayOnLoad { get; } = false;
         public bool ShowRuntimeMonitoringObject { get; } = false;
         public LoggingLevel LogBadImageFormatException { get; } = LoggingLevel.None;

@@ -67,7 +67,7 @@ namespace Baracuda.Monitoring.Systems
             }
 
             updateTimer += deltaTime;
-            if (updateTimer <= .05f)
+            if (!MonitoringSettings.Singleton.UpdatesWithLowTimeScale && updateTimer <= .05f)
             {
                 return;
             }
