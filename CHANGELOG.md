@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very
   complicated and error prone.
 
+## [3.5.3] - 2023-06-01
+
+### Fixed
+
+- Fixed issue #18 ambiguous reference between 'UnityEditor.Compilation.AssemblyFlags' and '
+  System.Reflection.AssemblyFlags'
 
 ## [3.5.2] - 2023-05-26
 
@@ -24,8 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Moved settings access from Window/Runtime Monitoring to Tools/Runtime Monitoring
-
-
 
 ## [3.5.1] - 2023-04-26
 

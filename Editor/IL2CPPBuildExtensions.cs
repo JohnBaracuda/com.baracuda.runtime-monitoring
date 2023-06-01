@@ -10,10 +10,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using UnityEditor;
-using UnityEditor.Compilation;
 using UnityEngine;
-using Assembly = System.Reflection.Assembly;
 
 namespace Baracuda.Monitoring.Editor
 {
@@ -56,7 +53,8 @@ namespace Baracuda.Monitoring.Editor
             return typeof(object);
         }
 
-        public static bool IsEditorAssembly(this Assembly systemAssembly, UnityEditor.Compilation.Assembly[] unityssemblies)
+        public static bool IsEditorAssembly(this Assembly systemAssembly,
+            UnityEditor.Compilation.Assembly[] unityssemblies)
         {
             for (var i = 0; i < unityssemblies.Length; i++)
             {
@@ -67,7 +65,7 @@ namespace Baracuda.Monitoring.Editor
                     continue;
                 }
                 var intFlag = (int) unityAssembly.flags;
-                if (unchecked((uint) intFlag & (uint) AssemblyFlags.EditorAssembly) > 0)
+                if (unchecked((uint) intFlag & (uint) UnityEditor.Compilation.AssemblyFlags.EditorAssembly) > 0)
                 {
                     return true;
                 }
@@ -89,7 +87,8 @@ namespace Baracuda.Monitoring.Editor
 
         public static bool IsStatic(this PropertyInfo propertyInfo)
         {
-            return propertyInfo?.GetMethod?.IsStatic ?? propertyInfo?.SetMethod?.IsStatic ?? throw new InvalidProgramException();
+            return propertyInfo?.GetMethod?.IsStatic ??
+                   propertyInfo?.SetMethod?.IsStatic ?? throw new InvalidProgramException();
         }
 
         public static void AddUnique<T>(this IList<T> list, T item)
@@ -106,7 +105,6 @@ namespace Baracuda.Monitoring.Editor
         {
             return type.IsArray && type.IsElementValueType();
         }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsElementValueType(this Type type)
@@ -235,21 +233,26 @@ namespace Baracuda.Monitoring.Editor
         {
             return $"{info.DeclaringType?.FullName}::{info.Name} ({info.FieldType.ToTypeDefString()})";
         }
+
         public static string GetDescription(this PropertyInfo info)
         {
             return $"{info.DeclaringType?.FullName}::{info.Name} ({info.PropertyType.ToTypeDefString()})";
         }
+
         public static string GetDescription(this EventInfo info)
         {
             return $"{info.DeclaringType?.FullName}::{info.Name} ({info.EventHandlerType.ToTypeDefString()})";
         }
+
         public static string GetDescription(this MethodInfo info)
         {
             return $"{info.DeclaringType?.FullName}::{info.Name} ({info.ReturnType.ToTypeDefString()})";
         }
+
         public static string GetDescription(this ParameterInfo info)
         {
-            return $"{info.Member.DeclaringType}::{info.Member.Name}::{info.Name} ({info.ParameterType.ToTypeDefString()})";
+            return
+                $"{info.Member.DeclaringType}::{info.Member.Name}::{info.Name} ({info.ParameterType.ToTypeDefString()})";
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -300,7 +303,6 @@ namespace Baracuda.Monitoring.Editor
             return returnValue;
         }
 
-
         public static Type[] GetAllTypesImplementingOpenGenericType(this Type openGenericType, Assembly[] assemblies)
         {
             var typeBuffer = new List<Type>(32);
@@ -315,13 +317,12 @@ namespace Baracuda.Monitoring.Editor
                         (type.IsGenericType &&
                          openGenericType.IsAssignableFrom(type.GetGenericTypeDefinition()))
                     select assemblyType);
-
             }
 
             return typeBuffer.ToArray();
         }
 
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string HumanizedName(this Type type)
         {
             if (type.IsGenericType)
