@@ -542,7 +542,10 @@ namespace Baracuda.Monitoring.Systems
             const string Path = "Assets/Resources";
             var filePath = $"{Path}/{nameof(MonitoringSettings)}.asset";
             Debug.Log($"[Runtime Monitoring] Creating new instance at path: {filePath}");
-            UnityEditor.AssetDatabase.CreateFolder("Assets", "Resources");
+            if (!UnityEditor.AssetDatabase.IsValidFolder("Assets/Resources"))
+            {
+                UnityEditor.AssetDatabase.CreateFolder("Assets", "Resources");
+            }
             UnityEditor.AssetDatabase.CreateAsset(Singleton, filePath);
             UnityEditor.AssetDatabase.SaveAssets();
             return Singleton;

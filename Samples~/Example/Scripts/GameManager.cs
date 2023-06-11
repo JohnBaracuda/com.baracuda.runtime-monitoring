@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2022 Jonathan Lang
+// Copyright (c) 2022 Jonathan Lang
 
 using Baracuda.Monitoring;
 using System;
@@ -12,7 +12,7 @@ namespace Baracuda.Example.Scripts
         [Monitor]
         [MOrder(100)]
         public event Action<GameState> GameStateChanged;
-        
+
         [Monitor]
         [MOrder(100)]
         public GameState GameState
@@ -24,20 +24,21 @@ namespace Baracuda.Example.Scripts
                 GameStateChanged?.Invoke(value);
             }
         }
-      
+
         [Monitor]
         [MFontSize(26)]
         [MGroupElement(false)]
         [MOrder(100)]
         [MShowIf(Condition.Positive)]
-        private int _deathTimer = 0;
-        
+        private int _deathTimer;
+
         private GameState _gameState = GameState.Playing;
+#pragma warning disable
         [SerializeField] [Min(30)] private int maxFrameRate = 165;
-        [SerializeField] [Range(0,4)] private int vsyncCount = 0;
-        [SerializeField] private bool logInit = false;
-        
-        
+        [SerializeField] [Range(0, 4)] private int vsyncCount;
+        [SerializeField] private bool logInit;
+#pragma warning restore
+
         protected override void Awake()
         {
             base.Awake();
@@ -55,21 +56,16 @@ namespace Baracuda.Example.Scripts
 
         private IEnumerator Start()
         {
-            PlayerState.OnPlayerDeath += delegate
-            {
-                StartCoroutine(PlayerDied());
-            };
-            
+            PlayerState.OnPlayerDeath += delegate { StartCoroutine(PlayerDied()); };
+
             yield return new WaitForSeconds(3);
-            
+
             Debug.Log($"[Tip] Press [{LegacyPlayerInput.ToggleMonitoringKey}] to toggle the monitoring display.");
-            
+
             yield return new WaitForSeconds(3);
-            
+
             Debug.Log($"[Tip] Press [{LegacyPlayerInput.ToggleFilterKey}] to open a filtering input field.");
         }
-        
-        
 
         private IEnumerator PlayerDied()
         {

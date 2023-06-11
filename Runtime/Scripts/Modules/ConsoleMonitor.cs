@@ -114,7 +114,7 @@ namespace Baracuda.Monitoring.Modules
 
         #region Message Log Caching
 
-#if UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
         static ConsoleMonitor()
         {
             Application.logMessageReceived -= OnLogMessageReceived;

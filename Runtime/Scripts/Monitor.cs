@@ -75,6 +75,9 @@ namespace Baracuda.Monitoring
 
         private static volatile bool isConstructed;
 
+        private const string SettingsNotFoundMessage =
+            "[Runtime Monitoring] Could not locate settings! Please open Tools/Runtime Monitoring/Settings to create a new settings file!";
+
         #endregion
 
 
@@ -123,10 +126,16 @@ namespace Baracuda.Monitoring
             }
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static async void Initialize()
         {
             Construct();
+
+            if (Settings == null)
+            {
+                Debug.Log(SettingsNotFoundMessage);
+                return;
+            }
 
             if (Settings.IsMonitoringEnabled)
             {

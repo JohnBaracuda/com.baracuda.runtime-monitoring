@@ -5,17 +5,18 @@ using UnityEngine;
 
 namespace Baracuda.Monitoring.Modules
 {
-    /// <summary>
-    /// Custom class showcasing how the monitoring system can be used to create a simple system monitor display.
-    /// </summary>
-    [MVisible(false)]
+        /// <summary>
+        ///     Custom class showcasing how the monitoring system can be used to create a simple system monitor display.
+        /// </summary>
+        [MVisible(false)]
     [MOptions(UIPosition.LowerRight)]
     [MFontName("JetBrainsMono-Regular")]
     [MGroupColor(ColorPreset.TransparentBlack)]
     [MGroupName("System")]
     public class SystemMonitor : MonitorModuleBase
     {
-        #region --- Fields ---
+        #region Fields
+
 #if MONITORING_EXAMPLES
         [MTag("OS")]
 #endif
@@ -125,7 +126,8 @@ namespace Baracuda.Monitoring.Modules
 
         #endregion
 
-        #region --- Setup ---
+
+        #region Setup
 
         private void Start()
         {
@@ -138,7 +140,8 @@ namespace Baracuda.Monitoring.Modules
 
             _processorType = SystemInfo.processorType;
             _processorCount = SystemInfo.processorCount.ToString();
-            _processorFrequency = (SystemInfo.processorFrequency * .001f).ToString("0.00", CultureInfo.InvariantCulture) + "GHz";
+            _processorFrequency =
+                (SystemInfo.processorFrequency * .001f).ToString("0.00", CultureInfo.InvariantCulture) + "GHz";
 
             _systemMemory = SystemInfo.systemMemorySize.ToString("N0", CultureInfo.InvariantCulture) + " GB";
             _graphicsDeviceName = SystemInfo.graphicsDeviceName;
