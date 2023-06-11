@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very
   complicated and error prone.
 
+## [3.5.4] - 2023-06-11
+
+### Fixed
+
+- Fixed #20 WebGL UI is not updating. This was caused because the callback object was created during subsystem registration which seems to not work.
+- Fixed #19 Creating a settings file creates an empty resources folder. 
+- Fixed a NullReferenceException when starting the game without a settings file as mentioned in #19.
+
 ## [3.5.3] - 2023-06-01
 
 ### Fixed
