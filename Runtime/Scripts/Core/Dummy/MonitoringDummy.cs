@@ -144,6 +144,7 @@ namespace Baracuda.Monitoring.Dummy
         #region Settings
 
         public bool IsMonitoringEnabled { get; } = false;
+        public UpdateRate SceneUpdateRate { get; } = UpdateRate.FixedUpdate;
         public bool IsEditorOnly { get; } = false;
         public bool AllowMultipleUIInstances { get; } = false;
         public bool AsyncProfiling { get; } = false;

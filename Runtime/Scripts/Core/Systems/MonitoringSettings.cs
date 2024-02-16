@@ -15,6 +15,7 @@ namespace Baracuda.Monitoring.Systems
 
 #pragma warning disable CS0414
         [SerializeField] private EnabledState enableMonitoring = EnabledState.Enabled;
+        [SerializeField] private UpdateRate updateRate = UpdateRate.FixedUpdate;
 
         [Tooltip(
             "When enabled, initial profiling will be processed asynchronous on a background thread. (Disabled for WebGL)")]
@@ -33,14 +34,15 @@ namespace Baracuda.Monitoring.Systems
         [SerializeField] private bool allowMultipleUIInstances;
 
         [Tooltip("Reference to the used MonitoringDisplay object.")]
-        [SerializeReference] [SerializeField] private MonitoringUI monitoringUIOverride;
+        [SerializeReference][SerializeField] private MonitoringUI monitoringUIOverride;
 
         #endregion
 
 
         #region Debug
 
-        [Tooltip("When enabled, the monitoring runtime object is set visible in the hierarchy.")] [SerializeField]
+        [Tooltip("When enabled, the monitoring runtime object is set visible in the hierarchy.")]
+        [SerializeField]
         private bool showRuntimeMonitoringObject;
 
         [Tooltip("BadImageFormatException is a rare exception that may occur during profiling.")]
@@ -102,10 +104,12 @@ namespace Baracuda.Monitoring.Systems
 
         #region Formatting
 
-        [Tooltip("When enabled, class names will be used as a prefix for displayed units")] [SerializeField]
+        [Tooltip("When enabled, class names will be used as a prefix for displayed units")]
+        [SerializeField]
         private bool addClassName;
 
-        [Tooltip("This symbol will be used to separate units class names and their member names.")] [SerializeField]
+        [Tooltip("This symbol will be used to separate units class names and their member names.")]
+        [SerializeField]
         private char appendSymbol = '.';
 
         [Tooltip("When enabled, names of monitored members will be humanized.(e.g. _playerHealth => Player Health)")]
@@ -114,7 +118,7 @@ namespace Baracuda.Monitoring.Systems
 
         [Tooltip("Collection of variable prefixes that should be removed when humanizing monitored member names.")]
         [SerializeField]
-        private string[] variablePrefixes = {"m_", "s_", "r_", "_"};
+        private string[] variablePrefixes = { "m_", "s_", "r_", "_" };
 
         [Tooltip("Enable the use of RichText on a global level.")]
         [SerializeField]
@@ -304,10 +308,13 @@ namespace Baracuda.Monitoring.Systems
         public bool IsEditorOnly => enableMonitoring == EnabledState.EditorOnly;
 
         /// <inheritdoc />
+        public UpdateRate SceneUpdateRate => updateRate;
+
+        /// <inheritdoc />
         public bool IsMonitoringEnabled =>
 #if UNITY_EDITOR
             enableMonitoring == EnabledState.EditorOnly || enableMonitoring == EnabledState.Enabled ||
-            (int) enableMonitoring == 3;
+            (int)enableMonitoring == 3;
 #else
             enableMonitoring == EnabledState.Enabled || (int) enableMonitoring == 3;
 #endif

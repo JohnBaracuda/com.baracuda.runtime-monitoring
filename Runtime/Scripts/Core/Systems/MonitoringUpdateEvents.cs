@@ -63,13 +63,15 @@ namespace Baracuda.Monitoring.Systems
 
             var sceneHook = new GameObject("Monitoring Scene Hook").AddComponent<SceneHook>();
 
+            sceneHook.sceneUpdateRate = Monitor.Settings.SceneUpdateRate;
+
             Object.DontDestroyOnLoad(sceneHook);
 
             sceneHook.gameObject.hideFlags = Monitor.Settings.ShowRuntimeMonitoringObject
                 ? HideFlags.None
                 : HideFlags.HideInHierarchy;
 
-            sceneHook.LateUpdateEvent += Tick;
+            sceneHook.SceneUpdateEvent += Tick;
 
             updateEnabled = Monitor.UI.Visible;
 

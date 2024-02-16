@@ -7,16 +7,30 @@ namespace Baracuda.Monitoring.Types
 {
     internal class SceneHook : MonoBehaviour
     {
-        internal event Action<float> LateUpdateEvent;
-        
+        public UpdateRate sceneUpdateRate;
+        internal event Action<float> SceneUpdateEvent;
+
+        private void Update()
+        {
+            if (sceneUpdateRate == UpdateRate.Update)
+                SceneUpdateEvent?.Invoke(Time.deltaTime);
+        }
         private void LateUpdate()
         {
-            LateUpdateEvent?.Invoke(Time.deltaTime);
+
+            if (sceneUpdateRate == UpdateRate.LateUpdate)
+                SceneUpdateEvent?.Invoke(Time.deltaTime);
         }
-        
+
         private void OnDestroy()
         {
-            LateUpdateEvent = null;
+            SceneUpdateEvent = null;
+        }
+
+        private void FixedUpdate()
+        {
+            if (sceneUpdateRate == UpdateRate.FixedUpdate)
+                SceneUpdateEvent?.Invoke(Time.fixedDeltaTime);
         }
     }
 }
