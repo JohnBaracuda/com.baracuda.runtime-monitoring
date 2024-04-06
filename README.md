@@ -8,10 +8,10 @@ Runtime Monitoring is an easy way to monitor the value or state of C# members du
 ![Last Commit](https://img.shields.io/github/last-commit/johnBaracuda/com.baracuda.runtime-monitoring)
 
 #### ⚠️ Attention!
-> I am developing this tool during my limited spare time, so bear in mind that I can only do limited QA.
-> If you have feedback or run into issues, the best way to reach out is by opening an issue on GitHub. 
-> Your questions, suggestions, or bug reports there really help me improve the tool. Please remember, 
-> it's just me here, so any extra information about bugs is extra useful. Thanks for understanding!"
+> Development on this tool is currently paused, but I'll try my best to maintain its compatibility. 
+> Your contributions, whether they're suggestions, questions, bug reports or commits, are greatly 
+> appreciated and help keep the project alive. For any feedback, please open an issue on GitHub. 
+> Thanks for your understanding and support!
 
 &nbsp;
 ## Table of Contents

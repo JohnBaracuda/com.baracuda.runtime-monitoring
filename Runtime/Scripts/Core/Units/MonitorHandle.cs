@@ -40,6 +40,11 @@ namespace Baracuda.Monitoring.Units
         public abstract string GetState();
 
         /// <summary>
+        /// Get the current value or state as an unmodified string.
+        /// </summary>
+        public abstract object GetValueAsObject();
+
+        /// <summary>
         ///     The target object of the monitored member. Null if static
         /// </summary>
         public object Target { get; }

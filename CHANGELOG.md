@@ -5,10 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.6.0] - 2024-04-06
 
-- Looking into solutions to circumvent the whole IL2CPP type def generation requirement because it is making things very
-  complicated and error prone.
+### Added
+
+- Added IMonitorHandle.GetValueAsObject() to get a monitored object without any formattig. As requrest in #26
+
+### Fixed
+
+- Fixed #23 Users can select the update rate of SceneHook in the Settings to Update, FixedUpdate, or LateUpdate
+- Fixed #22 Grouped monitored objctes are now unregistered correctly (TextMeshPro)
 
 ## [3.5.4] - 2023-06-11
 

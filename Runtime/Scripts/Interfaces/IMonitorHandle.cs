@@ -64,6 +64,11 @@ namespace Baracuda.Monitoring
         /// </summary>
         string GetState();
 
+        /// <summary>
+        /// Get the current value or state as an unmodified object.
+        /// </summary>
+        object GetValueAsObject();
+
 
         #region Obsolete
 

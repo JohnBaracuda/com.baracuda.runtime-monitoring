@@ -204,7 +204,7 @@ namespace Baracuda.Monitoring.Units
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object GetValueAsObject()
+        public override object GetValueAsObject()
         {
             return _getValue(_target);
         }

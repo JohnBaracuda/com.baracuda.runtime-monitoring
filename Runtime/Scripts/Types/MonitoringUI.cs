@@ -84,7 +84,6 @@ namespace Baracuda.Monitoring
 #pragma warning restore CS0618
         }
 
-
         [Obsolete("Use OnMonitorHandleCreated instead! This method will be removed in 4.0.0")]
         protected virtual void OnMonitorUnitCreated(IMonitorUnit handle)
         {

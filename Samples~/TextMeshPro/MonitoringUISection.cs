@@ -70,7 +70,7 @@ namespace Baracuda.Monitoring.TextMeshPro
             if (profile.FormatData.AllowGrouping)
             {
                 MonitoringUIGroup uiGroup;
-                if (profile.IsStatic)
+                if (profile.IsStatic || groupName != null)
                 {
                     uiGroup = _namedGroups[groupName];
                     uiGroup.RemoveChild(monitorHandle);

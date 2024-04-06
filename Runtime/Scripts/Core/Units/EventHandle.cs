@@ -37,6 +37,12 @@ namespace Baracuda.Monitoring.Units
             return _stateFormatter(_target, _invokeCounter);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override object GetValueAsObject()
+        {
+            return _eventHandler;
+        }
+
         public override void Refresh()
         {
             var state = GetState();
