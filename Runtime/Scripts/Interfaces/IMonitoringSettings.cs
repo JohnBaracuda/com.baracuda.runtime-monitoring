@@ -17,6 +17,12 @@ namespace Baracuda.Monitoring
         bool IsMonitoringEnabled { get; }
 
         /// <summary>
+        /// When enabled, the monitoring system is active, otherwise dummy systems are in place to prevent API calls from
+        /// resulting in compile or runtime exceptions.
+        /// </summary>
+        UpdateRate SceneUpdateRate { get; }
+
+        /// <summary>
         /// Returns true if runtime monitoring is currently editor only.
         /// </summary>
         bool IsEditorOnly { get; }
@@ -34,8 +40,8 @@ namespace Baracuda.Monitoring
         /// <summary>
         /// When enabled, monitoring is updated even if Time.timeScale is below 0.05
         /// </summary>
-        bool UpdatesWithLowTimeScale { get;  }
-        
+        bool UpdatesWithLowTimeScale { get; }
+
         /// <summary>
         /// When enabled, the monitoring display will be opened as soon as profiling has completed.
         /// </summary>
