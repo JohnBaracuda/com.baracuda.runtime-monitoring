@@ -131,6 +131,7 @@ namespace Baracuda.Monitoring
         {
             Construct();
 
+#if !DISABLE_MONITORING
             if (Settings == null)
             {
                 Debug.Log(SettingsNotFoundMessage);
@@ -142,6 +143,7 @@ namespace Baracuda.Monitoring
                 var profiler = new MonitoringProfiler();
                 Initialized = await profiler.ProfileAsync();
             }
+#endif
         }
 
         private static void OnApplicationQuit()
