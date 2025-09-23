@@ -146,8 +146,18 @@ namespace Baracuda.Monitoring.Systems
 
         private async Task ProfileInternalAsync(CancellationToken ct)
         {
-            var types = await CreateAssemblyProfileAsync(ct);
-            await CreateMonitoringProfileAsync(types, ct);
+            var generatedType = Type.GetType("Baracura.Monitoring.GeneratedMonitoringProfilerTarget");
+            if (generatedType != null)
+            {
+                var field = generatedType.GetField("Types", BindingFlags.Static | BindingFlags.Public);
+                var value = field!.GetValue(null);
+                await CreateMonitoringProfileAsync((Type[])value, ct);
+            }
+            else
+            {
+                var types = await CreateAssemblyProfileAsync(ct);
+                await CreateMonitoringProfileAsync(types, ct);
+            }
         }
 
         /*

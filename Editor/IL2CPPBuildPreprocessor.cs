@@ -83,6 +83,7 @@ namespace Baracuda.Monitoring.Editor
         private TypeBuffer TypeDefMethodBuffer { get; } = new TypeBuffer("  [Method Definitions] ");
         private TypeBuffer TypeDefOutParameterBuffer { get; } = new TypeBuffer("  [Out Parameter Definitions] ");
         private TypeBuffer TypeDefCollectionBuffer { get; } = new TypeBuffer("  [Collection Definitions] ");
+        private HashSet<Type> targetTypes = new();
 
         private class TypeBuffer
         {
@@ -151,6 +152,7 @@ namespace Baracuda.Monitoring.Editor
         {
             Debug.Log($"[Monitoring] Generating Type Definitions for IL2CPP");
 
+            targetTypes.Clear();
             for (var i = 0; i < assemblies.Length; i++)
             {
                 ProfileAssembly(assemblies[i]);
@@ -165,7 +167,10 @@ namespace Baracuda.Monitoring.Editor
             AppendTypeDefinitions(stringBuilder);
 
             AppendCloseClass(stringBuilder);
+
             AppendIfDefEnd(stringBuilder);
+
+            AppendTypeList(stringBuilder);
 
             AppendStats(stringBuilder);
 
@@ -258,6 +263,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 if (fieldInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
                 {
+                    targetTypes.Add(type);
                     ProfileFieldInfo(fieldInfo);
                 }
             }
@@ -267,6 +273,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 if (fieldInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
                 {
+                    targetTypes.Add(type);
                     ProfileFieldInfo(fieldInfo);
                 }
             }
@@ -276,6 +283,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 if (propertyInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
                 {
+                    targetTypes.Add(type);
                     ProfilePropertyInfo(propertyInfo);
                 }
             }
@@ -285,6 +293,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 if (propertyInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
                 {
+                    targetTypes.Add(type);
                     ProfilePropertyInfo(propertyInfo);
                 }
             }
@@ -294,6 +303,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 if (eventInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
                 {
+                    targetTypes.Add(type);
                     ProfileEventInfo(eventInfo);
                 }
             }
@@ -303,6 +313,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 if (eventInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
                 {
+                    targetTypes.Add(type);
                     ProfileEventInfo(eventInfo);
                 }
             }
@@ -312,6 +323,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 if (methodInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
                 {
+                    targetTypes.Add(type);
                     ProfileMethodInfo(methodInfo);
                 }
             }
@@ -321,6 +333,7 @@ namespace Baracuda.Monitoring.Editor
             {
                 if (methodInfo.GetCustomAttribute<MonitorAttribute>(true) != null)
                 {
+                    targetTypes.Add(type);
                     ProfileMethodInfo(methodInfo);
                 }
             }
@@ -713,6 +726,29 @@ namespace Baracuda.Monitoring.Editor
         #endregion
 
         //--------------------------------------------------------------------------------------------------------------
+
+        private void AppendTypeList(StringBuilder stringBuilder)
+        {
+            stringBuilder.AppendLine("namespace Baracuda.Monitoring");
+            stringBuilder.AppendLine("{");
+            stringBuilder.AppendLine($"    {preserveAttribute}");
+            stringBuilder.AppendLine("    public static class GeneratedMonitoringProfilerTarget");
+            stringBuilder.AppendLine("    {");
+            stringBuilder.AppendLine($"        {preserveAttribute}");
+            stringBuilder.AppendLine("        public static readonly System.Type[] Types =");
+            stringBuilder.AppendLine("        {");
+            foreach (var targetType in targetTypes)
+            {
+                if (targetType.Namespace != null &&
+                    targetType.Namespace.StartsWith("Baracuda.Monitoring")) continue;
+
+                stringBuilder.AppendLine($"            typeof(global::{targetType.FullName}),");
+            }
+            stringBuilder.AppendLine("        };");
+            stringBuilder.AppendLine("    }");
+            stringBuilder.AppendLine();
+            stringBuilder.AppendLine("}");
+        }
 
         #region Append Definitions
 
