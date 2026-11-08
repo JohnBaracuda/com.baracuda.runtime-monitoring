@@ -193,7 +193,7 @@ public bool TryGetPlayer(int playerId, out var player)
     // ...
 }
 ```
-![basic example](https://johnbaracuda.com/media/img/monitoring/Example_runtime_01.png)
+![basic example](https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_runtime_01.png)
 
 
 
@@ -213,7 +213,7 @@ Download and import Runtime Monitoring. To setup a different UI Controller (IMGU
 >  If you drag and drop a UIController asset into your scene, this controller will be used instead.
 &nbsp;
 
-![basic example](https://johnbaracuda.com/media/img/monitoring/Example_06.png)
+![basic example](https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_06.png)
 
 
 
@@ -263,7 +263,7 @@ Download and import Runtime Monitoring. To setup a different UI Controller (IMGU
 Place the `[Monitor]` attribute an a field, property, event or method and get its value or state monitored in a customizable UI during runtime. When monitoring non static (instances), you have to register the monitored target, as shown in the next point. Other than that there is not much to it. Just try it out yourself. 
 
 &nbsp;
-![example](https://johnbaracuda.com/media/img/monitoring/Example_member_01.png)
+![example](https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_member_01.png)
 
 > Note that the PlayerMovement class in this example is calling `this.RegisterMonitor()` in its Awake and `this.UnregisterMonitor` in its OnDestory method.
 
@@ -383,7 +383,7 @@ public delegate void GameStateDelegate(GameState gameState);
 public event Action<Player> OnPlayerSpawn;
 ```
 
-![example](https://johnbaracuda.com/media/img/monitoring/Example_event_03.png)
+![example](https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_event_03.png)
 
 
 
@@ -425,7 +425,7 @@ public void Populate(out Vector3[] verts)
 }
 ```
 
-![example](https://johnbaracuda.com/media/img/monitoring/Example_method_01.png)
+![example](https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_method_01.png)
 
 > This example additionally shows that out parameters are formatted too.
 
@@ -522,7 +522,7 @@ private string IListProcessor(IList<string> elements)
 &nbsp;
  >This example demonstrates how to create a simple progress bar with the help of a value processor. Note that this code is already relatively optimized.
 
-![example](https://johnbaracuda.com/media/img/monitoring/Example_valueprocessor_01.png)
+![example](https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_valueprocessor_01.png)
 
 
 &nbsp;
@@ -933,7 +933,7 @@ When applying multiple formatting attributes either directly on the monitored me
 5. Applied to the monitored members class by `[MOptions]`
 6. Applied to the monitored members class by a custom `[MAttributeCollection]` 
 
-![example](https://johnbaracuda.com/media/img/monitoring/Example_formatting_01.png)
+![example](https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_formatting_01.png)
 
  >Note that this is for display purposes only. There is no need to apply that many formatting options to every monitored member. Formatting is 100% optional.
 
@@ -945,7 +945,7 @@ You can filter the currently displayed elements using the monitoring filter API 
 Filtering will check for a variety of matches. If you want more explicit filtering you can disable most of these checks by navigating to 
 (menu: Tools > Runtime Monitoring > Settings: Filtering). You can also use the settings to determine if filtering should be case sensitive or case insensitive. By default filtering is case insensitive! 
 
-![example](https://johnbaracuda.com/media/img/monitoring/filter-editor-window.png)
+![example](https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/filter-editor-window.png)
 
 
 Optional Filter    | Description |        
@@ -987,7 +987,7 @@ You can change all of the symbols mentioned above in the monitoring settings by 
 &nbsp;
 > This example shows a custom filtering setup in the example scene.
 
-![example](https://johnbaracuda.com/media/img/monitoring/Example_filter_01.png)
+![example](https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_filter_01.png)
 
 
 &nbsp;
@@ -1103,7 +1103,7 @@ Use `Baracuda.Monitoring.Registry` to access cached data via the `IMonitoringReg
 Use `Baracuda.Monitoring.Settings` to access active settings via the `IMonitoringSettings` interface.
 You can configure and access the settings file via (menu: Tools > Runtime Monitoring > Settings)
 
-![example](https://johnbaracuda.com/media/img/monitoring/Example_settings_01.png)
+![example](https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_settings_01.png)
 
 
 
@@ -1113,7 +1113,7 @@ You can configure and access the settings file via (menu: Tools > Runtime Monito
 
 Both Mono and IL2CPP runtimes are supported. RTM is making extensive use of dynamic type and method creation during its profiling process. In order to create these types, IL2CPP requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the necessary information to generate everything it needs during runtime. You can manually create this list form the settings window.
 
-![example](https://johnbaracuda.com/media/img/monitoring/Example_08.png)
+![example](https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_08.png)
 
 
 

@@ -559,7 +559,7 @@ especially when reporting a bug.</p>
     <span class="hljs-comment">// ...</span>
 }
 </div></code></pre>
-<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_runtime_01.png" alt="basic example"></p>
+<p><img src="https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_runtime_01.png" alt="basic example"></p>
 <p> </p>
 <h2 id="customized-setup">Customized Setup</h2>
 <blockquote>
@@ -576,7 +576,7 @@ especially when reporting a bug.</p>
 <p>If you drag and drop a UIController asset into your scene, this controller will be used instead.
  </p>
 </blockquote>
-<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_06.png" alt="basic example"></p>
+<p><img src="https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_06.png" alt="basic example"></p>
 <p> </p>
 <h2 id="license">License</h2>
 <p><a href="https://github.com/JohnBaracuda/Runtime-Monitoring/blob/main/LICENSE">MIT</a> You can use this tool for anything you want, including commercial products, as long as you're not just selling my work or using it for some other morally questionable or condemnable act.</p>
@@ -613,7 +613,7 @@ especially when reporting a bug.</p>
 <h1 id="monitoring-member">Monitoring Member</h1>
 <p>Place the <code>[Monitor]</code> attribute an a field, property, event or method and get its value or state monitored in a customizable UI during runtime. When monitoring non static (instances), you have to register the monitored target, as shown in the next point. Other than that there is not much to it. Just try it out yourself.</p>
 <p> 
-<img src="https://johnbaracuda.com/media/img/monitoring/Example_member_01.png" alt="example"></p>
+<img src="https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_member_01.png" alt="example"></p>
 <blockquote>
 <p>Note that the PlayerMovement class in this example is calling <code>this.RegisterMonitor()</code> in its Awake and <code>this.UnregisterMonitor</code> in its OnDestory method.</p>
 </blockquote>
@@ -733,7 +733,7 @@ especially when reporting a bug.</p>
 [<span class="hljs-meta">MonitorEvent(ShowInvokeCounter = true, ShowSubscriberInfo = false)</span>]
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">event</span> Action&lt;Player&gt; OnPlayerSpawn;
 </div></code></pre>
-<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_event_03.png" alt="example"></p>
+<p><img src="https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_event_03.png" alt="example"></p>
 <p> </p>
 <h2 id="monitoring-methods">Monitoring Methods</h2>
 <p>A method can be monitored like a field or property with the additional feature that their out parameters are monitored too. Default parameter values can be set by passing them to the constructor of the <code>[MonitorMethod]</code> attribute. Even methods that return void can be monitored if they have at least one out parameter. Default and <a href="#global-value-processor">Global Value Processor</a> are applied to monitored out parameters, meaning that collections, vectors etc. assigned via out parameter are displayed in a readable way and not just formatted with ToString().</p>
@@ -766,7 +766,7 @@ especially when reporting a bug.</p>
     <span class="hljs-comment">//...</span>
 }
 </div></code></pre>
-<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_method_01.png" alt="example"></p>
+<p><img src="https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_method_01.png" alt="example"></p>
 <blockquote>
 <p>This example additionally shows that out parameters are formatted too.</p>
 </blockquote>
@@ -978,7 +978,7 @@ especially when reporting a bug.</p>
 <blockquote>
 <p>This example demonstrates how to create a simple progress bar with the help of a value processor. Note that this code is already relatively optimized.</p>
 </blockquote>
-<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_valueprocessor_01.png" alt="example"></p>
+<p><img src="https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_valueprocessor_01.png" alt="example"></p>
 <p> </p>
 <h3 id="static-value-processor">Static Value Processor</h3>
 <p>Static processor methods can have certain overloads for objects that implement generic collection interfaces, which allow you to process the value of individual elements of the collection instead of the whole collection all at once.</p>
@@ -1411,7 +1411,7 @@ pubic <span class="hljs-keyword">static</span> <span class="hljs-keyword">bool</
 <li>Applied to the monitored members class by <code>[MOptions]</code></li>
 <li>Applied to the monitored members class by a custom <code>[MAttributeCollection]</code></li>
 </ol>
-<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_formatting_01.png" alt="example"></p>
+<p><img src="https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_formatting_01.png" alt="example"></p>
 <blockquote>
 <p>Note that this is for display purposes only. There is no need to apply that many formatting options to every monitored member. Formatting is 100% optional.</p>
 </blockquote>
@@ -1420,7 +1420,7 @@ pubic <span class="hljs-keyword">static</span> <span class="hljs-keyword">bool</
 <p>You can filter the currently displayed elements using the monitoring filter API from <code>IMonitoringUI</code>. Or by using the Filter Editor window (menu: Tools &gt; Runtime Monitoring &gt; Filter Window)
 Filtering will check for a variety of matches. If you want more explicit filtering you can disable most of these checks by navigating to
 (menu: Tools &gt; Runtime Monitoring &gt; Settings: Filtering). You can also use the settings to determine if filtering should be case sensitive or case insensitive. By default filtering is case insensitive!</p>
-<p><img src="https://johnbaracuda.com/media/img/monitoring/filter-editor-window.png" alt="example"></p>
+<p><img src="https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/filter-editor-window.png" alt="example"></p>
 <table>
 <thead>
 <tr>
@@ -1487,7 +1487,7 @@ You can change all of the symbols mentioned above in the monitoring settings by 
 <blockquote>
 <p>This example shows a custom filtering setup in the example scene.</p>
 </blockquote>
-<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_filter_01.png" alt="example"></p>
+<p><img src="https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_filter_01.png" alt="example"></p>
 <p> </p>
 <h1 id="systems-and-api">Systems and API</h1>
 <p>The <code>Monitor</code> class (<code>Baracuda.Monitoring.Monitor</code>) is the primary access point to access monitoring systems and API.</p>
@@ -1601,11 +1601,11 @@ IMonitoringUI monitoringUI = Monitor.UI
 <h2 id="monitoring-settings">Monitoring Settings</h2>
 <p>Use <code>Baracuda.Monitoring.Settings</code> to access active settings via the <code>IMonitoringSettings</code> interface.
 You can configure and access the settings file via (menu: Tools &gt; Runtime Monitoring &gt; Settings)</p>
-<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_settings_01.png" alt="example"></p>
+<p><img src="https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_settings_01.png" alt="example"></p>
 <p> </p>
 <h2 id="runtime-compatibility">Runtime Compatibility</h2>
 <p>Both Mono and IL2CPP runtimes are supported. RTM is making extensive use of dynamic type and method creation during its profiling process. In order to create these types, IL2CPP requires AOT compilation (Ahead of time compilation) When using IL2CPP runtime a list of types is generated shortly before a build to give the compiler the necessary information to generate everything it needs during runtime. You can manually create this list form the settings window.</p>
-<p><img src="https://johnbaracuda.com/media/img/monitoring/Example_08.png" alt="example"></p>
+<p><img src="https://raw.githubusercontent.com/JohnBaracuda/com.baracuda.runtime-monitoring/main/Documentation~/images/Example_08.png" alt="example"></p>
 <p> </p>
 <h2 id="optimizations">Optimizations</h2>
 <p>In general RTM tries to be as optimized as possible by reducing allocations where ever possible and by doing a lot of the heavy work during the initial profiling. However due to the nature of some types and the creation of strings, allocations cannot be prevented. If performance is a sensitive aspect of your project, here are some tips and tricks to keep in mind.</p>
